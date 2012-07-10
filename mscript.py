@@ -34,7 +34,7 @@ elif ctx.mode == 'build':
             sources = "${SVGS_DIR}/floor.svg",
             deps = "${PNGS_DIR}/%d/tiles" % size,
             where = TOP))
-    # Foregrounds to be overlaid over floor texture
+    # Foregrounds composited over floor texture
     for name in "bomb1 bomb2 match picket".split() + \
             ["explo%02d" % n for n in range(1, 12)]:
         ctx.add_rule(Rule(rule = "${COMPOSITE} -background #0000 " \
@@ -42,7 +42,7 @@ elif ctx.mode == 'build':
                 (size, size),
                 targets = "${PNGS_DIR}/%d/tiles/%s.png" % (size, name),
                 sources = "${SVGS_DIR}/%s.svg" % name,
-                deps = ["${PNGS_DIR}/%d/alpha" % size, 
+                deps = ["${PNGS_DIR}/%d/tiles" % size, 
                         "${PNGS_DIR}/%d/tiles/floor.png" % size],
                 where = TOP))
     # Graphics with alpha
