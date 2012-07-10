@@ -68,12 +68,22 @@ elif ctx.mode == 'build':
     # SVG to use.
     def montage_chrome(num, s):
         tl, tr, bl, br = s.split()
+        # Use 2 stages, montage alpha chrome from 4 quarters then 
+        # composite it over floor
         ctx.add_rule(Rule(rule = "${MONTAGE} -tile 2x2 -background #0000 " \
                 "${SRC} -geometry %dx%d+0+0 ${TGT}" % (size / 2, size / 2),
                 targets = "${PNGS_DIR}/%d/alpha/chrome%02d.png" % (size, num),
                 sources = ["${SVGS_DIR}/chrome_%s.svg" % x \
                         for x in [tl, tr, bl, br]],
                 deps = "${PNGS_DIR}/%d/alpha" % size,
+                where = TOP))
+        ctx.add_rule(Rule(rule = "${COMPOSITE} -background #0000 " \
+                "${SRC} -geometry %dx%d ${SVGS_DIR}/floor.svg ${TGT}" %
+                (size, size),
+                targets = "${PNGS_DIR}/%d/tiles/chrome%02d.png" % (size, num),
+                sources = "${PNGS_DIR}/%d/alpha/chrome%02d.png" % (size, num),
+                deps = ["${PNGS_DIR}/%d/tiles" % size, 
+                        "${PNGS_DIR}/%d/tiles/floor.png" % size],
                 where = TOP))
     
     # Chrome pieces:
