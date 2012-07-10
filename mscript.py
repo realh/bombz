@@ -13,6 +13,7 @@ if ctx.mode == 'configure':
     
     ctx.find_prog_env("composite")
     ctx.find_prog_env("convert")
+    ctx.find_prog_env("montage")
     
 elif ctx.mode == 'build':
 
@@ -60,6 +61,48 @@ elif ctx.mode == 'build':
             sources = "${SVGS_DIR}/explo00.svg",
             deps = "${PNGS_DIR}/%d/alpha" % size,
             where = TOP))
+    
+    # Each chrome piece is made up of 4 quarters. This function pastes them
+    # together, where target file has name chromeXX.png where XX == num.
+    # s is split into tl, tr, bl, br: "tl"..."vert" indicating which source
+    # SVG to use.
+    def montage_chrome(num, s):
+        tl, tr, bl, br = s.split()
+        ctx.add_rule(Rule(rule = "${MONTAGE} -tile 2x2 -background #0000 " \
+                "${SRC} -geometry %dx%d+0+0 ${TGT}" % (size / 2, size / 2),
+                targets = "${PNGS_DIR}/%d/alpha/chrome%02d.png" % (size, num),
+                sources = ["${SVGS_DIR}/chrome_%s.svg" % x \
+                        for x in [tl, tr, bl, br]],
+                deps = "${PNGS_DIR}/%d/alpha" % size,
+                where = TOP))
+    
+    # Chrome pieces:
+    ################
+    # 00: tl corner             08: cross
+    # 01: horiz straight        09: right end
+    # 02: tr corner             10: bottom end
+    # 03: vert straight         11: inverted T
+    # 04: bl corner             12: T with leg facing left
+    # 05: br corner             13: T
+    # 06: top end               14: T with leg facing right
+    # 07: left end              15: island
+    montage_chrome(0, "tl horiz vert tl")
+    montage_chrome(1, "horiz horiz horiz horiz")
+    montage_chrome(2, "horiz tr tr vert")
+    montage_chrome(3, "vert vert vert vert")
+    montage_chrome(4, "vert bl bl horiz")
+    montage_chrome(5, "br vert horiz br")
+    montage_chrome(6, "tl tr vert vert")
+    montage_chrome(7, "tl horiz bl horiz")
+    montage_chrome(8, "br bl tr tl")
+    montage_chrome(9, "horiz tr horiz br")
+    montage_chrome(10, "vert vert bl br")
+    montage_chrome(11, "br bl horiz horiz")
+    montage_chrome(12, "br vert tr vert")
+    montage_chrome(13, "horiz horiz tr tl")
+    montage_chrome(14, "vert bl vert tl")
+    montage_chrome(15, "tl tr bl br")
+
 
 elif ctx.mode == 'clean' or ctx.mode == 'pristine':
 
