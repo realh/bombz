@@ -22,12 +22,6 @@ elif ctx.mode == 'build':
     ctx.add_rule(Rule(rule = "mkdir -p ${TGT}",
             targets = ["${PNGS_DIR}/%d/alpha" % size,
             "${PNGS_DIR}/%d/tiles" % size]))
-    # Dirt PNG from XCF
-    ctx.add_rule(Rule(rule = "${CONVERT} ${SRC} ${TGT}",
-            targets = "${PNGS_DIR}/%d/tiles/dirt.png" % size,
-            sources = "${TOP_DIR}/texture/dirt.xcf",
-            deps = "${PNGS_DIR}/%d/tiles" % size,
-            where = TOP))
     # Floor (no composition)
     ctx.add_rule(Rule(rule = "${CONVERT} ${SRC} -geometry %dx%d ${TGT}" %
                     (size, size),
