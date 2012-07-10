@@ -64,8 +64,6 @@ elif ctx.mode == 'build':
 elif ctx.mode == 'clean' or ctx.mode == 'pristine':
 
     ctx.recursively_remove("${PNGS_DIR}")
-    for f in ctx.glob("*.png", "${TOP_DIR}/texture"):
-        ctx.delete(f)
     if ctx.mode == 'pristine':
         ctx.delete("${TOP_DIR}/maitch.pyc")
         ctx.recursively_remove("${TOP_DIR}/build")
