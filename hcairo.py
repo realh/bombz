@@ -2,8 +2,9 @@ import cairo
 import rsvg
 
 def svg_to_cairo(source, width, height, alpha = True, SCALE = 4):
-    # SVGs don't plot well at the small sizes we're using so
-    # use enlarged versions and scale down the bitmaps afterwards
+    """ SVGs don't plot well at the small sizes we're using so
+    use enlarged versions (default SCALE 4) and scale down the bitmaps
+    afterwards """
     svg = rsvg.Handle(file = source)
     if alpha:
         format = cairo.FORMAT_ARGB32
@@ -25,6 +26,27 @@ def svg_to_cairo(source, width, height, alpha = True, SCALE = 4):
     cr.set_source_surface(surf, 0, 0)
     cr.paint()
     return surf2
+
+
+def load_image(*args):
+    if args[0].endswith(".svg"):
+        return svg_to_cairo(*args)
+    else:
+        return cairo.ImageSurface.create_from_png(args[0])
+
+
+def composite(obj1, obj2):
+    """ Plots obj2 over a copy of obj1 (so obj1 is not altered).
+    They should be the same size. """
+    surf = cairo.ImageSurface(obj1.get_format(),
+            obj1.get_width(), obj1.get_height())
+    cr = cairo.Context(surf)
+    cr.set_antialias(cairo.ANTIALIAS_NONE)
+    cr.set_source_surface(obj1, 0, 0)
+    cr.paint()
+    cr.set_source_surface(obj2, 0, 0)
+    cr.paint()
+    return surf
 
 
 def make_array(cols, rows):
@@ -152,11 +174,96 @@ def extend_edges(surf):
     return dest
 
 
-#surf1 = svg_to_cairo("svgs/chrome_br.svg", 36, 36)
-#surf2 = svg_to_cairo("svgs/chrome_tl.svg", 36, 36)
-#surf3 = svg_to_cairo("svgs/floor.svg", 36, 36)
-#surf = montage(cairo.FORMAT_ARGB32, [[surf1, surf3], [surf3, surf2]])
+def make_atlas(alpha, size, textures):
+    """ Makes a PNG containing an atlas suitable for OpenGL with each texture
+    having its edges and corners doubled-up.
+    alpha is boolean, whether dest will have alpha channel. If false, the first
+    object should be the floor, over which subsequent tiles are composited.
+    size: size (width = height) of each tile.
+    textures is similar to the montage() function's "objects" except each object
+    may be an SVG filename instead of a Cairo surface. If it's a surface it
+    should be a montage of foreground chrome subsections.
+    The textures argument will be altered by this function. """
+    if alpha:
+        format = cairo.FORMAT_ARGB32
+    else:
+        format = cairo.FORMAT_RGB24
+    for y in range(len(textures)):
+        row = textures[y]
+        for x in range(len(row)):
+            obj = row[x]
+            if obj == None:
+                continue
+            elif isinstance(obj, tuple) or isinstance(obj, list):
+                lt = True
+                s = obj[0]
+            else:
+                lt = False
+                s = obj
+            if isinstance(s, basestring):
+                s = load_image(s, size, size, True)
+            s = extend_edges(s)
+            if not alpha:
+                if x == 0 and y == 0:
+                    floor = s
+                else:
+                    s = composite(floor, s)
+            if lt:
+                obj[0] = s
+            else:
+                row[x] = s
+    return montage(format, textures)
 
-surf = svg_to_cairo("svgs/droidup.svg", 72, 72)
-surf = extend_edges(surf)
-surf.write_to_png("bomb1.png")
+
+def make_tile_atlas(dest, sources, size = 72, columns = 7):
+    """ Makes an atlas of the tiles.
+    dest is the filename where the PNG will be saved.
+    sources is a flat list of SVG filenames; the first must be floor and it must
+    end with the chrome subsections in order tl, tr, bl, br, horiz, vert. PNGs
+    may be use dinstead, but then you must use .svg suffix (lower case is
+    compulsory) for SVGs. """
+    chromes = [load_image(c, size/ 2, size/ 2) for c in sources[-6:]]
+    tl, tr, bl, br, horiz, vert = chromes
+    sources = sources[:-6]
+    def mc(*a):
+        sources.append(montage(cairo.FORMAT_ARGB32,
+                [[a[0], a[1]], [a[2], a[3]]]))
+    mc(tl, horiz, vert, tl)
+    mc(horiz, horiz, horiz, horiz)
+    mc(horiz, tr, tr, vert)
+    mc(vert, vert, vert, vert)
+    mc(vert, bl, bl, horiz)
+    mc(br, vert, horiz, br)
+    mc(tl, tr, vert, vert)
+    mc(tl, horiz, bl, horiz)
+    mc(br, bl, tr, tl)
+    mc(horiz, tr, horiz, br)
+    mc(vert, vert, bl, br)
+    mc(br, bl, horiz, horiz)
+    mc(br, vert, tr, vert)
+    mc(horiz, horiz, tr, tl)
+    mc(vert, bl, vert, tl)
+    mc(tl, tr, bl, br)
+    table = []
+    col = 0
+    for s in sources:
+        if col == 0:
+            row = []
+            table.append(row)
+        row.append(s)
+        col += 1
+        if col == columns:
+            col = 0
+    # Last row may need padding
+    while col < columns:
+        row.append(None)
+        col += 1
+    atlas = make_atlas(False, size, table)
+    atlas.write_to_png(dest)
+    
+
+svgs = ["svgs/floor.svg", "texture/dirt.png"] + \
+    ["svgs/%s.svg" % s for s in "match picket bomb1 bomb2".split() + \
+    ["explo%02d" % e for e in range(1, 12)] + \
+    ["chrome_%s" % c for c in "tl tr bl br horiz vert".split()]]
+make_tile_atlas("atlas.png", svgs)
