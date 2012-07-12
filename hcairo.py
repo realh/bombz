@@ -15,6 +15,8 @@ def svg_to_cairo(source, width, height, alpha = True, SCALE = 4):
     cr.scale(float(width * SCALE) / svg.props.width,
             float(height * SCALE) / svg.props.height)
     svg.render_cairo(cr)
+    if SCALE == 1:
+        return surf
     surf2 = cairo.ImageSurface(format, width, height)
     cr = cairo.Context(surf2)
     cr.set_antialias(cairo.ANTIALIAS_DEFAULT)
