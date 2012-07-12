@@ -127,11 +127,18 @@ def montage(format, objects):
             if o == None:
                 continue
             elif not isinstance(o, cairo.Surface):
+                xscale = o[1]
+                yscale = o[2]
                 o = o[0]
+            else:
+                xscale = 1
+                yscale = 1
             x0 = offsets[row][col][0]
             y0 = offsets[row][col][1]
             cr.set_source_surface(o, x0, y0)
-            cr.rectangle(x0, y0, sizes[row][col][0],  sizes[row][col][1])
+            w = sizes[row][col][0]
+            h = sizes[row][col][1]
+            cr.rectangle(x0, y0, w * xscale, h * yscale)
             cr.fill()
     return surf
 
@@ -215,9 +222,9 @@ def make_atlas(alpha, size, textures):
     return montage(format, textures)
 
 
-def make_tile_atlas(dest, sources, size = 72, columns = 7):
-    """ Makes an atlas of the tiles.
-    dest is the filename where the PNG will be saved.
+def make_game_tile_atlas(dest, sources, size = 72, columns = 7):
+    """ Makes an atlas of the game tiles.
+    dest = output PNG filename.
     sources is a flat list of SVG filenames; the first must be floor and it must
     end with the chrome subsections in order tl, tr, bl, br, horiz, vert. PNGs
     may be use dinstead, but then you must use .svg suffix (lower case is
@@ -260,10 +267,28 @@ def make_tile_atlas(dest, sources, size = 72, columns = 7):
         col += 1
     atlas = make_atlas(False, size, table)
     atlas.write_to_png(dest)
+
+
+def make_game_alpha_atlas(dest, sources, size = 72):
+    """ Arranges the graphics with alpha into a texture atlas.
+    dest = output PNG filename.
+    The order of sources (list of SVG filenames) should be
+    explo00, 4 droids, 2 bombs.
+    """
+    explo0 = svg_to_cairo(sources[0], size * 3, size * 3)
+    table = [[[explo0, 3, 3], None, None, sources[1], sources[2]],
+            [None, None, None, sources[3], sources[4]],
+            [None, None, None, sources[5], sources[6]]]
+    atlas = make_atlas(True, size, table)
+    atlas.write_to_png(dest)
     
 
 svgs = ["svgs/floor.svg", "texture/dirt.png"] + \
     ["svgs/%s.svg" % s for s in "match picket bomb1 bomb2".split() + \
     ["explo%02d" % e for e in range(1, 12)] + \
     ["chrome_%s" % c for c in "tl tr bl br horiz vert".split()]]
-make_tile_atlas("atlas.png", svgs)
+make_game_tile_atlas("tile_atlas.png", svgs)
+svgs = ["svgs/%s.svg" % s for s in ["explo00"] + \
+    ["droid%s" % d for d in "left right up down".split()] + \
+    ["bomb1", "bomb2"]]
+make_game_alpha_atlas("alpha_atlas.png", svgs)
