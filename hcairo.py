@@ -59,12 +59,13 @@ def make_array(cols, rows):
     return a
     
 
-def montage(format, objects):
+def montage(format, objects, powerof2 = False):
     """ Lays out multiple objects in a grid.
     format is a cairo format constant.
     objects is a 2D array, each row must contain the same number of members. An
     object may span more than 1 column and/or row by specifying [object, cols,
-    rows]. Spanned cells should contain None. """
+    rows]. Spanned cells should contain None.
+    If powerof2 is True, final sizes will be rounded up to a power of 2. """
     # First calculate the size of the content of each cell
     rows = len(objects)
     columns = len(objects[0])
@@ -117,6 +118,15 @@ def montage(format, objects):
     # Now we can work out final size
     width = offsets[-1][-1][0] + sizes[-1][-1][0]
     height = offsets[-1][-1][1] + sizes[-1][-1][1]
+    if powerof2:
+        w = 2
+        h = 2
+        while w < width:
+            w <<= 1
+        while h < height:
+            h <<= 1
+        width = w
+        height = h
     # Create a new surface...
     surf = cairo.ImageSurface(format, width, height)
     cr = cairo.Context(surf)
@@ -219,10 +229,10 @@ def make_atlas(alpha, size, textures):
                 obj[0] = s
             else:
                 row[x] = s
-    return montage(format, textures)
+    return montage(format, textures, True)
 
 
-def make_game_tile_atlas(dest, sources, size = 72, columns = 7):
+def make_game_tile_atlas(dest, sources, size = 72, columns = 6):
     """ Makes an atlas of the game tiles.
     dest = output PNG filename.
     sources is a flat list of SVG filenames; the first must be floor and it must
