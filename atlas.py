@@ -245,6 +245,14 @@ def make_game_tile_atlas(dest, sources, size = 72, columns = 6):
     def mc(*a):
         sources.append(montage(cairo.FORMAT_ARGB32,
                 [[a[0], a[1]], [a[2], a[3]]]))
+    # 00: tl corner             08: cross
+    # 01: horiz straight        09: right end
+    # 02: tr corner             10: bottom end
+    # 03: vert straight         11: inverted T
+    # 04: bl corner             12: T with leg facing left
+    # 05: br corner             13: T
+    # 06: top end               14: T with leg facing right
+    # 07: left end              15: island
     mc(tl, horiz, vert, tl)
     mc(horiz, horiz, horiz, horiz)
     mc(horiz, tr, tr, vert)
