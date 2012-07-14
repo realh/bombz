@@ -232,6 +232,21 @@ def make_atlas(alpha, size, textures):
     return montage(format, textures, True)
 
 
+def load_and_clip(source, top, left, size = 72):
+    """ Chrome quarters need to be double width and/or height to make shadows
+    work properly when rendering SVG, then we clip out the section we need.
+    top and left are the offsets of clip origin from source origin in multiples
+    of size / 2/ """
+    src = svg_to_cairo(source, size, size, True)
+    dest = cairo.ImageSurface(cairo.FORMAT_ARGB32, size / 2, size / 2)
+    cr = cairo.Context(dest)
+    cr.set_antialias(cairo.ANTIALIAS_NONE)
+    cr.set_source_surface(src, -top * size / 2, -left * size / 2)
+    cr.paint()
+    return dest
+    
+
+
 def make_game_tile_atlas(dest, sources, size = 72, columns = 6):
     """ Makes an atlas of the game tiles.
     dest = output PNG filename.
@@ -239,8 +254,12 @@ def make_game_tile_atlas(dest, sources, size = 72, columns = 6):
     end with the chrome subsections in order tl, tr, bl, br, horiz, vert. PNGs
     may be use dinstead, but then you must use .svg suffix (lower case is
     compulsory) for SVGs. """
-    chromes = [load_image(c, size/ 2, size/ 2) for c in sources[-6:]]
-    tl, tr, bl, br, horiz, vert = chromes
+    tl = load_and_clip(sources[-6], 0, 0)
+    tr = load_and_clip(sources[-5], 1, 0)
+    bl = load_and_clip(sources[-4], 0, 1)
+    br = load_and_clip(sources[-3], 1, 1)
+    horiz = load_and_clip(sources[-2], 1, 1)
+    vert = load_and_clip(sources[-1], 1, 1)
     sources = sources[:-6]
     def mc(*a):
         sources.append(montage(cairo.FORMAT_ARGB32,

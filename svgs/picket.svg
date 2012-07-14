@@ -10,8 +10,8 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="256"
-   height="256"
+   width="72"
+   height="72"
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.48.3.1 r9886"
@@ -304,6 +304,70 @@
          id="rect2289"
          transform="matrix(1.000000,0.000000,0.000000,-1.000000,-258.3750,-133.2500)" />
     </pattern>
+    <filter
+       id="filter3045"
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow">
+      <feFlood
+         id="feFlood3047"
+         flood-opacity="0.5"
+         flood-color="rgb(0,0,0)"
+         result="flood" />
+      <feComposite
+         id="feComposite3049"
+         in2="SourceGraphic"
+         in="flood"
+         operator="in"
+         result="composite1" />
+      <feGaussianBlur
+         id="feGaussianBlur3051"
+         in="composite"
+         stdDeviation="4"
+         result="blur" />
+      <feOffset
+         id="feOffset3053"
+         dx="8"
+         dy="8"
+         result="offset" />
+      <feComposite
+         id="feComposite3055"
+         in2="offset"
+         in="SourceGraphic"
+         operator="over"
+         result="composite2" />
+    </filter>
+    <filter
+       id="filter3076"
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow">
+      <feFlood
+         id="feFlood3078"
+         flood-opacity="0.5"
+         flood-color="rgb(0,0,0)"
+         result="flood" />
+      <feComposite
+         id="feComposite3080"
+         in2="SourceGraphic"
+         in="flood"
+         operator="in"
+         result="composite1" />
+      <feGaussianBlur
+         id="feGaussianBlur3082"
+         in="composite"
+         stdDeviation="8"
+         result="blur" />
+      <feOffset
+         id="feOffset3084"
+         dx="16"
+         dy="16"
+         result="offset" />
+      <feComposite
+         id="feComposite3086"
+         in2="offset"
+         in="SourceGraphic"
+         operator="over"
+         result="composite2" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -312,9 +376,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4862292"
-     inkscape:cx="228.12108"
-     inkscape:cy="30.923099"
+     inkscape:zoom="10.461071"
+     inkscape:cx="32.182314"
+     inkscape:cy="32.004384"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -332,8 +396,8 @@
     <inkscape:grid
        id="GridFromPre046Settings"
        type="xygrid"
-       originx="-4.6859329px"
-       originy="-272.55011px"
+       originx="-6.694804px"
+       originy="-273.28959px"
        spacingx="16.000000px"
        spacingy="16.000000px"
        color="#3f3fff"
@@ -360,10 +424,11 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-4.6859329,-523.81208)">
+     transform="translate(-6.694804,-707.0726)">
     <g
        id="g2297"
-       transform="translate(2.66752,-81.172587)">
+       transform="matrix(0.25248382,0,0,0.25139453,7.6791293,556.62468)"
+       style="filter:url(#filter3076)">
       <path
          sodipodi:nodetypes="cssssssssssssssssssssssssssssssssssssssc"
          id="path1310"
