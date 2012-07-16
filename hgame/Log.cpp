@@ -38,11 +38,11 @@
 namespace hgame {
 
 // For some reason these aren't in std::; use wrappers in case they are one day
-std::FILE *cstderr = stderr;
+static std::FILE *cstderr = stderr;
 
-inline char *cstrdup(const char *s) { return strdup(s); }
+inline static char *cstrdup(const char *s) { return strdup(s); }
 
-inline int cvasprintf(char **sout, const char *fmt, std::va_list ap)
+inline static int cvasprintf(char **sout, const char *fmt, std::va_list ap)
 {
     return vasprintf(sout, fmt, ap);
 }
