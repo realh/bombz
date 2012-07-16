@@ -27,10 +27,10 @@
 
 // HGame - a simple cross-platform game framework
 
-// Log.h: Interface for logging based on Android
+// Log.h: Interface for logging loosely based on Android's API
 
-#ifndef LOG_H
-#define LOG_H
+#ifndef HGAME_LOG_H
+#define HGAME_LOG_H
 
 #include <cstdarg>
 
@@ -121,4 +121,4 @@ private:
 #define HGAME_D(lgr, fmt, ...) HGAME_LOG((lgr), hgame::Log::DEBUG, (fmt), ...)
 #define HGAME_V(lgr, fmt, ...) HGAME_LOG((lgr), hgame::Log::VERBOSE, (fmt), ...)
 
-#endif // LOG_H
+#endif // HGAME_LOG_H
