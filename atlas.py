@@ -319,13 +319,3 @@ def make_game_alpha_atlas(dest, sources, size = 72):
     atlas = make_atlas(True, size, table)
     atlas.write_to_png(dest)
     
-
-svgs = ["svgs/floor.svg", "texture/dirt.png"] + \
-    ["svgs/%s.svg" % s for s in "match picket bomb1 bomb2".split() + \
-    ["explo%02d" % e for e in range(1, 12)] + \
-    ["chrome_%s" % c for c in "tl tr bl br horiz vert".split()]]
-make_game_tile_atlas("tile_atlas.png", svgs)
-svgs = ["svgs/%s.svg" % s for s in ["explo00"] + \
-    ["droid%s" % d for d in "left right up down".split()] + \
-    ["bomb1", "bomb2"]]
-make_game_alpha_atlas("alpha_atlas.png", svgs)
