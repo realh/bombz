@@ -160,6 +160,10 @@ void Log::v(Location *loc, const char * format, ...)
     IMPLEMENT_LOG_LEVEL(VERBOSE);
 }
         
+Log::Location::~Location()
+{
+}
+        
 Log::LocationStr::LocationStr(const char *s)
 {
     s = cstrdup(s);

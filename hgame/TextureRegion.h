@@ -43,11 +43,11 @@ private:
     TextureAtlas *atlas;
     float u0, v0, u1, v1;
 protected:
-    TextureRegion(TextureAtlas atlas, float u0, float v0, float u1, float v1);
+    TextureRegion(TextureAtlas *atlas, float u0, float v0, float u1, float v1);
 public:
     // Coordinates are in pixel units in atlas source's space
     // with origin at top-left
-    TextureRegion(TextureAtlas atlas, int x, int y, int w, int h);
+    TextureRegion(TextureAtlas *atlas, int x, int y, int w, int h);
     
     inline float getU0() const { return u0; }
     inline float getV0() const { return v0; }

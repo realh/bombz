@@ -53,13 +53,13 @@ public:
     // Only messages with given priority or higher will be logged
     Log(const char *tag, Level priority = DEBUG);
     
-    ~Log();
+    virtual ~Log();
     
     // Abstract class to encapsulate information about where an error occured.
     class Location
     {
     public:
-        virtual ~Location() = 0;
+        virtual ~Location();
         virtual const char *getString() const = 0;
         inline operator const char *() const
         {
@@ -110,15 +110,15 @@ private:
 }
 
 // Convenience macros
-#define HGAME_LOG(lgr, lvl, fmt, ...) (lgr)->log((lvl), \
-        new hgame::Log.LocationStr(__FILE__, __LINE__, __PRETTY_FUNCTION__), \
-        fmt, ...)
+#define HGAME_LOG(lgr, lvl, fmt...) (lgr)->log((lvl), \
+        new hgame::Log::LocationStr(__FILE__, __LINE__, __PRETTY_FUNCTION__), \
+        fmt)
 
-#define HGAME_F(lgr, fmt, ...) HGAME_LOG((lgr), hgame::Log::FATAL, (fmt), ...)
-#define HGAME_E(lgr, fmt, ...) HGAME_LOG((lgr), hgame::Log::ERROR, (fmt), ...)
-#define HGAME_W(lgr, fmt, ...) HGAME_LOG((lgr), hgame::Log::WARNING, (fmt), ...)
-#define HGAME_I(lgr, fmt, ...) HGAME_LOG((lgr), hgame::Log::INFO, (fmt), ...)
-#define HGAME_D(lgr, fmt, ...) HGAME_LOG((lgr), hgame::Log::DEBUG, (fmt), ...)
-#define HGAME_V(lgr, fmt, ...) HGAME_LOG((lgr), hgame::Log::VERBOSE, (fmt), ...)
+#define HGAME_F(lgr, fmt...) HGAME_LOG((lgr), hgame::Log::FATAL, fmt)
+#define HGAME_E(lgr, fmt...) HGAME_LOG((lgr), hgame::Log::ERROR, fmt)
+#define HGAME_W(lgr, fmt...) HGAME_LOG((lgr), hgame::Log::WARNING, fmt)
+#define HGAME_I(lgr, fmt...) HGAME_LOG((lgr), hgame::Log::INFO, fmt)
+#define HGAME_D(lgr, fmt...) HGAME_LOG((lgr), hgame::Log::DEBUG, fmt)
+#define HGAME_V(lgr, fmt...) HGAME_LOG((lgr), hgame::Log::VERBOSE, fmt)
 
 #endif // HGAME_LOG_H
