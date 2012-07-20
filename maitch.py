@@ -804,8 +804,8 @@ Other predefined variables [default values shown in squarer brackets]:
     
     def deps_from_cpp(self, sources, cppflags = None):
         """ Runs "${CDEP} sources" and returns its dependencies
-        (one file per line). filename should be absolute. If cflags is
-        None, self.env['CFLAGS'] is used. """
+        (one file per line). filename should be absolute. If cppflags is
+        None, self.env['CPPFLAGS'] is used. """
         if not cppflags:
             cppflags = self.env.get('CPPFLAGS', "")
         sources = process_nodes(sources)
@@ -1554,7 +1554,7 @@ class CRule(CRuleBase):
 class CxxRule(CRuleBase):
     " Standard rule for compiling C++ to an object file. "
     def __init__(self, **kwargs):
-        self.init_var(kwargs, 'CXXFLAGS')
+        self.init_var(kwargs, 'cxxflags')
         set_default(kwargs, 'compiler', "CXX");
         set_default(kwargs, 'flagsname', "CXXFLAGS");
         CRuleBase.__init__(self, **kwargs)

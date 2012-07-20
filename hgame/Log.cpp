@@ -29,34 +29,16 @@
 
 // Log.cpp: Simple logging implementation
 
-#include "Log.h"
+#include "hgame/Log.h"
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
+#include "hgame/cstdext.h"
+
 namespace hgame {
 
-// For some reason these aren't in std::; use wrappers in case they are one day
-static std::FILE *cstderr = stderr;
-
-inline static char *cstrdup(const char *s) { return strdup(s); }
-
-inline static int cvasprintf(char **sout, const char *fmt, std::va_list ap)
-{
-    return vasprintf(sout, fmt, ap);
-}
-
-static int casprintf(char **sout, const char *fmt, ...)
-{
-    std::va_list ap;
-    va_start(ap, fmt);
-    int result = vasprintf(sout, fmt, ap);
-    va_end(ap);
-    return result;
-}
-
- 
 void Log::logWrite(Level level, const Location *loc, const char *message)
 {
     std::fprintf(cstderr, "%-7s '%s' at %s: %s\n",

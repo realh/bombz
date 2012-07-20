@@ -8,7 +8,9 @@ __already_run = False
 def add_envs(envs):
     envs["BIN_DIR"] = "${TOP_DIR}/bin"
     envs["SRC_DIR"] = "${TOP_DIR}"
-    envs["HCXXFLAGS"] = "${CXXFLAGS} -I ${SRC_DIR}/hgame"
+    envs["HCXXFLAGS"] = "${CXXFLAGS} -I${SRC_DIR} -D_GNU_SOURCE"
+    envs["BOMBZ_CXXFLAGS"] = "${HCXXFLAGS} ${SDL_CFLAGS} ${OPENGL_CFLAGS}"
+    envs["BOMBZ_LIBS"] = "${SDL_LIBS} ${OPENGL_LIBS}"
 
 def init(ctx):
     global __already_run
@@ -18,24 +20,37 @@ def init(ctx):
     
     if ctx.mode == 'configure':
     
+        ctx.arg_disable("opengl", "Disable OpenGL rendering " \
+                "(for future compatibility - currently OpenGL is compulsory)")
+        
         ctx.pkg_config("sdl SDL_image", "SDL")
+        
+        if ctx.env['ENABLE_OPENGL']:
+            ctx.pkg_config("gl", "OPENGL")
+            ctx.env["BOMBZ_CXXFLAGS"] += " -DENABLE_OPENGL=1"
+        else:
+            raise Exception("OpenGL is currently compulsory")
+            ctx.env['OPENGL_CFLAGS'] = ""
+            ctx.env['OPENGL_LIBS'] = ""
+            ctx.env["BOMBZ_CXXFLAGS"] += " -DENABLE_OPENGL=0"
     
     elif ctx.mode == 'build':
     
-        sources = ctx.glob_src("*.cpp", "hgame", False) + ["SDLMain.cpp"]
-        mprint("sources for bin:", str(change_suffix(sources, ".cpp", ".o")))
+        sources = ctx.glob_src("*.cpp", "hgame", False) + \
+                ctx.glob_src("*.cpp", "sdl", False) + \
+                ["SDLMain.cpp"]
         for c in sources:
             ctx.add_rule(CxxRule(sources = c,
-                cxxflags = "${HCXXFLAGS} ${SDL_CFLAGS}",
-                wdeps = "${BUILD_DIR}/hgame"))
+                cxxflags = "${BOMBZ_CXXFLAGS}",
+                wdeps = ["${BUILD_DIR}/hgame", "${BUILD_DIR}/sdl"]))
         ctx.add_rule(CxxProgramRule(
             sources = change_suffix(sources, ".cpp", ".o"),
             targets = "${BIN_DIR}/bombz",
-            cxxflags = "${HCXXFLAGS} ${SDL_CFLAGS}",
-            libs = "${SDL_LIBS}",
+            cxxflags = "${BOMBZ_CXXFLAGS}",
+            libs = "${BOMBZ_LIBS}",
             wdeps = "${BIN_DIR}"))
         ctx.add_rule(Rule(rule = "mkdir -p ${TGT}",
-                targets = "${BIN_DIR} ${BUILD_DIR}/hgame"))
+                targets = "${BIN_DIR} ${BUILD_DIR}/hgame ${BUILD_DIR}/sdl"))
             
     elif ctx.mode == 'clean' or ctx.mode == 'pristine':
     
