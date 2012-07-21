@@ -2,7 +2,7 @@
 
 int main(int argc, char **argv)
 {
-    hgame::Log *log = new hgame::Log("main");
-    HGAME_I(log, "Hello world!");
+    hgame::Log log("main");
+    log.i("Hello world!");
     return 0;
 }

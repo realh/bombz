@@ -54,7 +54,7 @@ public:
     ~SDLPlatform();
 
 protected:
-    hgame::Log *log;
+    hgame::Log log;
     
     // Returns flase if it fails
     bool mkdirWithParents(const char *dir);

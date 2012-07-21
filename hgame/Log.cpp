@@ -39,10 +39,10 @@
 
 namespace hgame {
 
-void Log::logWrite(Level level, const Location *loc, const char *message)
+void Log::logWrite(Level level, const char *message)
 {
-    std::fprintf(cstderr, "%-7s '%s' at %s: %s\n",
-            getLevelName(level), tag, loc->getString(), message);
+    std::fprintf(cstderr, "%-7s '%s': %s\n",
+            getLevelName(level), tag, message);
     if (level == FATAL)
         abort();
 }
@@ -79,100 +79,62 @@ Log::~Log()
     std::free(tag);
 }
     
-void Log::log(Level level, Location *loc, const char *format, ...)
+void Log::log(Level level, const char *format, ...)
 {
     if (level <= priority)
     {
         std::va_list ap;
         va_start(ap, format);
-        log(level, loc, format, ap);
+        log(level, format, ap);
         va_end(ap);
     }
-    delete loc;
 }
     
-void Log::log(Level level, Location *loc, const char *format, std::va_list ap)
+void Log::log(Level level, const char *format, std::va_list ap)
 {
     if (level <= priority)
     {
         char *s;
         cvasprintf(&s, format, ap);
-        logWrite(level, loc, s);
+        logWrite(level, s);
         std::free(s);
-    }
-    else
-    {
-        delete loc;
     }
 }
 
 #define IMPLEMENT_LOG_LEVEL(l) \
     std::va_list ap; \
     va_start(ap, format); \
-    log(l, loc, format, ap); \
+    log(l, format, ap); \
     va_end(ap);
 
-void Log::f(Location *loc, const char * format, ...)
+void Log::f(const char * format, ...)
 {
     IMPLEMENT_LOG_LEVEL(FATAL);
 }
 
-void Log::e(Location *loc, const char * format, ...)
+void Log::e(const char * format, ...)
 {
     IMPLEMENT_LOG_LEVEL(ERROR);
 }
 
-void Log::w(Location *loc, const char * format, ...)
+void Log::w(const char * format, ...)
 {
     IMPLEMENT_LOG_LEVEL(WARNING);
 }
 
-void Log::i(Location *loc, const char * format, ...)
+void Log::i(const char * format, ...)
 {
     IMPLEMENT_LOG_LEVEL(INFO);
 }
 
-void Log::d(Location *loc, const char * format, ...)
+void Log::d(const char * format, ...)
 {
     IMPLEMENT_LOG_LEVEL(DEBUG);
 }
 
-void Log::v(Location *loc, const char * format, ...)
+void Log::v(const char * format, ...)
 {
     IMPLEMENT_LOG_LEVEL(VERBOSE);
 }
         
-Log::Location::~Location()
-{
-}
-        
-Log::LocationStr::LocationStr(const char *s)
-{
-    s = cstrdup(s);
-}
-
-Log::LocationStr::LocationStr(const char *srcfile, int line, const char *func)
-{
-    if (func)
-        casprintf(&s, "line %d of file %s (function %s)", line, srcfile, func);
-    else
-        casprintf(&s, "line %d of file %s", line, srcfile);
-}
-        
-Log::LocationStr::~LocationStr()
-{
-    std::free(s);
-}
-        
-void Log::LocationStr::setString(const char *s)
-{
-    std::free(this->s);
-    this->s = cstrdup(s);
-}
-
-const char *Log::LocationStr::getString() const
-{
-    return s;
-}
-
 }

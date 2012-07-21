@@ -98,14 +98,14 @@ const char *SDLPlatform::getProfileFilename(const char *owner,
             asprintf(&body, ".%s", appname);
             break;
         default:
-            HGAME_F(log, "Unsupported platform type %d", pt);
+            log.f("Unsupported platform type %d", pt);
             break;
     }
     const char *varval = std::getenv(var);
     char *dirname;
     asprintf(&dirname, "%s%c%s", varval, ds, body);
     std::free(body);
-    HGAME_D(log, "Ensuring directory '%s' exists for profile file '%s'",
+    log.d("Ensuring directory '%s' exists for profile file '%s'",
             dirname, leafname);
     if (!mkdirWithParents(dirname))
     {
@@ -127,20 +127,19 @@ char SDLPlatform::getDirectorySeparator()
     
 SDLPlatform::SDLPlatform() :
         platformType(hgame::Platform::UNKNOWN),
-        log(new hgame::Log("Platform"))
+        log("Platform")
 {
 }
 
 SDLPlatform::~SDLPlatform()
 {
-    delete log;
 }
 
-static bool platform_mkdir(const char *dir, hgame::Log *log)
+static bool platform_mkdir(const char *dir, hgame::Log &log)
 {
     if (mkdir(dir, 0755))
     {
-        HGAME_E(log, "Unable to create directory '%s': %s", dir,
+        log.e("Unable to create directory '%s': %s", dir,
                 std::strerror(cerrno));
         return false;
     }
@@ -162,7 +161,7 @@ bool SDLPlatform::mkdirWithParents(const char *dir)
         }
         else
         {
-            HGAME_E(log, "'%s' exists but is not a directory", dir);
+            log.e("'%s' exists but is not a directory", dir);
             return false;
         }
     }
@@ -187,7 +186,7 @@ bool SDLPlatform::mkdirWithParents(const char *dir)
     }
     else
     {
-        HGAME_E(log, "Unable to create directory '%s': FS error %s", dir,
+        log.e("Unable to create directory '%s': FS error %s", dir,
                 std::strerror(cerrno));
     }
     return result;
