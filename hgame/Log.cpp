@@ -137,4 +137,46 @@ void Log::v(const char * format, ...)
     IMPLEMENT_LOG_LEVEL(VERBOSE);
 }
         
+Throwable::Throwable(const char *file, int line, const char *func,
+            const char *desc, ...)
+{
+    va_list ap;
+    va_start(ap, desc);
+    Throwable(file, line, func, desc, ap);
+    va_end(ap);
+}
+
+Throwable::Throwable(const char *file, int line, const char *func,
+            int errno_code, const char *desc, ...)
+{
+    va_list ap;
+    va_start(ap, desc);
+    Throwable(file, line, func, errno_code, desc, ap);
+    va_end(ap);
+}
+
+Throwable::Throwable(const char *file, int line, const char *func,
+            const char *desc, std::va_list ap)
+{
+    char *tmp;
+    cvasprintf(&tmp, desc, ap);
+    casprintf(&repr, "Exception in %s at %s/%d: %s", func, file, line, tmp);
+    std::free(tmp);
+}
+
+Throwable::Throwable(const char *file, int line, const char *func,
+            int errno_code, const char *desc, std::va_list ap)
+{
+    char *tmp;
+    cvasprintf(&tmp, desc, ap);
+    casprintf(&repr, "Errno exception in %s at %s/%d: %s - %s",
+            func, file, line, tmp, std::strerror(errno_code));
+    std::free(tmp);
+}
+
+Throwable::~Throwable()
+{
+    std::free(repr);
+}
+
 }

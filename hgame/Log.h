@@ -76,6 +76,27 @@ private:
     Level priority;
 };
 
+// An exception class which includes info about where it was thrown
+class Throwable {
+private:
+    char *repr;
+public:
+    Throwable(const char *file, int line, const char *func,
+            const char *desc, ...);
+    Throwable(const char *file, int line, const char *func,
+            int errno_code, const char *desc, ...);
+    Throwable(const char *file, int line, const char *func,
+            const char *desc, std::va_list ap);
+    Throwable(const char *file, int line, const char *func,
+            int errno_code, const char *desc, std::va_list ap);
+    ~Throwable();
+    inline const char *describe() const { return repr; }
+    inline operator const char *() const { return repr; }
+};
+
 }
+
+#define THROW(typ, args...) \
+        throw typ(__FILE__, __LINE__, __PRETTY_FUNCTION__, args)
 
 #endif // HGAME_LOG_H
