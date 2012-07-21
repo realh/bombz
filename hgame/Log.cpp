@@ -160,7 +160,8 @@ Throwable::Throwable(const char *file, int line, const char *func,
 {
     char *tmp;
     cvasprintf(&tmp, desc, ap);
-    casprintf(&repr, "Exception in %s at %s/%d: %s", func, file, line, tmp);
+    casprintf(&repr, "Exception '%s' in %s at %s/%d: %s",
+            getClassName(), func, file, line, tmp);
     std::free(tmp);
 }
 
@@ -169,14 +170,19 @@ Throwable::Throwable(const char *file, int line, const char *func,
 {
     char *tmp;
     cvasprintf(&tmp, desc, ap);
-    casprintf(&repr, "Errno exception in %s at %s/%d: %s - %s",
-            func, file, line, tmp, std::strerror(errno_code));
+    casprintf(&repr, "Errno exception '%s' in %s at %s/%d: %s - %s",
+            getClassName(), func, file, line, tmp, std::strerror(errno_code));
     std::free(tmp);
 }
 
 Throwable::~Throwable()
 {
     std::free(repr);
+}
+
+const char *Throwable::getClassName() const
+{
+    return "Throwable";
 }
 
 }

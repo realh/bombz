@@ -78,8 +78,10 @@ private:
 
 // An exception class which includes info about where it was thrown
 class Throwable {
-private:
+protected:
     char *repr;
+    virtual const char *getClassName() const;
+    
 public:
     Throwable(const char *file, int line, const char *func,
             const char *desc, ...);
@@ -90,7 +92,7 @@ public:
     Throwable(const char *file, int line, const char *func,
             int errno_code, const char *desc, std::va_list ap);
     ~Throwable();
-    inline const char *describe() const { return repr; }
+    const char *describe() const { return repr; }
     inline operator const char *() const { return repr; }
 };
 
