@@ -107,11 +107,7 @@ const char *SDLPlatform::getProfileFilename(const char *owner,
     std::free(body);
     log.d("Ensuring directory '%s' exists for profile file '%s'",
             dirname, leafname);
-    if (!mkdirWithParents(dirname))
-    {
-        std::free(dirname);
-        std::abort();
-    }
+    mkdirWithParents(dirname);
     char *filename;
     asprintf(&filename, "%s%c%s", dirname, ds, leafname);
     std::free(dirname);
@@ -135,34 +131,26 @@ SDLPlatform::~SDLPlatform()
 {
 }
 
-static bool platform_mkdir(const char *dir, hgame::Log &log)
+static void platform_mkdir(const char *dir, hgame::Log &log)
 {
     if (mkdir(dir, 0755))
     {
-        log.e("Unable to create directory '%s': %s", dir,
-                std::strerror(cerrno));
-        return false;
-    }
-    else
-    {
-        return true;
+        THROW(hgame::Throwable, cerrno, "Unable to create directory '%s'", dir);
     }
 }
 
-bool SDLPlatform::mkdirWithParents(const char *dir)
+void SDLPlatform::mkdirWithParents(const char *dir)
 {
     struct stat dinfo;
-    bool result = stat(dir, &dinfo) == 0;
-    if (result)
+    if (stat(dir, &dinfo) == 0)
     {
         if (S_ISDIR(dinfo.st_mode))
         {
-            return true;
+            return;
         }
         else
         {
-            log.e("'%s' exists but is not a directory", dir);
-            return false;
+            THROW(hgame::Throwable, "'%s' exists but is not a directory", dir);
         }
     }
     else if (cerrno == ENOENT)
@@ -170,26 +158,23 @@ bool SDLPlatform::mkdirWithParents(const char *dir)
         char *parent = cstrdup(dir);
         char ds = getDirectorySeparator();
         char *sep = std::strrchr(parent, ds);
-        if (!sep)
+        if (!sep || sep == parent)
         {
-            result = platform_mkdir(dir, log);
+            platform_mkdir(dir, log);
         }
         else
         {
             *sep = 0;
-            if (mkdirWithParents(parent))
-                result = platform_mkdir(dir, log);
-            else
-                result = false;
+            mkdirWithParents(parent);
+            platform_mkdir(dir, log);
         }
         std::free(parent);
     }
     else
     {
-        log.e("Unable to create directory '%s': FS error %s", dir,
-                std::strerror(cerrno));
+        THROW(hgame::Throwable, cerrno,
+                "Unable to create directory '%s': stat error", dir);
     }
-    return result;
 }
 
 }

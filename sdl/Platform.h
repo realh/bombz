@@ -56,8 +56,7 @@ public:
 protected:
     hgame::Log log;
     
-    // Returns flase if it fails
-    bool mkdirWithParents(const char *dir);
+    void mkdirWithParents(const char *dir);
 };
 
 }
