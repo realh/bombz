@@ -35,14 +35,13 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "hgame/cstdext.h"
-
 namespace hgame {
+
+using namespace std;
 
 void Log::logWrite(Level level, const char *message)
 {
-    std::fprintf(cstderr, "%-7s '%s': %s\n",
-            getLevelName(level), tag, message);
+    fprintf(stderr, "%-7s '%s': %s\n", getLevelName(level), tag, message);
     if (level == FATAL)
         abort();
 }
@@ -69,40 +68,40 @@ const char *Log::getLevelName(Level level) const
 
 Log::Log(const char *tag, Level priority)
 {
-    this->tag = cstrdup(tag);
+    this->tag = strdup(tag);
     this->priority = priority;
 }
 
 Log::~Log()
 {
     // Not delete because we used strdup()
-    std::free(tag);
+    free(tag);
 }
     
 void Log::log(Level level, const char *format, ...)
 {
     if (level <= priority)
     {
-        std::va_list ap;
+        va_list ap;
         va_start(ap, format);
         log(level, format, ap);
         va_end(ap);
     }
 }
     
-void Log::log(Level level, const char *format, std::va_list ap)
+void Log::log(Level level, const char *format, va_list ap)
 {
     if (level <= priority)
     {
         char *s;
-        cvasprintf(&s, format, ap);
+        vasprintf(&s, format, ap);
         logWrite(level, s);
-        std::free(s);
+        free(s);
     }
 }
 
 #define IMPLEMENT_LOG_LEVEL(l) \
-    std::va_list ap; \
+    va_list ap; \
     va_start(ap, format); \
     log(l, format, ap); \
     va_end(ap);
@@ -156,28 +155,28 @@ Throwable::Throwable(const char *file, int line, const char *func,
 }
 
 Throwable::Throwable(const char *file, int line, const char *func,
-            const char *desc, std::va_list ap)
+            const char *desc, va_list ap)
 {
     char *tmp;
-    cvasprintf(&tmp, desc, ap);
-    casprintf(&repr, "Exception '%s' in %s at %s/%d: %s",
+    vasprintf(&tmp, desc, ap);
+    asprintf(&repr, "Exception '%s' in %s at %s/%d: %s",
             getClassName(), func, file, line, tmp);
-    std::free(tmp);
+    free(tmp);
 }
 
 Throwable::Throwable(const char *file, int line, const char *func,
-            int errno_code, const char *desc, std::va_list ap)
+            int errno_code, const char *desc, va_list ap)
 {
     char *tmp;
-    cvasprintf(&tmp, desc, ap);
-    casprintf(&repr, "Errno exception '%s' in %s at %s/%d: %s - %s",
-            getClassName(), func, file, line, tmp, std::strerror(errno_code));
-    std::free(tmp);
+    vasprintf(&tmp, desc, ap);
+    asprintf(&repr, "Errno exception '%s' in %s at %s/%d: %s - %s",
+            getClassName(), func, file, line, tmp, strerror(errno_code));
+    free(tmp);
 }
 
 Throwable::~Throwable()
 {
-    std::free(repr);
+    free(repr);
 }
 
 const char *Throwable::getClassName() const

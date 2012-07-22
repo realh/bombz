@@ -40,11 +40,12 @@
 
 #include "SDL_platform.h"
 
-#include "hgame/cstdext.h"
 #include "hgame/Log.h"
 
 
 namespace sdl {
+
+using namespace std;
 
 hgame::Platform::PlatformType SDLPlatform::getPlatformType() const
 {
@@ -52,11 +53,11 @@ hgame::Platform::PlatformType SDLPlatform::getPlatformType() const
     if (platformType == hgame::Platform::UNKNOWN)
     {
         const char *pn = SDL_GetPlatform();
-        if (std::strstr(plat_name, "Win") == pn)
+        if (strstr(plat_name, "Win") == pn)
         {
             platformType = hgame::Platform::WINDOWS;
         }
-        else if (std::strstr(plat_name, "Mac") == pn)
+        else if (strstr(plat_name, "Mac") == pn)
         {
             platformType = hgame::Platform::MAC;
         }
@@ -88,28 +89,28 @@ const char *SDLPlatform::getProfileFilename(const char *owner,
     {
         case hgame::Platform::WINDOWS:
             var = "APPDATA";
-            casprintf(&body, "%s%c%s", owner, ds, appname);
+            asprintf(&body, "%s%c%s", owner, ds, appname);
             break;
         case hgame::Platform::MAC:
-            casprintf(&body, "Library%c%s", ds, appname);
+            asprintf(&body, "Library%c%s", ds, appname);
             break;
         case hgame::Platform::POSIX:
-            casprintf(&body, ".%s", appname);
+            asprintf(&body, ".%s", appname);
             break;
         default:
             log.f("Unsupported platform type %d", pt);
             break;
     }
-    const char *varval = std::getenv(var);
+    const char *varval = getenv(var);
     char *dirname;
-    casprintf(&dirname, "%s%c%s", varval, ds, body);
-    std::free(body);
+    asprintf(&dirname, "%s%c%s", varval, ds, body);
+    free(body);
     log.d("Ensuring directory '%s' exists for profile file '%s'",
             dirname, leafname);
     mkdirWithParents(dirname);
     char *filename;
-    casprintf(&filename, "%s%c%s", dirname, ds, leafname);
-    std::free(dirname);
+    asprintf(&filename, "%s%c%s", dirname, ds, leafname);
+    free(dirname);
     return filename;
 }
 
@@ -122,7 +123,7 @@ char *SDLPlatform::getAsset(const char *leafname)
 {
     char *pathname;
     char ds = getDirectorySeparator();
-    casprintf(&pathname, "%s%c%s", assetsDir, ds, leafname);
+    asprintf(&pathname, "%s%c%s", assetsDir, ds, leafname);
     if (ds != '/')
     {
         for (int n = 0; pathname[n]; ++n)
@@ -145,24 +146,24 @@ SDLPlatform::SDLPlatform(int argc, char **argv) :
         log("Platform")
 {
     char ds = getDirectorySeparator();
-    char *dir = cstrdup(argv[0]);
-    *std::strrchr(dir, ds) = 0;
-    *std::strrchr(dir, ds) = 0;
-    casprintf(&assetsDir, "%s%cshare%c%s", dir, ds, ds, APPNAME_LOWER);
-    std::free(dir);
+    char *dir = strdup(argv[0]);
+    *strrchr(dir, ds) = 0;
+    *strrchr(dir, ds) = 0;
+    asprintf(&assetsDir, "%s%cshare%c%s", dir, ds, ds, APPNAME_LOWER);
+    free(dir);
     log.d("Assets directory '%s'", assetsDir);
 }
 
 SDLPlatform::~SDLPlatform()
 {
-    std::free(assetsDir);
+    free(assetsDir);
 }
 
 static void platform_mkdir(const char *dir, hgame::Log &log)
 {
     if (mkdir(dir, 0755))
     {
-        THROW(hgame::Throwable, cerrno, "Unable to create directory '%s'", dir);
+        THROW(hgame::Throwable, errno, "Unable to create directory '%s'", dir);
     }
 }
 
@@ -180,11 +181,11 @@ void SDLPlatform::mkdirWithParents(const char *dir)
             THROW(hgame::Throwable, "'%s' exists but is not a directory", dir);
         }
     }
-    else if (cerrno == ENOENT)
+    else if (errno == ENOENT)
     {
-        char *parent = cstrdup(dir);
+        char *parent = strdup(dir);
         char ds = getDirectorySeparator();
-        char *sep = std::strrchr(parent, ds);
+        char *sep = strrchr(parent, ds);
         if (!sep || sep == parent)
         {
             platform_mkdir(dir, log);
@@ -195,11 +196,11 @@ void SDLPlatform::mkdirWithParents(const char *dir)
             mkdirWithParents(parent);
             platform_mkdir(dir, log);
         }
-        std::free(parent);
+        free(parent);
     }
     else
     {
-        THROW(hgame::Throwable, cerrno,
+        THROW(hgame::Throwable, errno,
                 "Unable to create directory '%s': stat error", dir);
     }
 }
