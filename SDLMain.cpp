@@ -1,7 +1,7 @@
-#include "sdl/SDLApplication.h"
+#include "sdl/Application.h"
 
 int main(int argc, char **argv)
 {
-    sdl::SDLApplication application(argc, argv);
+    sdl::Application application(argc, argv);
     return 0;
 }

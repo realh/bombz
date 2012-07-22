@@ -27,23 +27,34 @@
 
 // HGame - a simple cross-platform game framework
 
-// Application.h: Core SDL Application
+#include "sdl/Exception.h"
 
-#ifndef SDL_APPLICATION_H
-#define SDL_APPLICATION_H
+#include <cstdarg>
+#include <cstdlib>
+#include <cstring>
 
-#include "config.h"
-
-#include "hgame/Application.h"
+#include "SDL_error.h"
 
 namespace sdl {
 
-class SDLApplication : public hgame::Application {
-public:
-    SDLApplication(int argc, char **argv);
-    ~SDLApplication();
-};
+using namespace std;
 
+const char *Exception::getClassName() const
+{
+    return "sdl::Exception";
 }
 
-#endif // SDL_APPLICATION_H
+Exception::Exception(const char *file, int line, const char *func,
+            const char *desc, ...)
+{
+    va_list(ap);
+    va_start(ap, desc);
+    char *usrmsg;
+    vasprintf(&usrmsg, desc, ap);
+    va_end(ap);
+    asprintf(&repr, "SDL error '%s': %s in %s at %d/%s",
+            SDL_GetError(), usrmsg, func, line, file);
+    free(usrmsg);
+}
+
+}

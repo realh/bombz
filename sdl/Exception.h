@@ -27,49 +27,27 @@
 
 // HGame - a simple cross-platform game framework
 
-// Platform.h: Various functions giving info about and for manipulating
-//             the platform we're running on - SDL version
+// Exception.h: Exception caused by SDL error
 
-#ifndef SDL_PLATFORM_H
-#define SDL_PLATFORM_H
+#ifndef SDL_EXCEPTION_H
+#define SDL_EXCEPTION_H
 
 #include "config.h"
 
+#include <cstdarg>
+
 #include "hgame/Log.h"
-#include "hgame/Platform.h"
 
 namespace sdl {
-
-class SDLPlatform : public hgame::Platform {
-private:
-    char *profileFileName;
-    char *assetsDir;
+ 
+class Exception : public hgame::Throwable {
 public:
-    hgame::Platform::PlatformType getPlatformType() const;
+    const char *getClassName() const;
     
-    const char *getProfileFilename(const char *owner,
-            const char *appname, const char *leafname);
-    
-    // Returns the top-level directory holding game's assets
-    const char *getAssetsDirectory() const;
-    
-    // Returns full path to an asset given its leafname.
-    // leafname may include subdirs. '/' separators are converted to
-    // '\' on Windows.
-    // Result must be std::freed, not deleted.
-    char *getAsset(const char *leafname);
-    
-    char getDirectorySeparator();
-    
-    SDLPlatform(int argc, char **argv);
-    ~SDLPlatform();
-
-protected:
-    hgame::Log &log;
-    
-    void mkdirWithParents(const char *dir);
+    Exception(const char *file, int line, const char *func,
+            const char *desc, ...);
 };
 
 }
 
-#endif // SDL_PLATFORM_H
+#endif // SDL_EXCEPTION_H

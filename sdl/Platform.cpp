@@ -27,7 +27,7 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "sdl/SDLPlatform.h"
+#include "sdl/Platform.h"
 
 #include <cerrno>
 #include <cstdio>
@@ -40,13 +40,13 @@
 
 #include "SDL_platform.h"
 
-#include "sdl/SDLLog.h"
+#include "sdl/Log.h"
 
 namespace sdl {
 
 using namespace std;
 
-hgame::Platform::PlatformType SDLPlatform::getPlatformType() const
+hgame::Platform::PlatformType Platform::getPlatformType() const
 {
     /*
     if (platformType == hgame::Platform::UNKNOWN)
@@ -77,7 +77,7 @@ hgame::Platform::PlatformType SDLPlatform::getPlatformType() const
 #endif
 }
 
-const char *SDLPlatform::getProfileFilename(const char *owner,
+const char *Platform::getProfileFilename(const char *owner,
             const char *appname, const char *leafname)
 {
     const char *var = "HOME";
@@ -113,12 +113,12 @@ const char *SDLPlatform::getProfileFilename(const char *owner,
     return filename;
 }
 
-const char *SDLPlatform::getAssetsDirectory() const
+const char *Platform::getAssetsDirectory() const
 {
     return assetsDir;
 }
     
-char *SDLPlatform::getAsset(const char *leafname)
+char *Platform::getAsset(const char *leafname)
 {
     char *pathname;
     char ds = getDirectorySeparator();
@@ -134,15 +134,15 @@ char *SDLPlatform::getAsset(const char *leafname)
     return pathname;
 }
 
-char SDLPlatform::getDirectorySeparator()
+char Platform::getDirectorySeparator()
 {
     if (getPlatformType() == hgame::Platform::WINDOWS)
         return '\\';
     return '/';
 }
     
-SDLPlatform::SDLPlatform(int argc, char **argv) :
-        log(*new SDLLog("Platform"))
+Platform::Platform(int argc, char **argv) :
+        log(*new Log("sdl::Platform"))
 {
     char ds = getDirectorySeparator();
     char *dir = strdup(argv[0]);
@@ -150,10 +150,9 @@ SDLPlatform::SDLPlatform(int argc, char **argv) :
     *strrchr(dir, ds) = 0;
     asprintf(&assetsDir, "%s%cshare%c%s", dir, ds, ds, APPNAME_LOWER);
     free(dir);
-    log.d("Assets directory '%s'", assetsDir);
 }
 
-SDLPlatform::~SDLPlatform()
+Platform::~Platform()
 {
     free(assetsDir);
 }
@@ -166,7 +165,7 @@ static void platform_mkdir(const char *dir, hgame::Log &log)
     }
 }
 
-void SDLPlatform::mkdirWithParents(const char *dir)
+void Platform::mkdirWithParents(const char *dir)
 {
     struct stat dinfo;
     if (stat(dir, &dinfo) == 0)
