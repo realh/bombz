@@ -27,7 +27,7 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "sdl/Platform.h"
+#include "sdl/SDLPlatform.h"
 
 #include <cerrno>
 #include <cstdio>
