@@ -65,7 +65,7 @@ public:
     ~SDLPlatform();
 
 protected:
-    hgame::Log log;
+    hgame::Log &log;
     
     void mkdirWithParents(const char *dir);
 };

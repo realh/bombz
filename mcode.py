@@ -11,6 +11,9 @@ def add_envs(envs):
     envs["HCXXFLAGS"] = "${CXXFLAGS} -I${SRC_DIR} -I${BUILD_DIR} -D_GNU_SOURCE"
     envs["BOMBZ_CXXFLAGS"] = "${HCXXFLAGS} ${SDL_CFLAGS} ${OPENGL_CFLAGS}"
     envs["BOMBZ_LIBS"] = "${SDL_LIBS} ${OPENGL_LIBS}"
+    envs["BUILD_SUBDIRS"] = "${BUILD_DIR}/hgame " \
+            "${BUILD_DIR}/hgl " \
+            "${BUILD_DIR}/sdl"
 
 def init(ctx):
     global __already_run
@@ -40,11 +43,12 @@ def init(ctx):
     
         sources = ctx.glob_src("*.cpp", "hgame", False) + \
                 ctx.glob_src("*.cpp", "sdl", False) + \
+                ctx.glob_src("*.cpp", "hgl", False) + \
                 ["SDLMain.cpp"]
         for c in sources:
             ctx.add_rule(CxxRule(sources = c,
                 cxxflags = "${BOMBZ_CXXFLAGS}",
-                wdeps = ["${BUILD_DIR}/hgame", "${BUILD_DIR}/sdl"]))
+                wdeps = "${BUILD_SUBDIRS}"))
         ctx.add_rule(CxxProgramRule(
             sources = change_suffix(sources, ".cpp", ".o"),
             targets = "${BIN_DIR}/bombz",
@@ -52,7 +56,7 @@ def init(ctx):
             libs = "${BOMBZ_LIBS}",
             wdeps = "${BIN_DIR}"))
         ctx.add_rule(Rule(rule = "mkdir -p ${TGT}",
-                targets = "${BIN_DIR} ${BUILD_DIR}/hgame ${BUILD_DIR}/sdl"))
+                targets = "${BIN_DIR} ${BUILD_SUBDIRS}"))
             
     elif ctx.mode == 'clean' or ctx.mode == 'pristine':
     

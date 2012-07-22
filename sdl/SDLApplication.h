@@ -40,6 +40,8 @@ namespace sdl {
 
 class SDLApplication : public hgame::Application {
 public:
+    SDLApplication(int argc, char **argv);
+    ~SDLApplication();
 };
 
 }

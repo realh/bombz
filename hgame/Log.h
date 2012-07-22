@@ -84,6 +84,9 @@ protected:
     char *repr;
     virtual const char *getClassName() const;
     
+    // Allows subclasses to construct more complex strings, must set repr
+    // in constructor
+    Throwable();
 public:
     Throwable(const char *file, int line, const char *func,
             const char *desc, ...);

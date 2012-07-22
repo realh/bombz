@@ -40,8 +40,7 @@
 
 #include "SDL_platform.h"
 
-#include "hgame/Log.h"
-
+#include "sdl/SDLLog.h"
 
 namespace sdl {
 
@@ -143,7 +142,7 @@ char SDLPlatform::getDirectorySeparator()
 }
     
 SDLPlatform::SDLPlatform(int argc, char **argv) :
-        log("Platform")
+        log(*new SDLLog("Platform"))
 {
     char ds = getDirectorySeparator();
     char *dir = strdup(argv[0]);

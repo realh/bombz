@@ -1,10 +1,7 @@
-#include "hgame/Log.h"
-#include "sdl/Platform.h"
+#include "sdl/SDLApplication.h"
 
 int main(int argc, char **argv)
 {
-    hgame::Log log("main");
-    log.i("Hello world!");
-    sdl::SDLPlatform platform(argc, argv);
+    sdl::SDLApplication application(argc, argv);
     return 0;
 }

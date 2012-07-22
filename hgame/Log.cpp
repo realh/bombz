@@ -136,6 +136,8 @@ void Log::v(const char * format, ...)
     IMPLEMENT_LOG_LEVEL(VERBOSE);
 }
         
+Throwable::Throwable() : repr(0) {}
+
 Throwable::Throwable(const char *file, int line, const char *func,
             const char *desc, ...)
 {

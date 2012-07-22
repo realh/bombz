@@ -34,12 +34,22 @@
 
 #include "config.h"
 
+#include "hgame/Log.h"
+#include "hgame/Platform.h"
+#include "hgame/RenderContext.h"
+
 namespace hgame {
 
-class RenderContext;
-
 class Application {
+protected:
+    Log &log;
+    Platform *platform;
+    RenderContext *renderContext;
 public:
+    inline RenderContext *getRenderContext() { return renderContext; }
+    inline Platform *getPlatform() { return platform; }
+    Application(Log *log, Platform *platform, RenderContext *rc);
+    virtual ~Application();
 };
 
 }
