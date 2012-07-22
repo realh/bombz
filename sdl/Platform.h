@@ -33,6 +33,8 @@
 #ifndef SDL_PLATFORM_H
 #define SDL_PLATFORM_H
 
+#include "config.h"
+
 #include "hgame/Log.h"
 #include "hgame/Platform.h"
 
@@ -41,16 +43,25 @@ namespace sdl {
 class SDLPlatform : public hgame::Platform {
 private:
     char *profileFileName;
-    hgame::Platform::PlatformType platformType;
+    char *assetsDir;
 public:
-    hgame::Platform::PlatformType getPlatformType();
+    hgame::Platform::PlatformType getPlatformType() const;
     
     const char *getProfileFilename(const char *owner,
             const char *appname, const char *leafname);
     
+    // Returns the top-level directory holding game's assets
+    const char *getAssetsDirectory() const;
+    
+    // Returns full path to an asset given its leafname.
+    // leafname may include subdirs. '/' separators are converted to
+    // '\' on Windows.
+    // Result must be std::freed, not deleted.
+    char *getAsset(const char *leafname);
+    
     char getDirectorySeparator();
     
-    SDLPlatform();
+    SDLPlatform(int argc, char **argv);
     ~SDLPlatform();
 
 protected:

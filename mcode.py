@@ -8,7 +8,7 @@ __already_run = False
 def add_envs(envs):
     envs["BIN_DIR"] = "${TOP_DIR}/bin"
     envs["SRC_DIR"] = "${TOP_DIR}"
-    envs["HCXXFLAGS"] = "${CXXFLAGS} -I${SRC_DIR} -D_GNU_SOURCE"
+    envs["HCXXFLAGS"] = "${CXXFLAGS} -I${SRC_DIR} -I${BUILD_DIR} -D_GNU_SOURCE"
     envs["BOMBZ_CXXFLAGS"] = "${HCXXFLAGS} ${SDL_CFLAGS} ${OPENGL_CFLAGS}"
     envs["BOMBZ_LIBS"] = "${SDL_LIBS} ${OPENGL_LIBS}"
 
@@ -27,12 +27,14 @@ def init(ctx):
         
         if ctx.env['ENABLE_OPENGL']:
             ctx.pkg_config("gl", "OPENGL")
-            ctx.env["BOMBZ_CXXFLAGS"] += " -DENABLE_OPENGL=1"
+            ctx.define("ENABLE_OPENGL", 1)
         else:
             raise Exception("OpenGL is currently compulsory")
             ctx.env['OPENGL_CFLAGS'] = ""
             ctx.env['OPENGL_LIBS'] = ""
-            ctx.env["BOMBZ_CXXFLAGS"] += " -DENABLE_OPENGL=0"
+            ctx.define("ENABLE_OPENGL", 0)
+        
+        ctx.define_from_var("APPNAME_LOWER")
     
     elif ctx.mode == 'build':
     

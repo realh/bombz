@@ -32,6 +32,8 @@
 #ifndef HGAME_TEXTURE_ATLAS_H
 #define HGAME_TEXTURE_ATLAS_H
 
+#include "config.h"
+
 namespace hgame {
 
 class TextureAtlas {

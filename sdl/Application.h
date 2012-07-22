@@ -32,6 +32,8 @@
 #ifndef SDL_APPLICATION_H
 #define SDL_APPLICATION_H
 
+#include "config.h"
+
 #include "hgame/Application.h"
 
 namespace sdl {

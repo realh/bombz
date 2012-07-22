@@ -33,6 +33,8 @@
 #ifndef HGAME_PLATFORM_H
 #define HGAME_PLATFORM_H
 
+#include "config.h"
+
 namespace hgame {
 
 class Platform {

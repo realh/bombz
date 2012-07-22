@@ -32,6 +32,8 @@
 #ifndef HGAME_LOG_H
 #define HGAME_LOG_H
 
+#include "config.h"
+
 #include <cstdarg>
 
 namespace hgame {

@@ -46,11 +46,11 @@
 
 namespace sdl {
 
-hgame::Platform::PlatformType SDLPlatform::getPlatformType()
+hgame::Platform::PlatformType SDLPlatform::getPlatformType() const
 {
+    /*
     if (platformType == hgame::Platform::UNKNOWN)
     {
-        /*
         const char *pn = SDL_GetPlatform();
         if (std::strstr(plat_name, "Win") == pn)
         {
@@ -65,17 +65,16 @@ hgame::Platform::PlatformType SDLPlatform::getPlatformType()
             // Assumption; we don't support anything else with SDL
             platformType = hgame::Platform::POSIX;
         }
-        */
-#ifdef __WIN32__
-        platformType = hgame::Platform::WINDOWS;
-#elif defined __MACOSX__
-        platformType = hgame::Platform::MAC;
-#else
-        // Assumption; we don't support anything else with SDL
-        platformType = hgame::Platform::POSIX;
-#endif
     }
-    return platformType;
+    */
+#ifdef __WIN32__
+    return hgame::Platform::WINDOWS;
+#elif defined __MACOSX__
+    return hgame::Platform::MAC;
+#else
+    // Assumption; we don't support anything else with SDL
+    return hgame::Platform::POSIX;
+#endif
 }
 
 const char *SDLPlatform::getProfileFilename(const char *owner,
@@ -89,13 +88,13 @@ const char *SDLPlatform::getProfileFilename(const char *owner,
     {
         case hgame::Platform::WINDOWS:
             var = "APPDATA";
-            asprintf(&body, "%s%c%s", owner, ds, appname);
+            casprintf(&body, "%s%c%s", owner, ds, appname);
             break;
         case hgame::Platform::MAC:
-            asprintf(&body, "Library%c%s", ds, appname);
+            casprintf(&body, "Library%c%s", ds, appname);
             break;
         case hgame::Platform::POSIX:
-            asprintf(&body, ".%s", appname);
+            casprintf(&body, ".%s", appname);
             break;
         default:
             log.f("Unsupported platform type %d", pt);
@@ -103,17 +102,38 @@ const char *SDLPlatform::getProfileFilename(const char *owner,
     }
     const char *varval = std::getenv(var);
     char *dirname;
-    asprintf(&dirname, "%s%c%s", varval, ds, body);
+    casprintf(&dirname, "%s%c%s", varval, ds, body);
     std::free(body);
     log.d("Ensuring directory '%s' exists for profile file '%s'",
             dirname, leafname);
     mkdirWithParents(dirname);
     char *filename;
-    asprintf(&filename, "%s%c%s", dirname, ds, leafname);
+    casprintf(&filename, "%s%c%s", dirname, ds, leafname);
     std::free(dirname);
     return filename;
 }
+
+const char *SDLPlatform::getAssetsDirectory() const
+{
+    return assetsDir;
+}
     
+char *SDLPlatform::getAsset(const char *leafname)
+{
+    char *pathname;
+    char ds = getDirectorySeparator();
+    casprintf(&pathname, "%s%c%s", assetsDir, ds, leafname);
+    if (ds != '/')
+    {
+        for (int n = 0; pathname[n]; ++n)
+        {
+            if (pathname[n] == '/')
+                pathname[n] = ds;
+        }
+    }
+    return pathname;
+}
+
 char SDLPlatform::getDirectorySeparator()
 {
     if (getPlatformType() == hgame::Platform::WINDOWS)
@@ -121,14 +141,21 @@ char SDLPlatform::getDirectorySeparator()
     return '/';
 }
     
-SDLPlatform::SDLPlatform() :
-        platformType(hgame::Platform::UNKNOWN),
+SDLPlatform::SDLPlatform(int argc, char **argv) :
         log("Platform")
 {
+    char ds = getDirectorySeparator();
+    char *dir = cstrdup(argv[0]);
+    *std::strrchr(dir, ds) = 0;
+    *std::strrchr(dir, ds) = 0;
+    casprintf(&assetsDir, "%s%cshare%c%s", dir, ds, ds, APPNAME_LOWER);
+    std::free(dir);
+    log.d("Assets directory '%s'", assetsDir);
 }
 
 SDLPlatform::~SDLPlatform()
 {
+    std::free(assetsDir);
 }
 
 static void platform_mkdir(const char *dir, hgame::Log &log)

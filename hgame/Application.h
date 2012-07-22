@@ -32,6 +32,8 @@
 #ifndef HGAME_APPLICATION_H
 #define HGAME_APPLICATION_H
 
+#include "config.h"
+
 namespace hgame {
 
 class RenderContext;
