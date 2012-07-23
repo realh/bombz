@@ -61,6 +61,8 @@ public:
     
     char getDirectorySeparator();
     
+    hgame::Image *loadPNG(const char *leafname);
+    
     Platform(int argc, char **argv);
     ~Platform();
 

@@ -27,6 +27,8 @@
 
 // HGame - a simple cross-platform game framework
 
+#include "sdl/Exception.h"
+#include "sdl/Image.h"
 #include "sdl/Platform.h"
 
 #include <cerrno>
@@ -38,7 +40,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "SDL_platform.h"
+#include <SDL_image.h>
+#include <SDL_platform.h>
 
 #include "sdl/Log.h"
 
@@ -139,6 +142,18 @@ char Platform::getDirectorySeparator()
     if (getPlatformType() == hgame::Platform::WINDOWS)
         return '\\';
     return '/';
+}
+    
+hgame::Image *Platform::loadPNG(const char *leafname)
+{
+    char *pathname = getAsset(leafname);
+    SDL_Surface *surf = IMG_Load(pathname);
+    free(pathname);
+    if (!surf)
+    {
+        THROW(Exception, "Unable to load PNG '%s'", leafname);
+    }
+    return new Image(surf);
 }
     
 Platform::Platform(int argc, char **argv) :

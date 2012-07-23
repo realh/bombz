@@ -35,6 +35,8 @@
 
 #include "config.h"
 
+#include "hgame/Image.h"
+
 namespace hgame {
 
 class Platform {
@@ -65,6 +67,9 @@ public:
             const char *appname, const char *leafname) = 0;
     
     virtual char getDirectorySeparator() = 0;
+    
+    // leafname is relative to app's assets folder
+    virtual Image *loadPNG(const char *leafname) = 0;
     
     virtual ~Platform();
 };
