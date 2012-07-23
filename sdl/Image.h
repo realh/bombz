@@ -27,48 +27,37 @@
 
 // HGame - a simple cross-platform game framework
 
-// Platform.h: Various functions giving info about and for manipulating
-//             the platform we're running on
+// Image.h: Wrapper for SDL_Surface
 
-#ifndef HGAME_PLATFORM_H
-#define HGAME_PLATFORM_H
+#ifndef SDL_IMAGE_H
+#define SDL_IMAGE_H
 
 #include "config.h"
 
-namespace hgame {
+#include "SDL.h"
 
-class Platform {
+#include "hgame/Image.h"
+
+namespace sdl {
+
+class Image : public hgame::Image {
+private:
+    SDL_Surface *surface;
 public:
-
-    enum PlatformType {
-        UNKNOWN,
-        POSIX,
-        WINDOWS,
-        MAC,
-        ANDROID,
-        IOS
-    };
+    Image(SDL_Surface *surf) : surface(surf) {}
+    ~Image();
     
-    // "BIG_ENDIAN" and "LITTLE_ENDIAN" seem to be defined elswehere
-    enum Endianness {
-        HGAME_LITTLE_ENDIAN,
-        HGAME_BIG_ENDIAN
-    };
-    static Endianness getEndianness();
+    Format getFormat() const;
+    int getWidth() const;
+    int getHeight() const;
     
-    virtual PlatformType getPlatformType() const = 0;
-    
-    // owner is used in Windows
-    // This function ensures the directory exists
-    // Return value is overwritten on subsequent calls
-    virtual const char *getProfileFilename(const char *owner,
-            const char *appname, const char *leafname) = 0;
-    
-    virtual char getDirectorySeparator() = 0;
-    
-    virtual ~Platform();
+    // Use with care!
+    inline SDL_Surface *getSurface()
+    {
+        return surface;
+    }
 };
 
 }
 
-#endif // HGAME_PLATFORM_H
+#endif // SDL_IMAGE_H

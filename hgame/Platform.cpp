@@ -29,7 +29,17 @@
 
 #include "hgame/Platform.h"
 
+#include <stdint.h>
+
 namespace hgame {
+
+Platform::Endianness Platform::getEndianness()
+{
+    uint32_t val = 0xff;
+    if (*((uint8_t *) &val) == 0xff)
+        return HGAME_LITTLE_ENDIAN;
+    return HGAME_BIG_ENDIAN;
+}
 
 Platform::~Platform()
 {

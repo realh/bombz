@@ -27,48 +27,36 @@
 
 // HGame - a simple cross-platform game framework
 
-// Platform.h: Various functions giving info about and for manipulating
-//             the platform we're running on
+// Image.h: Some sort of bitmap surface that can be used to upload
+//          textures to OpenGL
 
-#ifndef HGAME_PLATFORM_H
-#define HGAME_PLATFORM_H
+#ifndef HGAME_IMAGE_H
+#define HGAME_IMAGE_H
 
 #include "config.h"
 
 namespace hgame {
 
-class Platform {
+class Image {
 public:
 
-    enum PlatformType {
+    enum Format {
         UNKNOWN,
-        POSIX,
-        WINDOWS,
-        MAC,
-        ANDROID,
-        IOS
+        RGB_565,
+        ARGB_4444,
+        RGB_888,
+        ARGB_8888,
+        RGBA_4444,
+        RGBA_8888
     };
     
-    // "BIG_ENDIAN" and "LITTLE_ENDIAN" seem to be defined elswehere
-    enum Endianness {
-        HGAME_LITTLE_ENDIAN,
-        HGAME_BIG_ENDIAN
-    };
-    static Endianness getEndianness();
+    virtual Format getFormat() const = 0;
+    virtual int getWidth() const = 0;
+    virtual int getHeight() const = 0;
     
-    virtual PlatformType getPlatformType() const = 0;
-    
-    // owner is used in Windows
-    // This function ensures the directory exists
-    // Return value is overwritten on subsequent calls
-    virtual const char *getProfileFilename(const char *owner,
-            const char *appname, const char *leafname) = 0;
-    
-    virtual char getDirectorySeparator() = 0;
-    
-    virtual ~Platform();
+    virtual ~Image();
 };
 
 }
 
-#endif // HGAME_PLATFORM_H
+#endif // HGAME_IMAGE_H
