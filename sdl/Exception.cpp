@@ -39,13 +39,13 @@ namespace sdl {
 
 using namespace std;
 
-const char *Exception::getClassName() const
+const char *Exception::getClassName() const throw()
 {
     return "sdl::Exception";
 }
 
 Exception::Exception(const char *file, int line, const char *func,
-            const char *desc, ...)
+            const char *desc, ...) throw()
 {
     va_list(ap);
     va_start(ap, desc);

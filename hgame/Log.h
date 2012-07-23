@@ -35,6 +35,7 @@
 #include "config.h"
 
 #include <cstdarg>
+#include <exception>
 
 namespace hgame {
  
@@ -79,26 +80,25 @@ private:
 };
 
 // An exception class which includes info about where it was thrown
-class Throwable {
+class Throwable : public std::exception {
 protected:
     char *repr;
-    virtual const char *getClassName() const;
+    virtual const char *getClassName() const throw();
     
     // Allows subclasses to construct more complex strings, must set repr
     // in constructor
     Throwable();
 public:
     Throwable(const char *file, int line, const char *func,
-            const char *desc, ...);
+            const char *desc, ...) throw();
     Throwable(const char *file, int line, const char *func,
-            int errno_code, const char *desc, ...);
+            int errno_code, const char *desc, ...) throw();
     Throwable(const char *file, int line, const char *func,
-            const char *desc, std::va_list ap);
+            const char *desc, std::va_list ap) throw();
     Throwable(const char *file, int line, const char *func,
-            int errno_code, const char *desc, std::va_list ap);
-    ~Throwable();
-    const char *describe() const { return repr; }
-    inline operator const char *() const { return repr; }
+            int errno_code, const char *desc, std::va_list ap) throw();
+    ~Throwable() throw();
+    virtual const char *what() const throw();
 };
 
 }

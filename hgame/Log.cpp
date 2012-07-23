@@ -139,7 +139,7 @@ void Log::v(const char * format, ...)
 Throwable::Throwable() : repr(0) {}
 
 Throwable::Throwable(const char *file, int line, const char *func,
-            const char *desc, ...)
+            const char *desc, ...) throw()
 {
     va_list ap;
     va_start(ap, desc);
@@ -148,7 +148,7 @@ Throwable::Throwable(const char *file, int line, const char *func,
 }
 
 Throwable::Throwable(const char *file, int line, const char *func,
-            int errno_code, const char *desc, ...)
+            int errno_code, const char *desc, ...) throw()
 {
     va_list ap;
     va_start(ap, desc);
@@ -157,7 +157,7 @@ Throwable::Throwable(const char *file, int line, const char *func,
 }
 
 Throwable::Throwable(const char *file, int line, const char *func,
-            const char *desc, va_list ap)
+            const char *desc, va_list ap) throw()
 {
     char *tmp;
     vasprintf(&tmp, desc, ap);
@@ -167,7 +167,7 @@ Throwable::Throwable(const char *file, int line, const char *func,
 }
 
 Throwable::Throwable(const char *file, int line, const char *func,
-            int errno_code, const char *desc, va_list ap)
+            int errno_code, const char *desc, va_list ap) throw()
 {
     char *tmp;
     vasprintf(&tmp, desc, ap);
@@ -176,14 +176,19 @@ Throwable::Throwable(const char *file, int line, const char *func,
     free(tmp);
 }
 
-Throwable::~Throwable()
+Throwable::~Throwable() throw()
 {
     free(repr);
 }
 
-const char *Throwable::getClassName() const
+const char *Throwable::getClassName() const throw()
 {
     return "Throwable";
+}
+
+const char *Throwable::what() const throw()
+{
+    return repr;
 }
 
 }

@@ -42,10 +42,10 @@ namespace sdl {
  
 class Exception : public hgame::Throwable {
 public:
-    const char *getClassName() const;
+    const char *getClassName() const throw();
     
     Exception(const char *file, int line, const char *func,
-            const char *desc, ...);
+            const char *desc, ...) throw();
 };
 
 }
