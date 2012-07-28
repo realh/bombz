@@ -27,23 +27,12 @@
 
 // HGame - a simple cross-platform game framework
 
-// TextureAtlas.h: Abstract base class for a texture atlas
-
-#ifndef HGAME_TEXTURE_ATLAS_H
-#define HGAME_TEXTURE_ATLAS_H
-
-#include "config.h"
+#include "hgame/TextureAtlas.h"
 
 namespace hgame {
 
-class TextureAtlas {
-public:
-    virtual int getWidth() const = 0;
-    virtual int getHeight() const = 0;
-    
-    virtual ~TextureAtlas();
-};
-
+TextureAtlas::~TextureAtlas()
+{
 }
 
-#endif // HGAME_TEXTURE_ATLAS_H
+}

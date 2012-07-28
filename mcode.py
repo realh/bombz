@@ -38,6 +38,7 @@ def init(ctx):
             ctx.define("ENABLE_OPENGL", 0)
         
         ctx.define_from_var("APPNAME_LOWER")
+        ctx.define("WITH_SDL", 1)
     
     elif ctx.mode == 'build':
     

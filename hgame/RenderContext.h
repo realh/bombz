@@ -34,12 +34,18 @@
 
 #include "config.h"
 
+#include "hgame/Image.h"
+#include "hgame/TextureAtlas.h"
+
 namespace hgame {
 
 class RenderContext {
 public:
     virtual int getWidth() const = 0;
     virtual int getHeight() const = 0;
+    
+    // img dimensions must be powers of 2 in case using OpenGL
+    virtual TextureAtlas *uploadTexture(Image *img) = 0;
     
     virtual ~RenderContext();
 };

@@ -27,23 +27,35 @@
 
 // HGame - a simple cross-platform game framework
 
-// TextureAtlas.h: Abstract base class for a texture atlas
+// GLTextureAtlas.h: Common OpenGL Texture Atlas
 
-#ifndef HGAME_TEXTURE_ATLAS_H
-#define HGAME_TEXTURE_ATLAS_H
+#ifndef HGL_TEXTURE_ATLAS_H
+#define HGL_TEXTURE_ATLAS_H
 
 #include "config.h"
 
-namespace hgame {
+#ifdef WITH_SDL
+#include "SDL.h"
+#include "SDL_opengl.h"
+#endif
 
-class TextureAtlas {
+namespace hgl {
+
+class GLTextureAtlas {
+private:
+    int width, height;
+    GLuint textureId;
 public:
-    virtual int getWidth() const = 0;
-    virtual int getHeight() const = 0;
+    int getWidth() const;
+    int getHeight() const;
+    inline GLuint getTextureId() { return textureId; }
     
-    virtual ~TextureAtlas();
+    GLTextureAtlas(int width, int height);
+    ~GLTextureAtlas();
+    
+    inline void bind() { glBindTexture(GL_TEXTURE_2D, textureId); }
 };
 
 }
 
-#endif // HGAME_TEXTURE_ATLAS_H
+#endif // HGL_TEXTURE_ATLAS_H
