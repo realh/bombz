@@ -36,9 +36,9 @@
 
 #include "hgame/RenderContext.h"
 
-namespace hgame {
+namespace hgl {
 
-class GLRenderContext : public RenderContext {
+class GLRenderContext : public hgame::RenderContext {
 protected:
     int width;
     int height;

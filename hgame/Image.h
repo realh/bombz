@@ -40,17 +40,6 @@ namespace hgame {
 class Image {
 public:
 
-    enum Format {
-        UNKNOWN,
-        RGB_565,
-        ARGB_4444,
-        RGB_888,
-        ARGB_8888,
-        RGBA_4444,
-        RGBA_8888
-    };
-    
-    virtual Format getFormat() const = 0;
     virtual int getWidth() const = 0;
     virtual int getHeight() const = 0;
     

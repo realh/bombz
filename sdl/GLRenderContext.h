@@ -38,8 +38,9 @@
 
 namespace sdl {
 
-class GLRenderContext : public hgame::GLRenderContext {
+class GLRenderContext : public hgl::GLRenderContext {
 public:
+    hgame::TextureAtlas *uploadTexture(hgame::Image *img);
 };
 
 }

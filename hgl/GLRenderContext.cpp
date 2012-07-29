@@ -29,7 +29,7 @@
 
 #include "hgl/GLRenderContext.h"
 
-namespace hgame {
+namespace hgl {
 
 int GLRenderContext::getWidth() const
 {

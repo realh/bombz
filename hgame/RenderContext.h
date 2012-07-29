@@ -45,6 +45,7 @@ public:
     virtual int getHeight() const = 0;
     
     // img dimensions must be powers of 2 in case using OpenGL
+    // This object must take ownership of img or delete it
     virtual TextureAtlas *uploadTexture(Image *img) = 0;
     
     virtual ~RenderContext();

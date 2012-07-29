@@ -47,7 +47,6 @@ public:
     Image(SDL_Surface *surf) : surface(surf) {}
     ~Image();
     
-    Format getFormat() const;
     int getWidth() const;
     int getHeight() const;
     

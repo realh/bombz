@@ -27,28 +27,49 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "sdl/Image.h"
+#include "sdl/GLRenderContext.h"
+
+#include "SDL.h"
+#include "SDL_opengl.h"
 
 #include "hgame/Log.h"
-#include "hgame/Platform.h"
 
-#include "sdl/Exception.h"
+#include "hgl/GLTextureAtlas.h"
+
+#include "sdl/Image.h"
 
 namespace sdl {
 
-Image::~Image()
+hgame::TextureAtlas *GLRenderContext::uploadTexture(hgame::Image *img)
 {
-    SDL_FreeSurface(surface);
-}
-    
-int Image::getWidth() const
-{
-    return surface->w;
-}
-
-int Image::getHeight() const
-{
-    return surface->h;
+    SDL_Surface *surf = ((Image *) img)->getSurface();
+    int w = surf->w;
+    int h = surf->h;
+    GLint bpp = surf->format->BytesPerPixel;
+    GLenum tex_fmt;
+    if (bpp == 4)
+    {
+        if (surf->format->Rmask == 0xff)
+            tex_fmt = GL_RGBA;
+        else
+            tex_fmt = GL_BGRA;
+    }
+    else if (bpp == 3)
+    {
+        if (surf->format->Rmask == 0xff)
+            tex_fmt = GL_RGB;
+        else
+            tex_fmt = GL_BGR;
+    }
+    else
+    {
+        THROW(hgame::Throwable, "Unsupported bytes per pixel: %d", bpp);
+    }
+    hgl::GLTextureAtlas *atlas = new hgl::GLTextureAtlas(w, h);
+    glTexImage2D(GL_TEXTURE_2D, 0, bpp, w, h, 0, tex_fmt, GL_UNSIGNED_BYTE,
+            surf->pixels);
+    delete img;
+    return (hgame::TextureAtlas *) atlas;
 }
 
 }
