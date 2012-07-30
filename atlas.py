@@ -1,7 +1,8 @@
 import cairo
 import rsvg
 
-def svg_to_cairo(source, width, height, alpha = True, SCALE = 4):
+def svg_to_cairo(source, width, height, alpha = True, SCALE = 4,
+        w2 = 0, h2 = 0):
     """ SVGs don't plot well at the small sizes we're using so
     use enlarged versions (default SCALE 4) and scale down the bitmaps
     afterwards """
@@ -16,9 +17,13 @@ def svg_to_cairo(source, width, height, alpha = True, SCALE = 4):
     cr.scale(float(width * SCALE) / svg.props.width,
             float(height * SCALE) / svg.props.height)
     svg.render_cairo(cr)
-    if SCALE == 1:
+    if SCALE == 1 and (not w2 or w2 == width) and (not h2 or h2 == height):
         return surf
-    surf2 = cairo.ImageSurface(format, width, height)
+    if not w2:
+        w2 = width
+    if not h2:
+        h2 = height
+    surf2 = cairo.ImageSurface(format, w2, h2)
     cr = cairo.Context(surf2)
     cr.set_antialias(cairo.ANTIALIAS_DEFAULT)
     cr.set_antialias(cairo.ANTIALIAS_GRAY)
@@ -57,7 +62,14 @@ def make_array(cols, rows):
             r.append([0, 0])
         a.append(r)
     return a
-    
+
+
+def round_to_powerof2(a):
+    b = 2
+    while b < a:
+        b <<= 1
+    return b
+
 
 def montage(format, objects, powerof2 = False):
     """ Lays out multiple objects in a grid.
@@ -119,14 +131,8 @@ def montage(format, objects, powerof2 = False):
     width = offsets[-1][-1][0] + sizes[-1][-1][0]
     height = offsets[-1][-1][1] + sizes[-1][-1][1]
     if powerof2:
-        w = 2
-        h = 2
-        while w < width:
-            w <<= 1
-        while h < height:
-            h <<= 1
-        width = w
-        height = h
+        width = round_to_powerof2(width)
+        height = round_to_powerof2(height)
     # Create a new surface...
     surf = cairo.ImageSurface(format, width, height)
     cr = cairo.Context(surf)
@@ -319,3 +325,9 @@ def make_game_alpha_atlas(dest, sources, size = 72):
     atlas = make_atlas(True, size, table)
     atlas.write_to_png(dest)
     
+
+def make_title_logo(dest, source, width, height):
+    w2 = round_to_powerof2(width)
+    h2 = round_to_powerof2(height)
+    surf = svg_to_cairo(source, width, height, True, 1, w2, h2)
+    surf.write_to_png(dest)
