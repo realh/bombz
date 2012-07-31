@@ -42,12 +42,12 @@ namespace hgame {
 
 class Application {
 protected:
-    Log &log;
-    Platform *platform;
-    RenderContext *renderContext;
+    Log &mLog;
+    Platform *mPlatform;
+    RenderContext *mRenderContext;
 public:
-    inline RenderContext *getRenderContext() { return renderContext; }
-    inline Platform *getPlatform() { return platform; }
+    inline RenderContext *getRenderContext() { return mRenderContext; }
+    inline Platform *getPlatform() { return mPlatform; }
     Application(Log *log, Platform *platform, RenderContext *rc);
     virtual ~Application();
 };

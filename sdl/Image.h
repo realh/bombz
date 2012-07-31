@@ -42,9 +42,9 @@ namespace sdl {
 
 class Image : public hgame::Image {
 private:
-    SDL_Surface *surface;
+    SDL_Surface *mSurface;
 public:
-    Image(SDL_Surface *surf) : surface(surf) {}
+    Image(SDL_Surface *surf) : mSurface(surf) {}
     ~Image();
     
     int getWidth() const;
@@ -53,7 +53,7 @@ public:
     // Use with care!
     inline SDL_Surface *getSurface()
     {
-        return surface;
+        return mSurface;
     }
 };
 

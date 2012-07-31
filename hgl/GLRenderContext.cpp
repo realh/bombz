@@ -33,16 +33,16 @@ namespace hgl {
 
 int GLRenderContext::getWidth() const
 {
-    return width;
+    return mWidth;
 }
 
 int GLRenderContext::getHeight() const
 {
-    return height;
+    return mHeight;
 }
     
-GLRenderContext::GLRenderContext(int pwidth, int pheight) :
-    width(pwidth), height(pheight)
+GLRenderContext::GLRenderContext(int width, int height) :
+    mWidth(width), mHeight(height)
 {
 }
 

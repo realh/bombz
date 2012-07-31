@@ -100,14 +100,14 @@ const char *Platform::getProfileFilename(const char *owner,
             asprintf(&body, ".%s", appname);
             break;
         default:
-            log.f("Unsupported platform type %d", pt);
+            mLog.f("Unsupported platform type %d", pt);
             break;
     }
     const char *varval = getenv(var);
     char *dirname;
     asprintf(&dirname, "%s%c%s", varval, ds, body);
     free(body);
-    log.d("Ensuring directory '%s' exists for profile file '%s'",
+    mLog.d("Ensuring directory '%s' exists for profile file '%s'",
             dirname, leafname);
     mkdirWithParents(dirname);
     char *filename;
@@ -118,14 +118,14 @@ const char *Platform::getProfileFilename(const char *owner,
 
 const char *Platform::getAssetsDirectory() const
 {
-    return assetsDir;
+    return mAssetsDir;
 }
     
 char *Platform::getAsset(const char *leafname)
 {
     char *pathname;
     char ds = getDirectorySeparator();
-    asprintf(&pathname, "%s%c%s", assetsDir, ds, leafname);
+    asprintf(&pathname, "%s%c%s", mAssetsDir, ds, leafname);
     if (ds != '/')
     {
         for (int n = 0; pathname[n]; ++n)
@@ -157,22 +157,22 @@ hgame::Image *Platform::loadPNG(const char *leafname)
 }
     
 Platform::Platform(int argc, char **argv) :
-        log(*new Log("sdl::Platform"))
+        mLog(*new Log("sdl::Platform"))
 {
     char ds = getDirectorySeparator();
     char *dir = strdup(argv[0]);
     *strrchr(dir, ds) = 0;
     *strrchr(dir, ds) = 0;
-    asprintf(&assetsDir, "%s%cshare%c%s", dir, ds, ds, APPNAME_LOWER);
+    asprintf(&mAssetsDir, "%s%cshare%c%s", dir, ds, ds, APPNAME_LOWER);
     free(dir);
 }
 
 Platform::~Platform()
 {
-    free(assetsDir);
+    free(mAssetsDir);
 }
 
-static void platform_mkdir(const char *dir, hgame::Log &log)
+static void platform_mkdir(const char *dir)
 {
     if (mkdir(dir, 0755))
     {
@@ -201,13 +201,13 @@ void Platform::mkdirWithParents(const char *dir)
         char *sep = strrchr(parent, ds);
         if (!sep || sep == parent)
         {
-            platform_mkdir(dir, log);
+            platform_mkdir(dir);
         }
         else
         {
             *sep = 0;
             mkdirWithParents(parent);
-            platform_mkdir(dir, log);
+            platform_mkdir(dir);
         }
         free(parent);
     }

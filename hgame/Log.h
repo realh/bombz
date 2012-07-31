@@ -75,14 +75,14 @@ public:
     void v(const char *format, ...);
     
 private:
-    char *tag;
-    Level priority;
+    char *mTag;
+    Level mPriority;
 };
 
 // An exception class which includes info about where it was thrown
 class Throwable : public std::exception {
 protected:
-    char *repr;
+    char *mRepr;
     virtual const char *getClassName() const throw();
     
     // Allows subclasses to construct more complex strings, must set repr

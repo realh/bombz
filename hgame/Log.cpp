@@ -41,7 +41,7 @@ using namespace std;
 
 void Log::logWrite(Level level, const char *message)
 {
-    fprintf(stderr, "%-7s '%s': %s\n", getLevelName(level), tag, message);
+    fprintf(stderr, "%-7s '%s': %s\n", getLevelName(level), mTag, message);
     if (level == FATAL)
         abort();
 }
@@ -68,19 +68,19 @@ const char *Log::getLevelName(Level level) const
 
 Log::Log(const char *tag, Level priority)
 {
-    this->tag = strdup(tag);
-    this->priority = priority;
+    mTag = strdup(tag);
+    mPriority = priority;
 }
 
 Log::~Log()
 {
     // Not delete because we used strdup()
-    free(tag);
+    free(mTag);
 }
     
 void Log::log(Level level, const char *format, ...)
 {
-    if (level <= priority)
+    if (level <= mPriority)
     {
         va_list ap;
         va_start(ap, format);
@@ -91,7 +91,7 @@ void Log::log(Level level, const char *format, ...)
     
 void Log::log(Level level, const char *format, va_list ap)
 {
-    if (level <= priority)
+    if (level <= mPriority)
     {
         char *s;
         vasprintf(&s, format, ap);
@@ -136,7 +136,7 @@ void Log::v(const char * format, ...)
     IMPLEMENT_LOG_LEVEL(VERBOSE);
 }
         
-Throwable::Throwable() : repr(0) {}
+Throwable::Throwable() : mRepr(0) {}
 
 Throwable::Throwable(const char *file, int line, const char *func,
             const char *desc, ...) throw()
@@ -161,7 +161,7 @@ Throwable::Throwable(const char *file, int line, const char *func,
 {
     char *tmp;
     vasprintf(&tmp, desc, ap);
-    asprintf(&repr, "Exception '%s' in %s at %s/%d: %s",
+    asprintf(&mRepr, "Exception '%s' in %s at %s/%d: %s",
             getClassName(), func, file, line, tmp);
     free(tmp);
 }
@@ -171,14 +171,14 @@ Throwable::Throwable(const char *file, int line, const char *func,
 {
     char *tmp;
     vasprintf(&tmp, desc, ap);
-    asprintf(&repr, "Errno exception '%s' in %s at %s/%d: %s - %s",
+    asprintf(&mRepr, "Errno exception '%s' in %s at %s/%d: %s - %s",
             getClassName(), func, file, line, tmp, strerror(errno_code));
     free(tmp);
 }
 
 Throwable::~Throwable() throw()
 {
-    free(repr);
+    free(mRepr);
 }
 
 const char *Throwable::getClassName() const throw()
@@ -188,7 +188,7 @@ const char *Throwable::getClassName() const throw()
 
 const char *Throwable::what() const throw()
 {
-    return repr;
+    return mRepr;
 }
 
 }

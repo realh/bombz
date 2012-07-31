@@ -43,17 +43,17 @@ namespace hgl {
 
 class GLTextureAtlas {
 private:
-    int width, height;
-    GLuint textureId;
+    int mWidth, mHeight;
+    GLuint mTextureId;
 public:
     int getWidth() const;
     int getHeight() const;
-    inline GLuint getTextureId() { return textureId; }
+    inline GLuint getTextureId() { return mTextureId; }
     
     GLTextureAtlas(int width, int height);
     ~GLTextureAtlas();
     
-    inline void bind() { glBindTexture(GL_TEXTURE_2D, textureId); }
+    inline void bind() { glBindTexture(GL_TEXTURE_2D, mTextureId); }
 };
 
 }

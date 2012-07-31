@@ -42,8 +42,8 @@ class TextureRegion {
 private:
     // Coordinates are normalised to 0.0-1.0 with origin at top-left
     // (default implementation) or bottom-left depending on implementation
-    TextureAtlas *atlas;
-    float u0, v0, u1, v1;
+    TextureAtlas *mAtlas;
+    float mU0, mV0, mU1, mV1;
 protected:
     TextureRegion(TextureAtlas *atlas, float u0, float v0, float u1, float v1);
 public:
@@ -51,11 +51,11 @@ public:
     // with origin at top-left
     TextureRegion(TextureAtlas *atlas, int x, int y, int w, int h);
     
-    inline float getU0() const { return u0; }
-    inline float getV0() const { return v0; }
-    inline float getU1() const { return u1; }
-    inline float getV1() const { return v1; }
-    inline const TextureAtlas *getAtlas() const { return atlas; }
+    inline float getU0() const { return mU0; }
+    inline float getV0() const { return mV0; }
+    inline float getU1() const { return mU1; }
+    inline float getV1() const { return mV1; }
+    inline const TextureAtlas *getAtlas() const { return mAtlas; }
 };
 
 }

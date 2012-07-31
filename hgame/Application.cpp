@@ -31,16 +31,16 @@
 
 namespace hgame {
 
-Application::Application(Log *plog, Platform *pplatform, RenderContext *rc) :
-        log(*plog), platform(pplatform), renderContext(rc)
+Application::Application(Log *log, Platform *platform, RenderContext *rc) :
+        mLog(*log), mPlatform(platform), mRenderContext(rc)
 {
 }
 
 Application::~Application()
 {
-    delete renderContext;
-    delete platform;
-    delete &log;
+    delete mRenderContext;
+    delete mPlatform;
+    delete &mLog;
 }
 
 }

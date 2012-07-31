@@ -33,18 +33,18 @@ namespace hgl {
 
 int GLTextureAtlas::getWidth() const
 {
-    return width;
+    return mWidth;
 }
 
 int GLTextureAtlas::getHeight() const
 {
-    return height;
+    return mHeight;
 }
     
 GLTextureAtlas::GLTextureAtlas(int w, int h) :
-        width(w), height(h)
+        mWidth(w), mHeight(h)
 {
-    glGenTextures(1, &textureId);
+    glGenTextures(1, &mTextureId);
     bind();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -52,7 +52,7 @@ GLTextureAtlas::GLTextureAtlas(int w, int h) :
     
 GLTextureAtlas::~GLTextureAtlas()
 {
-    glDeleteTextures(1, &textureId);
+    glDeleteTextures(1, &mTextureId);
 }
 
 }

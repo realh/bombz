@@ -38,17 +38,17 @@ namespace sdl {
 
 Image::~Image()
 {
-    SDL_FreeSurface(surface);
+    SDL_FreeSurface(mSurface);
 }
     
 int Image::getWidth() const
 {
-    return surface->w;
+    return mSurface->w;
 }
 
 int Image::getHeight() const
 {
-    return surface->h;
+    return mSurface->h;
 }
 
 }

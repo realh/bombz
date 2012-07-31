@@ -42,8 +42,7 @@ namespace sdl {
 
 class Platform : public hgame::Platform {
 private:
-    char *profileFileName;
-    char *assetsDir;
+    char *mAssetsDir;
 public:
     hgame::Platform::PlatformType getPlatformType() const;
     
@@ -67,7 +66,7 @@ public:
     ~Platform();
 
 protected:
-    hgame::Log &log;
+    hgame::Log &mLog;
     
     void mkdirWithParents(const char *dir);
 };

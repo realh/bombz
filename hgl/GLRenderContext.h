@@ -40,8 +40,8 @@ namespace hgl {
 
 class GLRenderContext : public hgame::RenderContext {
 protected:
-    int width;
-    int height;
+    int mWidth;
+    int mHeight;
 public:
     int getWidth() const;
     int getHeight() const;

@@ -52,7 +52,7 @@ Exception::Exception(const char *file, int line, const char *func,
     char *usrmsg;
     vasprintf(&usrmsg, desc, ap);
     va_end(ap);
-    asprintf(&repr, "SDL error '%s': %s in %s at %d/%s",
+    asprintf(&mRepr, "SDL error '%s': %s in %s at %d/%s",
             SDL_GetError(), usrmsg, func, line, file);
     free(usrmsg);
 }
