@@ -39,6 +39,8 @@
 #include "SDL_opengl.h"
 #endif
 
+#include "hgl/GLRenderContext.h"
+
 namespace hgl {
 
 class GLTextureAtlas {
@@ -50,10 +52,19 @@ public:
     int getHeight() const;
     inline GLuint getTextureId() { return mTextureId; }
     
-    GLTextureAtlas(int width, int height);
+    GLTextureAtlas(GLRenderContext *rc, int width, int height);
     ~GLTextureAtlas();
     
-    inline void bind() { glBindTexture(GL_TEXTURE_2D, mTextureId); }
+    inline void bind(GLRenderContext *rc)
+    {
+        glBindTexture(GL_TEXTURE_2D, mTextureId);
+        rc->setBoundTexture(this);
+    }
+    
+    inline bool isBound(GLRenderContext *rc)
+    {
+        return rc->getBoundTexture() == this;
+    }
 };
 
 }

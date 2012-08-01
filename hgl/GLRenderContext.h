@@ -38,13 +38,26 @@
 
 namespace hgl {
 
+class GLTextureAtlas;
+
 class GLRenderContext : public hgame::RenderContext {
 protected:
+    GLTextureAtlas *mBoundTexture;
     int mWidth;
     int mHeight;
 public:
     int getWidth() const;
     int getHeight() const;
+    
+    inline GLTextureAtlas *getBoundTexture()
+    {
+        return mBoundTexture;
+    }
+    
+    inline void setBoundTexture(GLTextureAtlas *tex)
+    {
+        mBoundTexture = tex;
+    }
     
     GLRenderContext(int width, int height);
     ~GLRenderContext();

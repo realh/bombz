@@ -42,7 +42,7 @@ int GLRenderContext::getHeight() const
 }
     
 GLRenderContext::GLRenderContext(int width, int height) :
-    mWidth(width), mHeight(height)
+    mBoundTexture(0), mWidth(width), mHeight(height)
 {
 }
 
