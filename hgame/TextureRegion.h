@@ -41,7 +41,6 @@ class TextureAtlas;
 class TextureRegion {
 private:
     // Coordinates are normalised to 0.0-1.0 with origin at top-left
-    // (default implementation) or bottom-left depending on implementation
     TextureAtlas *mAtlas;
     float mU0, mV0, mU1, mV1;
 protected:
