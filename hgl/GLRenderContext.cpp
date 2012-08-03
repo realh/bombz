@@ -40,6 +40,12 @@ int GLRenderContext::getHeight() const
 {
     return mHeight;
 }
+
+void GLRenderContext::bindTexture(GLTextureAtlas *tex)
+{
+    glBindTexture(GL_TEXTURE_2D, tex->getTextureId());
+    mBoundTexture = tex;
+}
     
 GLRenderContext::GLRenderContext(int width, int height) :
     mBoundTexture(0), mWidth(width), mHeight(height)

@@ -57,8 +57,10 @@ public:
     
     inline void bind(GLRenderContext *rc)
     {
-        glBindTexture(GL_TEXTURE_2D, mTextureId);
-        rc->setBoundTexture(this);
+        if (rc->getBoundTexture() != this)
+        {
+            rc->bindTexture(this);
+        }
     }
     
     inline bool isBound(GLRenderContext *rc)

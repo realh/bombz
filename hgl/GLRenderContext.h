@@ -54,10 +54,9 @@ public:
         return mBoundTexture;
     }
     
-    inline void setBoundTexture(GLTextureAtlas *tex)
-    {
-        mBoundTexture = tex;
-    }
+    // Can't inline this because it needs to know tex's interface which
+    // would lead to circular includes
+    void bindTexture(GLTextureAtlas *tex);
     
     GLRenderContext(int width, int height);
     ~GLRenderContext();
