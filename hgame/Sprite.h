@@ -44,12 +44,16 @@ protected:
     TextureRegion *mTexture;
     int mW, mH;             // size
 public:
+    // All dimensions are in viewport space
     Sprite(TextureRegion *texture, int width, int height) :
             mTexture(texture), mW(width), mH(height)
             {}
     virtual ~Sprite();
     virtual void setPosition(int x, int y) = 0;
+    // Calling function must set everything up first, including
+    // binding the texture if necessary
     virtual void render(RenderContext *rc) = 0;
+    virtual void bind(RenderContext *rc) = 0;
 };
 
 }

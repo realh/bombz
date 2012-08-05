@@ -28,6 +28,7 @@
 // HGame - a simple cross-platform game framework
 
 #include "hgl/GLRenderContext.h"
+#include "hgl/GLTextureAtlas.h"
 
 namespace hgl {
 

@@ -34,18 +34,16 @@
 
 namespace hgame {
 
-TextureRegion::TextureRegion(TextureAtlas *atlas,
-        float u0, float v0, float u1, float v1) :
-        mAtlas(atlas), mU0(u0), mV0(v0), mU1(u1), mV1(v1)
-{
-}
-
 TextureRegion::TextureRegion(TextureAtlas *atlas, int x, int y, int w, int h)
 {
     float aw = (float) atlas->getWidth();
     float ah = (float) atlas->getHeight();
     TextureRegion(atlas, (float) x / aw, (float) y / ah,
             mU0 + (float) w / aw, mV0 + (float) h / ah);
+}
+
+TextureRegion::~TextureRegion()
+{
 }
 
 }

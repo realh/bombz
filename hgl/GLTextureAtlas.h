@@ -34,11 +34,6 @@
 
 #include "config.h"
 
-#ifdef WITH_SDL
-#include "SDL.h"
-#include "SDL_opengl.h"
-#endif
-
 #include "hgl/GLRenderContext.h"
 
 namespace hgl {

@@ -36,20 +36,23 @@
 
 #include "hgame/RenderContext.h"
 
-namespace hgl {
+#ifdef WITH_SDL
+#include "SDL.h"
+#include "SDL_opengl.h"
+#endif
 
-class GLTextureAtlas;
+namespace hgl {
 
 class GLRenderContext : public hgame::RenderContext {
 protected:
-    GLTextureAtlas *mBoundTexture;
+    class GLTextureAtlas *mBoundTexture;
     int mWidth;
     int mHeight;
 public:
     int getWidth() const;
     int getHeight() const;
     
-    inline GLTextureAtlas *getBoundTexture()
+    inline class GLTextureAtlas *getBoundTexture()
     {
         return mBoundTexture;
     }
