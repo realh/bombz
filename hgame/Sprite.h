@@ -52,8 +52,8 @@ public:
     virtual void setPosition(int x, int y) = 0;
     // Calling function must set everything up first, including
     // binding the texture if necessary
-    virtual void render(RenderContext *rc) = 0;
-    virtual void bind(RenderContext *rc) = 0;
+    virtual void render() = 0;
+    virtual void bind() = 0;
 };
 
 }

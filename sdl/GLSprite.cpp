@@ -36,6 +36,13 @@
 
 namespace sdl {
 
+GLSprite::GLSprite(GLRenderContext *rc, hgame::TextureRegion *texture,
+            int width, int height) :
+            hgame::Sprite(texture, width, height),
+            mRc(rc)
+{
+}
+
 void GLSprite::setPosition(int x, int y)
 {
     mVertices[0] = (float) x;
@@ -48,17 +55,16 @@ void GLSprite::setPosition(int x, int y)
     mVertices[7] = (float) (y + mH);
 }
 
-void GLSprite::render(hgame::RenderContext *rc)
+void GLSprite::render()
 {
     glVertexPointer(2, GL_FLOAT, 0, mVertices);
     glTexCoordPointer(2, GL_FLOAT, 0, mTexture->getCoords());
     glDrawArrays(GL_QUADS, 0, 4);
 }
 
-void GLSprite::bind(hgame::RenderContext *rc)
+void GLSprite::bind()
 {
-    ((hgl::GLTextureAtlas *) mTexture->getAtlas())->bind(
-            (hgl::GLRenderContext *) rc);
+    ((hgl::GLTextureAtlas *) mTexture->getAtlas())->bind(mRc);
 }
 
 }

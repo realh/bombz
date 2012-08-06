@@ -27,32 +27,33 @@
 
 // HGame - a simple cross-platform game framework
 
-// GLSprite: An OpenGL textured quadrilateral
+// TileBatcher: Render a tiled area in batches for efficiency
 
-#ifndef SDL_GL_GLSPRITE_H
-#define SDL_GL_GLSPRITE_H
+#ifndef SDL_GL_TILE_BATCHER_H
+#define SDL_GL_TILE_BATCHER_H
 
 #include "config.h"
 
-#include "hgame/Sprite.h"
+#include "hgame/TileBatcher.h"
 
 #include "sdl/GLRenderContext.h"
 
 namespace sdl {
 
-class GLSprite : public hgame::Sprite {
+class GLTileBatcher : public hgame::TileBatcher {
 private:
-    // Using GL_QUADS so need 4 coords
-    float mVertices[8];
     GLRenderContext *mRc;
+    float *mVertices;
 public:
-    GLSprite(GLRenderContext *rc, hgame::TextureRegion *texture,
-            int width, int height);
-    virtual void setPosition(int x, int y);
-    virtual void render();
-    void bind();
+    // See Sprite.h re rc
+    GLTileBatcher(GLRenderContext *rc, int nColumns, int nRows, int tile_size);
+    ~GLTileBatcher();
+    
+    // All regions must come from the same atlas
+    void setTextureAt(hgame::TextureRegion *tex, int x, int y);
+    void render();
 };
 
 }
 
-#endif // SDL_GL_GLSPRITE_H
+#endif // SDL_GL_TILE_BATCHER_H
