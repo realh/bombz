@@ -61,8 +61,12 @@ public:
     // would lead to circular includes
     void bindTexture(GLTextureAtlas *tex);
     
-    GLRenderContext(int width, int height);
+    bool needScaling() const;
+    
+    GLRenderContext(int width, int height, bool need_scaling);
     ~GLRenderContext();
+private:
+    bool mNeedScaling;
 };
 
 }

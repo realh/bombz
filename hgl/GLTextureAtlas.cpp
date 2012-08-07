@@ -41,13 +41,14 @@ int GLTextureAtlas::getHeight() const
     return mHeight;
 }
     
-GLTextureAtlas::GLTextureAtlas(GLRenderContext *rc, int w, int h) :
+GLTextureAtlas::GLTextureAtlas(GLRenderContext *rc, int w, int h,
+        int scale_method) :
         mWidth(w), mHeight(h)
 {
     glGenTextures(1, &mTextureId);
     bind(rc);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, scale_method);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, scale_method);
 }
     
 GLTextureAtlas::~GLTextureAtlas()

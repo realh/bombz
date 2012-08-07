@@ -48,13 +48,19 @@ void GLRenderContext::bindTexture(GLTextureAtlas *tex)
     mBoundTexture = tex;
 }
     
-GLRenderContext::GLRenderContext(int width, int height) :
-    mBoundTexture(0), mWidth(width), mHeight(height)
+GLRenderContext::GLRenderContext(int width, int height, bool need_scaling) :
+        mBoundTexture(0), mWidth(width), mHeight(height),
+        mNeedScaling(need_scaling)
 {
 }
 
 GLRenderContext::~GLRenderContext()
 {
+}
+
+bool GLRenderContext::needScaling() const
+{
+    return mNeedScaling;
 }
 
 }

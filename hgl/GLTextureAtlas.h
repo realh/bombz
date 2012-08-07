@@ -47,7 +47,9 @@ public:
     int getHeight() const;
     inline GLuint getTextureId() { return mTextureId; }
     
-    GLTextureAtlas(GLRenderContext *rc, int width, int height);
+    // scale_method is eg GL_LINEAR or GL_NEAREST
+    GLTextureAtlas(GLRenderContext *rc, int width, int height,
+            int scale_method);
     ~GLTextureAtlas();
     
     inline void bind(GLRenderContext *rc)

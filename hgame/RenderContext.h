@@ -41,6 +41,8 @@ namespace hgame {
 
 class RenderContext {
 public:
+    virtual ~RenderContext();
+    
     virtual int getWidth() const = 0;
     virtual int getHeight() const = 0;
     
@@ -48,7 +50,8 @@ public:
     // This object must take ownership of img or delete it
     virtual TextureAtlas *uploadTexture(Image *img) = 0;
     
-    virtual ~RenderContext();
+    // Whether tiles need resizing to fit screen
+    virtual bool needScaling() const = 0;
 };
 
 }

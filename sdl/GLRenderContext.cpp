@@ -65,7 +65,8 @@ hgame::TextureAtlas *GLRenderContext::uploadTexture(hgame::Image *img)
     {
         THROW(hgame::Throwable, "Unsupported bytes per pixel: %d", bpp);
     }
-    hgl::GLTextureAtlas *atlas = new hgl::GLTextureAtlas(this, w, h);
+    hgl::GLTextureAtlas *atlas = new hgl::GLTextureAtlas(this, w, h,
+            needScaling() ? GL_LINEAR : GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, bpp, w, h, 0, tex_fmt, GL_UNSIGNED_BYTE,
             surf->pixels);
     delete img;
