@@ -27,27 +27,71 @@
 
 // HGame - a simple cross-platform game framework
 
+// Thread.h: Threading with SDL
+
+#ifndef SDL_THREAD_H
+#define SDL_THREAD_H
+
+#include "config.h"
+
+#include "SDL_thread.h"
+
 #include "hgame/Thread.h"
 
-#include <cstdlib>
+namespace sdl {
 
-namespace hgame {
+class Mutex : public hgame::Mutex {
+private:
+    SDL_mutex *mMutex;
+public:
+    Mutex();
+    ~Mutex();
+    void lock();
+    void release();
+    inline SDL_mutex *getSDLMutex() { return mMutex; }
+};
 
-Mutex::~Mutex()
-{
+class Cond : public hgame::Cond {
+private:
+    SDL_cond *mCond;
+    bool mOwnMutex;
+    Mutex *mMutex;
+public:
+    // If mutex not given, one will be created
+    Cond(Mutex *mutex = 0);
+    ~Cond();
+    void wait();
+    // Returns false on timeout
+    bool waitTimeout(std::uint32_t ms);
+    void signal();
+    void broadcast();
+    hgame::Mutex *getMutex();
+};
+
+class Thread : public hgame::Thread {
+private:
+    SDL_Thread *mThread;
+    Mutex *mNameMutex;
+    bool mRunning;
+public:
+    Thread(hgame::Runnable *r, const char *name = 0);
+    ~Thread();
+    void start();
+    int wait();
+protected:
+    const char *getImplementationName();
+private:
+    static int launch(void *thread);
+};
+
+class ThreadFactory : public hgame::ThreadFactory {
+public:
+    hgame::Mutex *createMutex();
+    // If mutex not given, one will be created
+    hgame::Cond *createCond(hgame::Mutex *mutex = 0);
+    hgame::Thread *createThread(hgame::Runnable *r, const char *name = 0);
+};
+
 }
 
-Cond::~Cond()
-{
-}
-
-Runnable::~Runnable()
-{
-}
-
-Thread::~Thread()
-{
-    std::free(mName);
-}
-
-}
+#endif // SDL_THREAD_H

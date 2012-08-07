@@ -34,6 +34,9 @@
 
 #include "config.h"
 
+#include <cstdint>
+#include <cstring>
+
 namespace hgame {
 
 class Mutex {
@@ -46,22 +49,47 @@ public:
 class Cond {
 public:
     virtual void wait() = 0;
+    // Returns false on timeout
+    virtual bool waitTimeout(std::uint32_t ms) = 0;
     virtual void signal() = 0;
     virtual void broadcast() = 0;
     virtual ~Cond();
+    virtual Mutex *getMutex() = 0;
+};
+
+class Runnable {
+public:
+    virtual int run() = 0;
+    virtual ~Runnable();
 };
 
 class Thread {
 public:
-    // Used by creating thread
-    virtual void start(void *handle) = 0;
-    virtual void wait() = 0;
-    virtual Mutex *createMutex() = 0;
-    virtual Mutex *createCond() = 0;
+    Thread(Runnable *r, const char *name = 0) : mRunnable(r)
+    {
+        mName = name ? strdup(name) : 0;
+    }
+    virtual void start() = 0;
+    virtual int wait() = 0;
     virtual ~Thread();
+    inline const char *getName()
+    {
+        return mName ? mName : getImplementationName();
+    }
 protected:
-    // Thread's implementation goes here
-    virtual void run(void *handle) = 0;
+    // This may store result in mName so not const
+    virtual const char *getImplementationName() = 0;
+    char *mName;
+    Runnable *mRunnable;
 };
+
+class ThreadFactory {
+public:
+    virtual Mutex *createMutex() = 0;
+    virtual Cond *createCond(Mutex *mutex = 0) = 0;
+    virtual Thread *createThread(Runnable *r, const char *name = 0) = 0;
+};
+
+}
 
 #endif // HGAME_THREAD_H
