@@ -81,7 +81,7 @@ void Cond::wait()
     }
 }
 
-bool Cond::waitTimeout(std::uint32_t ms)
+bool Cond::waitTimeout(unsigned int ms)
 {
     switch (SDL_CondWaitTimeout(mCond, mMutex->getSDLMutex(), ms))
     {

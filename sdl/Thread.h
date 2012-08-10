@@ -62,7 +62,7 @@ public:
     ~Cond();
     void wait();
     // Returns false on timeout
-    bool waitTimeout(std::uint32_t ms);
+    bool waitTimeout(unsigned int ms);
     void signal();
     void broadcast();
     hgame::Mutex *getMutex();

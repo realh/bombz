@@ -34,7 +34,6 @@
 
 #include "config.h"
 
-#include <cstdint>
 #include <cstring>
 
 namespace hgame {
@@ -50,7 +49,7 @@ class Cond {
 public:
     virtual void wait() = 0;
     // Returns false on timeout
-    virtual bool waitTimeout(std::uint32_t ms) = 0;
+    virtual bool waitTimeout(unsigned int ms) = 0;
     virtual void signal() = 0;
     virtual void broadcast() = 0;
     virtual ~Cond();
