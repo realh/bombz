@@ -40,9 +40,20 @@ namespace hgame {
 class Image {
 public:
 
+    // Create a new blank image in the same format as the current one
+    virtual Image *createImage(int w, int h, bool alpha = true) = 0;
+    
     virtual int getWidth() const = 0;
     virtual int getHeight() const = 0;
     
+    // Used for creating drop shadows
+    virtual unsigned int getAlphaAt(int x, int y) const = 0;
+    virtual void setAlphaAt(int x, int y, unsigned int alpha) = 0;
+    
+    // Copies part of one image into current image
+    virtual void blit(Image *src, int dest_x, int dest_y,
+            int src_x, int src_y, int w, int h) = 0;
+
     virtual ~Image();
 };
 
