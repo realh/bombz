@@ -40,13 +40,13 @@ namespace hgame {
 class Image {
 public:
 
-    // Create a new blank image in the same format as the current one
-    virtual Image *createImage(int w, int h, bool alpha = true) = 0;
+    // Create a new blank image, 32-bit with alpha
+    virtual Image *createImage(int w, int h) = 0;
     
     virtual int getWidth() const = 0;
     virtual int getHeight() const = 0;
     
-    // Used for creating drop shadows
+    // Used for creating drop shadows; alpha in range 0-255
     virtual unsigned int getAlphaAt(int x, int y) const = 0;
     virtual void setAlphaAt(int x, int y, unsigned int alpha) = 0;
     

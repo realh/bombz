@@ -1,7 +1,7 @@
-#include "sdl/Application.h"
+#include "hsdl/Application.h"
 
 int main(int argc, char **argv)
 {
-    sdl::Application application(argc, argv);
+    hsdl::Application application(argc, argv);
     return 0;
 }

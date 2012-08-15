@@ -55,6 +55,15 @@ public:
     {
         return mSurface;
     }
+    
+    hgame::Image *createImage(int w, int h);
+    unsigned int getAlphaAt(int x, int y) const;
+    void setAlphaAt(int x, int y, unsigned int alpha);
+    void blit(hgame::Image *src, int dest_x, int dest_y,
+            int src_x, int src_y, int w, int h);
+    void blit(Image *src, int dest_x, int dest_y,
+            int src_x, int src_y, int w, int h);
+    
 };
 
 }

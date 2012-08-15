@@ -50,5 +50,30 @@ int Image::getHeight() const
 {
     return mSurface->h;
 }
+    
+hgame::Image *Image::createImage(int w, int h)
+{
+    return 0;
+}
+
+unsigned int Image::getAlphaAt(int x, int y) const
+{
+    return 0;
+}
+
+void Image::setAlphaAt(int x, int y, unsigned int alpha)
+{
+}
+
+void Image::blit(hgame::Image *src, int dest_x, int dest_y,
+        int src_x, int src_y, int w, int h)
+{
+    blit((Image *) src, dest_x, dest_y, src_x, src_y, w, h);
+}
+
+void Image::blit(Image *src, int dest_x, int dest_y,
+        int src_x, int src_y, int w, int h)
+{
+}
 
 }

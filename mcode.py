@@ -13,7 +13,7 @@ def add_envs(envs):
     envs["BOMBZ_LIBS"] = "${SDL_LIBS} ${OPENGL_LIBS}"
     envs["BUILD_SUBDIRS"] = "${BUILD_DIR}/hgame " \
             "${BUILD_DIR}/hgl " \
-            "${BUILD_DIR}/sdl"
+            "${BUILD_DIR}/hsdl"
 
 def init(ctx):
     global __already_run
@@ -43,7 +43,7 @@ def init(ctx):
     elif ctx.mode == 'build':
     
         sources = ctx.glob_src("*.cpp", "hgame", False) + \
-                ctx.glob_src("*.cpp", "sdl", False) + \
+                ctx.glob_src("*.cpp", "hsdl", False) + \
                 ctx.glob_src("*.cpp", "hgl", False) + \
                 ["SDLMain.cpp"]
         for c in sources:
