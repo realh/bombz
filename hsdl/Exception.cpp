@@ -27,64 +27,34 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "sdl/Translate.h"
+#include "hsdl/Exception.h"
 
-#include <cstdio>
+#include <cstdarg>
 #include <cstdlib>
 #include <cstring>
 
-namespace sdl {
+#include "SDL_error.h"
+
+namespace hsdl {
 
 using namespace std;
 
-const char *Translate::operator()(const char *tag) const
+const char *Exception::getClassName() const throw()
 {
-    return mHash.at(tag);
+    return "sdl::Exception";
 }
 
-Translate::Translate(Platform *platform) : mBuffer(0)
+Exception::Exception(const char *file, int line, const char *func,
+            const char *desc, ...) throw()
 {
-    char *filename;
-    char ds = platform->getDirectorySeparator();
-    asprintf(&filename, "%s%cstrings%cen", platform->getAssetsDirectory(),
-            ds, ds);
-    FILE *fp = fopen(filename, "r");
-    if (fp)
-    {
-        fseek(fp, 0, SEEK_END);
-        long len = ftell(fp);
-        mBuffer = new char[len + 1];
-        mBuffer[len] = 0;
-        rewind(fp);
-        fread(mBuffer, 1, len, fp);
-        fclose(fp);
-        int i = 0;
-        while (i < len)
-        {
-            // Skip any extra terminators
-            while (i < len && (mBuffer[i] == '\r' || mBuffer[i] == '\n'))
-                ++i;
-            if (i >= len)
-                break;
-            char *tag = mBuffer + i;
-            char *msg = strchr(tag, ':');
-            *msg = 0;
-            ++msg;
-            ++i;
-            while (i < len && mBuffer[i] != '\r' && mBuffer[i] != '\n')
-                ++i;
-            if (i >= len)
-                break;
-            mBuffer[i++] = 0;
-            mHash[tag] = msg;
-        }
-    }
-    free(filename);
-}
-
-Translate::~Translate()
-{
-    delete mBuffer;
+    va_list(ap);
+    va_start(ap, desc);
+    char *usrmsg;
+    vasprintf(&usrmsg, desc, ap);
+    va_end(ap);
+    asprintf(&mRepr, "SDL error '%s': %s in %s at %d/%s",
+            SDL_GetError(), usrmsg, func, line, file);
+    free(usrmsg);
 }
 
 }

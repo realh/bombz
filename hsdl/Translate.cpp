@@ -27,50 +27,64 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "sdl/GLRenderContext.h"
+#include "hsdl/Translate.h"
 
-#include "SDL.h"
-#include "SDL_opengl.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
-#include "hgame/Log.h"
+namespace hsdl {
 
-#include "hgl/GLTextureAtlas.h"
+using namespace std;
 
-#include "sdl/Image.h"
-
-namespace sdl {
-
-hgame::TextureAtlas *GLRenderContext::uploadTexture(hgame::Image *img)
+const char *Translate::operator()(const char *tag) const
 {
-    SDL_Surface *surf = ((Image *) img)->getSurface();
-    int w = surf->w;
-    int h = surf->h;
-    GLint bpp = surf->format->BytesPerPixel;
-    GLenum tex_fmt;
-    if (bpp == 4)
+    return mHash.at(tag);
+}
+
+Translate::Translate(Platform *platform) : mBuffer(0)
+{
+    char *filename;
+    char ds = platform->getDirectorySeparator();
+    asprintf(&filename, "%s%cstrings%cen", platform->getAssetsDirectory(),
+            ds, ds);
+    FILE *fp = fopen(filename, "r");
+    if (fp)
     {
-        if (surf->format->Rmask == 0xff)
-            tex_fmt = GL_RGBA;
-        else
-            tex_fmt = GL_BGRA;
+        fseek(fp, 0, SEEK_END);
+        long len = ftell(fp);
+        mBuffer = new char[len + 1];
+        mBuffer[len] = 0;
+        rewind(fp);
+        fread(mBuffer, 1, len, fp);
+        fclose(fp);
+        int i = 0;
+        while (i < len)
+        {
+            // Skip any extra terminators
+            while (i < len && (mBuffer[i] == '\r' || mBuffer[i] == '\n'))
+                ++i;
+            if (i >= len)
+                break;
+            char *tag = mBuffer + i;
+            char *msg = strchr(tag, ':');
+            *msg = 0;
+            ++msg;
+            ++i;
+            while (i < len && mBuffer[i] != '\r' && mBuffer[i] != '\n')
+                ++i;
+            if (i >= len)
+                break;
+            mBuffer[i++] = 0;
+            mHash[tag] = msg;
+        }
     }
-    else if (bpp == 3)
-    {
-        if (surf->format->Rmask == 0xff)
-            tex_fmt = GL_RGB;
-        else
-            tex_fmt = GL_BGR;
-    }
-    else
-    {
-        THROW(hgame::Throwable, "Unsupported bytes per pixel: %d", bpp);
-    }
-    hgl::GLTextureAtlas *atlas = new hgl::GLTextureAtlas(this, w, h,
-            needScaling() ? GL_LINEAR : GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, bpp, w, h, 0, tex_fmt, GL_UNSIGNED_BYTE,
-            surf->pixels);
-    delete img;
-    return (hgame::TextureAtlas *) atlas;
+    free(filename);
+}
+
+Translate::~Translate()
+{
+    delete mBuffer;
 }
 
 }

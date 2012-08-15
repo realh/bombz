@@ -27,23 +27,27 @@
 
 // HGame - a simple cross-platform game framework
 
-// Application.h: Core SDL Application
+// Exception.h: Exception caused by SDL error
 
-#ifndef SDL_APPLICATION_H
-#define SDL_APPLICATION_H
+#ifndef HSDL_EXCEPTION_H
+#define HSDL_EXCEPTION_H
 
 #include "config.h"
 
-#include "hgame/Application.h"
+#include <cstdarg>
 
-namespace sdl {
+#include "hgame/Log.h"
 
-class Application : public hgame::Application {
+namespace hsdl {
+ 
+class Exception : public hgame::Throwable {
 public:
-    Application(int argc, char **argv);
-    ~Application();
+    const char *getClassName() const throw();
+    
+    Exception(const char *file, int line, const char *func,
+            const char *desc, ...) throw();
 };
 
 }
 
-#endif // SDL_APPLICATION_H
+#endif // HSDL_EXCEPTION_H

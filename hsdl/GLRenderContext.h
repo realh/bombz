@@ -27,33 +27,22 @@
 
 // HGame - a simple cross-platform game framework
 
-// TileBatcher: Render a tiled area in batches for efficiency
+// GLRenderContext.h: Texture-based rendering with OpenGL in SDL
 
-#ifndef SDL_GL_TILE_BATCHER_H
-#define SDL_GL_TILE_BATCHER_H
+#ifndef HSDL_GL_RENDER_CONTEXT_H
+#define HSDL_GL_RENDER_CONTEXT_H
 
 #include "config.h"
 
-#include "hgame/TileBatcher.h"
+#include "hgl/GLRenderContext.h"
 
-#include "sdl/GLRenderContext.h"
+namespace hsdl {
 
-namespace sdl {
-
-class GLTileBatcher : public hgame::TileBatcher {
-private:
-    GLRenderContext *mRc;
-    float *mVertices;
+class GLRenderContext : public hgl::GLRenderContext {
 public:
-    // See Sprite.h re rc
-    GLTileBatcher(GLRenderContext *rc, int nColumns, int nRows, int tile_size);
-    ~GLTileBatcher();
-    
-    // All regions must come from the same atlas
-    void setTextureAt(hgame::TextureRegion *tex, int x, int y);
-    void render();
+    hgame::TextureAtlas *uploadTexture(hgame::Image *img);
 };
 
 }
 
-#endif // SDL_GL_TILE_BATCHER_H
+#endif // HSDL_GL_RENDER_CONTEXT_H

@@ -27,27 +27,32 @@
 
 // HGame - a simple cross-platform game framework
 
-// Exception.h: Exception caused by SDL error
+// GLSprite: An OpenGL textured quadrilateral
 
-#ifndef SDL_EXCEPTION_H
-#define SDL_EXCEPTION_H
+#ifndef HSDL_GL_GLSPRITE_H
+#define HSDL_GL_GLSPRITE_H
 
 #include "config.h"
 
-#include <cstdarg>
+#include "hgame/Sprite.h"
 
-#include "hgame/Log.h"
+#include "hsdl/GLRenderContext.h"
 
-namespace sdl {
- 
-class Exception : public hgame::Throwable {
+namespace hsdl {
+
+class GLSprite : public hgame::Sprite {
+private:
+    // Using GL_QUADS so need 4 coords
+    float mVertices[8];
+    GLRenderContext *mRc;
 public:
-    const char *getClassName() const throw();
-    
-    Exception(const char *file, int line, const char *func,
-            const char *desc, ...) throw();
+    GLSprite(GLRenderContext *rc, hgame::TextureRegion *texture,
+            int width, int height);
+    virtual void setPosition(int x, int y);
+    virtual void render();
+    void bind();
 };
 
 }
 
-#endif // SDL_EXCEPTION_H
+#endif // HSDL_GL_GLSPRITE_H

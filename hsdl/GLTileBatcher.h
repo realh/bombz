@@ -27,71 +27,33 @@
 
 // HGame - a simple cross-platform game framework
 
-// Thread.h: Threading with SDL
+// TileBatcher: Render a tiled area in batches for efficiency
 
-#ifndef SDL_THREAD_H
-#define SDL_THREAD_H
+#ifndef HSDL_GL_TILE_BATCHER_H
+#define HSDL_GL_TILE_BATCHER_H
 
 #include "config.h"
 
-#include "SDL_thread.h"
+#include "hgame/TileBatcher.h"
 
-#include "hgame/Thread.h"
+#include "hsdl/GLRenderContext.h"
 
-namespace sdl {
+namespace hsdl {
 
-class Mutex : public hgame::Mutex {
+class GLTileBatcher : public hgame::TileBatcher {
 private:
-    SDL_mutex *mMutex;
+    GLRenderContext *mRc;
+    float *mVertices;
 public:
-    Mutex();
-    ~Mutex();
-    void lock();
-    void release();
-    inline SDL_mutex *getSDLMutex() { return mMutex; }
-};
-
-class Cond : public hgame::Cond {
-private:
-    SDL_cond *mCond;
-    bool mOwnMutex;
-    Mutex *mMutex;
-public:
-    // If mutex not given, one will be created
-    Cond(Mutex *mutex = 0);
-    ~Cond();
-    void wait();
-    // Returns false on timeout
-    bool waitTimeout(unsigned int ms);
-    void signal();
-    void broadcast();
-    hgame::Mutex *getMutex();
-};
-
-class Thread : public hgame::Thread {
-private:
-    SDL_Thread *mThread;
-    Mutex *mNameMutex;
-    bool mRunning;
-public:
-    Thread(hgame::Runnable *r, const char *name = 0);
-    ~Thread();
-    void start();
-    int wait();
-protected:
-    const char *getImplementationName();
-private:
-    static int launch(void *thread);
-};
-
-class ThreadFactory : public hgame::ThreadFactory {
-public:
-    hgame::Mutex *createMutex();
-    // If mutex not given, one will be created
-    hgame::Cond *createCond(hgame::Mutex *mutex = 0);
-    hgame::Thread *createThread(hgame::Runnable *r, const char *name = 0);
+    // See Sprite.h re rc
+    GLTileBatcher(GLRenderContext *rc, int nColumns, int nRows, int tile_size);
+    ~GLTileBatcher();
+    
+    // All regions must come from the same atlas
+    void setTextureAt(hgame::TextureRegion *tex, int x, int y);
+    void render();
 };
 
 }
 
-#endif // SDL_THREAD_H
+#endif // HSDL_GL_TILE_BATCHER_H

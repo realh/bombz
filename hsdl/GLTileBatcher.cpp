@@ -27,11 +27,11 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "sdl/GLTileBatcher.h"
+#include "hsdl/GLTileBatcher.h"
 
 #include <cstring>
 
-namespace sdl {
+namespace hsdl {
 
 GLTileBatcher::GLTileBatcher(GLRenderContext *rc,
         int nColumns, int nRows, int tile_size) :

@@ -27,50 +27,31 @@
 
 // HGame - a simple cross-platform game framework
 
-// Platform.h: Various functions giving info about and for manipulating
-//             the platform we're running on - SDL version
+// Translate.h: Interface for looking up strings by a tag (SDL implementation)
 
-#ifndef SDL_PLATFORM_H
-#define SDL_PLATFORM_H
+#ifndef HSDL_TRANSLATE_H
+#define HSDL_TRANSLATE_H
 
 #include "config.h"
 
-#include "hgame/Log.h"
-#include "hgame/Platform.h"
+#include <map>
 
-namespace sdl {
+#include "hgame/Translate.h"
 
-class Platform : public hgame::Platform {
+#include "hsdl/Platform.h"
+
+namespace hsdl {
+
+class Translate : public hgame::Translate {
 private:
-    char *mAssetsDir;
+    std::map<const char *, const char *> mHash;
+    char *mBuffer;
 public:
-    hgame::Platform::PlatformType getPlatformType() const;
-    
-    const char *getProfileFilename(const char *owner,
-            const char *appname, const char *leafname);
-    
-    // Returns the top-level directory holding game's assets
-    const char *getAssetsDirectory() const;
-    
-    // Returns full path to an asset given its leafname.
-    // leafname may include subdirs. '/' separators are converted to
-    // '\' on Windows.
-    // Result must be std::freed, not deleted.
-    char *getAsset(const char *leafname);
-    
-    char getDirectorySeparator();
-    
-    hgame::Image *loadPNG(const char *leafname);
-    
-    Platform(int argc, char **argv);
-    ~Platform();
-
-protected:
-    hgame::Log &mLog;
-    
-    void mkdirWithParents(const char *dir);
+    Translate(Platform *platform);
+    ~Translate();
+    const char *operator()(const char *tag) const;
 };
 
 }
 
-#endif // SDL_PLATFORM_H
+#endif // HSDL_TRANSLATE_H

@@ -27,34 +27,50 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "sdl/Exception.h"
+// Platform.h: Various functions giving info about and for manipulating
+//             the platform we're running on - SDL version
 
-#include <cstdarg>
-#include <cstdlib>
-#include <cstring>
+#ifndef HSDL_PLATFORM_H
+#define HSDL_PLATFORM_H
 
-#include "SDL_error.h"
+#include "config.h"
 
-namespace sdl {
+#include "hgame/Log.h"
+#include "hgame/Platform.h"
 
-using namespace std;
+namespace hsdl {
 
-const char *Exception::getClassName() const throw()
-{
-    return "sdl::Exception";
+class Platform : public hgame::Platform {
+private:
+    char *mAssetsDir;
+public:
+    hgame::Platform::PlatformType getPlatformType() const;
+    
+    const char *getProfileFilename(const char *owner,
+            const char *appname, const char *leafname);
+    
+    // Returns the top-level directory holding game's assets
+    const char *getAssetsDirectory() const;
+    
+    // Returns full path to an asset given its leafname.
+    // leafname may include subdirs. '/' separators are converted to
+    // '\' on Windows.
+    // Result must be std::freed, not deleted.
+    char *getAsset(const char *leafname);
+    
+    char getDirectorySeparator();
+    
+    hgame::Image *loadPNG(const char *leafname);
+    
+    Platform(int argc, char **argv);
+    ~Platform();
+
+protected:
+    hgame::Log &mLog;
+    
+    void mkdirWithParents(const char *dir);
+};
+
 }
 
-Exception::Exception(const char *file, int line, const char *func,
-            const char *desc, ...) throw()
-{
-    va_list(ap);
-    va_start(ap, desc);
-    char *usrmsg;
-    vasprintf(&usrmsg, desc, ap);
-    va_end(ap);
-    asprintf(&mRepr, "SDL error '%s': %s in %s at %d/%s",
-            SDL_GetError(), usrmsg, func, line, file);
-    free(usrmsg);
-}
-
-}
+#endif // HSDL_PLATFORM_H

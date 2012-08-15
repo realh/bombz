@@ -27,22 +27,71 @@
 
 // HGame - a simple cross-platform game framework
 
-// GLRenderContext.h: Texture-based rendering with OpenGL in SDL
+// Thread.h: Threading with SDL
 
-#ifndef SDL_GL_RENDER_CONTEXT_H
-#define SDL_GL_RENDER_CONTEXT_H
+#ifndef HSDL_THREAD_H
+#define HSDL_THREAD_H
 
 #include "config.h"
 
-#include "hgl/GLRenderContext.h"
+#include "SDL_thread.h"
 
-namespace sdl {
+#include "hgame/Thread.h"
 
-class GLRenderContext : public hgl::GLRenderContext {
+namespace hsdl {
+
+class Mutex : public hgame::Mutex {
+private:
+    SDL_mutex *mMutex;
 public:
-    hgame::TextureAtlas *uploadTexture(hgame::Image *img);
+    Mutex();
+    ~Mutex();
+    void lock();
+    void release();
+    inline SDL_mutex *getSDLMutex() { return mMutex; }
+};
+
+class Cond : public hgame::Cond {
+private:
+    SDL_cond *mCond;
+    bool mOwnMutex;
+    Mutex *mMutex;
+public:
+    // If mutex not given, one will be created
+    Cond(Mutex *mutex = 0);
+    ~Cond();
+    void wait();
+    // Returns false on timeout
+    bool waitTimeout(unsigned int ms);
+    void signal();
+    void broadcast();
+    hgame::Mutex *getMutex();
+};
+
+class Thread : public hgame::Thread {
+private:
+    SDL_Thread *mThread;
+    Mutex *mNameMutex;
+    bool mRunning;
+public:
+    Thread(hgame::Runnable *r, const char *name = 0);
+    ~Thread();
+    void start();
+    int wait();
+protected:
+    const char *getImplementationName();
+private:
+    static int launch(void *thread);
+};
+
+class ThreadFactory : public hgame::ThreadFactory {
+public:
+    hgame::Mutex *createMutex();
+    // If mutex not given, one will be created
+    hgame::Cond *createCond(hgame::Mutex *mutex = 0);
+    hgame::Thread *createThread(hgame::Runnable *r, const char *name = 0);
 };
 
 }
 
-#endif // SDL_GL_RENDER_CONTEXT_H
+#endif // HSDL_THREAD_H

@@ -27,44 +27,23 @@
 
 // HGame - a simple cross-platform game framework
 
+// Application.h: Core SDL Application
+
+#ifndef HSDL_APPLICATION_H
+#define HSDL_APPLICATION_H
+
 #include "config.h"
 
-#include "sdl/GLTextureRegion.h"
+#include "hgame/Application.h"
 
-namespace sdl {
+namespace hsdl {
 
-GLTextureRegion::GLTextureRegion(hgame::TextureAtlas *atlas,
-            float u0, float v0, float u1, float v1) :
-        hgame::TextureRegion(atlas, u0, v0, u1, v1)
-{
-    initCoords();
-}
-            
-GLTextureRegion::GLTextureRegion(hgame::TextureAtlas *atlas,
-        int x, int y, int w, int h) :
-        hgame::TextureRegion(atlas, x, y, w, h)
-{
-    initCoords();
-}
-
-void GLTextureRegion::initCoords()
-{
-    // These coords are for a GL_QUAD, see
-    // http://immersedcode.org/2011/4/7/sdl-surface-to-texture/
-    mCoords = new float[8];
-    mCoords[0] = mU0;
-    mCoords[1] = mV0;
-    mCoords[2] = mU0;
-    mCoords[3] = mV1;
-    mCoords[4] = mU1;
-    mCoords[5] = mV0;
-    mCoords[6] = mU1;
-    mCoords[7] = mV1;
-}
-
-GLTextureRegion::~GLTextureRegion()
-{
-    delete mCoords;
-}
+class Application : public hgame::Application {
+public:
+    Application(int argc, char **argv);
+    ~Application();
+};
 
 }
+
+#endif // HSDL_APPLICATION_H

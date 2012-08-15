@@ -27,11 +27,11 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "sdl/Thread.h"
+#include "hsdl/Thread.h"
 
-#include "sdl/Exception.h"
+#include "hsdl/Exception.h"
 
-namespace sdl {
+namespace hsdl {
 
 Mutex::Mutex()
 {

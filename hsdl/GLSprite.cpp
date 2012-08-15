@@ -27,28 +27,44 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "sdl/Image.h"
+// See http://en.wikipedia.org/wiki/Triangle_strip
 
-#include "hgame/Log.h"
-#include "hgame/Platform.h"
+#include "hsdl/GLSprite.h"
 
-#include "sdl/Exception.h"
+#include "hgl/GLRenderContext.h"
+#include "hgl/GLTextureAtlas.h"
 
-namespace sdl {
+namespace hsdl {
 
-Image::~Image()
+GLSprite::GLSprite(GLRenderContext *rc, hgame::TextureRegion *texture,
+            int width, int height) :
+            hgame::Sprite(texture, width, height),
+            mRc(rc)
 {
-    SDL_FreeSurface(mSurface);
-}
-    
-int Image::getWidth() const
-{
-    return mSurface->w;
 }
 
-int Image::getHeight() const
+void GLSprite::setPosition(int x, int y)
 {
-    return mSurface->h;
+    mVertices[0] = (float) x;
+    mVertices[1] = (float) y;
+    mVertices[2] = (float) x;
+    mVertices[3] = (float) (y + mH);
+    mVertices[4] = (float) (x + mW);
+    mVertices[5] = (float) y;
+    mVertices[6] = (float) (x + mW);
+    mVertices[7] = (float) (y + mH);
+}
+
+void GLSprite::render()
+{
+    glVertexPointer(2, GL_FLOAT, 0, mVertices);
+    glTexCoordPointer(2, GL_FLOAT, 0, mTexture->getCoords());
+    glDrawArrays(GL_QUADS, 0, 4);
+}
+
+void GLSprite::bind()
+{
+    ((hgl::GLTextureAtlas *) mTexture->getAtlas())->bind(mRc);
 }
 
 }

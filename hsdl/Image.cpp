@@ -27,32 +27,28 @@
 
 // HGame - a simple cross-platform game framework
 
-// GLSprite: An OpenGL textured quadrilateral
+#include "hsdl/Image.h"
 
-#ifndef SDL_GL_GLSPRITE_H
-#define SDL_GL_GLSPRITE_H
+#include "hgame/Log.h"
+#include "hgame/Platform.h"
 
-#include "config.h"
+#include "hsdl/Exception.h"
 
-#include "hgame/Sprite.h"
+namespace hsdl {
 
-#include "sdl/GLRenderContext.h"
-
-namespace sdl {
-
-class GLSprite : public hgame::Sprite {
-private:
-    // Using GL_QUADS so need 4 coords
-    float mVertices[8];
-    GLRenderContext *mRc;
-public:
-    GLSprite(GLRenderContext *rc, hgame::TextureRegion *texture,
-            int width, int height);
-    virtual void setPosition(int x, int y);
-    virtual void render();
-    void bind();
-};
-
+Image::~Image()
+{
+    SDL_FreeSurface(mSurface);
+}
+    
+int Image::getWidth() const
+{
+    return mSurface->w;
 }
 
-#endif // SDL_GL_GLSPRITE_H
+int Image::getHeight() const
+{
+    return mSurface->h;
+}
+
+}

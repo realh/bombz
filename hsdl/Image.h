@@ -29,8 +29,8 @@
 
 // Image.h: Wrapper for SDL_Surface
 
-#ifndef SDL_IMAGE_H
-#define SDL_IMAGE_H
+#ifndef HSDL_IMAGE_H
+#define HSDL_IMAGE_H
 
 #include "config.h"
 
@@ -38,7 +38,7 @@
 
 #include "hgame/Image.h"
 
-namespace sdl {
+namespace hsdl {
 
 class Image : public hgame::Image {
 private:
@@ -59,4 +59,4 @@ public:
 
 }
 
-#endif // SDL_IMAGE_H
+#endif // HSDL_IMAGE_H

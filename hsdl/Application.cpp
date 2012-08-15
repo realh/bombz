@@ -27,31 +27,35 @@
 
 // HGame - a simple cross-platform game framework
 
-// Translate.h: Interface for looking up strings by a tag (SDL implementation)
+// Application.h: Core SDL Application
 
-#ifndef SDL_TRANSLATE_H
-#define SDL_TRANSLATE_H
+#include "hsdl/Application.h"
 
-#include "config.h"
+#include "SDL.h"
 
-#include <map>
+#include "hsdl/Exception.h"
+#include "hsdl/Log.h"
+#include "hsdl/Platform.h"
+#if ENABLE_OPENGL == 1
+#include "hsdl/GLRenderContext.h"
+#else
+#error "OpenGL is currently compulsory"
+#endif
 
-#include "hgame/Translate.h"
+namespace hsdl {
 
-#include "sdl/Platform.h"
-
-namespace sdl {
-
-class Translate : public hgame::Translate {
-private:
-    std::map<const char *, const char *> mHash;
-    char *mBuffer;
-public:
-    Translate(Platform *platform);
-    ~Translate();
-    const char *operator()(const char *tag) const;
-};
-
+Application::Application(int argc, char **argv) :
+        hgame::Application(new Log("SDLApp"),
+                new Platform(argc, argv),
+                0)
+{
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+        THROW(Exception, "Init failed");
 }
 
-#endif // SDL_TRANSLATE_H
+Application::~Application()
+{
+    SDL_Quit();
+}
+
+}

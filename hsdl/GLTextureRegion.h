@@ -27,20 +27,27 @@
 
 // HGame - a simple cross-platform game framework
 
-// Log.h
+// GLTextureRegion.h: OpenGL version of TextureRegion
 
-#ifndef SDL_LOG_H
-#define SDL_LOG_H
+#ifndef HSDL_GL_TEXTURE_REGION_H
+#define HSDL_GL_TEXTURE_REGION_H
 
 #include "config.h"
 
-#include "hgame/Log.h"
+#include "hgame/TextureRegion.h"
 
-namespace sdl {
+namespace hsdl {
 
-// At the moment I'm using SDL 1.2 which doesn't have logging
-typedef hgame::Log Log;
+class GLTextureRegion : public hgame::TextureRegion {
+public:
+    GLTextureRegion(hgame::TextureAtlas *atlas,
+            float u0, float v0, float u1, float v1);
+    GLTextureRegion(hgame::TextureAtlas *atlas, int x, int y, int w, int h);
+    ~GLTextureRegion();
+private:
+    void initCoords();
+};
 
 }
- 
-#endif // SDL_LOG_H
+
+#endif // HSDL_GL_TEXTURE_REGION_H

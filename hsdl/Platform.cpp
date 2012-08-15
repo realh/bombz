@@ -27,9 +27,9 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "sdl/Exception.h"
-#include "sdl/Image.h"
-#include "sdl/Platform.h"
+#include "hsdl/Exception.h"
+#include "hsdl/Image.h"
+#include "hsdl/Platform.h"
 
 #include <cerrno>
 #include <cstdio>
@@ -43,9 +43,9 @@
 #include <SDL_image.h>
 #include <SDL_platform.h>
 
-#include "sdl/Log.h"
+#include "hsdl/Log.h"
 
-namespace sdl {
+namespace hsdl {
 
 using namespace std;
 

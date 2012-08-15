@@ -27,44 +27,50 @@
 
 // HGame - a simple cross-platform game framework
 
-// See http://en.wikipedia.org/wiki/Triangle_strip
+#include "hsdl/GLRenderContext.h"
 
-#include "sdl/GLSprite.h"
+#include "SDL.h"
+#include "SDL_opengl.h"
 
-#include "hgl/GLRenderContext.h"
+#include "hgame/Log.h"
+
 #include "hgl/GLTextureAtlas.h"
 
-namespace sdl {
+#include "hsdl/Image.h"
 
-GLSprite::GLSprite(GLRenderContext *rc, hgame::TextureRegion *texture,
-            int width, int height) :
-            hgame::Sprite(texture, width, height),
-            mRc(rc)
-{
-}
+namespace hsdl {
 
-void GLSprite::setPosition(int x, int y)
+hgame::TextureAtlas *GLRenderContext::uploadTexture(hgame::Image *img)
 {
-    mVertices[0] = (float) x;
-    mVertices[1] = (float) y;
-    mVertices[2] = (float) x;
-    mVertices[3] = (float) (y + mH);
-    mVertices[4] = (float) (x + mW);
-    mVertices[5] = (float) y;
-    mVertices[6] = (float) (x + mW);
-    mVertices[7] = (float) (y + mH);
-}
-
-void GLSprite::render()
-{
-    glVertexPointer(2, GL_FLOAT, 0, mVertices);
-    glTexCoordPointer(2, GL_FLOAT, 0, mTexture->getCoords());
-    glDrawArrays(GL_QUADS, 0, 4);
-}
-
-void GLSprite::bind()
-{
-    ((hgl::GLTextureAtlas *) mTexture->getAtlas())->bind(mRc);
+    SDL_Surface *surf = ((Image *) img)->getSurface();
+    int w = surf->w;
+    int h = surf->h;
+    GLint bpp = surf->format->BytesPerPixel;
+    GLenum tex_fmt;
+    if (bpp == 4)
+    {
+        if (surf->format->Rmask == 0xff)
+            tex_fmt = GL_RGBA;
+        else
+            tex_fmt = GL_BGRA;
+    }
+    else if (bpp == 3)
+    {
+        if (surf->format->Rmask == 0xff)
+            tex_fmt = GL_RGB;
+        else
+            tex_fmt = GL_BGR;
+    }
+    else
+    {
+        THROW(hgame::Throwable, "Unsupported bytes per pixel: %d", bpp);
+    }
+    hgl::GLTextureAtlas *atlas = new hgl::GLTextureAtlas(this, w, h,
+            needScaling() ? GL_LINEAR : GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, bpp, w, h, 0, tex_fmt, GL_UNSIGNED_BYTE,
+            surf->pixels);
+    delete img;
+    return (hgame::TextureAtlas *) atlas;
 }
 
 }
