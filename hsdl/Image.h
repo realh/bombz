@@ -57,13 +57,17 @@ public:
     }
     
     hgame::Image *createImage(int w, int h);
-    unsigned int getAlphaAt(int x, int y) const;
+    unsigned int getAlphaAt(int x, int y);
     void setAlphaAt(int x, int y, unsigned int alpha);
     void blit(hgame::Image *src, int dest_x, int dest_y,
             int src_x, int src_y, int w, int h);
     void blit(Image *src, int dest_x, int dest_y,
             int src_x, int src_y, int w, int h);
-    
+    void lock();
+    void unlock();
+private:
+    void *getPixelAddr(int x, int y);
+    Uint32 getPixelRawValue(int x, int y, void **pAddr = 0);
 };
 
 }

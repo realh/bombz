@@ -47,8 +47,12 @@ public:
     virtual int getHeight() const = 0;
     
     // Used for creating drop shadows; alpha in range 0-255
-    virtual unsigned int getAlphaAt(int x, int y) const = 0;
+    virtual unsigned int getAlphaAt(int x, int y) = 0;
     virtual void setAlphaAt(int x, int y, unsigned int alpha) = 0;
+    
+    // May be necessary for direct access to pixel data
+    virtual void lock() = 0;
+    virtual void unlock() = 0;
     
     // Copies part of one image into current image
     virtual void blit(Image *src, int dest_x, int dest_y,

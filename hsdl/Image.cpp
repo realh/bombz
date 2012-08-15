@@ -53,16 +53,58 @@ int Image::getHeight() const
     
 hgame::Image *Image::createImage(int w, int h)
 {
-    return 0;
+    Uint32 rm, gm, bm, am;
+    SDL_PixelFormat *fmt = mSurface->format;
+    if (fmt->BitsPerPixel == 32)
+    {
+        rm = fmt->Rmask;
+        gm = fmt->Gmask;
+        bm = fmt->Bmask;
+        am = fmt->Amask;
+    }
+    else
+    {
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        rm = 0xff000000;
+        gm = 0x00ff0000;
+        bm = 0x0000ff00;
+        am = 0x000000ff;
+#else
+        rm = 0x000000ff;
+        gm = 0x0000ff00;
+        bm = 0x00ff0000;
+        am = 0xff000000;
+#endif
+    }
+    SDL_Surface *surf = SDL_CreateRGBSurface(SDL_SRCALPHA, w, h, 32,
+            rm, gm, bm, am);
+    return new Image(surf);
 }
 
-unsigned int Image::getAlphaAt(int x, int y) const
+unsigned int Image::getAlphaAt(int x, int y)
 {
-    return 0;
+    SDL_PixelFormat *fmt = mSurface->format;
+    return ((getPixelRawValue(x, y) & fmt->Amask) >> fmt->Ashift) << fmt->Aloss;
 }
 
 void Image::setAlphaAt(int x, int y, unsigned int alpha)
 {
+    SDL_PixelFormat *fmt = mSurface->format;
+    void *ppix;
+    Uint32 pix = (getPixelRawValue(x, y, &ppix) & ~fmt->Amask) |
+            (((alpha >> fmt->Aloss) << fmt->Ashift) & fmt->Amask);
+    if (fmt->BitsPerPixel >= 24)
+    {
+        *((Uint32 *) ppix) = pix;
+    }
+    else if (fmt->BitsPerPixel >= 15)
+    {
+        *((Uint16 *) ppix) = pix;
+    }
+    else
+    {
+        *((Uint8 *) ppix) = pix;
+    }
 }
 
 void Image::blit(hgame::Image *src, int dest_x, int dest_y,
@@ -74,6 +116,56 @@ void Image::blit(hgame::Image *src, int dest_x, int dest_y,
 void Image::blit(Image *src, int dest_x, int dest_y,
         int src_x, int src_y, int w, int h)
 {
+    SDL_Rect src_rect;
+    SDL_Rect dest_rect;
+    src_rect.x = src_x;
+    src_rect.y = src_y;
+    src_rect.w = w;
+    src_rect.h = h;
+    dest_rect.x = dest_x;
+    dest_rect.y = dest_y;
+    dest_rect.w = w;
+    dest_rect.h = h;
+    if (SDL_BlitSurface(src->mSurface, &src_rect, mSurface, &dest_rect))
+    {
+        THROW(Exception, "Image blit failed");
+    }
+}
+
+void *Image::getPixelAddr(int x, int y)
+{
+    return (void *) (((char *) mSurface->pixels) + mSurface->pitch * y +
+            x * mSurface->format->BytesPerPixel);
+}
+
+Uint32 Image::getPixelRawValue(int x, int y, void **pAddr)
+{
+    SDL_PixelFormat *fmt = mSurface->format;
+    void *ppix = getPixelAddr(x, y);
+    if (pAddr)
+        *pAddr = ppix;
+    if (fmt->BitsPerPixel >= 24)
+    {
+        return *((Uint32 *) ppix);
+    }
+    else if (fmt->BitsPerPixel >= 15)
+    {
+        return (Uint32) *((Uint16 *) ppix);
+    }
+    return (Uint32) *((Uint8 *) ppix);
+}
+
+void Image::lock()
+{
+    if (SDL_LockSurface(mSurface))
+    {
+        THROW(Exception, "Unable to lock surface");
+    }
+}
+
+void Image::unlock()
+{
+    SDL_UnlockSurface(mSurface);
 }
 
 }
