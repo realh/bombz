@@ -57,7 +57,7 @@ def init(ctx):
             
     elif ctx.mode == 'clean' or ctx.mode == 'pristine':
     
-        ctx.recursively_remove("${TOP_DIR}/share")
+        ctx.recursively_remove("${TOP_DIR}/share/bombz/pngs")
         if ctx.mode == 'pristine':
             for f in ctx.glob("*.pyc", "${TOP_DIR}"):
                 ctx.delete(f)
