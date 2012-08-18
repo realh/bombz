@@ -27,50 +27,32 @@
 
 // HGame - a simple cross-platform game framework
 
-// Image.h: Wrapper for SDL_Surface
+// Font.h: Create Images from rendered text using SDL_ttf
 
-#ifndef HSDL_IMAGE_H
-#define HSDL_IMAGE_H
+#ifndef HSDL_FONT_H
+#define HSDL_FONT_H
 
 #include "config.h"
 
-#include "SDL.h"
+#include "hgame/Font.h"
 
-#include "hgame/Image.h"
-#include "hgame/Types.h"
+#include "SDL_ttf.h"
 
 namespace hsdl {
 
-class Image : public hgame::Image {
+class Font {
 private:
-    SDL_Surface *mSurface;
+    TTF_Font *mFont;
+    static const char *smPath;
 public:
-    Image(SDL_Surface *surf) : mSurface(surf) {}
-    ~Image();
+    hgame::Image *render(hgame::Colour colour, const char *text);
     
-    int getWidth() const;
-    int getHeight() const;
+    // px = size in pixels. Face is chosen internally
+    Font(unsigned int px);
     
-    // Use with care!
-    inline SDL_Surface *getSurface()
-    {
-        return mSurface;
-    }
-    
-    hgame::Image *createImage(int w, int h);
-    hgame::HUInt8 getAlphaAt(int x, int y);
-    void setAlphaAt(int x, int y, hgame::HUInt8 alpha);
-    void blit(hgame::Image *src, int dest_x, int dest_y,
-            int src_x, int src_y, int w, int h);
-    void blit(Image *src, int dest_x, int dest_y,
-            int src_x, int src_y, int w, int h);
-    void lock();
-    void unlock();
-private:
-    void *getPixelAddr(int x, int y);
-    Uint32 getPixelRawValue(int x, int y, void **pAddr = 0);
+    ~Font();
 };
 
 }
 
-#endif // HSDL_IMAGE_H
+#endif // HSDL_FONT_H

@@ -34,13 +34,15 @@
 
 #include "config.h"
 
+#include "hgame/Image.h"
 #include "hgame/Types.h"
 
 namespace hgame {
 
-class Image {
+class Font {
 public:
-    virtual Image *render(unsigned int px, Colour colour) = 0;
+    // Text should be UTF-8; colour's alpha is ignored
+    virtual Image *render(Colour colour, const char *text) = 0;
     
     virtual ~Font();
 };

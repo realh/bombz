@@ -34,9 +34,11 @@
 
 #include "config.h"
 
+#include <climits>
+
 namespace hgame {
 
-#if sizeof(long) == 8
+#if ULONG_MAX == 0xffffffffffffffffUL
 typedef long HInt64;
 typedef unsigned long HUInt64;
 #else

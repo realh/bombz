@@ -49,8 +49,8 @@ public:
     virtual int getHeight() const = 0;
     
     // Used for creating drop shadows; alpha in range 0-255
-    virtual UInt8 getAlphaAt(int x, int y) = 0;
-    virtual void setAlphaAt(int x, int y, UInt8 alpha) = 0;
+    virtual HUInt8 getAlphaAt(int x, int y) = 0;
+    virtual void setAlphaAt(int x, int y, HUInt8 alpha) = 0;
     
     // May be necessary for direct access to pixel data
     virtual void lock() = 0;

@@ -27,50 +27,43 @@
 
 // HGame - a simple cross-platform game framework
 
-// Image.h: Wrapper for SDL_Surface
-
-#ifndef HSDL_IMAGE_H
-#define HSDL_IMAGE_H
-
-#include "config.h"
-
-#include "SDL.h"
-
-#include "hgame/Image.h"
-#include "hgame/Types.h"
+#include "hsdl/Exception.h"
+#include "hsdl/Font.h"
+#include "hsdl/Image.h"
 
 namespace hsdl {
 
-class Image : public hgame::Image {
-private:
-    SDL_Surface *mSurface;
-public:
-    Image(SDL_Surface *surf) : mSurface(surf) {}
-    ~Image();
-    
-    int getWidth() const;
-    int getHeight() const;
-    
-    // Use with care!
-    inline SDL_Surface *getSurface()
-    {
-        return mSurface;
-    }
-    
-    hgame::Image *createImage(int w, int h);
-    hgame::HUInt8 getAlphaAt(int x, int y);
-    void setAlphaAt(int x, int y, hgame::HUInt8 alpha);
-    void blit(hgame::Image *src, int dest_x, int dest_y,
-            int src_x, int src_y, int w, int h);
-    void blit(Image *src, int dest_x, int dest_y,
-            int src_x, int src_y, int w, int h);
-    void lock();
-    void unlock();
-private:
-    void *getPixelAddr(int x, int y);
-    Uint32 getPixelRawValue(int x, int y, void **pAddr = 0);
-};
+const char *Font::smPath = 0;
 
+hgame::Image *Font::render(hgame::Colour colour, const char *text)
+{
+    SDL_Color sc;
+    sc.r = colour.getRed();
+    sc.g = colour.getGreen();
+    sc.b = colour.getBlue();
+    return new Image(TTF_RenderUTF8_Blended(mFont, text, sc));
+}
+    
+Font::Font(unsigned int px)
+{
+    if (!smPath)
+    {
+        if (TTF_Init())
+        {
+            THROW(Exception, "Unable to initialise font system");
+        }
+        smPath = WITH_FONT;
+    }
+    mFont = TTF_OpenFont(smPath, px);
+    if (!mFont)
+    {
+        THROW(Exception, "Unable to load font '%s' at size %d", smPath, px);
+    }
+}
+    
+Font::~Font()
+{
+    TTF_CloseFont(mFont);
 }
 
-#endif // HSDL_IMAGE_H
+}

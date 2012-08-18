@@ -26,7 +26,7 @@ def init(ctx):
         ctx.arg_disable("opengl", "Disable OpenGL rendering " \
                 "(for future compatibility - currently OpenGL is compulsory)")
         
-        ctx.pkg_config("sdl SDL_image", "SDL")
+        ctx.pkg_config("sdl SDL_image SDL_ttf", "SDL")
         
         if ctx.env['ENABLE_OPENGL']:
             ctx.pkg_config("gl", "OPENGL")
