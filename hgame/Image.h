@@ -35,6 +35,8 @@
 
 #include "config.h"
 
+#include "hgame/Types.h"
+
 namespace hgame {
 
 class Image {
@@ -47,8 +49,8 @@ public:
     virtual int getHeight() const = 0;
     
     // Used for creating drop shadows; alpha in range 0-255
-    virtual unsigned int getAlphaAt(int x, int y) = 0;
-    virtual void setAlphaAt(int x, int y, unsigned int alpha) = 0;
+    virtual UInt8 getAlphaAt(int x, int y) = 0;
+    virtual void setAlphaAt(int x, int y, UInt8 alpha) = 0;
     
     // May be necessary for direct access to pixel data
     virtual void lock() = 0;

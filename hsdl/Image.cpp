@@ -81,18 +81,18 @@ hgame::Image *Image::createImage(int w, int h)
     return new Image(surf);
 }
 
-unsigned int Image::getAlphaAt(int x, int y)
+hgame::UInt8 Image::getAlphaAt(int x, int y)
 {
     SDL_PixelFormat *fmt = mSurface->format;
     return ((getPixelRawValue(x, y) & fmt->Amask) >> fmt->Ashift) << fmt->Aloss;
 }
 
-void Image::setAlphaAt(int x, int y, unsigned int alpha)
+void Image::setAlphaAt(int x, int y, hgame::UInt8 alpha)
 {
     SDL_PixelFormat *fmt = mSurface->format;
     void *ppix;
     Uint32 pix = (getPixelRawValue(x, y, &ppix) & ~fmt->Amask) |
-            (((alpha >> fmt->Aloss) << fmt->Ashift) & fmt->Amask);
+        ((((hgame::UInt32) alpha >> fmt->Aloss) << fmt->Ashift) & fmt->Amask);
     if (fmt->BitsPerPixel >= 24)
     {
         *((Uint32 *) ppix) = pix;

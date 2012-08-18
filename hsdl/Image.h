@@ -37,6 +37,7 @@
 #include "SDL.h"
 
 #include "hgame/Image.h"
+#include "hgame/Types.h"
 
 namespace hsdl {
 
@@ -57,8 +58,8 @@ public:
     }
     
     hgame::Image *createImage(int w, int h);
-    unsigned int getAlphaAt(int x, int y);
-    void setAlphaAt(int x, int y, unsigned int alpha);
+    hgame::UInt8 getAlphaAt(int x, int y);
+    void setAlphaAt(int x, int y, hgame::UInt8 alpha);
     void blit(hgame::Image *src, int dest_x, int dest_y,
             int src_x, int src_y, int w, int h);
     void blit(Image *src, int dest_x, int dest_y,

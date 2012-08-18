@@ -39,6 +39,9 @@ def init(ctx):
         
         ctx.define_from_var("APPNAME_LOWER")
         ctx.define("WITH_SDL", 1)
+        # FIXME: Font should be configurable with default to shipped Bitstream
+        ctx.define("WITH_FONT",
+                "/usr/share/fonts/truetype/freefont/FreeSans.ttf")
     
     elif ctx.mode == 'build':
     
