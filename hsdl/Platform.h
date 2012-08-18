@@ -62,6 +62,8 @@ public:
     
     hgame::Image *loadPNG(const char *leafname);
     
+    hgame::Font *loadFont(unsigned int px);
+    
     Platform(int argc, char **argv);
     ~Platform();
 

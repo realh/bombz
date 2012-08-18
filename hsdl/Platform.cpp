@@ -28,6 +28,7 @@
 // HGame - a simple cross-platform game framework
 
 #include "hsdl/Exception.h"
+#include "hsdl/Font.h"
 #include "hsdl/Image.h"
 #include "hsdl/Platform.h"
 
@@ -156,6 +157,11 @@ hgame::Image *Platform::loadPNG(const char *leafname)
     return new Image(surf);
 }
     
+hgame::Font *Platform::loadFont(unsigned int px)
+{
+    return new Font(px);
+}
+
 Platform::Platform(int argc, char **argv) :
         mLog(*new Log("sdl::Platform"))
 {

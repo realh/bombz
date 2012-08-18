@@ -40,7 +40,7 @@
 
 namespace hsdl {
 
-class Font {
+class Font : public hgame::Font {
 private:
     TTF_Font *mFont;
     static const char *smPath;

@@ -35,6 +35,7 @@
 
 #include "config.h"
 
+#include "hgame/Font.h"
 #include "hgame/Image.h"
 
 namespace hgame {
@@ -72,6 +73,8 @@ public:
     virtual Image *loadPNG(const char *leafname) = 0;
     
     virtual ~Platform();
+    
+    virtual Font *loadFont(unsigned int px) = 0;
 };
 
 }
