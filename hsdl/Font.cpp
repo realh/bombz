@@ -31,6 +31,8 @@
 #include "hsdl/Font.h"
 #include "hsdl/Image.h"
 
+#include <cstdio>
+
 namespace hsdl {
 
 const char *Font::smPath = 0;

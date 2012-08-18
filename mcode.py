@@ -13,7 +13,8 @@ def add_envs(envs):
     envs["BOMBZ_LIBS"] = "${SDL_LIBS} ${OPENGL_LIBS}"
     envs["BUILD_SUBDIRS"] = "${BUILD_DIR}/hgame " \
             "${BUILD_DIR}/hgl " \
-            "${BUILD_DIR}/hsdl"
+            "${BUILD_DIR}/hsdl " \
+            "${BUILD_DIR}/tests "
 
 def init(ctx):
     global __already_run
@@ -27,6 +28,7 @@ def init(ctx):
                 "(for future compatibility - currently OpenGL is compulsory)")
         
         ctx.pkg_config("sdl SDL_image SDL_ttf", "SDL")
+        ctx.pkg_config("libpng")
         
         if ctx.env['ENABLE_OPENGL']:
             ctx.pkg_config("gl", "OPENGL")
@@ -45,10 +47,10 @@ def init(ctx):
     
     elif ctx.mode == 'build':
     
-        sources = ctx.glob_src("*.cpp", "hgame", False) + \
+        lib_sources = ctx.glob_src("*.cpp", "hgame", False) + \
                 ctx.glob_src("*.cpp", "hsdl", False) + \
-                ctx.glob_src("*.cpp", "hgl", False) + \
-                ["SDLMain.cpp"]
+                ctx.glob_src("*.cpp", "hgl", False)
+        sources = lib_sources + ["SDLMain.cpp"]
         for c in sources:
             ctx.add_rule(CxxRule(sources = c,
                 cxxflags = "${BOMBZ_CXXFLAGS}",
@@ -61,6 +63,17 @@ def init(ctx):
             wdeps = "${BIN_DIR}"))
         ctx.add_rule(Rule(rule = "mkdir -p ${TGT}",
                 targets = "${BIN_DIR} ${BUILD_SUBDIRS}"))
+        
+        ctx.add_rule(CxxRule(sources = "tests/sdlfont.cpp",
+            cxxflags = "${BOMBZ_CXXFLAGS} ${LIBPNG_CFLAGS}",
+            wdeps = "${BUILD_SUBDIRS}"))
+        ctx.add_rule(CxxProgramRule(
+            sources = change_suffix(lib_sources + ["tests/sdlfont.cpp"],
+                    ".cpp", ".o"),
+            targets = "tests/sdlfont",
+            cxxflags = "${BOMBZ_CXXFLAGS} ${LIBPNG_CFLAGS}",
+            libs = "${BOMBZ_LIBS} ${LIBPNG_LIBS}",
+            wdeps = "tests"))
             
     elif ctx.mode == 'clean' or ctx.mode == 'pristine':
     
