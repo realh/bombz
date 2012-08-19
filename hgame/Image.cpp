@@ -169,6 +169,7 @@ void Image::blit(Image *src, int dest_x, int dest_y,
             Colour dest_c = getColourAt(dest_x + x, dest_y + y);
             HUInt32 src_a = src_c.getAlpha();
             HUInt32 dest_a = dest_c.getAlpha();
+            // See http://en.wikipedia.org/wiki/Alpha_compositing
             dest_c.setRed(src_c.getRed() * src_a / 255 +
                     dest_c.getRed() * dest_a / 255 * (255 - dest_a) / 255);
             dest_c.setGreen(src_c.getGreen() * src_a / 255 +
