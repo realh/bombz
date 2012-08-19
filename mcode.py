@@ -26,6 +26,7 @@ def init(ctx):
     
         ctx.arg_disable("opengl", "Disable OpenGL rendering " \
                 "(for future compatibility - currently OpenGL is compulsory)")
+        ctx.arg_disable("shadows", "Disable drop shadows under menu text")
         
         ctx.pkg_config("sdl SDL_image SDL_ttf", "SDL")
         ctx.pkg_config("libpng")
@@ -44,6 +45,7 @@ def init(ctx):
         # FIXME: Font should be configurable with default to shipped Bitstream
         ctx.define("WITH_FONT",
                 "/usr/share/fonts/truetype/freefont/FreeSans.ttf")
+        ctx.define_from_var("ENABLE_SHADOWS")
     
     elif ctx.mode == 'build':
     

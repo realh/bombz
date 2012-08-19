@@ -111,6 +111,11 @@ int main(int argc, char **argv)
         font = platform->loadFont(64);
         img = (hsdl::Image *) font->render(hgame::Colour(0x8000),
                 "Hello world!");
+#if ENABLE_SHADOWS
+        hsdl::Image *plain = img;
+        img = (hsdl::Image *) plain->createShadow(8);
+        delete plain;
+#endif
     }
     catch (hsdl::Exception e)
     {

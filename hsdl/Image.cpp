@@ -81,6 +81,30 @@ hgame::Image *Image::createImage(int w, int h)
     return new Image(surf);
 }
 
+hgame::Colour Image::getColourAt(int x, int y)
+{
+    SDL_PixelFormat *fmt = mSurface->format;
+    Uint32 raw = getPixelRawValue(x, y);
+    return hgame::Colour(((raw & fmt->Rmask) >> fmt->Rshift) << fmt->Rloss,
+            ((raw & fmt->Gmask) >> fmt->Gshift) << fmt->Gloss,
+            ((raw & fmt->Bmask) >> fmt->Bshift) << fmt->Bloss,
+            ((raw & fmt->Amask) >> fmt->Ashift) << fmt->Aloss);
+}
+
+void Image::setColourAt(int x, int y, hgame::Colour colour)
+{
+    SDL_PixelFormat *fmt = mSurface->format;
+    Uint32 pix = ((((Uint32) colour.getRed() >> fmt->Rloss) << fmt->Rshift) &
+                    fmt->Rmask) |
+            ((((Uint32) colour.getGreen() >> fmt->Gloss) << fmt->Gshift) &
+                    fmt->Gmask) |
+            ((((Uint32) colour.getBlue() >> fmt->Bloss) << fmt->Bshift) &
+                    fmt->Bmask) |
+            ((((Uint32) colour.getAlpha() >> fmt->Aloss) << fmt->Ashift) &
+                    fmt->Amask);
+    setPixelRawValue(x, y, pix);
+}
+
 hgame::HUInt8 Image::getAlphaAt(int x, int y)
 {
     SDL_PixelFormat *fmt = mSurface->format;
@@ -90,32 +114,41 @@ hgame::HUInt8 Image::getAlphaAt(int x, int y)
 void Image::setAlphaAt(int x, int y, hgame::HUInt8 alpha)
 {
     SDL_PixelFormat *fmt = mSurface->format;
-    void *ppix;
-    Uint32 pix = (getPixelRawValue(x, y, &ppix) & ~fmt->Amask) |
-        ((((hgame::HUInt32) alpha >> fmt->Aloss) << fmt->Ashift) & fmt->Amask);
+    void *addr;
+    Uint32 pix = (getPixelRawValue(x, y, &addr) & ~fmt->Amask) |
+        ((((Uint32) alpha >> fmt->Aloss) << fmt->Ashift) & fmt->Amask);
+    setPixelRawValue(addr, pix);
+}
+
+void Image::setPixelRawValue(int x, int y, hgame::HUInt32 pix)
+{
+    setPixelRawValue(getPixelAddr(x, y), pix);
+}
+
+void Image::setPixelRawValue(void *addr, hgame::HUInt32 pix)
+{
+    if (!addr)
+        return;
+    SDL_PixelFormat *fmt = mSurface->format;
     if (fmt->BitsPerPixel >= 24)
     {
-        *((Uint32 *) ppix) = pix;
+        *((Uint32 *) addr) = pix;
     }
     else if (fmt->BitsPerPixel >= 15)
     {
-        *((Uint16 *) ppix) = pix;
+        *((Uint16 *) addr) = pix;
     }
     else
     {
-        *((Uint8 *) ppix) = pix;
+        *((Uint8 *) addr) = pix;
     }
 }
 
-void Image::blit(hgame::Image *src, int dest_x, int dest_y,
+/*
+void Image::blit(hgame::Image *src0, int dest_x, int dest_y,
         int src_x, int src_y, int w, int h)
 {
-    blit((Image *) src, dest_x, dest_y, src_x, src_y, w, h);
-}
-
-void Image::blit(Image *src, int dest_x, int dest_y,
-        int src_x, int src_y, int w, int h)
-{
+    Image *src = (Image *) src0;
     SDL_Rect src_rect;
     SDL_Rect dest_rect;
     src_rect.x = src_x;
@@ -131,9 +164,12 @@ void Image::blit(Image *src, int dest_x, int dest_y,
         THROW(Exception, "Image blit failed");
     }
 }
+*/
 
 void *Image::getPixelAddr(int x, int y)
 {
+    if (x < 0 || x >= mSurface->w || y < 0 || y >= mSurface->h)
+        return 0;
     return (void *) (((char *) mSurface->pixels) + mSurface->pitch * y +
             x * mSurface->format->BytesPerPixel);
 }
@@ -144,6 +180,8 @@ Uint32 Image::getPixelRawValue(int x, int y, void **pAddr)
     void *ppix = getPixelAddr(x, y);
     if (pAddr)
         *pAddr = ppix;
+    if (!ppix)
+        return 0;
     if (fmt->BitsPerPixel >= 24)
     {
         return *((Uint32 *) ppix);

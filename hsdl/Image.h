@@ -57,18 +57,27 @@ public:
         return mSurface;
     }
     
-    hgame::Image *createImage(int w, int h);
+    hgame::Colour getColourAt(int x, int y);
+    void setColourAt(int x, int y, hgame::Colour colour);
+    
     hgame::HUInt8 getAlphaAt(int x, int y);
     void setAlphaAt(int x, int y, hgame::HUInt8 alpha);
+    
+    hgame::Image *createImage(int w, int h);
+    
+    // SDL_BlitSurface is broken
+    /*
     void blit(hgame::Image *src, int dest_x, int dest_y,
             int src_x, int src_y, int w, int h);
-    void blit(Image *src, int dest_x, int dest_y,
-            int src_x, int src_y, int w, int h);
+    */
+    
     void lock();
     void unlock();
 private:
     void *getPixelAddr(int x, int y);
     Uint32 getPixelRawValue(int x, int y, void **pAddr = 0);
+    void setPixelRawValue(int x, int y, hgame::HUInt32 pix);
+    void setPixelRawValue(void *addr, hgame::HUInt32 pix);
 };
 
 }
