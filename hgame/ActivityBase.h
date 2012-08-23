@@ -45,8 +45,8 @@ class ActivityBase : public Runnable {
     // calling stopRendering before destroying any resources associated with
     // the RenderContext.
 protected:
-    Log &mLog;
     Application *mApplication;
+    Log &mLog;
     volatile bool mRunning;
 public:
     inline Application *getApplication()
@@ -67,7 +67,7 @@ public:
     }
     
     // subclasses must initialise log
-    ActivityBase(Application *app) : mApplication(app)
+    ActivityBase(Application *app, Log *log) : mApplication(app), mLog(*log)
     {
     }
     
@@ -80,7 +80,6 @@ public:
     // Called by Application when the activity should be shut down
     virtual void stop();
     
-protected:
     // Called on the rendering thread
     virtual void render() = 0;
     

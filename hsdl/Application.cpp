@@ -33,9 +33,12 @@
 
 #include "SDL.h"
 
+#include "hgame/Activity.h"
+
 #include "hsdl/Exception.h"
 #include "hsdl/Log.h"
 #include "hsdl/Platform.h"
+#include "hsdl/Thread.h"
 #if ENABLE_OPENGL == 1
 #include "hsdl/GLRenderContext.h"
 #else
@@ -47,8 +50,9 @@ namespace hsdl {
 Application::Application(int argc, char **argv) :
         hgame::Application(new Log("SDLApp"),
                 new Platform(argc, argv),
-                0)
+                0, new ThreadFactory())
 {
+    mRenderingCond = createCond();
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
         THROW(Exception, "Init failed");
 }
@@ -56,6 +60,34 @@ Application::Application(int argc, char **argv) :
 Application::~Application()
 {
     SDL_Quit();
+}
+
+void Application::start()
+{
+    mActivity->start();
+    while (true) // FIXME: Need some sort of stop condition
+    {
+        mRenderingCond->wait();
+        mRenderingCond->getMutex()->lock();
+        mRenderer->run();
+        mRenderingCond->getMutex()->unlock();
+    }
+}
+
+void Application::startRendering(hgame::Runnable *r)
+{
+    mRenderingCond->getMutex()->lock();
+    mRenderer = r;
+    mRenderingCond->signal();
+    mRenderingCond->getMutex()->unlock();
+}
+
+int Application::awaitRendering()
+{
+    // Just wait for cond to be unlocked after running mRenderer
+    mRenderingCond->getMutex()->lock();
+    mRenderingCond->getMutex()->unlock();
+    return 0;
 }
 
 }

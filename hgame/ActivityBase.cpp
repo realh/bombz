@@ -31,7 +31,7 @@
 
 namespace hgame {
 
-~ActivityBase()
+ActivityBase::~ActivityBase()
 {
 }
     
@@ -40,7 +40,7 @@ void ActivityBase::start()
     mRunning = true;
 }
     
-void ActivityBase:stop()
+void ActivityBase::stop()
 {
     mRunning = false;
 }

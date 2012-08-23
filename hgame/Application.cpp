@@ -31,8 +31,10 @@
 
 namespace hgame {
 
-Application::Application(Log *log, Platform *platform, RenderContext *rc) :
-        mLog(*log), mPlatform(platform), mRenderContext(rc)
+Application::Application(Log *log, Platform *platform, RenderContext *rc,
+        ThreadFactory *thread_fact) :
+        mLog(*log), mPlatform(platform), mRenderContext(rc),
+        mThreadFactory(thread_fact), mActivity(0)
 {
 }
 

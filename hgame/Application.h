@@ -37,19 +37,60 @@
 #include "hgame/Log.h"
 #include "hgame/Platform.h"
 #include "hgame/RenderContext.h"
+#include "hgame/Thread.h"
 
 namespace hgame {
+
+class Activity;
 
 class Application {
 protected:
     Log &mLog;
     Platform *mPlatform;
     RenderContext *mRenderContext;
+    ThreadFactory *mThreadFactory;
+    Activity *mActivity;
 public:
     inline RenderContext *getRenderContext() { return mRenderContext; }
     inline Platform *getPlatform() { return mPlatform; }
-    Application(Log *log, Platform *platform, RenderContext *rc);
+    Application(Log *log, Platform *platform, RenderContext *rc,
+            ThreadFactory *thread_fact);
     virtual ~Application();
+    
+    Mutex *createMutex()
+    {
+        return mThreadFactory->createMutex();
+    }
+    Cond *createCond(Mutex *mutex = 0)
+    {
+        return mThreadFactory->createCond(mutex);
+    }
+    Thread *createThread(Runnable *r, const char *name = 0)
+    {
+        return mThreadFactory->createThread(r, name);
+    }
+    
+    // Either starts a thread for rendering or activates rendering in
+    // main thread depending on implementation. Either way, should be called
+    // from a different thread.
+    virtual void startRendering(Runnable *r) = 0;
+    
+    // Waits for rendering to stop, either by joining the thread, or waiting
+    // on a cond depending on implementation. Either way, should be called
+    // from a different thread.
+    virtual int awaitRendering() = 0;
+    
+    void setActivity(Activity *activity)
+    {
+        mActivity = activity;
+    }
+    
+    Activity *getActivity()
+    {
+        return mActivity;
+    }
+    
+    virtual void start() = 0;
 };
 
 }

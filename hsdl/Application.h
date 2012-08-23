@@ -39,9 +39,15 @@
 namespace hsdl {
 
 class Application : public hgame::Application {
+private:
+    hgame::Cond *mRenderingCond;
+    hgame::Runnable *mRenderer;
 public:
     Application(int argc, char **argv);
     ~Application();
+    void startRendering(hgame::Runnable *r);
+    int awaitRendering();
+    void start();
 };
 
 }

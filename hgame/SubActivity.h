@@ -44,9 +44,9 @@ class SubActivity : public ActivityBase {
 protected:
     ActivityBase *mParentActivity;
 public:
-    SubActivity(mParentActivity *parent) :
-            mParentActivity(parent),
-            ActivityBase(parent->getApplication())
+    SubActivity(ActivityBase *parent, Log *log) :
+            ActivityBase(parent->getApplication(), log),
+            mParentActivity(parent)
     {}
     
     void requestRender();

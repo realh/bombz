@@ -40,10 +40,13 @@ namespace hgame {
 
 class Activity : public ActivityBase {
 private:
-    SubActivity *mSubActivity;
     Runnable *mRenderLoop;
+    SubActivity *mSubActivity;
+    Thread *mThread;
+    Cond *mRenderCond;
+    volatile bool mRenderNeeded;
 public:
-    Activity(Application *app);
+    Activity(Application *app, Log *log, const char *name);
     
     virtual ~Activity();
     
@@ -53,12 +56,16 @@ public:
     
     virtual int run();
     
-    void setSubActivity();
+    void setSubActivity(SubActivity *subact);
+    
+    inline SubActivity *getSubActivity()
+    {
+        return mSubActivity;
+    }
     
     // Called by mRenderLoop
     int runRenderLoop();
     
-protected:
     void render();
     
     void requestRender();

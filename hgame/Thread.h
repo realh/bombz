@@ -42,6 +42,10 @@ class Mutex {
 public:
     virtual void lock() = 0;
     virtual void release() = 0;
+    inline void unlock()
+    {
+        release();
+    }
     virtual ~Mutex();
 };
 
