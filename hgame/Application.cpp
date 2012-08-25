@@ -91,4 +91,9 @@ void Application::requestRender(bool shutdown)
     }
 }
 
+void Application::stop()
+{
+    requestRender(true);
+}
+
 }

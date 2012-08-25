@@ -88,7 +88,12 @@ public:
         return mActivity;
     }
     
+    // Call to get everything going after setActivity()
     virtual void start() = 0;
+    
+    // Call to shut everything down from Activity when finished; default
+    // implementation calls requestRender(true)
+    virtual void stop();
     
 protected:
     virtual void renderLoop();
