@@ -45,7 +45,6 @@ private:
     GLRenderContext *mRc;
     float *mVertices;
 public:
-    // See Sprite.h re rc
     GLTileBatcher(GLRenderContext *rc, int nColumns, int nRows, int tile_size);
     ~GLTileBatcher();
     

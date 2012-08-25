@@ -36,6 +36,8 @@
 
 #include "hgl/GLTextureAtlas.h"
 
+#include "hsdl/GLSprite.h"
+#include "hsdl/GLTileBatcher.h"
 #include "hsdl/Image.h"
 
 namespace hsdl {
@@ -73,4 +75,16 @@ hgame::TextureAtlas *GLRenderContext::uploadTexture(hgame::Image *img)
     return (hgame::TextureAtlas *) atlas;
 }
 
+hgame::Sprite *GLRenderContext::createSprite(hgame::TextureRegion *texture,
+            int width, int height)
+{
+    return new GLSprite(this, texture, width, height);
+}
+
+hgame::TileBatcher *GLRenderContext::createTileBatcher(int nColumns, int nRows,
+        int tile_size)
+{
+    return new GLTileBatcher(this, nColumns, nRows, tile_size);
+}
+    
 }

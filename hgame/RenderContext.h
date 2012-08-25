@@ -39,6 +39,10 @@
 
 namespace hgame {
 
+class Sprite;
+class TextureRegion;
+class TileBatcher;
+
 class RenderContext {
 public:
     virtual ~RenderContext();
@@ -52,6 +56,12 @@ public:
     
     // Whether tiles need resizing to fit screen
     virtual bool needScaling() const = 0;
+
+    virtual Sprite *createSprite(TextureRegion *texture,
+            int width, int height) = 0;
+    
+    virtual TileBatcher *createTileBatcher(int nColumns, int nRows,
+            int tile_size) = 0;
 };
 
 }

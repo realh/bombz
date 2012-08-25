@@ -41,6 +41,10 @@ namespace hsdl {
 class GLRenderContext : public hgl::GLRenderContext {
 public:
     hgame::TextureAtlas *uploadTexture(hgame::Image *img);
+    hgame::Sprite *createSprite(hgame::TextureRegion *texture,
+            int width, int height);
+    hgame::TileBatcher *createTileBatcher(int nColumns, int nRows,
+            int tile_size);
 };
 
 }
