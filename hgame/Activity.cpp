@@ -32,7 +32,7 @@
 namespace hgame {
 
 Activity::Activity(Application *app, Log *log, const char *name) :
-        ActivityBase(app, log), mRenderLoop(0), mSubActivity(0),
+        ActivityBase(app, log), mSubActivity(0),
         mRenderNeeded(false)
 {
     mThread = app->createThread(this, name);
@@ -68,6 +68,7 @@ int Activity::run()
     {
         result = mSubActivity->run();
     }
+    mApplication->stop();
     return result;
 }
 

@@ -36,7 +36,7 @@ Application::Application(Log *log, Platform *platform, RenderContext *rc,
         ThreadFactory *thread_fact) :
         mLog(*log), mPlatform(platform), mRenderContext(rc),
         mThreadFactory(thread_fact), mActivity(0),
-        mRenderWaiting(false), mRenderShutdown(false)
+        mRenderWaiting(false), mRenderShutdown(false), mRenderLooping(false)
 {
     mRenderingCond = createCond();
 }
@@ -53,8 +53,9 @@ void Application::renderLoop()
 {
     mRenderingCond->getMutex()->lock();
     bool wait = !(mRenderWaiting = true);
+    mRenderLooping = true;
     mRenderingCond->getMutex()->unlock();
-    while (true) // FIXME: Need some sort of stop condition
+    while (mRenderLooping)
     {
         if (wait)
             mRenderingCond->wait();
@@ -78,6 +79,11 @@ void Application::renderLoop()
 void Application::requestRender(bool shutdown)
 {
     mRenderingCond->getMutex()->lock();
+    requestRenderAlreadyLocked(shutdown);
+}
+
+void Application::requestRenderAlreadyLocked(bool shutdown)
+{
     if (shutdown)
         mRenderShutdown = true;
     if (mRenderWaiting)
@@ -93,7 +99,16 @@ void Application::requestRender(bool shutdown)
 
 void Application::stop()
 {
-    requestRender(true);
+    mRenderingCond->getMutex()->lock();
+    if (mRenderLooping)
+    {
+        mRenderLooping = false;
+        requestRenderAlreadyLocked(true);
+    }
+    else
+    {
+        mRenderingCond->getMutex()->unlock();
+    }
 }
 
 }

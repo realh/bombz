@@ -40,7 +40,6 @@ namespace hgame {
 
 class Activity : public ActivityBase {
 private:
-    Runnable *mRenderLoop;
     SubActivity *mSubActivity;
     Thread *mThread;
     Cond *mRenderCond;
@@ -50,8 +49,10 @@ public:
     
     virtual ~Activity();
     
+    // Starts the thread
     virtual void start();
     
+    // Asks thread to stop and waits/joins
     virtual void stop();
     
     virtual int run();
@@ -64,6 +65,14 @@ public:
     }
     
     virtual void render();
+    
+    // Called from rendering thread when a context becomes available.
+    // Load textures etc here
+    virtual void initRendering(RenderContext *rc) = 0;
+    
+    // Called when a render context is being destroyed or when requested
+    // by Application::requestRender()
+    virtual void deleteRendering(RenderContext *rc) = 0;
 };
 
 }

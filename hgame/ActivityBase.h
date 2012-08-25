@@ -79,15 +79,6 @@ public:
     
     // Called on the rendering thread
     virtual void render() = 0;
-    
-    // Called from rendering thread when a context becomes available.
-    // Load textures etc here
-    virtual void initRendering(RenderContext *rc) = 0;
-    
-    // Called when a render context is being destroyed or when requested
-    // by Application::requestRender()
-    virtual void deleteRendering(RenderContext *rc) = 0;
-    
 };
 
 }

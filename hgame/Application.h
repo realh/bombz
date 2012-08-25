@@ -53,6 +53,7 @@ protected:
     hgame::Cond *mRenderingCond;
     volatile bool mRenderWaiting;
     volatile bool mRenderShutdown;
+    volatile bool mRenderLooping;
 public:
     inline RenderContext *getRenderContext() { return mRenderContext; }
     inline Platform *getPlatform() { return mPlatform; }
@@ -91,11 +92,15 @@ public:
     // Call to get everything going after setActivity()
     virtual void start() = 0;
     
-    // Call to shut everything down from Activity when finished; default
-    // implementation calls requestRender(true)
+    // Call *from Activity* to shut everything down when finished; default
+    // implementation is equivalent to requestRender(true) if mRenderLooping
+    // is true
     virtual void stop();
     
 protected:
+    // Allows stop() to do the same as requestRender() without an unsafe
+    // extra unlock/lock. Mutex is unlocked on exit from this method.
+    virtual void requestRenderAlreadyLocked(bool shutdown);
     virtual void renderLoop();
 };
 
