@@ -31,6 +31,9 @@
 
 #include "hsdl/Application.h"
 
+#include <cassert>
+#include <cstdlib>
+
 #include "SDL.h"
 
 #include "hgame/Activity.h"
@@ -52,7 +55,6 @@ Application::Application(int argc, char **argv) :
                 new Platform(argc, argv),
                 0, new ThreadFactory())
 {
-    mRenderingCond = createCond();
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
         THROW(Exception, "Init failed");
 }
@@ -64,30 +66,24 @@ Application::~Application()
 
 void Application::start()
 {
-    mActivity->start();
-    while (true) // FIXME: Need some sort of stop condition
-    {
-        mRenderingCond->wait();
-        mRenderingCond->getMutex()->lock();
-        mRenderer->run();
-        mRenderingCond->getMutex()->unlock();
+    assert(mActivity != 0);
+    try {
+        mActivity->initRendering(mRenderContext);
     }
-}
-
-void Application::startRendering(hgame::Runnable *r)
-{
-    mRenderingCond->getMutex()->lock();
-    mRenderer = r;
-    mRenderingCond->signal();
-    mRenderingCond->getMutex()->unlock();
-}
-
-int Application::awaitRendering()
-{
-    // Just wait for cond to be unlocked after running mRenderer
-    mRenderingCond->getMutex()->lock();
-    mRenderingCond->getMutex()->unlock();
-    return 0;
+    catch (std::exception e)
+    {
+        mLog.f("Exception initialising activity rendering: %s", e.what());
+        std::exit(1);
+    }
+    mActivity->start();
+    try {
+        renderLoop();
+    }
+    catch (std::exception e)
+    {
+        mLog.f("Exception in rendering thread: %s", e.what());
+        std::exit(1);
+    }
 }
 
 }

@@ -46,14 +46,12 @@ Activity::~Activity()
     
 void Activity::start()
 {
-    ActivityBase::start();
     mThread->start();
 }
     
 void Activity::stop()
 {
     ActivityBase::stop();
-    stopRendering();
     if (mSubActivity)
     {
         mSubActivity->stop();
@@ -82,52 +80,10 @@ void Activity::setSubActivity(SubActivity *subact)
     mSubActivity = subact;
 }
 
-int Activity::runRenderLoop()
-{
-    while (mRunning)
-    {
-        mRenderCond->wait();
-        mRenderCond->getMutex()->lock();
-        mRenderCond->getMutex()->unlock();
-        bool dirty = true;
-        while (dirty)
-        {
-            render();
-            mRenderCond->getMutex()->lock();
-            dirty = mRenderNeeded;
-            mRenderNeeded = false;
-            mRenderCond->getMutex()->unlock();
-        }
-    }
-    return 0;
-}
-    
 void Activity::render()
 {
     if (mSubActivity)
         mSubActivity->render();
-}
-
-void Activity::requestRender()
-{
-    mRenderCond->getMutex()->lock();
-    if (!mRenderNeeded)
-    {
-        mRenderNeeded = true;
-        mRenderCond->signal();
-    }
-    mRenderCond->getMutex()->unlock();
-}
-
-void Activity::stopRendering()
-{
-    requestRender();
-    mApplication->awaitRendering();
-}
-
-int RenderLoop::run()
-{
-    return mActivity->run();
 }
 
 }

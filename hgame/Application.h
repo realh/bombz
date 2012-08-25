@@ -50,6 +50,9 @@ protected:
     RenderContext *mRenderContext;
     ThreadFactory *mThreadFactory;
     Activity *mActivity;
+    hgame::Cond *mRenderingCond;
+    volatile bool mRenderWaiting;
+    volatile bool mRenderShutdown;
 public:
     inline RenderContext *getRenderContext() { return mRenderContext; }
     inline Platform *getPlatform() { return mPlatform; }
@@ -70,15 +73,10 @@ public:
         return mThreadFactory->createThread(r, name);
     }
     
-    // Either starts a thread for rendering or activates rendering in
-    // main thread depending on implementation. Either way, should be called
-    // from a different thread.
-    virtual void startRendering(Runnable *r) = 0;
-    
-    // Waits for rendering to stop, either by joining the thread, or waiting
-    // on a cond depending on implementation. Either way, should be called
-    // from a different thread.
-    virtual int awaitRendering() = 0;
+    // Wake up rendering thread. If shutdown is true, the activity's
+    // deleteRendering() method will be called and this function will
+    // block until that's all completed
+    virtual void requestRender(bool shutdown = false);
     
     void setActivity(Activity *activity)
     {
@@ -91,6 +89,9 @@ public:
     }
     
     virtual void start() = 0;
+    
+protected:
+    virtual void renderLoop();
 };
 
 }

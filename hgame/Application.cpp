@@ -28,21 +28,67 @@
 // HGame - a simple cross-platform game framework
 
 #include "hgame/Application.h"
+#include "hgame/Activity.h"
 
 namespace hgame {
 
 Application::Application(Log *log, Platform *platform, RenderContext *rc,
         ThreadFactory *thread_fact) :
         mLog(*log), mPlatform(platform), mRenderContext(rc),
-        mThreadFactory(thread_fact), mActivity(0)
+        mThreadFactory(thread_fact), mActivity(0),
+        mRenderWaiting(false), mRenderShutdown(false)
 {
+    mRenderingCond = createCond();
 }
 
 Application::~Application()
 {
+    delete mRenderingCond;
     delete mRenderContext;
     delete mPlatform;
     delete &mLog;
+}
+
+void Application::renderLoop()
+{
+    mRenderingCond->getMutex()->lock();
+    bool wait = !(mRenderWaiting = true);
+    mRenderingCond->getMutex()->unlock();
+    while (true) // FIXME: Need some sort of stop condition
+    {
+        if (wait)
+            mRenderingCond->wait();
+        mRenderingCond->getMutex()->lock();
+        mRenderWaiting = false;
+        mRenderingCond->getMutex()->unlock();
+        if (!mRenderShutdown)
+            mActivity->render();
+        mRenderingCond->getMutex()->lock();
+        wait = !mRenderWaiting;
+        mRenderWaiting = true;
+        if (mRenderShutdown)
+        {
+            mActivity->deleteRendering(mRenderContext);
+            mRenderingCond->signal();
+        }
+        mRenderingCond->getMutex()->unlock();
+    }
+}
+
+void Application::requestRender(bool shutdown)
+{
+    mRenderingCond->getMutex()->lock();
+    if (shutdown)
+        mRenderShutdown = true;
+    if (mRenderWaiting)
+        mRenderingCond->signal();
+    else
+        mRenderWaiting = true;
+    mRenderingCond->getMutex()->unlock();
+    if (shutdown)
+    {
+        mRenderingCond->wait();
+    }
 }
 
 }

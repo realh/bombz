@@ -51,8 +51,6 @@ public:
     
     void requestRender();
     
-    void stopRendering();
-    
     // Called from the parent's run() thread after SubActivity's run()
     // has finished. Typically a SubActivity might delete itself here
     virtual void stopped() = 0;

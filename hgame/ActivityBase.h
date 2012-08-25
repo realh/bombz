@@ -41,9 +41,10 @@ namespace hgame {
 
 class ActivityBase : public Runnable {
     // Note we implement Runnable. The run() function should consist mainly of
-    // a main loop which checks the mRunning flag and exits when it's false,
-    // calling stopRendering before destroying any resources associated with
-    // the RenderContext.
+    // a main loop which sets the mRunning flag when starting and regularly
+    // checks it, exiting the loop when it's false.
+    // It will usually have its own thread, so it should
+    // catch any unhandled exceptions at the top-level.
 protected:
     Application *mApplication;
     Log &mLog;
@@ -73,21 +74,20 @@ public:
     
     virtual ~ActivityBase();
     
-    // Called when Application has created a render context, starting the
-    // activity. Subclasses should chain up
-    virtual void start();
-    
     // Called by Application when the activity should be shut down
     virtual void stop();
     
     // Called on the rendering thread
     virtual void render() = 0;
     
-    // Wake up rendering thread
-    virtual void requestRender() = 0;
+    // Called from rendering thread when a context becomes available.
+    // Load textures etc here
+    virtual void initRendering(RenderContext *rc) = 0;
     
-    // Called to wait for the rendering thread to stop
-    virtual void stopRendering() = 0;
+    // Called when a render context is being destroyed or when requested
+    // by Application::requestRender()
+    virtual void deleteRendering(RenderContext *rc) = 0;
+    
 };
 
 }

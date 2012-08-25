@@ -35,11 +35,6 @@ ActivityBase::~ActivityBase()
 {
 }
     
-void ActivityBase::start()
-{
-    mRunning = true;
-}
-    
 void ActivityBase::stop()
 {
     mRunning = false;

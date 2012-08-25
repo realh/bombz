@@ -63,22 +63,7 @@ public:
         return mSubActivity;
     }
     
-    // Called by mRenderLoop
-    int runRenderLoop();
-    
-    void render();
-    
-    void requestRender();
-    
-    void stopRendering();
-};
-
-class RenderLoop : public Runnable {
-private:
-    Activity *mActivity;
-public:
-    RenderLoop(Activity *act) : mActivity(act) {}
-    int run();
+    virtual void render();
 };
 
 }
