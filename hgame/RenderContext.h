@@ -62,6 +62,11 @@ public:
     
     virtual TileBatcher *createTileBatcher(int nColumns, int nRows,
             int tile_size) = 0;
+    
+    // w and h are desired number of tiles across and down.
+    // Returns tile size in pixels. Currently only supports square tiles
+    // and pixels.
+    int calculateTileSize(int w, int h);
 };
 
 }

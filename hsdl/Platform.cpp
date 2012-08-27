@@ -117,7 +117,7 @@ const char *Platform::getProfileFilename(const char *owner,
     return filename;
 }
 
-const char *Platform::getAssetsDirectory() const
+const char *Platform::getAssetsDirectory()
 {
     return mAssetsDir;
 }

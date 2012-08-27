@@ -29,20 +29,88 @@
 
 #include "hgame/Platform.h"
 
-#include <stdint.h>
+#include <cerrno>
+#include <cstring>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include "hgame/Log.h"
+#include "hgame/Types.h"
 
 namespace hgame {
 
+using namespace std;
+
 Platform::Endianness Platform::getEndianness()
 {
-    uint32_t val = 0xff;
-    if (*((uint8_t *) &val) == 0xff)
+    HUInt32 val = 0xff;
+    if (*((HUInt8 *) &val) == 0xff)
         return HGAME_LITTLE_ENDIAN;
     return HGAME_BIG_ENDIAN;
 }
 
 Platform::~Platform()
 {
+}
+
+char *Platform::joinPath(const char *first, ...)
+{
+    va_list ap;
+    va_start(ap, first);
+    char *result = joinPath(first, ap);
+    va_end(ap);
+    return result;
+}
+
+char *Platform::joinPath(const char *first, std::va_list ap)
+{
+    char *path = (char *) first;
+    char sep = getDirectorySeparator();
+    const char *element;
+    
+    while ((element = va_arg(ap, const char *)) != 0)
+    {
+        size_t l = strlen(path);
+        char *tmp = path;
+        path = new char[l + strlen(element) + 2];
+        strcpy(path, tmp);
+        path[l] = sep;
+        strcpy(path + l + 1, element);
+        if (tmp != first)
+            delete[] tmp;
+    }
+    return path;
+}
+
+Platform::FileType Platform::getFileType(const char *filename)
+{
+    char *path = joinPath(getAssetsDirectory(), filename, 0);
+    struct stat info;
+    FileType result = NOT_FOUND;
+    if (stat(path, &info))
+    {
+        if (errno != ENOENT)
+        {
+            THROW(Throwable, "Error accessing file '%s': %s",
+                    filename, strerror(errno));
+        }
+    }
+    else if (S_ISREG(info.st_mode))
+    {
+        result = PLAIN_FILE;
+    }
+    else if (S_ISDIR(info.st_mode))
+    {
+        result = DIRECTORY;
+    }
+    else
+    {
+        THROW(Throwable, "Object '%s' is neither file nor directory (%04o)",
+                filename, info.st_mode);
+    }
+    return result;
 }
 
 }

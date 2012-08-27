@@ -35,20 +35,30 @@
 #include "config.h"
 
 #include "hgame/Activity.h"
+#include "hgame/TextureAtlas.h"
+#include "hgame/TextureRegion.h"
 
 namespace bombz {
 
 class Activity : public hgame::Activity {
+private:
+    static const char *kName;
+    hgame::TextureAtlas *mAlphaAtlas;
+    hgame::TextureAtlas *mTileAtlas;
+    int mScreenTileSize;
+    int mSrcTileSize;
 public:
-    Activity(hgame::Application *app);
+    Activity();
     
-    virtual ~Activity();
+    ~Activity();
     
+    /* Base class should suffice
     void stop();
     
     int run();
     
     void render();
+    */
     
     void initRendering(hgame::RenderContext *rc);
     

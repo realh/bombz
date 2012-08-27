@@ -35,6 +35,8 @@
 
 #include "config.h"
 
+#include <cstdarg>
+
 #include "hgame/Font.h"
 #include "hgame/Image.h"
 
@@ -50,6 +52,12 @@ public:
         MAC,
         ANDROID,
         IOS
+    };
+    
+    enum FileType {
+        NOT_FOUND,
+        PLAIN_FILE,
+        DIRECTORY
     };
     
     // "BIG_ENDIAN" and "LITTLE_ENDIAN" seem to be defined elswehere
@@ -69,12 +77,21 @@ public:
     
     virtual char getDirectorySeparator() = 0;
     
+    // ... must be NULL-terminated
+    char *joinPath(const char *first, ...);
+    char *joinPath(const char *first, std::va_list ap);
+    
     // leafname is relative to app's assets folder
     virtual Image *loadPNG(const char *leafname) = 0;
     
     virtual ~Platform();
     
     virtual Font *loadFont(unsigned int px) = 0;
+    
+    // filename relative to app's assets folder
+    virtual FileType getFileType(const char *filename);
+    
+    virtual const char *getAssetsDirectory() = 0;
 };
 
 }

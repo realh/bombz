@@ -25,54 +25,34 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// HGame - a simple cross-platform game framework
+// Bombz - 2D puzzle game
 
-// Platform.h: Various functions giving info about and for manipulating
-//             the platform we're running on - SDL version
+#include "bombz/Activity.h"
 
-#ifndef HSDL_PLATFORM_H
-#define HSDL_PLATFORM_H
+namespace bombz {
+    
+const char *Activity::kName = "BombzActivity";
 
-#include "config.h"
-
-#include "hgame/Log.h"
-#include "hgame/Platform.h"
-
-namespace hsdl {
-
-class Platform : public hgame::Platform {
-private:
-    char *mAssetsDir;
-public:
-    hgame::Platform::PlatformType getPlatformType() const;
+Activity::Activity() :
+        hgame::Activity(new hgame::Log(kName), kName),
+        mAlphaAtlas(0),
+        mTileAtlas(0)
+{
+}
     
-    const char *getProfileFilename(const char *owner,
-            const char *appname, const char *leafname);
+Activity::~Activity()
+{
+}
     
-    // Returns the top-level directory holding game's assets
-    const char *getAssetsDirectory();
     
-    // Returns full path to an asset given its leafname.
-    // leafname may include subdirs. '/' separators are converted to
-    // '\' on Windows.
-    // Result must be std::freed, not deleted.
-    char *getAsset(const char *leafname);
+void Activity::initRendering(hgame::RenderContext *rc)
+{
+    // FIXME: Replace numbers with constants from a Level class or whatever
+    mScreenTileSize = rc->calculateTileSize(20, 15);
+}
     
-    char getDirectorySeparator();
-    
-    hgame::Image *loadPNG(const char *leafname);
-    
-    hgame::Font *loadFont(unsigned int px);
-    
-    Platform(int argc, char **argv);
-    ~Platform();
-    
-protected:
-    hgame::Log &mLog;
-    
-    void mkdirWithParents(const char *dir);
-};
-
+void Activity::deleteRendering(hgame::RenderContext *rc)
+{
 }
 
-#endif // HSDL_PLATFORM_H
+}

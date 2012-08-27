@@ -14,6 +14,7 @@ def add_envs(envs):
     envs["BUILD_SUBDIRS"] = "${BUILD_DIR}/hgame " \
             "${BUILD_DIR}/hgl " \
             "${BUILD_DIR}/hsdl " \
+            "${BUILD_DIR}/bombz " \
             "${BUILD_DIR}/tests "
 
 def init(ctx):
@@ -52,7 +53,8 @@ def init(ctx):
         lib_sources = ctx.glob_src("*.cpp", "hgame", False) + \
                 ctx.glob_src("*.cpp", "hsdl", False) + \
                 ctx.glob_src("*.cpp", "hgl", False)
-        sources = lib_sources + ["SDLMain.cpp"]
+        bombz_sources = ctx.glob_src("*.cpp", "bombz", False)
+        sources = lib_sources + bombz_sources + ["SDLMain.cpp"]
         for c in sources:
             ctx.add_rule(CxxRule(sources = c,
                 cxxflags = "${BOMBZ_CXXFLAGS}",
@@ -70,7 +72,8 @@ def init(ctx):
             cxxflags = "${BOMBZ_CXXFLAGS} ${LIBPNG_CFLAGS}",
             wdeps = "${BUILD_SUBDIRS}"))
         ctx.add_rule(CxxProgramRule(
-            sources = change_suffix(lib_sources + ["tests/sdlfont.cpp"],
+            sources = change_suffix(lib_sources + bombz_sources + \
+                    ["tests/sdlfont.cpp"],
                     ".cpp", ".o"),
             targets = "tests/sdlfont",
             cxxflags = "${BOMBZ_CXXFLAGS} ${LIBPNG_CFLAGS}",

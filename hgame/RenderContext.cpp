@@ -35,4 +35,17 @@ RenderContext::~RenderContext()
 {
 }
 
+int RenderContext::calculateTileSize(int w, int h)
+{
+    double scrn_w = (double) getWidth();
+    double scrn_h = (double) getHeight();
+    double src_aspect = (double) w / (double) h;
+    double scrn_aspect = scrn_w / scrn_h;
+    if (scrn_aspect >= src_aspect)
+    {
+        return (int) (scrn_h / (double) h);
+    }
+    return (int) (scrn_w / (double) w);
+}
+
 }
