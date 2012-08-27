@@ -57,8 +57,11 @@ protected:
 public:
     inline RenderContext *getRenderContext() { return mRenderContext; }
     inline Platform *getPlatform() { return mPlatform; }
-    Application(Log *log, Platform *platform, RenderContext *rc,
-            ThreadFactory *thread_fact);
+    // Most of these args should be passed in by subclasses.
+    // Note mRenderContext is not set here, some platforms can't create
+    // one until later
+    Application(Log *log, Platform *platform,
+            Activity *activity, ThreadFactory *thread_fact);
     virtual ~Application();
     
     Mutex *createMutex()
@@ -79,12 +82,7 @@ public:
     // block until that's all completed
     virtual void requestRender(bool shutdown = false);
     
-    void setActivity(Activity *activity)
-    {
-        mActivity = activity;
-    }
-    
-    Activity *getActivity()
+    inline Activity *getActivity()
     {
         return mActivity;
     }

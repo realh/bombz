@@ -101,7 +101,7 @@ static void surf_to_png(SDL_Surface *surf, const char *filename)
 
 int main(int argc, char **argv)
 {
-    hsdl::Application application(argc, argv);
+    hsdl::Application application(argc, argv, 0);
     hgame::Platform *platform;
     hgame::Font *font;
     hsdl::Image *img;

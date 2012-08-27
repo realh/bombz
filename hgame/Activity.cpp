@@ -29,21 +29,33 @@
 
 #include "hgame/Activity.h"
 
+#include <cstdlib>
+#include <cstring>
+
 namespace hgame {
 
-Activity::Activity(Application *app, Log *log, const char *name) :
-        ActivityBase(app, log), mSubActivity(0),
-        mRenderNeeded(false)
+Activity::Activity(Log *log, const char *name) :
+        ActivityBase(log), mSubActivity(0),
+        mThread(0), mRenderCond(0), mRenderNeeded(false)
 {
-    mThread = app->createThread(this, name);
-    mRenderCond = app->createCond();
+    mName = strdup(name);
 }
 
 Activity::~Activity()
 {
     delete mThread;
+    delete mRenderCond;
+    std::free(mName);
 }
     
+    
+void Activity::setApplication(Application *app)
+{
+    ActivityBase::setApplication(app);
+    mRenderCond = app->createCond();
+    mThread = app->createThread(this, mName);
+}
+
 void Activity::start()
 {
     mThread->start();

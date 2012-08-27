@@ -2,6 +2,6 @@
 
 int main(int argc, char **argv)
 {
-    hsdl::Application application(argc, argv);
+    hsdl::Application application(argc, argv, 0);
     return 0;
 }

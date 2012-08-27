@@ -32,13 +32,16 @@
 
 namespace hgame {
 
-Application::Application(Log *log, Platform *platform, RenderContext *rc,
-        ThreadFactory *thread_fact) :
-        mLog(*log), mPlatform(platform), mRenderContext(rc),
-        mThreadFactory(thread_fact), mActivity(0),
+Application::Application(Log *log, Platform *platform,
+        Activity *activity, ThreadFactory *thread_fact) :
+        mLog(*log), mPlatform(platform), mRenderContext(0),
+        mThreadFactory(thread_fact), mActivity(activity),
         mRenderWaiting(false), mRenderShutdown(false), mRenderLooping(false)
 {
     mRenderingCond = createCond();
+    // activity won't be null in a normal app, but can be in some basic tests
+    if (activity)
+        activity->setApplication(this);
 }
 
 Application::~Application()

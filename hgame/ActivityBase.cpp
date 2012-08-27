@@ -40,4 +40,9 @@ void ActivityBase::stop()
     mRunning = false;
 }
 
+void ActivityBase::setApplication(Application *app)
+{
+    mApplication = app;
+}
+
 }

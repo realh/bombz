@@ -44,8 +44,11 @@ private:
     Thread *mThread;
     Cond *mRenderCond;
     volatile bool mRenderNeeded;
+    char *mName;
 public:
-    Activity(Application *app, Log *log, const char *name);
+    Activity(Log *log, const char *name);
+    
+    void setApplication(Application *app);
     
     virtual ~Activity();
     

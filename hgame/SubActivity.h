@@ -45,7 +45,7 @@ protected:
     ActivityBase *mParentActivity;
 public:
     SubActivity(ActivityBase *parent, Log *log) :
-            ActivityBase(parent->getApplication(), log),
+            ActivityBase(log),
             mParentActivity(parent)
     {}
     

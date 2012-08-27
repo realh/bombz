@@ -67,10 +67,12 @@ public:
         return mApplication->getPlatform();
     }
     
-    // subclasses must initialise log
-    ActivityBase(Application *app, Log *log) : mApplication(app), mLog(*log)
+    ActivityBase(Log *log) : mApplication(0), mLog(*log)
     {
     }
+    
+    // Called from Application constructor in case of Acitivity subclass
+    virtual void setApplication(Application *app);
     
     virtual ~ActivityBase();
     

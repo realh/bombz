@@ -50,10 +50,10 @@
 
 namespace hsdl {
 
-Application::Application(int argc, char **argv) :
+Application::Application(int argc, char **argv, hgame::Activity *activity) :
         hgame::Application(new Log("SDLApp"),
                 new Platform(argc, argv),
-                0, new ThreadFactory())
+                activity, new ThreadFactory())
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
         THROW(Exception, "Init failed");

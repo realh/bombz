@@ -40,7 +40,7 @@ namespace hsdl {
 
 class Application : public hgame::Application {
 public:
-    Application(int argc, char **argv);
+    Application(int argc, char **argv, hgame::Activity *activity);
     ~Application();
     void start();
 };
