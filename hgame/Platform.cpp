@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -30,10 +30,13 @@
 #include "hgame/Platform.h"
 
 #include <cerrno>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 #include <unistd.h>
 
 #include "hgame/Log.h"
@@ -42,6 +45,19 @@
 namespace hgame {
 
 using namespace std;
+
+class CommonDirectoryListing : public DirectoryListing {
+private:
+    DIR *mDir;
+public:
+    CommonDirectoryListing(const char *dirname);
+    ~CommonDirectoryListing();
+    const char *getNext();
+};
+
+DirectoryListing::~DirectoryListing()
+{
+}
 
 Platform::Endianness Platform::getEndianness()
 {
@@ -69,7 +85,7 @@ char *Platform::joinPath(const char *first, std::va_list ap)
     char *path = (char *) first;
     char sep = getDirectorySeparator();
     const char *element;
-    
+
     while ((element = va_arg(ap, const char *)) != 0)
     {
         size_t l = strlen(path);
@@ -82,6 +98,23 @@ char *Platform::joinPath(const char *first, std::va_list ap)
             delete[] tmp;
     }
     return path;
+}
+
+Image *Platform::loadPNG(const char *leafname, int size)
+{
+    char sz[8];
+    sprintf(sz, "%d", size);
+    char *name = joinPath("pngs", sz, leafname);
+    try {
+        Image *img = loadPNG(name);
+        delete[] name;
+        return img;
+    }
+    catch (exception e)
+    {
+        delete[] name;
+        throw e;
+    }
 }
 
 Platform::FileType Platform::getFileType(const char *filename)
@@ -107,10 +140,75 @@ Platform::FileType Platform::getFileType(const char *filename)
     }
     else
     {
+        delete[] path;
         THROW(Throwable, "Object '%s' is neither file nor directory (%04o)",
                 filename, info.st_mode);
     }
+    delete[] path;
     return result;
+}
+
+DirectoryListing *Platform::listDirectory(const char *dirname)
+{
+    return (DirectoryListing *) new CommonDirectoryListing(dirname);
+}
+
+int Platform::getBestPNGMatch(int tile_size)
+{
+    int best = 0;
+    char *pathname = joinPath(getAssetsDirectory(), "pngs");
+    DirectoryListing *dir = listDirectory(pathname);
+    const char *leafname;
+    try {
+        while ((leafname = dir->getNext()) != 0)
+        {
+            int size = atoi(leafname);
+            if ((size >= tile_size && (best < tile_size || size < best)) ||
+                    size > best)
+            {
+                best = size;
+            }
+        }
+    }
+    catch (exception e) {
+        delete dir;
+        delete[] pathname;
+        throw e;
+    }
+    delete dir;
+    delete[] pathname;
+    return best;
+}
+
+
+CommonDirectoryListing::CommonDirectoryListing(const char *dirname)
+{
+    mDir = opendir(dirname);
+    if (!mDir)
+    {
+        THROW(Throwable, "Error opening directory '%s': %s",
+                dirname, strerror(errno));
+    }
+}
+
+CommonDirectoryListing::~CommonDirectoryListing()
+{
+    closedir(mDir);
+}
+
+const char *CommonDirectoryListing::getNext()
+{
+    errno = 0;
+    struct dirent *entry = readdir(mDir);
+    if (!entry)
+    {
+        if (errno)
+        {
+            THROW(Throwable, "Error reading directory: %s", strerror(errno));
+        }
+        return 0;
+    }
+    return entry->d_name;
 }
 
 }

@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -30,7 +30,7 @@
 #include "bombz/Activity.h"
 
 namespace bombz {
-    
+
 const char *Activity::kName = "BombzActivity";
 
 Activity::Activity() :
@@ -39,20 +39,35 @@ Activity::Activity() :
         mTileAtlas(0)
 {
 }
-    
+
 Activity::~Activity()
 {
 }
-    
-    
+
 void Activity::initRendering(hgame::RenderContext *rc)
 {
+    hgame::Platform *platform = mApplication->getPlatform();
     // FIXME: Replace numbers with constants from a Level class or whatever
     mScreenTileSize = rc->calculateTileSize(20, 15);
+    mSrcTileSize = platform->getBestPNGMatch(mScreenTileSize);
+    hgame::Image *img = platform->loadPNG("tile_atlas.png", mSrcTileSize);
+    mTileAtlas = rc->uploadTexture(img);
+    delete img;
+    img = platform->loadPNG("alpha_atlas.png", mSrcTileSize);
+    mAlphaAtlas = rc->uploadTexture(img);
+    delete img;
+    if (mSubActivity)
+        mSubActivity->initRendering(rc);
 }
-    
+
 void Activity::deleteRendering(hgame::RenderContext *rc)
 {
+    if (mSubActivity)
+        mSubActivity->deleteRendering(rc);
+    delete mAlphaAtlas;
+    mAlphaAtlas = 0;
+    delete mTileAtlas;
+    mTileAtlas = 0;
 }
 
 }

@@ -1,7 +1,11 @@
 #include "hsdl/Application.h"
 
+#include "bombz/Activity.h"
+
 int main(int argc, char **argv)
 {
-    hsdl::Application application(argc, argv, 0);
+    bombz::Activity activity;
+    hsdl::Application application(argc, argv, &activity);
+    application.start();
     return 0;
 }

@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -53,34 +53,44 @@ public:
     inline Application *getApplication()
     {
         return mApplication;
-    
+
     }
-    
+
     inline RenderContext *getRenderContext()
     {
         return mApplication->getRenderContext();
-    
+
     }
-    
+
     inline Platform *getPlatform()
     {
         return mApplication->getPlatform();
     }
-    
+
     ActivityBase(Log *log) : mApplication(0), mLog(*log)
     {
     }
-    
-    // Called from Application constructor in case of Acitivity subclass
+
+    // Called from Application constructor in case of Activity subclass
     virtual void setApplication(Application *app);
-    
+
     virtual ~ActivityBase();
-    
+
     // Called by Application when the activity should be shut down
     virtual void stop();
-    
+
     // Called on the rendering thread
     virtual void render() = 0;
+
+    // Called from rendering thread when a context becomes available.
+    // Load textures etc here. Activity subclasses should forward to
+    // their SubActivities.
+    virtual void initRendering(RenderContext *rc) = 0;
+
+    // Called when a render context is being destroyed or when requested
+    // by Application::requestRender(). Activity subclasses should forward to
+    // their SubActivities.
+    virtual void deleteRendering(RenderContext *rc) = 0;
 };
 
 }
