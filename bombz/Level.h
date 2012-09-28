@@ -90,7 +90,7 @@ public:
 
     void deleteRendering(hgame::RenderContext *rc);
 
-    void render(bool stop = false);
+    void render(hgame::RenderContext *rc);
 };
 
 }
