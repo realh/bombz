@@ -44,10 +44,14 @@ namespace bombz {
 
 typedef hgame::HUInt8 HUInt8;
 
+class Activity;
+
 class Level {
 public:
     static const int kWidth = 20;
     static const int kHeight = 15;
+
+    static const int kAtlasColumns = 6;
 
     static const int kExploTicks = 12;
     static const int kFuseTicks = 60;
@@ -77,20 +81,27 @@ private:
 
     hgame::RenderContext *mRc;
     hgame::TextureAtlas *mTileAtlas;
+    hgame::TextureAtlas *mAlphaAtlas;
     hgame::TileBatcher *mTileBatcher;
+    int mScreenTileSize;
+    int mSrcTileSize;
 
-    hgame::TextureRegion **mTextureRegions;
+    hgame::TextureRegion **mTileRegions;
+    hgame::TextureRegion *mExplo00Region;
 
 public:
     Level();
     ~Level();
 
-    void initRendering(hgame::RenderContext *rc,
-            hgame::TextureAtlas *tile_atlas);
+    void initRendering(hgame::RenderContext *rc, Activity *act);
 
     void deleteRendering(hgame::RenderContext *rc);
 
     void render(hgame::RenderContext *rc);
+private:
+    hgame::TextureRegion *createRegion(int x, int y);
+
+    hgame::TextureRegion *createRegion(int n);
 };
 
 }

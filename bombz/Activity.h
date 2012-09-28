@@ -81,6 +81,17 @@ public:
     {
         return mLogoAtlas;
     }
+
+    inline int getScreenTileSize() const
+    {
+        return mScreenTileSize;
+    }
+
+    inline int getSrcTileSize() const
+    {
+        return mSrcTileSize;
+    }
+
 };
 
 }
