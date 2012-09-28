@@ -46,13 +46,13 @@ typedef hgame::HUInt8 HUInt8;
 
 class Level {
 public:
-    const int kWidth = 20;
-    const int kHeight = 15;
+    static const int kWidth = 20;
+    static const int kHeight = 15;
 
-    const int kExploTicks = 12;
-    const int kFuseTicks = 60;
-    const int kEasyExtraFuse = 20;
-    const int kMaxFuseTicks = kFuseTicks + kEasyExtraFuse;
+    static const int kExploTicks = 12;
+    static const int kFuseTicks = 60;
+    static const int kEasyExtraFuse = 20;
+    static const int kMaxFuseTicks = kFuseTicks + kEasyExtraFuse;
 
     enum {
         BLANK,
@@ -72,8 +72,8 @@ public:
     };
 
 private:
-    HUint8 **mLevel;
-    HUint8 **mTmpLevel;
+    HUInt8 *mLevel;
+    HUInt8 *mTmpLevel;
 
     hgame::RenderContext *mRc;
     hgame::TextureAtlas *mTileAtlas;

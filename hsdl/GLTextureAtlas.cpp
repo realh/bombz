@@ -27,51 +27,21 @@
 
 // HGame - a simple cross-platform game framework
 
-// TextureRegion.h: A region within a texture atlas
+#include "hsdl/GLTextureAtlas.h"
+#include "hsdl/GLTextureRegion.h"
 
-#ifndef HGAME_TEXTURE_REGION_H
-#define HGAME_TEXTURE_REGION_H
+namespace hsdl {
 
-#include "config.h"
-
-namespace hgame {
-
-class TextureAtlas;
-
-class TextureRegion {
-private:
-    // Coordinates are normalised to 0.0-1.0 with origin at top-left
-    TextureAtlas *mAtlas;
-protected:
-    float mU0, mV0, mU1, mV1;
-    // Coords is an array of coords suitable for passing directly to
-    // an implementation function, eg for rendering a GL_TRIANGLE_STRIP;
-    // must be initialised in derived constructor
-    float *mCoords;
-public:
-    TextureRegion(TextureAtlas *atlas, float u0, float v0, float u1, float v1) :
-            mAtlas(atlas), mU0(u0), mV0(v0), mU1(u1), mV1(v1)
-            {}
-
-    // Coordinates are in pixel units in atlas source's space
-    // with origin at top-left
-    TextureRegion(TextureAtlas *atlas, int x, int y, int w, int h);
-
-    virtual ~TextureRegion();
-
-    inline float getU0() const { return mU0; }
-
-    inline float getV0() const { return mV0; }
-
-    inline float getU1() const { return mU1; }
-
-    inline float getV1() const { return mV1; }
-
-    inline const TextureAtlas *getAtlas() const { return mAtlas; }
-
-    inline const float *getCoords() const { return mCoords; }
-};
-
+hgame::TextureRegion *
+GLTextureAtlas::createRegion(float u0, float v0, float u1, float v1)
+{
+    return (hgame::TextureRegion *) new GLTextureRegion(this, u0, v0, u1, v1);
 }
 
-#endif // HGAME_TEXTURE_REGION_H
+hgame::TextureRegion *
+GLTextureAtlas::createRegion(int x, int y, int w, int h)
+{
+    return (hgame::TextureRegion *) new GLTextureRegion(this, x, y, w, h);
+}
+
+}
