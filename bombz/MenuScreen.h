@@ -27,55 +27,28 @@
 
 // Bombz - 2D puzzle game
 
-#include "bombz/Activity.h"
+// MenuScreen.h: Base class for any of Bombz's menu screens
+
+#ifndef BOMBZ_MENU_SCREEN_H
+#define BOMBZ_MENU_SCREEN_H
+
+#include "config.h"
+
+#include "hgame/SubActivity.h"
 
 namespace bombz {
 
-const char *Activity::kName = "BombzActivity";
+class MenuScreen: public hgame::SubActivity {
+public:
+    MenuScreen(ActivityBase *parent, Log *log) :
+            hgame::SubActivity(parent, log)
+    {}
 
-Activity::Activity() :
-        hgame::Activity(new hgame::Log(kName), kName),
-        mAlphaAtlas(0),
-        mTileAtlas(0),
-        mLogoAtlas(0)
-{
-}
-
-Activity::~Activity()
-{
-}
-
-void Activity::initRendering(hgame::RenderContext *rc)
-{
-    hgame::Platform *platform = getPlatform();
-    // FIXME: Replace numbers with constants from a Level class or whatever
-    mScreenTileSize = rc->calculateTileSize(20, 15);
-    mSrcTileSize = platform->getBestPNGMatch(mScreenTileSize);
-    hgame::Image *img = platform->loadPNG("tile_atlas.png", mSrcTileSize);
-    mTileAtlas = rc->uploadTexture(img);
-    delete img;
-    img = platform->loadPNG("alpha_atlas.png", mSrcTileSize);
-    mAlphaAtlas = rc->uploadTexture(img);
-    delete img;
-    if (mSubActivity)
-        mSubActivity->initRendering(rc);
-}
-
-void Activity::deleteRendering(hgame::RenderContext *rc)
-{
-    if (mSubActivity)
-        mSubActivity->deleteRendering(rc);
-    delete mAlphaAtlas;
-    mAlphaAtlas = 0;
-    delete mTileAtlas;
-    mTileAtlas = 0;
-}
-
-void Activity::loadLogo()
-{
-    hgame::Image *img = getPlatform()->loadPNG("title_logo.png", mSrcTileSize);
-    mLogoAtlas = getRenderContext()->uploadTexture(img);
-    delete img;
-}
+    // Called from the parent's run() thread after SubActivity's run()
+    // has finished. Typically a SubActivity might delete itself here
+    void stopped();
+};
 
 }
+
+#endif // BOMBZ_MENU_SCREEN_H

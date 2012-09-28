@@ -27,62 +27,72 @@
 
 // Bombz - 2D puzzle game
 
-// Activity.h: Bombz's main Activity
+// Level.h: Manages the level
 
-#ifndef BOMBZ_ACTIVITY_H
-#define BOMBZ_ACTIVITY_H
+#ifndef BOMBZ_LEVEL_H
+#define BOMBZ_LEVEL_H
 
 #include "config.h"
 
-#include "hgame/Activity.h"
+#include "hgame/RenderContext.h"
 #include "hgame/TextureAtlas.h"
 #include "hgame/TextureRegion.h"
+#include "hgame/TileBatcher.h"
+#include "hgame/Types.h"
 
 namespace bombz {
 
-class Activity : public hgame::Activity {
-private:
-    static const char *kName;
-    hgame::TextureAtlas *mAlphaAtlas;
-    hgame::TextureAtlas *mTileAtlas;
-    hgame::TextureAtlas *mLogoAtlas;
-    int mScreenTileSize;
-    int mSrcTileSize;
+typedef hgame::HUInt8 HUInt8;
+
+class Level {
 public:
-    Activity();
+    const int kWidth = 20;
+    const int kHeight = 15;
 
-    ~Activity();
+    const int kExploTicks = 12;
+    const int kFuseTicks = 60;
+    const int kEasyExtraFuse = 20;
+    const int kMaxFuseTicks = kFuseTicks + kEasyExtraFuse;
 
-    /* Base class should suffice
-    void stop();
+    enum {
+        BLANK,
+        EARTH,
+        MATCH,
+        PICKET,
+        BOMB1,
+        BOMB2,
+        EXPLO00,
+        EXPLO11 = EXPLO00 + 11,
+        CHROME00 = EXPLO11 + 1,
+        CHROME15 = CHROME00 + 15,
+        BOMB1_FUSED_FIRST = CHROME15 + 1,
+        BOMB1_FUSED_LAST = (int) (BOMB1_FUSED_FIRST + kMaxFuseTicks - 1),
+        BOMB2_FUSED_FIRST = BOMB1_FUSED_LAST + 1,
+        BOMB2_FUSED_LAST = (int) (BOMB2_FUSED_FIRST + kMaxFuseTicks - 1)
+    };
 
-    int run();
+private:
+    HUint8 **mLevel;
+    HUint8 **mTmpLevel;
 
-    void render();
-    */
+    hgame::RenderContext *mRc;
+    hgame::TextureAtlas *mTileAtlas;
+    hgame::TileBatcher *mTileBatcher;
 
-    void initRendering(hgame::RenderContext *rc);
+    hgame::TextureRegion **mTextureRegions;
+
+public:
+    Level();
+    ~Level();
+
+    void initRendering(hgame::RenderContext *rc,
+            hgame::TextureAtlas *tile_atlas);
 
     void deleteRendering(hgame::RenderContext *rc);
 
-    void loadLogo();
-
-    inline hgame::TextureAtlas *getAlphaAtlas()
-    {
-        return mAlphaAtlas;
-    }
-
-    inline hgame::TextureAtlas *getTileAtlas()
-    {
-        return mTileAtlas;
-    }
-
-    inline hgame::TextureAtlas *getLogoAtlas()
-    {
-        return mLogoAtlas;
-    }
+    void render(bool stop = false);
 };
 
 }
 
-#endif // BOMBZ_ACTIVITY_H
+#endif // BOMBZ_LEVEL_H

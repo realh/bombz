@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,7 +36,8 @@ Application::Application(Log *log, Platform *platform,
         Activity *activity, ThreadFactory *thread_fact) :
         mLog(*log), mPlatform(platform), mRenderContext(0),
         mThreadFactory(thread_fact), mActivity(activity),
-        mRenderWaiting(false), mRenderShutdown(false), mRenderLooping(false)
+        mRenderWaiting(false), mRenderReason(RENDER_REASON_RENDER),
+        mRenderLooping(false)
 {
     mRenderingCond = createCond();
     // activity won't be null in a normal app, but can be in some basic tests
@@ -65,12 +66,12 @@ void Application::renderLoop()
         mRenderingCond->getMutex()->lock();
         mRenderWaiting = false;
         mRenderingCond->getMutex()->unlock();
-        if (!mRenderShutdown)
+        if (!mRenderReason)
             mActivity->render();
         mRenderingCond->getMutex()->lock();
         wait = !mRenderWaiting;
         mRenderWaiting = true;
-        if (mRenderShutdown)
+        if (mRenderReason == RENDER_REASON_SHUTDOWN)
         {
             mActivity->deleteRendering(mRenderContext);
             mRenderingCond->signal();
@@ -79,22 +80,21 @@ void Application::renderLoop()
     }
 }
 
-void Application::requestRender(bool shutdown)
+void Application::requestRender(RenderReason reason)
 {
     mRenderingCond->getMutex()->lock();
-    requestRenderAlreadyLocked(shutdown);
+    requestRenderAlreadyLocked(reason);
 }
 
-void Application::requestRenderAlreadyLocked(bool shutdown)
+void Application::requestRenderAlreadyLocked(RenderReason reason)
 {
-    if (shutdown)
-        mRenderShutdown = true;
+    mRenderReason = reason;
     if (mRenderWaiting)
         mRenderingCond->signal();
     else
         mRenderWaiting = true;
     mRenderingCond->getMutex()->unlock();
-    if (shutdown)
+    if (reason)
     {
         mRenderingCond->wait();
     }
@@ -106,7 +106,7 @@ void Application::stop()
     if (mRenderLooping)
     {
         mRenderLooping = false;
-        requestRenderAlreadyLocked(true);
+        requestRenderAlreadyLocked(RENDER_REASON_SHUTDOWN);
     }
     else
     {

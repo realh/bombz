@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -43,6 +43,12 @@ namespace hgame {
 
 class Activity;
 
+typedef enum {
+    RENDER_REASON_RENDER,
+    RENDER_REASON_SUSPEND,
+    RENDER_REASON_SHUTDOWN
+} RenderReason;
+
 class Application {
 protected:
     Log &mLog;
@@ -52,53 +58,60 @@ protected:
     Activity *mActivity;
     hgame::Cond *mRenderingCond;
     volatile bool mRenderWaiting;
-    volatile bool mRenderShutdown;
+    volatile bool mRenderReason;
     volatile bool mRenderLooping;
 public:
     inline RenderContext *getRenderContext() { return mRenderContext; }
+
     inline Platform *getPlatform() { return mPlatform; }
+
     // Most of these args should be passed in by subclasses.
     // Note mRenderContext is not set here, some platforms can't create
     // one until later
     Application(Log *log, Platform *platform,
             Activity *activity, ThreadFactory *thread_fact);
+
     virtual ~Application();
-    
+
     Mutex *createMutex()
     {
         return mThreadFactory->createMutex();
     }
+
     Cond *createCond(Mutex *mutex = 0)
     {
         return mThreadFactory->createCond(mutex);
     }
+
     Thread *createThread(Runnable *r, const char *name = 0)
     {
         return mThreadFactory->createThread(r, name);
     }
-    
+
     // Wake up rendering thread. If shutdown is true, the activity's
     // deleteRendering() method will be called and this function will
     // block until that's all completed
-    virtual void requestRender(bool shutdown = false);
-    
+    virtual void requestRender(RenderReason reason = RENDER_REASON_RENDER);
+
     inline Activity *getActivity()
     {
         return mActivity;
     }
-    
+
     // Call to get everything going after setActivity()
     virtual void start() = 0;
-    
+
     // Call *from Activity* to shut everything down when finished; default
-    // implementation is equivalent to requestRender(true) if mRenderLooping
-    // is true
+    // implementation is equivalent to requestRender(RENDER_REASON_SHUTDOWN)
+    // if mRenderLooping is true
     virtual void stop();
-    
+
 protected:
     // Allows stop() to do the same as requestRender() without an unsafe
     // extra unlock/lock. Mutex is unlocked on exit from this method.
-    virtual void requestRenderAlreadyLocked(bool shutdown);
+    virtual void requestRenderAlreadyLocked(RenderReason reason =
+            RENDER_REASON_RENDER);
+
     virtual void renderLoop();
 };
 
