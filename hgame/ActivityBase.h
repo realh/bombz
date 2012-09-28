@@ -80,7 +80,7 @@ public:
     virtual void stop();
 
     // Called on the rendering thread
-    virtual void render() = 0;
+    virtual void render(RenderContext *rc) = 0;
 
     // Called from rendering thread when a context becomes available.
     // Load textures etc here. Activity subclasses should forward to

@@ -58,7 +58,7 @@ public:
 
     int run();
 
-    void render();
+    void render(hgame::RenderContext *rc);
     */
 
     void initRendering(hgame::RenderContext *rc);

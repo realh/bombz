@@ -93,10 +93,10 @@ void Activity::setSubActivity(SubActivity *subact)
     mSubActivity = subact;
 }
 
-void Activity::render()
+void Activity::render(RenderContext *rc)
 {
     if (mSubActivity)
-        mSubActivity->render();
+        mSubActivity->render(rc);
 }
 
 }

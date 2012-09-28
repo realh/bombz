@@ -67,7 +67,7 @@ public:
         return mSubActivity;
     }
 
-    virtual void render();
+    virtual void render(RenderContext *rc);
 };
 
 }

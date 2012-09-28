@@ -67,7 +67,7 @@ void Application::renderLoop()
         mRenderWaiting = false;
         mRenderingCond->getMutex()->unlock();
         if (!mRenderReason)
-            mActivity->render();
+            mActivity->render(mRenderContext);
         mRenderingCond->getMutex()->lock();
         wait = !mRenderWaiting;
         mRenderWaiting = true;
