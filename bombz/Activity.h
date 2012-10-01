@@ -38,6 +38,8 @@
 #include "hgame/TextureAtlas.h"
 #include "hgame/TextureRegion.h"
 
+#include "bombz/Level.h"
+
 namespace bombz {
 
 class Activity : public hgame::Activity {
@@ -48,6 +50,7 @@ private:
     hgame::TextureAtlas *mLogoAtlas;
     int mScreenTileSize;
     int mSrcTileSize;
+    Level *mLevel;
 public:
     Activity();
 
@@ -92,6 +95,10 @@ public:
         return mSrcTileSize;
     }
 
+    inline Level *getLevel() const
+    {
+        return mLevel;
+    }
 };
 
 }

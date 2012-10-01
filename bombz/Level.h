@@ -35,6 +35,7 @@
 #include "config.h"
 
 #include "hgame/RenderContext.h"
+#include "hgame/Sprite.h"
 #include "hgame/TextureAtlas.h"
 #include "hgame/TextureRegion.h"
 #include "hgame/TileBatcher.h"
@@ -88,6 +89,7 @@ private:
 
     hgame::TextureRegion **mTileRegions;
     hgame::TextureRegion *mExplo00Region;
+    hgame::Sprite *mExplo00Sprite;
 
 public:
     Level();
@@ -98,6 +100,8 @@ public:
     void deleteRendering(hgame::RenderContext *rc);
 
     void render(hgame::RenderContext *rc);
+
+    void blank(bool with_frame = true);
 private:
     hgame::TextureRegion *createRegion(int x, int y);
 

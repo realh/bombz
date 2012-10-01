@@ -36,6 +36,7 @@ Level::Level() : mRc(0), mTileAtlas(0), mTileBatcher(0), mTileRegions(0)
 {
     mLevel = new HUInt8[kWidth * kHeight];
     mTmpLevel = new HUInt8[kWidth * kHeight];
+    blank();
 }
 
 Level::~Level()
@@ -44,7 +45,7 @@ Level::~Level()
     delete[] mLevel;
 }
 
-void initRendering(hgame::RenderContext *rc, Activity *act)
+void Level::initRendering(hgame::RenderContext *rc, Activity *act)
 {
     mRc = rc;
     mTileAtlas = act->getTileAtlas();
@@ -65,24 +66,97 @@ void initRendering(hgame::RenderContext *rc, Activity *act)
     int m;
     for (m = 0, n = BOMB1_FUSED_FIRST; n <= BOMB1_FUSED_LAST; ++n, ++m)
     {
-        mTileRegions[n] = createRegion(((i & 4) == 0) ? BOMB1 : BLANK;
+        mTileRegions[n] = createRegion(((m & 4) == 0) ? BOMB1 : BLANK);
     }
     for (m = 0, n = BOMB2_FUSED_FIRST; n <= BOMB2_FUSED_LAST; ++n, ++m)
     {
-        mTileRegions[n] = createRegion(((i & 4) == 0) ? BOMB2 : BLANK;
+        mTileRegions[n] = createRegion(((m & 4) == 0) ? BOMB2 : BLANK);
     }
     mExplo00Region = mAlphaAtlas->createRegion(1, 1,
             mSrcTileSize * 3, mSrcTileSize * 3);
+    mExplo00Sprite = rc->createSprite(mExplo00Region,
+            mScreenTileSize * 3, mScreenTileSize * 3);
 }
 
-    void deleteRendering(hgame::RenderContext *rc);
+void Level::deleteRendering(hgame::RenderContext *rc)
+{
+    delete mExplo00Sprite;
+    mExplo00Sprite = 0;
+    delete mExplo00Region;
+    mExplo00Region = 0;
+    for (int n = BLANK; n <= BOMB2_FUSED_LAST; ++n)
+    {
+        delete mTileRegions[n];
+        mTileRegions[n] = 0;
+    }
+    delete[] mTileRegions;
+    mTileRegions = 0;
+    delete mTileBatcher;
+    mTileBatcher = 0;
+    // Atlases are owned by Activity, don't delete them
+    mAlphaAtlas = 0;
+    mTileAtlas = 0;
+    mRc = 0;
+}
 
-    void render(hgame::RenderContext *rc);
+void Level::render(hgame::RenderContext *rc)
+{
+    int n, x, y;
+    for (n = 0, y = 0; y < kHeight; ++y)
+    {
+        for (x = 0; x < kWidth; ++x)
+            mTileBatcher->setTextureAt(mTileRegions[mLevel[n]], x, y);
+    }
+    rc->bindTexture(mTileAtlas);
+    mTileBatcher->render(rc);
+    rc->bindTexture(mAlphaAtlas);
+    for (n = 0, y = 0; y < kHeight; ++y)
+    {
+        for (x = 0; x < kWidth; ++x)
+        {
+            if (mLevel[n] == EXPLO00)
+            {
+                mExplo00Sprite->setPosition((x - 1) * mScreenTileSize,
+                        (y - 1) * mScreenTileSize);
+                mExplo00Sprite->render(rc);
+            }
+        }
+    }
+}
+
+void Level::blank(bool with_frame)
+{
+    int n, x, y;
+    for (n = 0, y = 0; y < kHeight; ++y)
+    {
+        for (x = 0; x < kWidth; ++x)
+        {
+            HUInt8 t = BLANK;
+            if (with_frame)
+            {
+                if (y == 0 && x == 0)
+                    t = CHROME00;
+                else if (y == 0 && x == kWidth - 1)
+                    t = CHROME00 + 2;
+                else if (y == kHeight - 1 && x == 0)
+                    t = CHROME00 + 4;
+                else if (y == kHeight - 1 && x == kWidth - 1)
+                    t = CHROME00 + 5;
+                else if (y == 0 || y == kHeight - 1)
+                    t = CHROME00 + 1;
+                else if (x == 0 || x == kWidth - 1)
+                    t = CHROME00 + 3;
+            }
+            mLevel[n] = t;
+        }
+    }
+}
 
 hgame::TextureRegion *Level::createRegion(int x, int y)
 {
     return mTileAtlas->createRegion(x * (mSrcTileSize + 2) + 1,
-            y * (mSrcTileSize + 2) + 1);
+            y * (mSrcTileSize + 2) + 1,
+            mSrcTileSize, mSrcTileSize);
 }
 
 hgame::TextureRegion *Level::createRegion(int n)

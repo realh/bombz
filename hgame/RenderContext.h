@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -44,29 +44,48 @@ class TextureRegion;
 class TileBatcher;
 
 class RenderContext {
+private:
+    const TextureAtlas *mBoundTexture;
 public:
+    RenderContext();
     virtual ~RenderContext();
-    
+
     virtual int getWidth() const = 0;
     virtual int getHeight() const = 0;
-    
+
     // img dimensions must be powers of 2 in case using OpenGL
     // This object must take ownership of img or delete it
     virtual TextureAtlas *uploadTexture(Image *img) = 0;
-    
+
     // Whether tiles need resizing to fit screen
     virtual bool needScaling() const = 0;
 
     virtual Sprite *createSprite(TextureRegion *texture,
             int width, int height) = 0;
-    
+
     virtual TileBatcher *createTileBatcher(int nColumns, int nRows,
             int tile_size) = 0;
-    
+
     // w and h are desired number of tiles across and down.
     // Returns tile size in pixels. Currently only supports square tiles
     // and pixels.
     int calculateTileSize(int w, int h);
+
+    inline const TextureAtlas *getBoundTexture()
+    {
+        return mBoundTexture;
+    }
+
+    inline void bindTexture(const TextureAtlas *tex)
+    {
+        if (mBoundTexture != tex)
+        {
+            doBindTexture(tex);
+            mBoundTexture = tex;
+        }
+    }
+protected:
+    virtual void doBindTexture(const TextureAtlas *tex) = 0;
 };
 
 }

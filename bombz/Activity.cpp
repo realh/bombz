@@ -39,10 +39,12 @@ Activity::Activity() :
         mTileAtlas(0),
         mLogoAtlas(0)
 {
+    mLevel = new Level();
 }
 
 Activity::~Activity()
 {
+    delete mLevel;
 }
 
 void Activity::initRendering(hgame::RenderContext *rc)
@@ -57,6 +59,7 @@ void Activity::initRendering(hgame::RenderContext *rc)
     img = platform->loadPNG("alpha_atlas.png", mSrcTileSize);
     mAlphaAtlas = rc->uploadTexture(img);
     delete img;
+    mLevel->initRendering(rc, this);
     if (mSubActivity)
         mSubActivity->initRendering(rc);
 }
@@ -65,6 +68,7 @@ void Activity::deleteRendering(hgame::RenderContext *rc)
 {
     if (mSubActivity)
         mSubActivity->deleteRendering(rc);
+    mLevel->deleteRendering(rc);
     delete mAlphaAtlas;
     mAlphaAtlas = 0;
     delete mTileAtlas;

@@ -49,11 +49,17 @@ public:
             mTexture(texture), mW(width), mH(height)
             {}
     virtual ~Sprite();
+
     virtual void setPosition(int x, int y) = 0;
+
     // Calling function must set everything up first, including
     // binding the texture if necessary
     virtual void render(RenderContext *rc) = 0;
-    virtual void bind() = 0;
+
+    inline void bind(RenderContext *rc)
+    {
+        rc->bindTexture(mTexture->getAtlas());
+    }
 };
 
 }

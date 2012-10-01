@@ -50,7 +50,6 @@ public:
             int width, int height);
     virtual void setPosition(int x, int y);
     virtual void render(hgame::RenderContext *rc);
-    void bind();
 };
 
 }

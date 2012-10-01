@@ -62,9 +62,4 @@ void GLSprite::render(hgame::RenderContext *rc)
     glDrawArrays(GL_QUADS, 0, 4);
 }
 
-void GLSprite::bind()
-{
-    ((hgl::GLTextureAtlas *) mTexture->getAtlas())->bind(mRc);
-}
-
 }
