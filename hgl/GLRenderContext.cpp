@@ -48,19 +48,8 @@ void GLRenderContext::doBindTexture(const hgame::TextureAtlas *tex)
             ((const GLTextureAtlas *) tex)->getTextureId());
 }
 
-GLRenderContext::GLRenderContext(int width, int height, bool need_scaling) :
-        hgame::RenderContext(), mWidth(width), mHeight(height),
-        mNeedScaling(need_scaling)
-{
-}
-
 GLRenderContext::~GLRenderContext()
 {
-}
-
-bool GLRenderContext::needScaling() const
-{
-    return mNeedScaling;
 }
 
 }

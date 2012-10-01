@@ -31,7 +31,8 @@
 
 namespace hgame {
 
-RenderContext::RenderContext() : mBoundTexture(0)
+RenderContext::RenderContext(Log *log) :
+        mBoundTexture(0), mNeedScaling(false), mLog(*log)
 {
 }
 
@@ -45,11 +46,14 @@ int RenderContext::calculateTileSize(int w, int h)
     double scrn_h = (double) getHeight();
     double src_aspect = (double) w / (double) h;
     double scrn_aspect = scrn_w / scrn_h;
+    double result;
     if (scrn_aspect >= src_aspect)
-    {
-        return (int) (scrn_h / (double) h);
-    }
-    return (int) (scrn_w / (double) w);
+        result = (int) (scrn_h / (double) h);
+    else
+        result = (int) (scrn_w / (double) w);
+    mLog.d("Screen size is %dx%d, tile size is %d",
+            (int) scrn_w, (int) scrn_h, result);
+    return result;
 }
 
 }

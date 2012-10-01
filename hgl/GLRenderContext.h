@@ -51,9 +51,9 @@ public:
     int getWidth() const;
     int getHeight() const;
 
-    bool needScaling() const;
-
-    GLRenderContext(int width, int height, bool need_scaling);
+    GLRenderContext(hgame::Log *log) :
+            hgame::RenderContext(log), mWidth(0), mHeight(0)
+    {}
     ~GLRenderContext();
 protected:
     void doBindTexture(const hgame::TextureAtlas *tex);

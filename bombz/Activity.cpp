@@ -50,9 +50,10 @@ Activity::~Activity()
 void Activity::initRendering(hgame::RenderContext *rc)
 {
     hgame::Platform *platform = getPlatform();
-    // FIXME: Replace numbers with constants from a Level class or whatever
-    mScreenTileSize = rc->calculateTileSize(20, 15);
+    mScreenTileSize = rc->calculateTileSize(Level::kWidth, Level::kHeight);
     mSrcTileSize = platform->getBestPNGMatch(mScreenTileSize);
+    mLog.d("Using source tile size %d", mSrcTileSize);
+    rc->setNeedScaling(mSrcTileSize != mScreenTileSize);
     hgame::Image *img = platform->loadPNG("tile_atlas.png", mSrcTileSize);
     mTileAtlas = rc->uploadTexture(img);
     delete img;

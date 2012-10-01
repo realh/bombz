@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,10 +27,11 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "hsdl/GLRenderContext.h"
+#include "config.h"
 
-#include "SDL.h"
-#include "SDL_opengl.h"
+#include <cstdlib>
+
+#include "hsdl/GLRenderContext.h"
 
 #include "hgame/Log.h"
 
@@ -41,6 +42,32 @@
 #include "hsdl/Image.h"
 
 namespace hsdl {
+
+GLRenderContext::GLRenderContext() :
+        hgl::GLRenderContext(new hgame::Log("GLRenderContext"))
+{
+    SDL_Rect **modes = SDL_ListModes(0, SDL_FULLSCREEN | SDL_HWSURFACE);
+    int w, h;
+    if (!modes)
+    {
+        THROW(hgame::Throwable, "No modes available");
+    }
+    else if ((long) modes == -1)
+    {
+        w = 1920;
+        h = 1080;
+    }
+    else
+    {
+        int n;
+        mLog.d("Available modes:");
+        for (n = 0; modes[n]; ++n)
+        {
+            mLog.d("  %dx%d", modes[n]->w, modes[n]->h);
+        }
+    }
+    std::exit(0);
+}
 
 hgame::TextureAtlas *GLRenderContext::uploadTexture(hgame::Image *img)
 {
@@ -68,7 +95,7 @@ hgame::TextureAtlas *GLRenderContext::uploadTexture(hgame::Image *img)
         THROW(hgame::Throwable, "Unsupported bytes per pixel: %d", bpp);
     }
     hgl::GLTextureAtlas *atlas = new hgl::GLTextureAtlas(this, w, h,
-            needScaling() ? GL_LINEAR : GL_NEAREST);
+            getNeedScaling() ? GL_LINEAR : GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, bpp, w, h, 0, tex_fmt, GL_UNSIGNED_BYTE,
             surf->pixels);
     delete img;
@@ -86,5 +113,5 @@ hgame::TileBatcher *GLRenderContext::createTileBatcher(int nColumns, int nRows,
 {
     return new GLTileBatcher(this, nColumns, nRows, tile_size);
 }
-    
+
 }

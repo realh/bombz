@@ -113,6 +113,9 @@ protected:
             RENDER_REASON_RENDER);
 
     virtual void renderLoop();
+
+    // To be called at start of rendering thread
+    virtual void createRenderContext() = 0;
 };
 
 }

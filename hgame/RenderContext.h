@@ -35,6 +35,7 @@
 #include "config.h"
 
 #include "hgame/Image.h"
+#include "hgame/Log.h"
 #include "hgame/TextureAtlas.h"
 
 namespace hgame {
@@ -46,8 +47,11 @@ class TileBatcher;
 class RenderContext {
 private:
     const TextureAtlas *mBoundTexture;
+    bool mNeedScaling;
+protected:
+    Log &mLog;
 public:
-    RenderContext();
+    RenderContext(Log *log);
     virtual ~RenderContext();
 
     virtual int getWidth() const = 0;
@@ -58,7 +62,15 @@ public:
     virtual TextureAtlas *uploadTexture(Image *img) = 0;
 
     // Whether tiles need resizing to fit screen
-    virtual bool needScaling() const = 0;
+    inline bool getNeedScaling() const
+    {
+        return mNeedScaling;
+    }
+
+    inline void setNeedScaling(bool f)
+    {
+        mNeedScaling = f;
+    }
 
     virtual Sprite *createSprite(TextureRegion *texture,
             int width, int height) = 0;
