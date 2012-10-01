@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,8 +37,10 @@
 #include <cstdarg>
 #include <exception>
 
+#include "hgame/Types.h"
+
 namespace hgame {
- 
+
 class Log
 {
 public:
@@ -50,30 +52,31 @@ public:
         DEBUG,
         VERBOSE
     };
-    
+
     const char *getLevelName(Level level) const;
-    
+
     // Only messages with given priority or higher will be logged
     Log(const char *tag, Level priority = DEBUG);
-    
+
     virtual ~Log();
-    
+
     // Default implementation writes info to stderr.
     // Derived classes can re-implement this
     virtual void logWrite(Level level, const char *message);
 
 public:
     // Formats a message before passing it on to logWrite.
-    virtual void log(Level level, const char *format, ...);
+    virtual void log(Level level, const char *format, ...)
+            H_GNUC_PRINTF(3, 4);
     virtual void log(Level level, const char *format, std::va_list ap);
-    
-    void f(const char *format, ...);
-    void e(const char *format, ...);
-    void w(const char *format, ...);
-    void i(const char *format, ...);
-    void d(const char *format, ...);
-    void v(const char *format, ...);
-    
+
+    void f(const char *format, ...) H_GNUC_PRINTF(2, 3);
+    void e(const char *format, ...) H_GNUC_PRINTF(2, 3);
+    void w(const char *format, ...) H_GNUC_PRINTF(2, 3);
+    void i(const char *format, ...) H_GNUC_PRINTF(2, 3);
+    void d(const char *format, ...) H_GNUC_PRINTF(2, 3);
+    void v(const char *format, ...) H_GNUC_PRINTF(2, 3);
+
 private:
     char *mTag;
     Level mPriority;
@@ -84,15 +87,19 @@ class Throwable : public std::exception {
 protected:
     char *mRepr;
     virtual const char *getClassName() const throw();
-    
+
     // Allows subclasses to construct more complex strings, must set repr
     // in constructor
     Throwable();
 public:
     Throwable(const char *file, int line, const char *func,
-            const char *desc, ...) throw();
+            const char *desc, ...)
+            throw()
+            H_GNUC_PRINTF(5, 6);
     Throwable(const char *file, int line, const char *func,
-            int errno_code, const char *desc, ...) throw();
+            int errno_code, const char *desc, ...)
+            throw()
+            H_GNUC_PRINTF(6, 7);
     Throwable(const char *file, int line, const char *func,
             const char *desc, std::va_list ap) throw();
     Throwable(const char *file, int line, const char *func,

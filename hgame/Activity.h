@@ -68,6 +68,11 @@ public:
     }
 
     virtual void render(RenderContext *rc);
+
+    // Return a 0-terminated array of ints in pairs of x, y;
+    // sorted with best mode first;
+    // must be able to delete[] result
+    virtual int *getBestModes() = 0;
 };
 
 }

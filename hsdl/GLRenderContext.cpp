@@ -43,7 +43,7 @@
 
 namespace hsdl {
 
-GLRenderContext::GLRenderContext() :
+GLRenderContext::GLRenderContext(int *best_modes) :
         hgl::GLRenderContext(new hgame::Log("GLRenderContext"))
 {
     SDL_Rect **modes = SDL_ListModes(0, SDL_FULLSCREEN | SDL_HWSURFACE);

@@ -104,7 +104,7 @@ Image *Platform::loadPNG(const char *leafname, int size)
 {
     char sz[8];
     sprintf(sz, "%d", size);
-    char *name = joinPath("pngs", sz, leafname);
+    char *name = joinPath("pngs", sz, leafname, NULL);
     try {
         Image *img = loadPNG(name);
         delete[] name;
@@ -119,15 +119,14 @@ Image *Platform::loadPNG(const char *leafname, int size)
 
 Platform::FileType Platform::getFileType(const char *filename)
 {
-    char *path = joinPath(getAssetsDirectory(), filename, 0);
+    char *path = joinPath(getAssetsDirectory(), filename, NULL);
     struct stat info;
     FileType result = NOT_FOUND;
     if (stat(path, &info))
     {
         if (errno != ENOENT)
         {
-            THROW(Throwable, "Error accessing file '%s': %s",
-                    filename, strerror(errno));
+            THROW(Throwable, errno, "Error accessing file '%s'", filename);
         }
     }
     else if (S_ISREG(info.st_mode))
@@ -156,7 +155,7 @@ DirectoryListing *Platform::listDirectory(const char *dirname)
 int Platform::getBestPNGMatch(int tile_size)
 {
     int best = 0;
-    char *pathname = joinPath(getAssetsDirectory(), "pngs");
+    char *pathname = joinPath(getAssetsDirectory(), "pngs", NULL);
     DirectoryListing *dir = listDirectory(pathname);
     const char *leafname;
     try {
@@ -186,8 +185,7 @@ CommonDirectoryListing::CommonDirectoryListing(const char *dirname)
     mDir = opendir(dirname);
     if (!mDir)
     {
-        THROW(Throwable, "Error opening directory '%s': %s",
-                dirname, strerror(errno));
+        THROW(Throwable, errno, "Error opening directory '%s'", dirname);
     }
 }
 
@@ -204,9 +202,14 @@ const char *CommonDirectoryListing::getNext()
     {
         if (errno)
         {
-            THROW(Throwable, "Error reading directory: %s", strerror(errno));
+            THROW(Throwable, errno, "Error reading directory");
         }
         return 0;
+    }
+    if (entry->d_name[0] == '.' &&
+            (!entry->d_name[1] || entry->d_name[1] == '.'))
+    {
+        return getNext();
     }
     return entry->d_name;
 }

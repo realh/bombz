@@ -39,13 +39,14 @@
 
 #include "hgame/Font.h"
 #include "hgame/Image.h"
+#include "hgame/Types.h"
 
 namespace hgame {
 
 class DirectoryListing {
 public:
     virtual ~DirectoryListing();
-    // Returns a leafname
+    // Returns a leafname; . and .. are excluded
     virtual const char *getNext() = 0;
 };
 
@@ -85,7 +86,7 @@ public:
     virtual char getDirectorySeparator() = 0;
 
     // ... must be NULL-terminated
-    char *joinPath(const char *first, ...);
+    char *joinPath(const char *first, ...) H_GNUC_NULL_TERMINATED;
     char *joinPath(const char *first, std::va_list ap);
 
     // leafname is relative to app's assets folder

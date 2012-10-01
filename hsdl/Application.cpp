@@ -89,7 +89,7 @@ void Application::start()
 
 void Application::createRenderContext()
 {
-    mRenderContext = new GLRenderContext();
+    mRenderContext = new GLRenderContext(mActivity->getBestModes());
 }
 
 }

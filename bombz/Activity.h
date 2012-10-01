@@ -70,6 +70,8 @@ public:
 
     void loadLogo();
 
+    int *getBestModes();
+
     inline hgame::TextureAtlas *getAlphaAtlas()
     {
         return mAlphaAtlas;

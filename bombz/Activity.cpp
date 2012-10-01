@@ -27,6 +27,11 @@
 
 // Bombz - 2D puzzle game
 
+#include "config.h"
+
+#include <algorithm>
+#include <vector>
+
 #include "bombz/Activity.h"
 
 namespace bombz {
@@ -81,6 +86,34 @@ void Activity::loadLogo()
     hgame::Image *img = getPlatform()->loadPNG("title_logo.png", mSrcTileSize);
     mLogoAtlas = getRenderContext()->uploadTexture(img);
     delete img;
+}
+
+int *Activity::getBestModes()
+{
+    hgame::Platform *plat = getPlatform();
+    char *pngs_dir = plat->joinPath(plat->getAssetsDirectory(), "pngs", NULL);
+    hgame::DirectoryListing *dir = plat->listDirectory(pngs_dir);
+    delete[] pngs_dir;
+    std::vector<int> sizes;
+    const char *ss;
+    while ((ss = dir->getNext()) != 0)
+    {
+        mLog.d("Found pngs subdirectory %s", ss);
+        sizes.push_back(std::atoi(ss));
+    }
+    delete dir;
+    std::sort(sizes.begin(), sizes.end());
+    int *modes = new int[2 * sizes.size() + 2];
+    std::vector<int>::reverse_iterator i;
+    int n;
+    for (n = 0, i = sizes.rbegin(); i != sizes.rend(); ++n, ++i)
+    {
+        modes[n * 2] = *i * Level::kWidth;
+        modes[n * 2 + 1] = *i * Level::kHeight;
+    }
+    modes[n * 2] = 0;
+    modes[n * 2 + 1] = 0;
+    return modes;
 }
 
 }

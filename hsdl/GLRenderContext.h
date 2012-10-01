@@ -45,7 +45,8 @@ class GLRenderContext : public hgl::GLRenderContext {
 private:
     SDL_Surface *mSurface;
 public:
-    GLRenderContext();
+    // See hgame/Application.h for an explanation of best_modes
+    GLRenderContext(int *best_modes);
     hgame::TextureAtlas *uploadTexture(hgame::Image *img);
     hgame::Sprite *createSprite(hgame::TextureRegion *texture,
             int width, int height);
