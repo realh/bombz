@@ -56,7 +56,7 @@ public:
     const char *getLevelName(Level level) const;
 
     // Only messages with given priority or higher will be logged
-    Log(const char *tag, Level priority = DEBUG);
+    Log(const char *tag, Level priority = VERBOSE);
 
     virtual ~Log();
 

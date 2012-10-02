@@ -50,22 +50,99 @@ GLRenderContext::GLRenderContext(int *best_modes) :
     int w, h;
     if (!modes)
     {
-        THROW(hgame::Throwable, "No modes available");
+        THROW(hgame::Throwable, "No screen modes available");
     }
     else if ((long) modes == -1)
     {
-        w = 1920;
-        h = 1080;
+        w = best_modes[0];
+        h = best_modes[1];
     }
     else
     {
         int n;
-        mLog.d("Available modes:");
+        mLog.v("Available modes:");
         for (n = 0; modes[n]; ++n)
         {
-            mLog.d("  %dx%d", modes[n]->w, modes[n]->h);
+            mLog.v("  %dx%d", modes[n]->w, modes[n]->h);
+        }
+        int best_w = 0;
+        int best_h = 0;
+        int best_vh = 0;
+        int highest_w = 0;
+        int highest_h = 0;
+        int m;
+        bool scaling = true;
+        bool exact = false;
+        // Try to find highest resolution that doesn't need scaling
+        for (m = 0; best_modes[2 * m]; ++m)
+        {
+            for (n = 0; modes[n]; ++n)
+            {
+                int tvh;
+                int cvh;
+                if (modes[n]->w >= highest_w && modes[n]->h >= highest_h)
+                {
+                    highest_w = modes[n]->w;
+                    highest_h = modes[n]->h;
+                }
+                if ((float) modes[n]->w / (float) modes[n]->h >=
+                    (float) best_modes[2 * m] / (float) best_modes[2 * m + 1])
+                {
+                    // Test height
+                    cvh = modes[n]->h;
+                    tvh = best_modes[2 * m + 1];
+                }
+                else
+                {
+                    // Test width
+                    cvh = modes[n]->w;
+                    tvh = best_modes[2 * m];
+                }
+                if (cvh == tvh)
+                {
+                    if (!exact || modes[n]->h > best_h)
+                    {
+                        best_w = modes[n]->w;
+                        best_h = modes[n]->h;
+                        best_vh = cvh;
+                        exact = true;
+                        scaling = false;
+                    }
+                }
+                else if (!exact && ((tvh == 1080 && cvh > 1080 && cvh <= 1200)
+                        || (tvh == 720 && cvh > 720 && cvh <= 800)))
+
+                {
+                    if (scaling || modes[n]->h > best_h)
+                    {
+                        best_w = modes[n]->w;
+                        best_h = modes[n]->h;
+                        best_vh = cvh;
+                        scaling = false;
+                    }
+                }
+                else if (scaling && cvh > best_vh)
+                {
+                    best_w = modes[n]->w;
+                    best_h = modes[n]->h;
+                    best_vh = cvh;
+                }
+            }
+            if (!scaling)
+                break;
+        }
+        if (!best_h)
+        {
+            w = highest_w;
+            h = highest_h;
+        }
+        else
+        {
+            w = best_w;
+            h = best_h;
         }
     }
+    mLog.i("Using video mode %d x %d", w, h);
     std::exit(0);
 }
 

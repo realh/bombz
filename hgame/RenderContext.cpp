@@ -46,7 +46,7 @@ int RenderContext::calculateTileSize(int w, int h)
     double scrn_h = (double) getHeight();
     double src_aspect = (double) w / (double) h;
     double scrn_aspect = scrn_w / scrn_h;
-    double result;
+    int result;
     if (scrn_aspect >= src_aspect)
         result = (int) (scrn_h / (double) h);
     else

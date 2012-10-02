@@ -98,7 +98,7 @@ int *Activity::getBestModes()
     const char *ss;
     while ((ss = dir->getNext()) != 0)
     {
-        mLog.d("Found pngs subdirectory %s", ss);
+        mLog.v("Found pngs subdirectory %s", ss);
         sizes.push_back(std::atoi(ss));
     }
     delete dir;
