@@ -66,16 +66,36 @@ void Application::renderLoop()
         mRenderingCond->getMutex()->lock();
         mRenderWaiting = false;
         mRenderingCond->getMutex()->unlock();
-        if (!mRenderReason)
-            mActivity->render(mRenderContext);
+        if (mRenderReason == RENDER_REASON_RENDER)
+        {
+            try {
+                mActivity->render(mRenderContext);
+            }
+            catch (std::exception e)
+            {
+                mLog.e("Rendering exception: %s", e.what());
+                mRenderLooping = false;
+            }
+        }
         mRenderingCond->getMutex()->lock();
         wait = !mRenderWaiting;
         mRenderWaiting = true;
-        if (mRenderReason == RENDER_REASON_SHUTDOWN)
+        if (mRenderReason != RENDER_REASON_DELETE ||
+                mRenderReason == RENDER_REASON_SHUTDOWN )
         {
-            mActivity->deleteRendering(mRenderContext);
-            mRenderingCond->signal();
+            try {
+                mActivity->deleteRendering(mRenderContext);
+            }
+            catch (std::exception e)
+            {
+                mLog.e("Exception freeing render resources: %s", e.what());
+                mRenderLooping = false;
+            }
         }
+        if (mRenderReason != RENDER_REASON_RENDER)
+            mRenderingCond->signal();
+        if (mRenderReason == RENDER_REASON_SHUTDOWN)
+            mRenderLooping = false;
         mRenderingCond->getMutex()->unlock();
     }
 }
@@ -94,7 +114,7 @@ void Application::requestRenderAlreadyLocked(RenderReason reason)
     else
         mRenderWaiting = true;
     mRenderingCond->getMutex()->unlock();
-    if (reason)
+    if (reason != RENDER_REASON_RENDER)
     {
         mRenderingCond->wait();
     }

@@ -44,9 +44,11 @@ namespace hgame {
 class Activity;
 
 typedef enum {
-    RENDER_REASON_RENDER,
-    RENDER_REASON_SUSPEND,
-    RENDER_REASON_SHUTDOWN
+    RENDER_REASON_RENDER,   // Render current frame
+    RENDER_REASON_SUSPEND,  // Do nothing
+    RENDER_REASON_DELETE,   // Free resources associated with rc,
+                            // it's going away
+    RENDER_REASON_SHUTDOWN  // As above, app is shutting down
 } RenderReason;
 
 class Application {
@@ -88,9 +90,9 @@ public:
         return mThreadFactory->createThread(r, name);
     }
 
-    // Wake up rendering thread. If shutdown is true, the activity's
-    // deleteRendering() method will be called and this function will
-    // block until that's all completed
+    // Wake up rendering thread. If reason is DELETE or SHUTDOWN, activity's
+    // deleteRendering() will be called. If reason != RENDER this will block
+    // until request has been serviced
     virtual void requestRender(RenderReason reason = RENDER_REASON_RENDER);
 
     inline Activity *getActivity()

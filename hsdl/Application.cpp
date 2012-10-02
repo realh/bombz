@@ -77,14 +77,9 @@ void Application::start()
         std::exit(1);
     }
     mActivity->start();
-    try {
-        renderLoop();
-    }
-    catch (std::exception e)
-    {
-        mLog.f("Exception in rendering thread: %s", e.what());
-        std::exit(1);
-    }
+    renderLoop();
+    mActivity->stop();
+    delete mRenderContext;
 }
 
 void Application::createRenderContext()

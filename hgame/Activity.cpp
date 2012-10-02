@@ -78,7 +78,13 @@ int Activity::run()
 
     while (mSubActivity && mRunning)
     {
-        result = mSubActivity->run();
+        try {
+            result = mSubActivity->run();
+        }
+        catch (std::exception e) {
+            mLog.e("Exception in Activity: %s", e.what());
+            mRunning = false;
+        }
     }
     mApplication->stop();
     return result;
