@@ -34,12 +34,25 @@
 
 #include "config.h"
 
+#include "hgame/Event.h"
 #include "hgame/Log.h"
 #include "hgame/Platform.h"
 #include "hgame/RenderContext.h"
 #include "hgame/Thread.h"
+#include "hgame/Types.h"
 
 namespace hgame {
+
+extern const EventQuark EVENT_TICK;
+extern const EventQuark EVENT_RENDER_CONTEXT_CREATED;
+extern const EventQuark EVENT_RENDER_CONTEXT_DESTROYED;
+extern const EventQuark EVENT_PAUSE;
+extern const EventQuark EVENT_RESUME;
+
+class TickEvent : public Event {
+public:
+    TickEvent() : Event(EVENT_TICK) {}
+};
 
 class Activity;
 
@@ -62,6 +75,7 @@ protected:
     volatile bool mRenderWaiting;
     volatile bool mRenderReason;
     volatile bool mRenderLooping;
+    EventQueue mEvQueue;
 public:
     inline RenderContext *getRenderContext() { return mRenderContext; }
 
@@ -107,6 +121,19 @@ public:
     // implementation is equivalent to requestRender(RENDER_REASON_SHUTDOWN)
     // if mRenderLooping is true
     virtual void stop();
+
+    inline void pushEvent(Event *ev)
+    {
+        mEvQueue.pushEvent(ev);
+    }
+
+    inline Event *getNextEvent()
+    {
+        return mEvQueue.getNextEvent();
+    }
+
+    // Makes sure there's a TICK event at intervals specified
+    virtual Event *getNextEvent(int tick_period_ms) = 0;
 
 protected:
     // Allows stop() to do the same as requestRender() without an unsafe

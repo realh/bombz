@@ -92,8 +92,12 @@ public:
 private:
     static EventPool *smPool;
     EventQuark mType;
+    bool mPriority;
 public:
-    inline Event(EventQuark t) : mType(t) {}
+    // Priority is whether event has higher priority than tick
+    inline Event(const EventQuark &t, bool priority = false) :
+            mType(t), mPriority(priority)
+    {}
 
     // Returns to pool, subclasses may do other stuff too
     virtual void dispose();
@@ -106,6 +110,16 @@ public:
     {
         smPool = pool;
     }
+
+    const EventQuark &getType() const
+    {
+        return mType;
+    }
+
+    bool getPriority() const
+    {
+        return mPriority;
+    }
 };
 
 // Allows events to be posted and read, and also maintains a pool
@@ -113,7 +127,7 @@ class EventQueue {
 private:
     Cond *mCond;
     std::queue<Event *> mQueue;
-    int mWaiting;
+    volatile int mWaiting;
 public:
     EventQueue(ThreadFactory *tf);
 

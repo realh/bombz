@@ -39,11 +39,15 @@
 namespace hsdl {
 
 class Application : public hgame::Application {
+private:
+    hgame::HUInt32 mLastTick;
+    hgame::Event *mSavedEvent;
 public:
     Application(int argc, char **argv, hgame::Activity *activity);
     ~Application();
     void start();
     void createRenderContext();
+    hgame::Event *getNextEvent(int tick_period_ms);
 };
 
 }

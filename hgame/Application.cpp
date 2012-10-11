@@ -32,12 +32,19 @@
 
 namespace hgame {
 
+const EventQuark EVENT_TICK("TICK");
+const EventQuark EVENT_RENDER_CONTEXT_CREATED("RCUP");
+const EventQuark EVENT_RENDER_CONTEXT_DESTROYED("RCDN");
+const EventQuark EVENT_PAUSE("PAUS");
+const EventQuark EVENT_RESUME("RESM");
+
 Application::Application(Log *log, Platform *platform,
         Activity *activity, ThreadFactory *thread_fact) :
         mLog(*log), mPlatform(platform), mRenderContext(0),
         mThreadFactory(thread_fact), mActivity(activity),
         mRenderWaiting(false), mRenderReason(RENDER_REASON_RENDER),
-        mRenderLooping(false)
+        mRenderLooping(false),
+        mEvQueue(thread_fact)
 {
     mRenderingCond = createCond();
     // activity won't be null in a normal app, but can be in some basic tests

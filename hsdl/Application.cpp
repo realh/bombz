@@ -53,8 +53,11 @@ namespace hsdl {
 Application::Application(int argc, char **argv, hgame::Activity *activity) :
         hgame::Application(new Log("SDLApp"),
                 new Platform(argc, argv),
-                activity, new ThreadFactory())
+                activity, new ThreadFactory()),
+        mLastTick(SDL_GetTicks()),
+        mSavedEvent(0)
 {
+    hgame::Event::setPool(new hgame::EventPool(mThreadFactory));
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
         THROW(Exception, "Init failed");
 }
@@ -85,6 +88,32 @@ void Application::start()
 void Application::createRenderContext()
 {
     mRenderContext = new GLRenderContext(mActivity->getBestModes());
+}
+
+hgame::Event *Application::getNextEvent(int tick_period_ms)
+{
+    hgame::Event *result;
+    if (mSavedEvent)
+    {
+        result = mSavedEvent;
+        mSavedEvent = 0;
+        return result;
+    }
+    int timeout = tick_period_ms - (SDL_GetTicks() - mLastTick);
+    if (timeout < 0)
+        timeout = 0;
+    result = mEvQueue.getNextEvent(timeout);
+    Uint32 now = SDL_GetTicks();
+    if (now - mLastTick >= (Uint32) tick_period_ms)
+    {
+        if (!result || !result->getPriority())
+        {
+            mLastTick = now;
+            mSavedEvent = result;
+            return new hgame::TickEvent();
+        }
+    }
+    return result;
 }
 
 }
