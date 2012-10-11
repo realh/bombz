@@ -34,6 +34,7 @@
 
 #include "config.h"
 
+#include <cstdlib>
 #include <queue>
 
 #include "hgame/Thread.h"
@@ -68,27 +69,48 @@ public:
     }
 };
 
-// Should only be managed by EventQueue
-class Event {
-public:
-    static const int kMaxSize = 60;
-private:
-    EventQuark mType;
-protected:
-    HUInt8 mData[kMaxSize];
-public:
-    inline Event(EventQuark t) : mType(t) {}
-
-    // Called when returning to pool in case subclass needs to free anything
-    virtual void dispose();
-};
-
-// Allows events to be posted and read, and also maintains a pool
-class EventQueue {
+// Pool of events to reduce memory alloc activity
+class EventPool {
 public:
     static const int kPoolSize = 16;
 private:
     void *mPool[kPoolSize];
+    Mutex *mMutex;
+public:
+    EventPool(ThreadFactory *tf);
+
+    ~EventPool();
+
+    void *getEventMem();
+
+    void returnEvent(class Event *ev);
+};
+
+class Event {
+public:
+    static const int kMaxSize = 60;
+private:
+    static EventPool *smPool;
+    EventQuark mType;
+public:
+    inline Event(EventQuark t) : mType(t) {}
+
+    // Returns to pool, subclasses may do other stuff too
+    virtual void dispose();
+
+    void *operator new(size_t sz);
+
+    void operator delete(void *);
+
+    inline static void setPool(EventPool *pool)
+    {
+        smPool = pool;
+    }
+};
+
+// Allows events to be posted and read, and also maintains a pool
+class EventQueue {
+private:
     Cond *mCond;
     std::queue<Event *> mQueue;
     int mWaiting;
@@ -96,10 +118,6 @@ public:
     EventQueue(ThreadFactory *tf);
 
     ~EventQueue();
-
-    void *getEventMem();
-
-    void disposeOfEvent(Event *ev);
 
     void pushEvent(Event *);
 

@@ -32,30 +32,29 @@
 #include <cstring>
 
 #include "hgame/Event.h"
+#include "hgame/Log.h"
 
 namespace hgame {
 
-void Event::dispose() {}
-
-EventQueue::EventQueue(ThreadFactory *tf) :
-        mCond(tf->createCond()), mWaiting(0)
+EventPool::EventPool(ThreadFactory *tf) :
+        mMutex(tf->createMutex())
 {
     memset(mPool, 0, kPoolSize * sizeof(void *));
 }
 
-EventQueue::~EventQueue()
+EventPool::~EventPool()
 {
     for (int n = 0; n < kPoolSize; ++n)
     {
         if (mPool[n])
             delete[] (char *) mPool[n];
     }
-    delete mCond;
+    delete mMutex;
 }
 
-void *EventQueue::getEventMem()
+void *EventPool::getEventMem()
 {
-    mCond->lock();
+    mMutex->lock();
     void *result = 0;
     for (int n = 0; n < kPoolSize; ++n)
     {
@@ -67,15 +66,14 @@ void *EventQueue::getEventMem()
         }
     }
     if (!result)
-        result = new char[sizeof(Event)];
-    mCond->release();
+        result = new char[Event::kMaxSize + sizeof(EventQuark)];
+    mMutex->release();
     return result;
 }
 
-void EventQueue::disposeOfEvent(Event *ev)
+void EventPool::returnEvent(Event *ev)
 {
-    ev->dispose();
-    mCond->lock();
+    mMutex->lock();
     int n;
     for (n = 0; n < kPoolSize; ++n)
     {
@@ -87,7 +85,42 @@ void EventQueue::disposeOfEvent(Event *ev)
     }
     if (n == kPoolSize)
         delete[] (char *) ev;
-    mCond->release();
+    mMutex->release();
+}
+
+EventPool *Event::smPool = 0;
+
+void Event::dispose()
+{
+    smPool->returnEvent(this);
+}
+
+void *Event::operator new(size_t sz)
+{
+    if (sz > Event::kMaxSize + sizeof(EventQuark))
+    {
+        THROW(Throwable, "Event is too big, increase Event::kMaxSize");
+    }
+    if (!smPool)
+    {
+        THROW(Throwable, "Event pool not initialised");
+    }
+    return smPool->getEventMem();
+}
+
+void Event::operator delete(void *addr)
+{
+    delete[] (char *) addr;
+}
+
+EventQueue::EventQueue(ThreadFactory *tf) :
+        mCond(tf->createCond()), mWaiting(0)
+{
+}
+
+EventQueue::~EventQueue()
+{
+    delete mCond;
 }
 
 void EventQueue::pushEvent(Event *ev)
