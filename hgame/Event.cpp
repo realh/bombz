@@ -140,6 +140,7 @@ Event *EventQueue::getNextEvent(int timeout)
     {
         if (timeout != 0)
         {
+            ++mWaiting;
             if (timeout == -1)
             {
                 mCond->wait();
@@ -154,6 +155,7 @@ Event *EventQueue::getNextEvent(int timeout)
                     mQueue.pop();
                 }
             }
+            --mWaiting;
         }
     }
     else
