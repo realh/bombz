@@ -55,17 +55,17 @@ Application::~Application()
 
 void Application::renderLoop()
 {
-    mRenderingCond->getMutex()->lock();
+    mRenderingCond->lock();
     bool wait = !(mRenderWaiting = true);
     mRenderLooping = true;
-    mRenderingCond->getMutex()->unlock();
+    mRenderingCond->unlock();
     while (mRenderLooping)
     {
         if (wait)
             mRenderingCond->wait();
-        mRenderingCond->getMutex()->lock();
+        mRenderingCond->lock();
         mRenderWaiting = false;
-        mRenderingCond->getMutex()->unlock();
+        mRenderingCond->unlock();
         if (mRenderReason == RENDER_REASON_RENDER)
         {
             try {
@@ -77,7 +77,7 @@ void Application::renderLoop()
                 mRenderLooping = false;
             }
         }
-        mRenderingCond->getMutex()->lock();
+        mRenderingCond->lock();
         wait = !mRenderWaiting;
         mRenderWaiting = true;
         if (mRenderReason != RENDER_REASON_DELETE ||
@@ -96,13 +96,13 @@ void Application::renderLoop()
             mRenderingCond->signal();
         if (mRenderReason == RENDER_REASON_SHUTDOWN)
             mRenderLooping = false;
-        mRenderingCond->getMutex()->unlock();
+        mRenderingCond->unlock();
     }
 }
 
 void Application::requestRender(RenderReason reason)
 {
-    mRenderingCond->getMutex()->lock();
+    mRenderingCond->lock();
     requestRenderAlreadyLocked(reason);
 }
 
@@ -113,7 +113,7 @@ void Application::requestRenderAlreadyLocked(RenderReason reason)
         mRenderingCond->signal();
     else
         mRenderWaiting = true;
-    mRenderingCond->getMutex()->unlock();
+    mRenderingCond->unlock();
     if (reason != RENDER_REASON_RENDER)
     {
         mRenderingCond->wait();
@@ -122,7 +122,7 @@ void Application::requestRenderAlreadyLocked(RenderReason reason)
 
 void Application::stop()
 {
-    mRenderingCond->getMutex()->lock();
+    mRenderingCond->lock();
     if (mRenderLooping)
     {
         mRenderLooping = false;
@@ -130,7 +130,7 @@ void Application::stop()
     }
     else
     {
-        mRenderingCond->getMutex()->unlock();
+        mRenderingCond->unlock();
     }
 }
 
