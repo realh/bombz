@@ -36,7 +36,7 @@ Level::Level() : mRc(0), mTileAtlas(0), mTileBatcher(0), mTileRegions(0)
 {
     mLevel = new HUInt8[kWidth * kHeight];
     mTmpLevel = new HUInt8[kWidth * kHeight];
-    blank();
+    reset();
 }
 
 Level::~Level()
@@ -124,7 +124,7 @@ void Level::render(hgame::RenderContext *rc)
     }
 }
 
-void Level::blank(bool with_frame)
+void Level::reset(bool with_frame)
 {
     int n, x, y;
     for (n = 0, y = 0; y < kHeight; ++y)

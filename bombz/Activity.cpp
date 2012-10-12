@@ -42,7 +42,9 @@ Activity::Activity() :
         hgame::Activity(new hgame::Log(kName), kName),
         mAlphaAtlas(0),
         mTileAtlas(0),
-        mLogoAtlas(0)
+        mLogoAtlas(0),
+        mLogoRegion(0),
+        mLogoSprite(0)
 {
     mLevel = new Level();
 }
@@ -65,6 +67,7 @@ void Activity::initRendering(hgame::RenderContext *rc)
     img = platform->loadPNG("alpha_atlas.png", mSrcTileSize);
     mAlphaAtlas = rc->uploadTexture(img);
     delete img;
+    loadLogo(rc);
     mLevel->initRendering(rc, this);
     if (mSubActivity)
         mSubActivity->initRendering(rc);
@@ -79,13 +82,29 @@ void Activity::deleteRendering(hgame::RenderContext *rc)
     mAlphaAtlas = 0;
     delete mTileAtlas;
     mTileAtlas = 0;
+    deleteLogo();
 }
 
-void Activity::loadLogo()
+void Activity::loadLogo(hgame::RenderContext *rc)
 {
     hgame::Image *img = getPlatform()->loadPNG("title_logo.png", mSrcTileSize);
     mLogoAtlas = getRenderContext()->uploadTexture(img);
     delete img;
+    mLogoRegion = mLogoAtlas->createRegion(1, 1,
+            mSrcTileSize * 16, mSrcTileSize * 4);
+    mLogoSprite = rc->createSprite(mLogoRegion,
+            mScreenTileSize * 16, mScreenTileSize * 4);
+    mLogoSprite->setPosition(mScreenTileSize * 2, mScreenTileSize * 2);
+}
+
+void Activity::deleteLogo()
+{
+    delete mLogoSprite;
+    mLogoSprite = 0;
+    delete mLogoRegion;
+    mLogoRegion = 0;
+    delete mLogoAtlas;
+    mLogoAtlas = 0;
 }
 
 int *Activity::getBestModes()

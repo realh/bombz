@@ -35,6 +35,7 @@
 #include "config.h"
 
 #include "hgame/Activity.h"
+#include "hgame/Sprite.h"
 #include "hgame/TextureAtlas.h"
 #include "hgame/TextureRegion.h"
 
@@ -48,6 +49,8 @@ private:
     hgame::TextureAtlas *mAlphaAtlas;
     hgame::TextureAtlas *mTileAtlas;
     hgame::TextureAtlas *mLogoAtlas;
+    hgame::TextureRegion *mLogoRegion;
+    hgame::Sprite *mLogoSprite;
     int mScreenTileSize;
     int mSrcTileSize;
     Level *mLevel;
@@ -68,7 +71,9 @@ public:
 
     void deleteRendering(hgame::RenderContext *rc);
 
-    void loadLogo();
+    void loadLogo(hgame::RenderContext *rc);
+
+    void deleteLogo();
 
     int *getBestModes();
 
@@ -85,6 +90,11 @@ public:
     inline hgame::TextureAtlas *getLogoAtlas()
     {
         return mLogoAtlas;
+    }
+
+    inline hgame::Sprite *getLogoSprite()
+    {
+        return mLogoSprite;
     }
 
     inline int getScreenTileSize() const

@@ -101,7 +101,7 @@ public:
 
     void render(hgame::RenderContext *rc);
 
-    void blank(bool with_frame = true);
+    void reset(bool with_frame = true);
 private:
     hgame::TextureRegion *createRegion(int x, int y);
 
