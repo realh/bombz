@@ -250,7 +250,7 @@ def load_and_clip(source, top, left, size = 72):
     cr.set_source_surface(src, -top * size / 2, -left * size / 2)
     cr.paint()
     return dest
-    
+
 
 
 def make_game_tile_atlas(dest, sources, size = 72, columns = 6):
@@ -324,7 +324,7 @@ def make_game_alpha_atlas(dest, sources, size = 72):
             [None, None, None, sources[5], sources[6]]]
     atlas = make_atlas(True, size, table)
     atlas.write_to_png(dest)
-    
+
 
 def make_title_logo(dest, source, width, height):
     w2 = round_to_powerof2(width)
