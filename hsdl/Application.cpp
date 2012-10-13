@@ -72,7 +72,7 @@ void Application::start()
     assert(mActivity != 0);
     try {
         createRenderContext();
-        mActivity->initRendering(mRenderContext);
+        mActivity->requestRenderState(hgame::Acivity::RENDER_STATE_RENDERING);
     }
     catch (std::exception e)
     {

@@ -122,7 +122,7 @@ public:
     }
 };
 
-// Allows events to be posted and read, and also maintains a pool
+// Allows events to be posted and read
 class EventQueue {
 private:
     Cond *mCond;

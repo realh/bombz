@@ -42,8 +42,7 @@ Application::Application(Log *log, Platform *platform,
         Activity *activity, ThreadFactory *thread_fact) :
         mLog(*log), mPlatform(platform), mRenderContext(0),
         mThreadFactory(thread_fact), mActivity(activity),
-        mRenderWaiting(false), mRenderReason(RENDER_REASON_RENDER),
-        mRenderLooping(false),
+        mRenderBlocking(false), mRenderLooping(false), mRenderWaiting(false),
         mEvQueue(thread_fact)
 {
     mRenderingCond = createCond();
@@ -66,65 +65,65 @@ void Application::renderLoop()
     bool wait = !(mRenderWaiting = true);
     mRenderLooping = true;
     mRenderingCond->unlock();
-    while (mRenderLooping)
+    // Have to do an extra loop if wait is false even if mRenderLooping is false
+    // because it means stop() was called during last loop
+    while (mRenderLooping || wait)
     {
         if (wait)
             mRenderingCond->wait();
         mRenderingCond->lock();
         mRenderWaiting = false;
         mRenderingCond->unlock();
-        if (mRenderReason == RENDER_REASON_RENDER)
+        try {
+            mActivity->serviceRenderRequest(mRenderContext);
+        }
+        catch (std::exception e)
         {
-            try {
-                mActivity->render(mRenderContext);
-            }
-            catch (std::exception e)
-            {
-                mLog.e("Rendering exception: %s", e.what());
-                mRenderLooping = false;
-            }
+            mLog.e("Rendering exception: %s", e.what());
+            mRenderLooping = false;
         }
         mRenderingCond->lock();
         wait = !mRenderWaiting;
         mRenderWaiting = true;
-        if (mRenderReason != RENDER_REASON_DELETE ||
-                mRenderReason == RENDER_REASON_SHUTDOWN )
+        if (mRenderBlocking)
         {
-            try {
-                mActivity->deleteRendering(mRenderContext);
-            }
-            catch (std::exception e)
-            {
-                mLog.e("Exception freeing render resources: %s", e.what());
-                mRenderLooping = false;
-            }
-        }
-        if (mRenderReason != RENDER_REASON_RENDER)
+            // Use same cond "in reverse"
             mRenderingCond->signal();
-        if (mRenderReason == RENDER_REASON_SHUTDOWN)
-            mRenderLooping = false;
+            mRenderBlocking = false;
+        }
         mRenderingCond->unlock();
     }
 }
 
-void Application::requestRender(RenderReason reason)
+void Application::requestRender()
 {
     mRenderingCond->lock();
-    requestRenderAlreadyLocked(reason);
+    requestRenderWhileLocked();
+    mRenderingCond->unlock();
 }
 
-void Application::requestRenderAlreadyLocked(RenderReason reason)
+void Application::requestRenderWhileLocked(bool block)
 {
     mRenderReason = reason;
+    if (block)
+        mRenderBlocking = true;
     if (mRenderWaiting)
         mRenderingCond->signal();
     else
         mRenderWaiting = true;
-    mRenderingCond->unlock();
-    if (reason != RENDER_REASON_RENDER)
-    {
+    if (block)
         mRenderingCond->wait();
-    }
+}
+
+void Application::changeActivity(Activity *new_act, bool del)
+{
+    mRenderingCond->lock();
+    mActivity->requestRenderState(Activity::RENDER_STATE_FREE);
+    requestRenderWhileLocked(true);
+    if (del)
+        delete mActivity;
+    mActivity = new_act;
+    mRenderingCond->unlock();
 }
 
 void Application::stop()
@@ -133,12 +132,10 @@ void Application::stop()
     if (mRenderLooping)
     {
         mRenderLooping = false;
-        requestRenderAlreadyLocked(RENDER_REASON_SHUTDOWN);
+        mActivity->requestRenderState(Activity::RENDER_STATE_UNINITIALISED);
+        requestRenderWhileLocked(true);
     }
-    else
-    {
-        mRenderingCond->unlock();
-    }
+    mRenderingCond->unlock();
 }
 
 }

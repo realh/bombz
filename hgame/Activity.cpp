@@ -35,16 +35,17 @@
 namespace hgame {
 
 Activity::Activity(Log *log, const char *name) :
-        ActivityBase(log), mSubActivity(0),
-        mThread(0), mRenderCond(0), mRenderNeeded(false)
+        mApplication(0), mLog(*log), mRunning(false),
+        mCurrentRenderState(RENDER_STATE_UNINITIALISED),
+        mRequestedRenderState(RENDER_STATE_UNINITIALISED),
+        mRenderStateMutex(0)
 {
     mName = strdup(name);
 }
 
 Activity::~Activity()
 {
-    delete mThread;
-    delete mRenderCond;
+    delete mRenderMutex;
     std::free(mName);
 }
 
@@ -52,57 +53,40 @@ Activity::~Activity()
 void Activity::setApplication(Application *app)
 {
     ActivityBase::setApplication(app);
-    mRenderCond = app->createCond();
-    mThread = app->createThread(this, mName);
+    mRenderMutex = app->createMutex();
 }
 
-void Activity::start()
+
+void Activity::requestRenderState(RenderState new_state)
 {
-    mThread->start();
+    mRenderMutex->lock();
+    mRequestedRenderState = new_state;
+    mRenderMutex->unlock();
 }
 
-void Activity::stop()
+void Activity::serviceRenderRequest(RenderContext *rc)
 {
-    ActivityBase::stop();
-    if (mSubActivity)
+    mRenderMutex->lock();
+    if ((mRequestedRenderState == RENDER_STATE_INITIALISED ||
+            mRequestedRenderState == RENDER_STATE_RENDERING) &&
+            (mCurrentRenderState == RENDER_STATE_UNINITIALISED ||
+            mCurrentRenderState == RENDER_STATE_FREE))
     {
-        mSubActivity->stop();
-        mSubActivity->stopped();
+        initRendering(rc);
     }
-    mThread->wait();
-}
-
-int Activity::run()
-{
-    int result = -1;
-
-    while (mSubActivity && mRunning)
+    if (mRequestedRenderState == RENDER_STATE_RENDERING)
     {
-        try {
-            result = mSubActivity->run();
-        }
-        catch (std::exception e) {
-            mLog.e("Exception in Activity: %s", e.what());
-            mRunning = false;
-        }
+        render(rc);
     }
-    mApplication->stop();
-    return result;
-}
-
-void Activity::setSubActivity(SubActivity *subact)
-{
-    if (mSubActivity)
+    if ((mRequestedRenderState == RENDER_STATE_UNINITIALISED ||
+            mRequestedRenderState == RENDER_STATE_FREE) &&
+            (mCurrentRenderState == RENDER_STATE_INITIALISED ||
+            mCurrentRenderState == RENDER_STATE_RENDERING))
     {
-        mSubActivity->stop();
+        deleteRendering(rc);
     }
-    mSubActivity = subact;
-}
-
-void Activity::render(RenderContext *rc)
-{
-    if (mSubActivity)
-        mSubActivity->render(rc);
+    mCurrentRenderState = mRequestedRenderState;
+    mRenderMutex->unlock();
 }
 
 }

@@ -56,14 +56,6 @@ public:
 
 class Activity;
 
-typedef enum {
-    RENDER_REASON_RENDER,   // Render current frame
-    RENDER_REASON_SUSPEND,  // Do nothing
-    RENDER_REASON_DELETE,   // Free resources associated with rc,
-                            // it's going away
-    RENDER_REASON_SHUTDOWN  // As above, app is shutting down
-} RenderReason;
-
 class Application {
 protected:
     Log &mLog;
@@ -72,9 +64,9 @@ protected:
     ThreadFactory *mThreadFactory;
     Activity *mActivity;
     hgame::Cond *mRenderingCond;
-    volatile bool mRenderWaiting;
-    volatile bool mRenderReason;
+    volatile bool mRenderBlocking;
     volatile bool mRenderLooping;
+    volatile bool mRenderWaiting;
     EventQueue mEvQueue;
 public:
     inline RenderContext *getRenderContext() { return mRenderContext; }
@@ -104,21 +96,23 @@ public:
         return mThreadFactory->createThread(r, name);
     }
 
-    // Wake up rendering thread. If reason is DELETE or SHUTDOWN, activity's
-    // deleteRendering() will be called. If reason != RENDER this will block
-    // until request has been serviced
-    virtual void requestRender(RenderReason reason = RENDER_REASON_RENDER);
+    // Wake up rendering thread to service a render/init/shutdown request
+    virtual void requestRender();
 
     inline Activity *getActivity()
     {
         return mActivity;
     }
 
+    // Shuts down current activity, optionally deleting it (del)
+    // and replaces it with new one
+    void changeActivity(Activity *new_act, bool del = false);
+
     // Call to get everything going after setActivity()
     virtual void start() = 0;
 
     // Call *from Activity* to shut everything down when finished; default
-    // implementation is equivalent to requestRender(RENDER_REASON_SHUTDOWN)
+    // implementation is equivalent to shutting down activity's rendering
     // if mRenderLooping is true
     virtual void stop();
 
@@ -137,9 +131,10 @@ public:
 
 protected:
     // Allows stop() to do the same as requestRender() without an unsafe
-    // extra unlock/lock. Mutex is unlocked on exit from this method.
-    virtual void requestRenderAlreadyLocked(RenderReason reason =
-            RENDER_REASON_RENDER);
+    // extra unlock/lock. Mutex is still locked on exit from this method.
+    // Can also block until request has been serviced by rendering thread,
+    // this causes a temporary unlock.
+    virtual void requestRenderWhileLocked(bool block = false);
 
     virtual void renderLoop();
 
