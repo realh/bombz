@@ -61,10 +61,7 @@ protected:
     Mutex *mRenderStateMutex;
     char *mName;
 public:
-    Activity(Log *log, const char *name);
-
-    // Called from Application constructor
-    void setApplication(Application *app);
+    Activity(Application *app, const char *name);
 
     virtual ~Activity();
 

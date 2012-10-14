@@ -76,8 +76,8 @@ public:
     // Most of these args should be passed in by subclasses.
     // Note mRenderContext is not set here, some platforms can't create
     // one until later
-    Application(Log *log, Platform *platform,
-            Activity *activity, ThreadFactory *thread_fact);
+    Application(Platform *platform, const char *log_name,
+            ThreadFactory *thread_fact);
 
     virtual ~Application();
 
@@ -106,7 +106,7 @@ public:
 
     // Shuts down current activity, optionally deleting it (del)
     // and replaces it with new one
-    void changeActivity(Activity *new_act, bool del = false);
+    void setActivity(Activity *new_act, bool del = false);
 
     // Call to get everything going after setActivity()
     virtual void start() = 0;
@@ -128,6 +128,11 @@ public:
 
     // Makes sure there's a TICK event at intervals specified
     virtual Event *getNextEvent(int tick_period_ms) = 0;
+
+    inline Log *createLog(const char *name, Level priority = Log::VERBOSE)
+    {
+        return mPlatform->createLog(name, priority);
+    }
 
 protected:
     // Allows stop() to do the same as requestRender() without an unsafe

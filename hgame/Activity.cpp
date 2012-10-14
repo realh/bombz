@@ -34,13 +34,15 @@
 
 namespace hgame {
 
-Activity::Activity(Log *log, const char *name) :
-        mApplication(0), mLog(*log), mRunning(false),
+Activity::Activity(Application *app, const char *name) :
+        mApplication(app), mRunning(false),
         mCurrentRenderState(RENDER_STATE_UNINITIALISED),
         mRequestedRenderState(RENDER_STATE_UNINITIALISED),
         mRenderStateMutex(0)
 {
     mName = strdup(name);
+    mLog = app->createLog(name);
+    mRenderMutex = app->createMutex();
 }
 
 Activity::~Activity()
@@ -48,14 +50,6 @@ Activity::~Activity()
     delete mRenderMutex;
     std::free(mName);
 }
-
-
-void Activity::setApplication(Application *app)
-{
-    ActivityBase::setApplication(app);
-    mRenderMutex = app->createMutex();
-}
-
 
 void Activity::requestRenderState(RenderState new_state)
 {

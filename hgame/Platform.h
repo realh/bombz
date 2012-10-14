@@ -39,6 +39,7 @@
 
 #include "hgame/Font.h"
 #include "hgame/Image.h"
+#include "hgame/Log.h"
 #include "hgame/Types.h"
 
 namespace hgame {
@@ -109,6 +110,8 @@ public:
     // Assuming there are a number of subdirectories "48", "72" etc in
     // ${ASSETS}/pngs/ this returns the best match for tile_size
     int getBestPNGMatch(int tile_size);
+
+    virtual Log *createLog(const char *name, Level priority = Log::VERBOSE);
 };
 
 }

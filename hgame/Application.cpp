@@ -38,17 +38,15 @@ const EventQuark EVENT_RENDER_CONTEXT_DESTROYED("RCDN");
 const EventQuark EVENT_PAUSE("PAUS");
 const EventQuark EVENT_RESUME("RESM");
 
-Application::Application(Log *log, Platform *platform,
-        Activity *activity, ThreadFactory *thread_fact) :
-        mLog(*log), mPlatform(platform), mRenderContext(0),
+Application::Application(Platform *platform, const char *log_name,
+        ThreadFactory *thread_fact) :
+        mActivity(0), mPlatform(platform), mRenderContext(0),
         mThreadFactory(thread_fact), mActivity(activity),
         mRenderBlocking(false), mRenderLooping(false), mRenderWaiting(false),
         mEvQueue(thread_fact)
 {
     mRenderingCond = createCond();
-    // activity won't be null in a normal app, but can be in some basic tests
-    if (activity)
-        activity->setApplication(this);
+    mLog = *(platform->createLog(log_name));
 }
 
 Application::~Application()
@@ -115,13 +113,16 @@ void Application::requestRenderWhileLocked(bool block)
         mRenderingCond->wait();
 }
 
-void Application::changeActivity(Activity *new_act, bool del)
+void Application::setActivity(Activity *new_act, bool del)
 {
     mRenderingCond->lock();
-    mActivity->requestRenderState(Activity::RENDER_STATE_FREE);
-    requestRenderWhileLocked(true);
-    if (del)
-        delete mActivity;
+    if (mActivity)
+    {
+        mActivity->requestRenderState(Activity::RENDER_STATE_FREE);
+        requestRenderWhileLocked(true);
+        if (del)
+            delete mActivity;
+    }
     mActivity = new_act;
     mRenderingCond->unlock();
 }
