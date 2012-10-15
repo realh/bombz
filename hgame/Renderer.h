@@ -27,57 +27,53 @@
 
 // HGame - a simple cross-platform game framework
 
-// Activity.h: A game's activity
+// Renderer.h: Interface for objects which render something
 
-#ifndef HGAME_ACTIVITY_H
-#define HGAME_ACTIVITY_H
+#ifndef HGAME_RENDERER_H
+#define HGAME_RENDERER_H
 
 #include "config.h"
 
-#include "hgame/Application.h"
-#include "hgame/Renderer.h"
+#include "hgame/RenderContext.h"
+#include "hgame/Thread.h"
 
 namespace hgame {
 
-class Activity : public Renderer, public Runnable {
-    // Note we implement Runnable. The run() function should consist mainly of
-    // a main loop which sets the mRunning flag when starting and regularly
-    // checks it, exiting the loop when it's false.
-    // It will usually have its own thread, so it should
-    // catch any unhandled exceptions at the top-level.
-protected:
-    Application *mApplication;
-    Log &mLog;
-    volatile bool mRunning;
-    char *mName;
+class Renderer {
 public:
-    Activity(Application *app, const char *name);
+    enum RenderState {
+        RENDER_STATE_UNINITIALISED,
+        RENDER_STATE_INITIALISED,
+        RENDER_STATE_RENDERING,
+        RENDER_STATE_FREE
+    };
+protected:
+    volatile RenderState mCurrentRenderState;
+    volatile RenderState mRequestedRenderState;
+    Mutex *mRenderStateMutex;
+public:
+    Renderer(ThreadFactory *tf);
 
-    virtual ~Activity();
+    virtual ~Renderer();
 
-    inline Application *getApplication()
-    {
-        return mApplication;
+    // The difference between FREE and UNINITIALISED is that FREE is for
+    // freeing up resoureces only for current activity,
+    virtual void requestRenderState(RenderState new_state);
 
-    }
+    // Called in rendering thread to call one of the following pure virtual
+    // functions depending on mRequestedRenderState
+    virtual void serviceRenderRequest(RenderContext *rc);
 
-    inline RenderContext *getRenderContext()
-    {
-        return mApplication->getRenderContext();
+    // For RENDER_STATE_RENDERING
+    virtual void render(RenderContext *rc) = 0;
 
-    }
+    // For RENDER_STATE_INITIALISED
+    virtual void initRendering(RenderContext *rc) = 0;
 
-    inline Platform *getPlatform()
-    {
-        return mApplication->getPlatform();
-    }
-
-    // Return a 0-terminated array of ints in pairs of x, y;
-    // sorted with best mode first;
-    // must be able to delete[] result
-    virtual int *getBestModes() = 0;
+    // For RENDER_STATE_FREE/UNINITILISED
+    virtual void deleteRendering(RenderContext *rc) = 0;
 };
 
 }
 
-#endif // HGAME_ACTIVITY_H
+#endif // HGAME_RENDERER_H

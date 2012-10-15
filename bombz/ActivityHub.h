@@ -72,6 +72,11 @@ public:
 
     int *getBestModes();
 
+    inline hgame::Application *getApplication()
+    {
+        return mApplication;
+    }
+
     inline hgame::Platform *getPlatform()
     {
         return mApplication->getPlatform();

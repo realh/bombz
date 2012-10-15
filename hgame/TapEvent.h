@@ -59,6 +59,12 @@ public:
     }
 };
 
+class TapListener {
+public:
+    // Return true if event is handled
+    virtual bool onTapEvent(TapEvent *event) = 0;
+};
+
 }
 
 #endif // HGAME_TAP_EVENT_H

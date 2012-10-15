@@ -43,9 +43,9 @@ ActivityHub::ActivityHub(hgame::Application *app) :
         mTileAtlas(0),
         mLogoAtlas(0),
         mLogoRegion(0),
-        mLogoSprite(0)
+        mLogoSprite(0),
+        mLevel(new Level(this))
 {
-    mLevel = new Level();
 }
 
 ActivityHub::~ActivityHub()
@@ -67,7 +67,7 @@ void ActivityHub::initRendering(hgame::RenderContext *rc)
     mAlphaAtlas = rc->uploadTexture(img);
     delete img;
     loadLogo(rc);
-    mLevel->initRendering(rc, this);
+    mLevel->initRendering(rc);
 }
 
 void ActivityHub::deleteRendering(hgame::RenderContext *rc)

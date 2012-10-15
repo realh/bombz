@@ -32,10 +32,12 @@
 
 namespace bombz {
 
-Level::Level() : mRc(0), mTileAtlas(0), mTileBatcher(0), mTileRegions(0)
+Level::Level(ActivityHub *hub) :
+        hgame::Renderer(hub->getApplication()->getThreadFactory()),
+        mLevel(new HUInt8[kWidth * kHeight]),
+        mTmpLevel(new HUInt8[kWidth * kHeight]),
+        mRc(0), mTileAtlas(0), mTileBatcher(0), mTileRegions(0), mHub(hub)
 {
-    mLevel = new HUInt8[kWidth * kHeight];
-    mTmpLevel = new HUInt8[kWidth * kHeight];
     reset();
 }
 
@@ -45,13 +47,13 @@ Level::~Level()
     delete[] mLevel;
 }
 
-void Level::initRendering(hgame::RenderContext *rc, ActivityHub *hub)
+void Level::initRendering(hgame::RenderContext *rc)
 {
     mRc = rc;
-    mTileAtlas = hub->getTileAtlas();
-    mAlphaAtlas = hub->getAlphaAtlas();
-    mScreenTileSize = hub->getScreenTileSize();
-    mSrcTileSize = hub->getSrcTileSize();
+    mTileAtlas = mHub->getTileAtlas();
+    mAlphaAtlas = mHub->getAlphaAtlas();
+    mScreenTileSize = mHub->getScreenTileSize();
+    mSrcTileSize = mHub->getSrcTileSize();
     mTileBatcher = rc->createTileBatcher(kWidth, kHeight, mScreenTileSize);
     mTileRegions = new hgame::TextureRegion *[BOMB2_FUSED_LAST + 1];
     int n;

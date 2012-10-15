@@ -35,6 +35,7 @@
 #include "config.h"
 
 #include "hgame/RenderContext.h"
+#include "hgame/Renderer.h"
 #include "hgame/Sprite.h"
 #include "hgame/TextureAtlas.h"
 #include "hgame/TextureRegion.h"
@@ -45,9 +46,9 @@ namespace bombz {
 
 typedef hgame::HUInt8 HUInt8;
 
-class Activity;
+class ActivityHub;
 
-class Level {
+class Level : public hgame::Renderer {
 public:
     static const int kWidth = 20;
     static const int kHeight = 15;
@@ -91,11 +92,13 @@ private:
     hgame::TextureRegion *mExplo00Region;
     hgame::Sprite *mExplo00Sprite;
 
+    ActivityHub *mHub;
+
 public:
-    Level();
+    Level(ActivityHub *hub);
     ~Level();
 
-    void initRendering(hgame::RenderContext *rc, class ActivityHub *hub);
+    void initRendering(hgame::RenderContext *rc);
 
     void deleteRendering(hgame::RenderContext *rc);
 

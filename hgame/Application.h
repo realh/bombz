@@ -83,6 +83,11 @@ public:
 
     virtual ~Application();
 
+    ThreadFactory *getThreadFactory()
+    {
+        return mThreadFactory;
+    }
+
     Mutex *createMutex()
     {
         return mThreadFactory->createMutex();

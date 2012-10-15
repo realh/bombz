@@ -27,57 +27,36 @@
 
 // HGame - a simple cross-platform game framework
 
-// Activity.h: A game's activity
+// Widget.h: An on-screen widget that responds to tap-events
 
-#ifndef HGAME_ACTIVITY_H
-#define HGAME_ACTIVITY_H
+#ifndef HGAME_WIDGET_H
+#define HGAME_WIDGET_H
 
 #include "config.h"
 
-#include "hgame/Application.h"
-#include "hgame/Renderer.h"
+#include "hgame/TapEvent.h"
 
 namespace hgame {
 
-class Activity : public Renderer, public Runnable {
-    // Note we implement Runnable. The run() function should consist mainly of
-    // a main loop which sets the mRunning flag when starting and regularly
-    // checks it, exiting the loop when it's false.
-    // It will usually have its own thread, so it should
-    // catch any unhandled exceptions at the top-level.
+class Widget : public TapListener {
+private:
+    TapListener *mListener;
 protected:
-    Application *mApplication;
-    Log &mLog;
-    volatile bool mRunning;
-    char *mName;
+    int mX0, mY0, mX1, mY1;
 public:
-    Activity(Application *app, const char *name);
+    Widget(int x, int y, int w, int h) :
+            mListener(0), mX0(x), mY0(y), mX1(x + w), mY1(y + h)
+    {}
 
-    virtual ~Activity();
+    // Forwards to mListener if coords overlap
+    bool onTapEvent(TapEvent *event);
 
-    inline Application *getApplication()
+    void setTapListener(TapListener *l)
     {
-        return mApplication;
-
+        mListener = l;
     }
-
-    inline RenderContext *getRenderContext()
-    {
-        return mApplication->getRenderContext();
-
-    }
-
-    inline Platform *getPlatform()
-    {
-        return mApplication->getPlatform();
-    }
-
-    // Return a 0-terminated array of ints in pairs of x, y;
-    // sorted with best mode first;
-    // must be able to delete[] result
-    virtual int *getBestModes() = 0;
 };
 
 }
 
-#endif // HGAME_ACTIVITY_H
+#endif // HGAME_WIDGET_H
