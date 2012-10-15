@@ -40,8 +40,8 @@ static void surf_to_png(SDL_Surface *surf, const char *filename)
         perror("Unable to save file");
         exit(1);
     }
-    
-    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 
+
+    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
             NULL, png_user_error, png_user_warn);
     if (!png_ptr)
     {
@@ -60,7 +60,7 @@ static void surf_to_png(SDL_Surface *surf, const char *filename)
         png_destroy_write_struct(&png_ptr, &info_ptr);
         exit(1);
     }
-    
+
     png_init_io(png_ptr, fp);
     int colortype = png_colortype_from_surface(surf);
     png_set_IHDR(png_ptr, info_ptr, surf->w, surf->h, 8, colortype,
@@ -68,7 +68,7 @@ static void surf_to_png(SDL_Surface *surf, const char *filename)
             PNG_FILTER_TYPE_DEFAULT);
     png_write_info(png_ptr, info_ptr);
     png_set_packing(png_ptr);
-    
+
     /*
     printf("Rmask = 0x%x Gmask = 0x%x Bmask = 0x%x Amask = 0x%x\n",
             surf->format->Rmask,
@@ -83,7 +83,7 @@ static void surf_to_png(SDL_Surface *surf, const char *filename)
     {
         png_set_bgr(png_ptr);
     }
-    
+
     png_bytep *row_pointers = (png_bytep *) malloc(sizeof(png_bytep) * surf->h);
     for (int i = 0; i < surf->h; i++)
     {
@@ -101,7 +101,7 @@ static void surf_to_png(SDL_Surface *surf, const char *filename)
 
 int main(int argc, char **argv)
 {
-    hsdl::Application application(argc, argv, 0);
+    hsdl::Application application(argc, argv);
     hgame::Platform *platform;
     hgame::Font *font;
     hsdl::Image *img;

@@ -25,46 +25,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Bombz - 2D puzzle game
+// HGame - a simple cross-platform game framework
+
+// TapEvent.h: Mouse click/finger tap event
+
+#ifndef HGAME_TAP_EVENT_H
+#define HGAME_TAP_EVENT_H
 
 #include "config.h"
 
-#include "bombz/Activity.h"
-#include "bombz/MenuScreen.h"
+#include "hgame/Event.h"
 
-namespace bombz {
+namespace hgame {
 
-MenuScreen::MenuScreen(hgame::ActivityBase *parent, hgame::Log *log) :
-        hgame::SubActivity(parent, log),
-        mMasterActivity((Activity *) parent)
-{
-}
+extern const EventQuark EVENT_TAP;
 
-void MenuScreen::stopped()
-{
-}
+class TapEvent : public Event {
+private:
+    int mX, mY;
+public:
+    // Priority is whether event has higher priority than tick
+    inline TapEvent(int x, int y) : Event(EVENT_TAP, false), mX(x), mY(y)
+    {}
 
-int MenuScreen::run()
-{
-    mMasterActivity->getLevel()->reset(true);
-    // FIXME: loop
-    return 0;
-}
+    int getX() const
+    {
+        return mX;
+    }
 
-void MenuScreen::render(hgame::RenderContext *rc)
-{
-    rc->bindTexture(mMasterActivity->getTileAtlas());
-    mMasterActivity->getLevel()->render(rc);
-    rc->bindTexture(mMasterActivity->getLogoAtlas());
-    mMasterActivity->getLogoSprite()->render(rc);
-}
-
-void MenuScreen::initRendering(hgame::RenderContext *rc)
-{
-}
-
-void MenuScreen::deleteRendering(hgame::RenderContext *rc)
-{
-}
+    int getY() const
+    {
+        return mY;
+    }
+};
 
 }
+
+#endif // HGAME_TAP_EVENT_H

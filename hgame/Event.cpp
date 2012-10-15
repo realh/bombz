@@ -95,6 +95,10 @@ void Event::dispose()
     smPool->returnEvent(this);
 }
 
+Event::~Event()
+{
+}
+
 void *Event::operator new(size_t sz)
 {
     if (sz > Event::kMaxSize + sizeof(EventQuark))

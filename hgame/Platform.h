@@ -111,7 +111,8 @@ public:
     // ${ASSETS}/pngs/ this returns the best match for tile_size
     int getBestPNGMatch(int tile_size);
 
-    virtual Log *createLog(const char *name, Level priority = Log::VERBOSE);
+    virtual Log *createLog(const char *name,
+            Log::Level priority = Log::VERBOSE);
 };
 
 }

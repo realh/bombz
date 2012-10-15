@@ -72,6 +72,11 @@ public:
 
     int *getBestModes();
 
+    inline hgame::Platform *getPlatform()
+    {
+        return mApplication->getPlatform();
+    }
+
     inline hgame::TextureAtlas *getAlphaAtlas()
     {
         return mAlphaAtlas;

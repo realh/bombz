@@ -27,7 +27,7 @@
 
 // Bombz - 2D puzzle game
 
-#include "bombz/Activity.h"
+#include "bombz/ActivityHub.h"
 #include "bombz/Level.h"
 
 namespace bombz {
@@ -45,13 +45,13 @@ Level::~Level()
     delete[] mLevel;
 }
 
-void Level::initRendering(hgame::RenderContext *rc, Activity *act)
+void Level::initRendering(hgame::RenderContext *rc, ActivityHub *hub)
 {
     mRc = rc;
-    mTileAtlas = act->getTileAtlas();
-    mAlphaAtlas = act->getAlphaAtlas();
-    mScreenTileSize = act->getScreenTileSize();
-    mSrcTileSize = act->getSrcTileSize();
+    mTileAtlas = hub->getTileAtlas();
+    mAlphaAtlas = hub->getAlphaAtlas();
+    mScreenTileSize = hub->getScreenTileSize();
+    mSrcTileSize = hub->getSrcTileSize();
     mTileBatcher = rc->createTileBatcher(kWidth, kHeight, mScreenTileSize);
     mTileRegions = new hgame::TextureRegion *[BOMB2_FUSED_LAST + 1];
     int n;

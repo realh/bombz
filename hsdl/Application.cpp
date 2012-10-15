@@ -29,15 +29,15 @@
 
 // Application.h: Core SDL Application
 
-#include "hsdl/Application.h"
-
 #include <cassert>
 #include <cstdlib>
 
 #include "SDL.h"
 
 #include "hgame/Activity.h"
+#include "hgame/TapEvent.h"
 
+#include "hsdl/Application.h"
 #include "hsdl/Exception.h"
 #include "hsdl/Log.h"
 #include "hsdl/Platform.h"
@@ -50,21 +50,115 @@
 
 namespace hsdl {
 
-Application::Application(int argc, char **argv, hgame::Activity *activity) :
-        hgame::Application(new Log("SDLApp"),
-                new Platform(argc, argv),
-                activity, new ThreadFactory()),
+SafeRunnable::SafeRunnable(Application *app, const char *name) :
+        mStopped(false), mApplication(app), mName(name),
+        mLog(*(app->createLog(name)))
+{
+}
+
+int SafeRunnable::run()
+{
+    int result = 1;
+    try {
+        result = runSafely();
+    }
+    catch (std::exception e)
+    {
+        mLog.e("Exception: %s", e.what());
+        result = 1;
+    }
+    if (result)
+    {
+        mStopped = true;
+        mApplication->stopThreads();
+    }
+    return result;
+}
+
+void SafeRunnable::stop()
+{
+    mStopped = true;
+}
+
+int ActivityRunnable::runSafely()
+{
+    int result = 1;
+    hgame::Activity *act;
+    while (!mStopped && (act = mApplication->getActivity()) != 0)
+    {
+        result = act->run();
+    }
+    return result;
+}
+
+int EventRunnable::runSafely()
+{
+    while (!mStopped)
+    {
+        SDL_Event sdl_ev;
+        if (SDL_WaitEvent(&sdl_ev))
+        {
+            switch (sdl_ev.type)
+            {
+                case SDL_QUIT:
+                    mStopped = true;
+                    break;
+                case SDL_MOUSEBUTTONDOWN:
+                    if (mApplication->getTapEventsEnabled() &&
+                            sdl_ev.button.button == SDL_BUTTON_LEFT)
+                    {
+                        mApplication->pushEvent(
+                                new hgame::TapEvent(sdl_ev.button.x,
+                                        sdl_ev.button.y));
+                    }
+                    break;
+            }
+        }
+        else
+        {
+            THROW(Exception, "SDL_WaitEvent error");
+        }
+    }
+    return 0;
+}
+
+void EventRunnable::stop()
+{
+    mStopped = true;
+    SDL_Event ev;
+    ev.type = SDL_QUIT;
+    if (SDL_PushEvent(&ev))
+    {
+        mLog.e("Unable to push SDL_QuitEvent");
+        std::exit(1);
+    }
+}
+
+Application::Application(int argc, char **argv) :
+        hgame::Application(new Platform(argc, argv), "SDLApp",
+                new ThreadFactory()),
         mLastTick(SDL_GetTicks()),
-        mSavedEvent(0)
+        mSavedEvent(0),
+        mActivityRunnable(this),
+        mActivityThread(0),
+        mEventRunnable(this),
+        mEventThread(0)
 {
     hgame::Event::setPool(new hgame::EventPool(mThreadFactory));
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
         THROW(Exception, "Init failed");
+    mActivityThread = mThreadFactory->createThread(&mActivityRunnable,
+            "Activity thread");
+    mEventThread = mThreadFactory->createThread(&mEventRunnable,
+            "Event thread");
 }
 
 Application::~Application()
 {
     SDL_Quit();
+    delete mActivityThread;
+    delete mEventThread;
+    mSavedEvent->dispose();
 }
 
 void Application::start()
@@ -72,17 +166,19 @@ void Application::start()
     assert(mActivity != 0);
     try {
         createRenderContext();
-        mActivity->requestRenderState(hgame::Acivity::RENDER_STATE_RENDERING);
+        mActivity->requestRenderState(hgame::Activity::RENDER_STATE_RENDERING);
     }
     catch (std::exception e)
     {
-        mLog.f("Exception initialising activity rendering: %s", e.what());
+        mLog.f("Exception initialising render context: %s", e.what());
         std::exit(1);
     }
-    mActivity->start();
+    mEventThread->start();
+    mActivityThread->start();
     renderLoop();
-    mActivity->stop();
     delete mRenderContext;
+    mActivityThread->wait();
+    mEventThread->wait();
 }
 
 void Application::createRenderContext()
@@ -114,6 +210,13 @@ hgame::Event *Application::getNextEvent(int tick_period_ms)
         }
     }
     return result;
+}
+
+void Application::stopThreads()
+{
+    pushEvent(new hgame::Event(hgame::EVENT_STOP, true));
+    mActivityRunnable.stop();
+    mEventRunnable.stop();
 }
 
 }

@@ -37,16 +37,17 @@ const EventQuark EVENT_RENDER_CONTEXT_CREATED("RCUP");
 const EventQuark EVENT_RENDER_CONTEXT_DESTROYED("RCDN");
 const EventQuark EVENT_PAUSE("PAUS");
 const EventQuark EVENT_RESUME("RESM");
+const EventQuark EVENT_STOP("STOP");
 
 Application::Application(Platform *platform, const char *log_name,
         ThreadFactory *thread_fact) :
-        mActivity(0), mPlatform(platform), mRenderContext(0),
-        mThreadFactory(thread_fact), mActivity(activity),
+        mLog(*(platform->createLog(log_name))),
+        mPlatform(platform), mRenderContext(0),
+        mThreadFactory(thread_fact), mActivity(0),
+        mRenderingCond(createCond()),
         mRenderBlocking(false), mRenderLooping(false), mRenderWaiting(false),
         mEvQueue(thread_fact)
 {
-    mRenderingCond = createCond();
-    mLog = *(platform->createLog(log_name));
 }
 
 Application::~Application()
@@ -102,7 +103,6 @@ void Application::requestRender()
 
 void Application::requestRenderWhileLocked(bool block)
 {
-    mRenderReason = reason;
     if (block)
         mRenderBlocking = true;
     if (mRenderWaiting)
@@ -133,7 +133,8 @@ void Application::stop()
     if (mRenderLooping)
     {
         mRenderLooping = false;
-        mActivity->requestRenderState(Activity::RENDER_STATE_UNINITIALISED);
+        if (mActivity)
+            mActivity->requestRenderState(Activity::RENDER_STATE_UNINITIALISED);
         requestRenderWhileLocked(true);
     }
     mRenderingCond->unlock();

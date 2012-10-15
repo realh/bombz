@@ -35,32 +35,30 @@
 namespace hgame {
 
 Activity::Activity(Application *app, const char *name) :
-        mApplication(app), mRunning(false),
+        mApplication(app), mLog(*(app->createLog(name))), mRunning(false),
         mCurrentRenderState(RENDER_STATE_UNINITIALISED),
         mRequestedRenderState(RENDER_STATE_UNINITIALISED),
-        mRenderStateMutex(0)
+        mRenderStateMutex(app->createMutex()),
+        mName(strdup(name))
 {
-    mName = strdup(name);
-    mLog = app->createLog(name);
-    mRenderMutex = app->createMutex();
 }
 
 Activity::~Activity()
 {
-    delete mRenderMutex;
+    delete mRenderStateMutex;
     std::free(mName);
 }
 
 void Activity::requestRenderState(RenderState new_state)
 {
-    mRenderMutex->lock();
+    mRenderStateMutex->lock();
     mRequestedRenderState = new_state;
-    mRenderMutex->unlock();
+    mRenderStateMutex->unlock();
 }
 
 void Activity::serviceRenderRequest(RenderContext *rc)
 {
-    mRenderMutex->lock();
+    mRenderStateMutex->lock();
     if ((mRequestedRenderState == RENDER_STATE_INITIALISED ||
             mRequestedRenderState == RENDER_STATE_RENDERING) &&
             (mCurrentRenderState == RENDER_STATE_UNINITIALISED ||
@@ -80,7 +78,7 @@ void Activity::serviceRenderRequest(RenderContext *rc)
         deleteRendering(rc);
     }
     mCurrentRenderState = mRequestedRenderState;
-    mRenderMutex->unlock();
+    mRenderStateMutex->unlock();
 }
 
 }

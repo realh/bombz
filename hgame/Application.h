@@ -48,6 +48,7 @@ extern const EventQuark EVENT_RENDER_CONTEXT_CREATED;
 extern const EventQuark EVENT_RENDER_CONTEXT_DESTROYED;
 extern const EventQuark EVENT_PAUSE;
 extern const EventQuark EVENT_RESUME;
+extern const EventQuark EVENT_STOP;
 
 class TickEvent : public Event {
 public:
@@ -67,6 +68,7 @@ protected:
     volatile bool mRenderBlocking;
     volatile bool mRenderLooping;
     volatile bool mRenderWaiting;
+    volatile bool mTapEventsEnabled;
     EventQueue mEvQueue;
 public:
     inline RenderContext *getRenderContext() { return mRenderContext; }
@@ -129,9 +131,19 @@ public:
     // Makes sure there's a TICK event at intervals specified
     virtual Event *getNextEvent(int tick_period_ms) = 0;
 
-    inline Log *createLog(const char *name, Level priority = Log::VERBOSE)
+    inline Log *createLog(const char *name, Log::Level priority = Log::VERBOSE)
     {
         return mPlatform->createLog(name, priority);
+    }
+
+    inline void setTapEventsEnabled(bool setting)
+    {
+        mTapEventsEnabled = setting;
+    }
+
+    inline bool getTapEventsEnabled()
+    {
+        return mTapEventsEnabled;
     }
 
 protected:

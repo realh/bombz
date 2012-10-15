@@ -95,7 +95,7 @@ public:
     Level();
     ~Level();
 
-    void initRendering(hgame::RenderContext *rc, Activity *act);
+    void initRendering(hgame::RenderContext *rc, class ActivityHub *hub);
 
     void deleteRendering(hgame::RenderContext *rc);
 

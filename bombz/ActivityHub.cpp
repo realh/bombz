@@ -37,6 +37,7 @@
 namespace bombz {
 
 ActivityHub::ActivityHub(hgame::Application *app) :
+        mLog(*(app->createLog("BombzActivityHub"))),
         mApplication(app),
         mAlphaAtlas(0),
         mTileAtlas(0),
@@ -82,7 +83,7 @@ void ActivityHub::deleteRendering(hgame::RenderContext *rc)
 void ActivityHub::loadLogo(hgame::RenderContext *rc)
 {
     hgame::Image *img = getPlatform()->loadPNG("title_logo.png", mSrcTileSize);
-    mLogoAtlas = getRenderContext()->uploadTexture(img);
+    mLogoAtlas = rc->uploadTexture(img);
     delete img;
     mLogoRegion = mLogoAtlas->createRegion(1, 1,
             mSrcTileSize * 16, mSrcTileSize * 4);

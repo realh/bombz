@@ -99,6 +99,8 @@ public:
             mType(t), mPriority(priority)
     {}
 
+    virtual ~Event();
+
     // Returns to pool, subclasses may do other stuff too
     virtual void dispose();
 

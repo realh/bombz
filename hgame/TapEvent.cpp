@@ -25,37 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Bombz - 2D puzzle game
-
-// MenuScreen.h: Base class for any of Bombz's menu screens
-
-#ifndef BOMBZ_MENU_SCREEN_H
-#define BOMBZ_MENU_SCREEN_H
+// HGame - a simple cross-platform game framework
 
 #include "config.h"
 
-#include "hgame/Log.h"
-#include "hgame/SubActivity.h"
+#include "hgame/TapEvent.h"
 
-namespace bombz {
+namespace hgame {
 
-class MenuScreen: public hgame::SubActivity {
-private:
-    class Activity *mMasterActivity;
-public:
-    MenuScreen(hgame::ActivityBase *parent, hgame::Log *log);
-
-    virtual void stopped();
-
-    virtual int run();
-
-    virtual void render(hgame::RenderContext *rc);
-
-    virtual void initRendering(hgame::RenderContext *rc);
-
-    virtual void deleteRendering(hgame::RenderContext *rc);
-};
+const EventQuark EVENT_TAP("TAP_");
 
 }
-
-#endif // BOMBZ_MENU_SCREEN_H

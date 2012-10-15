@@ -38,16 +38,61 @@
 
 namespace hsdl {
 
+class Application;
+
+class SafeRunnable : public hgame::Runnable {
+protected:
+    bool mStopped;
+    Application *mApplication;
+    const char *mName;
+    hgame::Log &mLog;
+public:
+    SafeRunnable(Application *app, const char *name);
+
+    // Acts as wrapper to runSafely() with exception handling
+    int run();
+
+    virtual int runSafely() = 0;
+
+    virtual void stop();
+};
+
+class ActivityRunnable : public SafeRunnable {
+private:
+    Application *mApplication;
+public:
+    inline ActivityRunnable(Application *app) :
+            SafeRunnable(app, "ActivityRunnable")
+    {}
+    int runSafely();
+};
+
+class EventRunnable : public SafeRunnable {
+private:
+    Application *mApplication;
+public:
+    inline EventRunnable(Application *app) :
+            SafeRunnable(app, "ActivityRunnable")
+    {}
+    int runSafely();
+    void stop();
+};
+
 class Application : public hgame::Application {
 private:
     hgame::HUInt32 mLastTick;
     hgame::Event *mSavedEvent;
+    ActivityRunnable mActivityRunnable;
+    hgame::Thread *mActivityThread;
+    EventRunnable mEventRunnable;
+    hgame::Thread *mEventThread;
 public:
-    Application(int argc, char **argv, hgame::Activity *activity);
+    Application(int argc, char **argv);
     ~Application();
     void start();
     void createRenderContext();
     hgame::Event *getNextEvent(int tick_period_ms);
+    void stopThreads();
 };
 
 }

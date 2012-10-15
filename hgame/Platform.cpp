@@ -179,7 +179,7 @@ int Platform::getBestPNGMatch(int tile_size)
     return best;
 }
 
-Log *Platform::createLog(const char *name, Level priority)
+Log *Platform::createLog(const char *name, Log::Level priority)
 {
     return new Log(name, priority);
 }
