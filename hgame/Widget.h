@@ -70,6 +70,36 @@ public:
     virtual void setTextureRegion(RenderContext *rc, TextureRegion *region);
 
     virtual void render(RenderContext *rc);
+
+    int getLeft() const
+    {
+        return mX0;
+    }
+
+    int getRight() const
+    {
+        return mX1;
+    }
+
+    int getTop() const
+    {
+        return mY0;
+    }
+
+    int getBottom() const
+    {
+        return mY1;
+    }
+
+    int getWidth() const
+    {
+        return mX1 - mX0;
+    }
+
+    int getHeight() const
+    {
+        return mY1 - mY0;
+    }
 };
 
 }

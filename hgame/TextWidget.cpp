@@ -44,8 +44,34 @@ TextWidget::TextWidget(const char *text, Font *font, Colour colour,
         delete img;
     }
 #endif
-    mX1 = x + mImage->getWidth();
-    mY1 = y + mImage->getHeight();
+    int w = mImage->getWidth();
+    int h = mImage->getHeight();
+    switch (align & ALIGN_HMASK)
+    {
+        case ALIGN_RIGHT:
+            mX0 = x - w;
+            break;
+        case ALIGN_CENTRE:
+            mX0 -= w / 2;
+            mX1 = mX0 + w;
+            break;
+        default:
+            mX1 = x + w;
+            break;
+    }
+    switch (align & ALIGN_VMASK)
+    {
+        case ALIGN_BOTTOM:
+            mY0 = y - h;
+            break;
+        case ALIGN_CENTRE:
+            mY0 -= h / 2;
+            mY1 = mY0 + h;
+            break;
+        default:
+            mY1 = y + h;
+            break;
+    }
 }
 
 TextWidget::~TextWidget()
