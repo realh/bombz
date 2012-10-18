@@ -27,40 +27,34 @@
 
 // HGame - a simple cross-platform game framework
 
+// Widget.h: Text widget
+
+#ifndef HGAME_TEXT_WIDGET_H
+#define HGAME_TEXT_WIDGET_H
+
+#include "config.h"
+
+#include "hgame/Font.h"
+#include "hgame/Platform.h"
+#include "hgame/Types.h"
 #include "hgame/Widget.h"
 
 namespace hgame {
 
-Widget::Widget(int x, int y, int w, int h) :
-        mListener(0), mRegion(0), mSprite(0),
-        mX0(x), mY0(y), mX1(x + w), mY1(y + h)
-{}
+class TextWidget : public Widget {
+private:
+    Image *mImage;
+public:
+    TextWidget(const char *text, Font *font, Colour colour,
+            int x, int y,
+            Alignment align = (Alignment) (ALIGN_LEFT | ALIGN_TOP),
+            int shadow_offset = 0);
 
-Widget::~Widget()
-{
-    delete mSprite;
-    delete mRegion;
-}
+    ~TextWidget();
 
-bool Widget::onTapEvent(TapEvent *event)
-{
-    int x = event->getX();
-    int y = event->getY();
-    if (mListener && x >= mX0 && x < mX1 && y >= mY0 && y < mY1)
-        return mListener->onTapEvent(event);
-    return false;
-}
-
-void Widget::setTextureRegion(RenderContext *rc, TextureRegion *region)
-{
-    mRegion = region;
-    mSprite = rc->createSprite(region, mX1 - mX0, mY1 - mY0);
-    mSprite->setPosition(mX0, mY0);
-}
-
-void Widget::render(RenderContext *rc)
-{
-    mSprite->render(rc);
-}
+    Image *getImage();
+};
 
 }
+
+#endif // HGAME_TEXT_WIDGET_H

@@ -34,27 +34,42 @@
 
 #include "config.h"
 
+#include "hgame/Image.h"
+#include "hgame/RenderContext.h"
 #include "hgame/TapEvent.h"
+#include "hgame/TextureRegion.h"
+#include "hgame/Sprite.h"
 
 namespace hgame {
 
+// Note this isn't a Renderer despite having a render method because
+// resources are usually part of a shared atlas, so it has a setTextureRegion
+// method instead
 class Widget : public TapListener {
-private:
-    TapListener *mListener;
 protected:
+    TapListener *mListener;
+    TextureRegion *mRegion;
+    Sprite *mSprite;
     int mX0, mY0, mX1, mY1;
 public:
-    Widget(int x, int y, int w, int h) :
-            mListener(0), mX0(x), mY0(y), mX1(x + w), mY1(y + h)
-    {}
+    Widget(int x, int y, int w, int h);
+
+    virtual ~Widget();
 
     // Forwards to mListener if coords overlap
-    bool onTapEvent(TapEvent *event);
+    virtual bool onTapEvent(TapEvent *event);
 
     void setTapListener(TapListener *l)
     {
         mListener = l;
     }
+
+    virtual Image *getImage() = 0;
+
+    // Takes ownership of region
+    virtual void setTextureRegion(RenderContext *rc, TextureRegion *region);
+
+    virtual void render(RenderContext *rc);
 };
 
 }

@@ -27,40 +27,35 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "hgame/Widget.h"
+#include "hgame/TextWidget.h"
 
 namespace hgame {
 
-Widget::Widget(int x, int y, int w, int h) :
-        mListener(0), mRegion(0), mSprite(0),
-        mX0(x), mY0(y), mX1(x + w), mY1(y + h)
-{}
-
-Widget::~Widget()
+TextWidget::TextWidget(const char *text, Font *font, Colour colour,
+        int x, int y, Alignment align, int shadow_offset) :
+        Widget(x, y, x, y)
 {
-    delete mSprite;
-    delete mRegion;
+    mImage = font->render(colour, text);
+#if ENABLE_SHADOW
+    if (shadow_offset)
+    {
+        Image *img = mImage;
+        mImage = img->createShadow(shadow_offset);
+        delete img;
+    }
+#endif
+    mX1 = x + mImage->getWidth();
+    mY1 = y + mImage->getHeight();
 }
 
-bool Widget::onTapEvent(TapEvent *event)
+TextWidget::~TextWidget()
 {
-    int x = event->getX();
-    int y = event->getY();
-    if (mListener && x >= mX0 && x < mX1 && y >= mY0 && y < mY1)
-        return mListener->onTapEvent(event);
-    return false;
+    delete mImage;
 }
 
-void Widget::setTextureRegion(RenderContext *rc, TextureRegion *region)
+Image *TextWidget::getImage()
 {
-    mRegion = region;
-    mSprite = rc->createSprite(region, mX1 - mX0, mY1 - mY0);
-    mSprite->setPosition(mX0, mY0);
-}
-
-void Widget::render(RenderContext *rc)
-{
-    mSprite->render(rc);
+    return mImage;
 }
 
 }

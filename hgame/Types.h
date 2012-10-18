@@ -136,6 +136,18 @@ public:
     }
 };
 
+enum Alignment {
+    ALIGN_LEFT = 0,
+    ALIGN_RIGHT = 1,
+    ALIGN_CENTRE = 2,   // Horizontal
+    ALIGN_HMASK = 3,
+
+    ALIGN_TOP = 0,
+    ALIGN_BOTTOM = 4,
+    ALIGN_MIDDLE = 8,   // Vertical
+    ALIGN_VMASK = 12
+};
+
 }
 
 #endif // HGAME_TYPES_H
