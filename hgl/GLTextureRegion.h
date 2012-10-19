@@ -29,14 +29,14 @@
 
 // GLTextureRegion.h: OpenGL version of TextureRegion
 
-#ifndef HSDL_GL_TEXTURE_REGION_H
-#define HSDL_GL_TEXTURE_REGION_H
+#ifndef HGL_GL_TEXTURE_REGION_H
+#define HGL_GL_TEXTURE_REGION_H
 
 #include "config.h"
 
 #include "hgame/TextureRegion.h"
 
-namespace hsdl {
+namespace hgl {
 
 class GLTextureAtlas;
 
@@ -46,12 +46,8 @@ public:
             float u0, float v0, float u1, float v1);
 
     GLTextureRegion(GLTextureAtlas *atlas, int x, int y, int w, int h);
-
-    ~GLTextureRegion();
-private:
-    void initCoords();
 };
 
 }
 
-#endif // HSDL_GL_TEXTURE_REGION_H
+#endif // HGL_GL_TEXTURE_REGION_H

@@ -29,10 +29,10 @@
 
 #include "config.h"
 
-#include "hsdl/GLTextureAtlas.h"
-#include "hsdl/GLTextureRegion.h"
+#include "hgl/GLTextureAtlas.h"
+#include "hgl/GLTextureRegion.h"
 
-namespace hsdl {
+namespace hgl {
 
 GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
             float u0, float v0, float u1, float v1) :
@@ -42,30 +42,17 @@ GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
 }
 
 GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
-        int x, int y, int w, int h) :
-        hgame::TextureRegion((hgame::TextureAtlas *) atlas, x, y, w, h)
+        int x, int y, int w, int h)
 {
-    initCoords();
-}
-
-void GLTextureRegion::initCoords()
-{
-    // These coords are for a GL_QUAD, see
-    // http://immersedcode.org/2011/4/7/sdl-surface-to-texture/
-    mCoords = new float[8];
-    mCoords[0] = mU0;
-    mCoords[1] = mV0;
-    mCoords[2] = mU0;
-    mCoords[3] = mV1;
-    mCoords[4] = mU1;
-    mCoords[5] = mV0;
-    mCoords[6] = mU1;
-    mCoords[7] = mV1;
-}
-
-GLTextureRegion::~GLTextureRegion()
-{
-    delete mCoords;
+    // Note corners are brought inwards by half a pixel to prevent
+    // artifacts at edges
+    mAtlas = atlas;
+    float aw = (float) atlas->getWidth();
+    float ah = (float) atlas->getHeight();
+    mU0 = ((float) x + 0.5) / aw;
+    mV0 = ((float) y + 0.5) / ah;
+    mU1 = mU0 + (float) (w - 1) / aw;
+    mV1 = mV0 + (float) (h - 1) / ah);
 }
 
 }
