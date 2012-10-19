@@ -51,6 +51,11 @@ protected:
     TextureRegion *mRegion;
     Sprite *mSprite;
     int mX0, mY0, mX1, mY1;
+#ifdef ENABLE_WIDGET_HIGHLIGHTING
+    TextureRegion *mHighlightedRegion;
+    Sprite *mHighlightedSprite;
+    bool mHighlighted;
+#endif
 public:
     Widget(int x, int y, int w, int h);
 
@@ -64,10 +69,25 @@ public:
         mListener = l;
     }
 
+    // Caller takes ownership of image
     virtual Image *getImage() = 0;
 
+#ifdef ENABLE_WIDGET_HIGHLIGHTING
+    // Caller takes ownership of image
+    virtual Image *getHighlightedImage() = 0;
+
+    // Takes ownership of regions
+    virtual void setTextureRegions(RenderContext *rc,
+            TextureRegion *region, TextureRegion *highlighted_region);
+
+    void setHighlighted(bool highlight = true)
+    {
+        mHighlighted = highlight;
+    }
+#else
     // Takes ownership of region
     virtual void setTextureRegion(RenderContext *rc, TextureRegion *region);
+#endif
 
     virtual void render(RenderContext *rc);
 

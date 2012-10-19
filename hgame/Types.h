@@ -136,6 +136,53 @@ public:
     }
 };
 
+class Rect {
+private:
+    int mX, mY, mW, mH;
+public:
+    Rect(int x, int y, int w, int h) :
+            mX(x), mY(y), mW(w), mH(h)
+    {}
+
+    Rect(const Rect &r2)
+    {
+        mX = r2.mX;
+        mY = r2.mY;
+        mW = r2.mW;
+        mH = r2.mH;
+    }
+
+    int getLeft() const
+    {
+        return mX;
+    }
+
+    int getRight() const
+    {
+        return mX + mW;
+    }
+
+    int getTop() const
+    {
+        return mY;
+    }
+
+    int getBottom() const
+    {
+        return mY + mH;
+    }
+
+    int getWidth() const
+    {
+        return mW;
+    }
+
+    int getHeight() const
+    {
+        return mY;
+    }
+};
+
 enum Alignment {
     ALIGN_LEFT = 0,
     ALIGN_RIGHT = 1,

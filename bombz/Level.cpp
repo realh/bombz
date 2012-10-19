@@ -156,8 +156,7 @@ void Level::reset(bool with_frame)
 
 hgame::TextureRegion *Level::createRegion(int x, int y)
 {
-    return mTileAtlas->createRegion(x * (mSrcTileSize + 2) + 1,
-            y * (mSrcTileSize + 2) + 1,
+    return mTileAtlas->createRegion(x * mSrcTileSize, y * mSrcTileSize,
             mSrcTileSize, mSrcTileSize);
 }
 

@@ -27,63 +27,48 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "hgame/TextWidget.h"
+// WidgetGroup.h: A group of widgets sharing an atlas
+
+#ifndef HGAME_WIDGET_GROUP_H
+#define HGAME_WIDGET_GROUP_H
+
+#include "config.h"
+
+#include <list>
+
+#include "hgame/Renderer.h"
+#include "hgame/TextureAtlas.h"
+#include "hgame/Widget.h"
 
 namespace hgame {
 
-TextWidget::TextWidget(const char *text, Font *font, Colour colour,
-        int x, int y, Alignment align, int shadow_offset) :
-        Widget(x, y, x, y)
-{
-    mImage = font->render(colour, text);
-#if ENABLE_SHADOW
-    if (shadow_offset)
-    {
-        Image *img = mImage;
-        mImage = img->createShadow(shadow_offset);
-        delete img;
-    }
+class WidgetGroup : public Renderer, public TapListener {
+protected:
+    TextureAtlas *mAtlas;
+#ifdef ENABLE_WIDGET_HIGHLIGHTING
+    TextureAtlas *mHighlightedAtlas;
 #endif
-    int w = mImage->getWidth();
-    int h = mImage->getHeight();
-    switch (align & ALIGN_HMASK)
-    {
-        case ALIGN_RIGHT:
-            mX0 = x - w;
-            break;
-        case ALIGN_CENTRE:
-            mX0 -= w / 2;
-            mX1 = mX0 + w;
-            break;
-        default:
-            mX1 = x + w;
-            break;
-    }
-    switch (align & ALIGN_VMASK)
-    {
-        case ALIGN_BOTTOM:
-            mY0 = y - h;
-            break;
-        case ALIGN_CENTRE:
-            mY0 -= h / 2;
-            mY1 = mY0 + h;
-            break;
-        default:
-            mY1 = y + h;
-            break;
-    }
-}
+    std::list<Widget *> mWidgets;
+public:
+    inline WidgetGroup() : mAtlas(0)
+#ifdef ENABLE_WIDGET_HIGHLIGHTING
+            , mHighlightedAtlas(0)
+#endif
+     {}
 
-TextWidget::~TextWidget()
-{
-    delete mImage;
-}
+    virtual ~WidgetGroup();
 
-Image *TextWidget::getImage()
-{
-    Image *i = mImage;
-    mImage = 0;
-    return i;
-}
+    virtual void addWidget(Widget *w);
+
+    virtual void render(RenderContext *rc);
+
+    virtual bool onTapEvent(TapEvent *event);
+
+    virtual void initRendering(RenderContext *rc) = 0;
+
+    virtual void deleteRendering(RenderContext *rc) = 0;
+};
 
 }
+
+#endif // HGAME_WIDGET_GROUP_H
