@@ -85,7 +85,7 @@ void ActivityHub::loadLogo(hgame::RenderContext *rc)
     hgame::Image *img = getPlatform()->loadPNG("title_logo.png", mSrcTileSize);
     mLogoAtlas = rc->uploadTexture(img);
     delete img;
-    mLogoRegion = mLogoAtlas->createRegion(1, 1,
+    mLogoRegion = mLogoAtlas->createRegion(0, 0,
             mSrcTileSize * 16, mSrcTileSize * 4);
     mLogoSprite = rc->createSprite(mLogoRegion,
             mScreenTileSize * 16, mScreenTileSize * 4);
