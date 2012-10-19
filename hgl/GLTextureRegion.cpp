@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,27 +27,45 @@
 
 // HGame - a simple cross-platform game framework
 
-// GLTextureRegion.h: OpenGL version of TextureRegion
-
-#ifndef ANDROID_GL_TEXTURE_REGION_H
-#define ANDROID_GL_TEXTURE_REGION_H
-
 #include "config.h"
 
-#include "hgame/TextureRegion.h"
+#include "hsdl/GLTextureAtlas.h"
+#include "hsdl/GLTextureRegion.h"
 
-namespace android {
+namespace hsdl {
 
-class GLTextureRegion : public hgame::TextureRegion {
-public:
-    GLTextureRegion(TextureAtlas *atlas,
-            float u0, float v0, float u1, float v1);
-    GLTextureRegion(TextureAtlas *atlas, int x, int y, int w, int h);
-    ~GLTextureRegion();
-private:
-    void initCoords();
-};
-
+GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
+            float u0, float v0, float u1, float v1) :
+        hgame::TextureRegion((hgame::TextureAtlas *) atlas, u0, v0, u1, v1)
+{
+    initCoords();
 }
 
-#endif // ANDROID_GL_TEXTURE_REGION_H
+GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
+        int x, int y, int w, int h) :
+        hgame::TextureRegion((hgame::TextureAtlas *) atlas, x, y, w, h)
+{
+    initCoords();
+}
+
+void GLTextureRegion::initCoords()
+{
+    // These coords are for a GL_QUAD, see
+    // http://immersedcode.org/2011/4/7/sdl-surface-to-texture/
+    mCoords = new float[8];
+    mCoords[0] = mU0;
+    mCoords[1] = mV0;
+    mCoords[2] = mU0;
+    mCoords[3] = mV1;
+    mCoords[4] = mU1;
+    mCoords[5] = mV0;
+    mCoords[6] = mU1;
+    mCoords[7] = mV1;
+}
+
+GLTextureRegion::~GLTextureRegion()
+{
+    delete mCoords;
+}
+
+}

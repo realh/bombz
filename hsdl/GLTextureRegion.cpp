@@ -36,14 +36,14 @@ namespace hsdl {
 
 GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
             float u0, float v0, float u1, float v1) :
-        hgame::TextureRegion((hgame::TextureAtlas *) atlas, u0, v0, u1, v1)
+        hgl::TextureRegion((hgame::TextureAtlas *) atlas, u0, v0, u1, v1)
 {
     initCoords();
 }
 
 GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
         int x, int y, int w, int h) :
-        hgame::TextureRegion((hgame::TextureAtlas *) atlas, x, y, w, h)
+        hgl::TextureRegion((hgame::TextureAtlas *) atlas, x, y, w, h)
 {
     initCoords();
 }
@@ -61,11 +61,6 @@ void GLTextureRegion::initCoords()
     mCoords[5] = mV0;
     mCoords[6] = mU1;
     mCoords[7] = mV1;
-}
-
-GLTextureRegion::~GLTextureRegion()
-{
-    delete mCoords;
 }
 
 }

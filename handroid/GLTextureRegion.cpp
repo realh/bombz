@@ -27,27 +27,37 @@
 
 // HGame - a simple cross-platform game framework
 
-// Log.cpp: Simple logging implementation
+#include "android/GLTextureRegion.h"
 
-#include "TextureAtlas.h"
-#include "TextureRegion.h"
+namespace android {
 
-namespace hgame {
-
-TextureRegion::TextureRegion(TextureAtlas *atlas, int x, int y, int w, int h)
+GLTextureRegion::GLTextureRegion(TextureAtlas *atlas,
+            float u0, float v0, float u1, float v1) :
+        hgl::TextureRegion(atlas, x, y, w, h)
 {
-    mAtlas = atlas;
-    float aw = (float) atlas->getWidth();
-    float ah = (float) atlas->getHeight();
-    mU0 = (float) x / aw;
-    mV0 = (float) y / ah;
-    mU1 = mU0 + (float) w / aw;
-    mV1 = mV0 + (float) h / ah);
+    initCoords();
 }
 
-TextureRegion::~TextureRegion()
+GLTextureRegion::GLTextureRegion(TextureAtlas *atlas,
+        int x, int y, int w, int h) :
+        hgl::TextureRegion(atlas, x, y, w, h)
 {
-    delete[] mCoords;
+    initCoords();
+}
+
+void GLTextureRegion::initCoords()
+{
+    // These coords are for a GL_TRIANGLE_STRIP,
+    // see http://en.wikipedia.org/wiki/Triangle_strip
+    mCoords = new float[8];
+    mCoords[0] = mU0;
+    mCoords[1] = mV1;
+    mCoords[2] = mU0;
+    mCoords[3] = mV0;
+    mCoords[4] = mU1;
+    mCoords[5] = mV1;
+    mCoords[6] = mU1;
+    mCoords[7] = mV0;
 }
 
 }

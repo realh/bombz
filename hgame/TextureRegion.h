@@ -39,10 +39,9 @@ namespace hgame {
 class TextureAtlas;
 
 class TextureRegion {
-private:
+protected:
     // Coordinates are normalised to 0.0-1.0 with origin at top-left
     TextureAtlas *mAtlas;
-protected:
     float mU0, mV0, mU1, mV1;
     // Coords is an array of coords suitable for passing directly to
     // an implementation function, eg for rendering a GL_TRIANGLE_STRIP;

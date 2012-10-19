@@ -159,6 +159,7 @@ def montage(format, objects, powerof2 = False):
     return surf
 
 
+"""
 def extend_edges(surf):
     width = surf.get_width()
     height = surf.get_height()
@@ -195,6 +196,7 @@ def extend_edges(surf):
             cr.rectangle(x0, y0, w, h)
             cr.fill()
     return dest
+"""
 
 
 def make_atlas(alpha, size, textures):
@@ -225,7 +227,7 @@ def make_atlas(alpha, size, textures):
                 s = obj
             if isinstance(s, basestring):
                 s = load_image(s, size, size, True)
-            s = extend_edges(s)
+            #s = extend_edges(s)
             if not alpha:
                 if x == 0 and y == 0:
                     floor = s

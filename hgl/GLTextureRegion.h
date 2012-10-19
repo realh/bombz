@@ -27,27 +27,31 @@
 
 // HGame - a simple cross-platform game framework
 
-// Log.cpp: Simple logging implementation
+// GLTextureRegion.h: OpenGL version of TextureRegion
 
-#include "TextureAtlas.h"
-#include "TextureRegion.h"
+#ifndef HSDL_GL_TEXTURE_REGION_H
+#define HSDL_GL_TEXTURE_REGION_H
 
-namespace hgame {
+#include "config.h"
 
-TextureRegion::TextureRegion(TextureAtlas *atlas, int x, int y, int w, int h)
-{
-    mAtlas = atlas;
-    float aw = (float) atlas->getWidth();
-    float ah = (float) atlas->getHeight();
-    mU0 = (float) x / aw;
-    mV0 = (float) y / ah;
-    mU1 = mU0 + (float) w / aw;
-    mV1 = mV0 + (float) h / ah);
+#include "hgame/TextureRegion.h"
+
+namespace hsdl {
+
+class GLTextureAtlas;
+
+class GLTextureRegion : public hgame::TextureRegion {
+public:
+    GLTextureRegion(GLTextureAtlas *atlas,
+            float u0, float v0, float u1, float v1);
+
+    GLTextureRegion(GLTextureAtlas *atlas, int x, int y, int w, int h);
+
+    ~GLTextureRegion();
+private:
+    void initCoords();
+};
+
 }
 
-TextureRegion::~TextureRegion()
-{
-    delete[] mCoords;
-}
-
-}
+#endif // HSDL_GL_TEXTURE_REGION_H
