@@ -29,6 +29,8 @@
 
 #include "hsdl/GLTileBatcher.h"
 
+#include "hgl/GLTextureRegion.h"
+
 #include <cstring>
 
 namespace hsdl {
@@ -67,7 +69,7 @@ GLTileBatcher::~GLTileBatcher()
 void GLTileBatcher::setTextureAt(hgame::TextureRegion *tex, int x, int y)
 {
     std::memcpy(mVertices + (y * mNColumns + x) * 16 + 8,
-            tex->getCoords(), 8 * sizeof(float));
+            ((hgl::GLTextureRegion *) tex->getCoords()), 8 * sizeof(float));
 }
 
 void GLTileBatcher::render(hgame::RenderContext *rc)

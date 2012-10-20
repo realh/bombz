@@ -36,23 +36,29 @@ namespace hgl {
 
 GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
             float u0, float v0, float u1, float v1) :
-        hgame::TextureRegion((hgame::TextureAtlas *) atlas, u0, v0, u1, v1)
+        hgame::TextureRegion((hgame::TextureAtlas *) atlas, u0, v0, u1, v1),
+        mCoords(0)
 {
-    initCoords();
 }
 
 GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
-        int x, int y, int w, int h)
+        int x, int y, int w, int h) :
+        // We're going to overwrite U/V so init them quickest way possible
+        hgame::TextureRegion((hgame::TextureAtlas *) atlas, 0f, 0f, 0f, 0f)
 {
     // Note corners are brought inwards by half a pixel to prevent
     // artifacts at edges
-    mAtlas = atlas;
     float aw = (float) atlas->getWidth();
     float ah = (float) atlas->getHeight();
     mU0 = ((float) x + 0.5) / aw;
     mV0 = ((float) y + 0.5) / ah;
     mU1 = mU0 + (float) (w - 1) / aw;
-    mV1 = mV0 + (float) (h - 1) / ah);
+    mV1 = mV0 + (float) (h - 1) / ah;
+}
+
+GLTextureRegion::~GLTextureRegion()
+{
+    delete[] mCoords;
 }
 
 }

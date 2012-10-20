@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -51,30 +51,29 @@ private:
     static void fillGaussTable();
 #endif
 public:
-
     // Create a new blank image, 32-bit with alpha
     virtual Image *createImage(int w, int h) = 0;
-    
+
     virtual int getWidth() const = 0;
     virtual int getHeight() const = 0;
-    
+
     virtual Colour getColourAt(int x, int y) = 0;
     virtual void setColourAt(int x, int y, Colour colour) = 0;
-    
+
     // Used for creating drop shadows; alpha in range 0-255
     virtual HUInt8 getAlphaAt(int x, int y) = 0;
     virtual void setAlphaAt(int x, int y, HUInt8 alpha) = 0;
-    
+
     // May be necessary for direct access to pixel data
     virtual void lock() = 0;
     virtual void unlock() = 0;
-    
+
     // Copies part of one image into current image
     virtual void blit(Image *src, int dest_x, int dest_y,
             int src_x, int src_y, int w, int h);
 
     virtual ~Image();
-    
+
 #if ENABLE_SHADOWS
     // Create a new image which is copy of current one with drop shadow
     Image *createShadow(int offset);

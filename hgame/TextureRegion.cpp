@@ -42,12 +42,11 @@ TextureRegion::TextureRegion(TextureAtlas *atlas, int x, int y, int w, int h)
     mU0 = (float) x / aw;
     mV0 = (float) y / ah;
     mU1 = mU0 + (float) w / aw;
-    mV1 = mV0 + (float) h / ah);
+    mV1 = mV0 + (float) h / ah;
 }
 
 TextureRegion::~TextureRegion()
 {
-    delete[] mCoords;
 }
 
 }

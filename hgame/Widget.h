@@ -73,7 +73,6 @@ public:
     virtual Image *getImage() = 0;
 
 #ifdef ENABLE_WIDGET_HIGHLIGHTING
-    // Caller takes ownership of image
     virtual Image *getHighlightedImage() = 0;
 
     // Takes ownership of regions

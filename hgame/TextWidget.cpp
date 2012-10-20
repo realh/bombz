@@ -81,9 +81,7 @@ TextWidget::~TextWidget()
 
 Image *TextWidget::getImage()
 {
-    Image *i = mImage;
-    mImage = 0;
-    return i;
+    return mImage;
 }
 
 }

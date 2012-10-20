@@ -31,48 +31,8 @@
 
 namespace hgame {
 
-Renderer::Renderer(ThreadFactory *tf) :
-        mCurrentRenderState(RENDER_STATE_UNINITIALISED),
-        mRequestedRenderState(RENDER_STATE_UNINITIALISED),
-        mRenderStateMutex(tf->createMutex())
-{
-}
-
 Renderer::~Renderer()
 {
-    delete mRenderStateMutex;
-}
-
-void Renderer::requestRenderState(RenderState new_state)
-{
-    mRenderStateMutex->lock();
-    mRequestedRenderState = new_state;
-    mRenderStateMutex->unlock();
-}
-
-void Renderer::serviceRenderRequest(RenderContext *rc)
-{
-    mRenderStateMutex->lock();
-    if ((mRequestedRenderState == RENDER_STATE_INITIALISED ||
-            mRequestedRenderState == RENDER_STATE_RENDERING) &&
-            (mCurrentRenderState == RENDER_STATE_UNINITIALISED ||
-            mCurrentRenderState == RENDER_STATE_FREE))
-    {
-        initRendering(rc);
-    }
-    if (mRequestedRenderState == RENDER_STATE_RENDERING)
-    {
-        render(rc);
-    }
-    if ((mRequestedRenderState == RENDER_STATE_UNINITIALISED ||
-            mRequestedRenderState == RENDER_STATE_FREE) &&
-            (mCurrentRenderState == RENDER_STATE_INITIALISED ||
-            mCurrentRenderState == RENDER_STATE_RENDERING))
-    {
-        deleteRendering(rc);
-    }
-    mCurrentRenderState = mRequestedRenderState;
-    mRenderStateMutex->unlock();
 }
 
 }

@@ -73,13 +73,23 @@ bool WidgetGroup::onTapEvent(TapEvent *event)
     return false;
 }
 
-struct WidgetAndRect {
+struct WidgetAndPos {
     Widget *w;
-    Rect r;
-    WidgetAndRect(Widget *pw, int x, int y, int w, int h) :
-            w(p2), r(x, y, w, h)
-    {}
+    Image *i;
+#ifdef ENABLE_WIDGET_HIGHLIGHTING
+    Image *h;
+#endif
+    int x, y;
+    WidgetAndRect(Widget *pw, int x, int y);
 };
+
+WidgetAndRect::WidgetAndRect(Widget *pw, int x_, int y_) :
+            w(pw), i(pw->getImage()),
+#ifdef ENABLE_WIDGET_HIGHLIGHTING
+            i(pw->getHighlightedImage()),
+#endif
+            x(x_), y(y_)
+{}
 
 static bool sort_widget_width(Widget *w1, Widget *w2)
 {
@@ -88,6 +98,7 @@ static bool sort_widget_width(Widget *w1, Widget *w2)
 
 void WidgetGroup::initRendering(RenderContext *rc)
 {
+    // First work out position of each widget region in atlas
     std::list<Widget *> cands = mWidgets;
     sort(cands.begin(), cands.end(), sort_widget_width);
     int width = round_to_power_of_2(cands.back()->getWidth());
@@ -100,7 +111,7 @@ void WidgetGroup::initRendering(RenderContext *rc)
         cands.pop_back();
         int w = wg->getWidth();
         int tallest = wg->getHeight();
-        assigned.push_back(WidgetAndRect(wg, 0, height, w, tallest));
+        assigned.push_back(WidgetAndRect(wg, 0, height));
         // Can we fit another widget or more in the same row?
         int rem;
         while (cands.size() && cands.front()->getWidth() <= (rem = width - w))
@@ -111,13 +122,11 @@ void WidgetGroup::initRendering(RenderContext *rc)
                 if ((wg = *i)->getWidth() <= rem)
                 {
                     cands.remove(i);
-                    int w2 = wg->getWidth();
                     int h = wg->getWidth();
-                    assigned.push_back(WidgetAndRect(wg, w, height,
-                            w2, h));
+                    assigned.push_back(WidgetAndRect(wg, w, height));
+                    w += wg->getWidth();
                     if (h > tallest)
                         tallest = h;
-                    w += w2;
                     break;
                 }
             }
@@ -126,7 +135,29 @@ void WidgetGroup::initRendering(RenderContext *rc)
     }
     height = round_to_power_of_2(height);
 
-    // FIXME: Make montage of Images and upload as texture atlas
+    // Make montage of all images
+    Image *montage = assigned.front().i->createImage(width, height);
+#ifdef ENABLE_WIDGET_HIGHLIGHTING
+    Image *hmontage = assigned.front().i->createImage(width, height);
+#endif
+    for (std::list<WidgetAndRect>::iterator i = assigned.begin();
+            i != assigned.end(); ++i)
+    {
+        montage->blit(i->i, i->x, i->y, 0, 0,
+                i->i->getWidth(),  i->i->getHeight());
+#ifdef ENABLE_WIDGET_HIGHLIGHTING
+        hmontage->blit(i->h, i->x, i->y, 0, 0,
+                i->h->getWidth(),  i->h->getHeight());
+#endif
+    }
+
+    // Upload textures
+#ifdef ENABLE_WIDGET_HIGHLIGHTING
+    mHighlightedAtlas = rc->uploadTexture(hmontage);
+    delete hmontage;
+#endif
+    mAtlas = rc->uploadTexture(montage);
+    delete montage;
 }
 
 void WidgetGroup::deleteRendering(RenderContext *rc)

@@ -34,13 +34,13 @@
 
 #include "config.h"
 
-#include "hgl/TextureRegion.h"
+#include "hgl/GLTextureRegion.h"
 
 namespace hsdl {
 
 class GLTextureAtlas;
 
-class GLTextureRegion : public hgl::TextureRegion {
+class GLTextureRegion : public hgl::GLTextureRegion {
 public:
     GLTextureRegion(GLTextureAtlas *atlas,
             float u0, float v0, float u1, float v1);

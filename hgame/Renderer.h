@@ -35,34 +35,12 @@
 #include "config.h"
 
 #include "hgame/RenderContext.h"
-#include "hgame/Thread.h"
 
 namespace hgame {
 
 class Renderer {
 public:
-    enum RenderState {
-        RENDER_STATE_UNINITIALISED,
-        RENDER_STATE_INITIALISED,
-        RENDER_STATE_RENDERING,
-        RENDER_STATE_FREE
-    };
-protected:
-    volatile RenderState mCurrentRenderState;
-    volatile RenderState mRequestedRenderState;
-    Mutex *mRenderStateMutex;
-public:
-    Renderer(ThreadFactory *tf);
-
     virtual ~Renderer();
-
-    // The difference between FREE and UNINITIALISED is that FREE is for
-    // freeing up resoureces only for current activity,
-    virtual void requestRenderState(RenderState new_state);
-
-    // Called in rendering thread to call one of the following pure virtual
-    // functions depending on mRequestedRenderState
-    virtual void serviceRenderRequest(RenderContext *rc);
 
     // For RENDER_STATE_RENDERING
     virtual void render(RenderContext *rc) = 0;

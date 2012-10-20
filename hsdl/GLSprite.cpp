@@ -33,6 +33,7 @@
 
 #include "hgl/GLRenderContext.h"
 #include "hgl/GLTextureAtlas.h"
+#include "hgl/GLTextureRegion.h"
 
 namespace hsdl {
 
@@ -58,7 +59,8 @@ void GLSprite::setPosition(int x, int y)
 void GLSprite::render(hgame::RenderContext *rc)
 {
     glVertexPointer(2, GL_FLOAT, 0, mVertices);
-    glTexCoordPointer(2, GL_FLOAT, 0, mTexture->getCoords());
+    glTexCoordPointer(2, GL_FLOAT, 0,
+            ((hgl::GLTextureRegion *) mTexture)->getCoords());
     glDrawArrays(GL_QUADS, 0, 4);
 }
 

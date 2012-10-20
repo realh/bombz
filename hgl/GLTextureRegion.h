@@ -41,11 +41,20 @@ namespace hgl {
 class GLTextureAtlas;
 
 class GLTextureRegion : public hgame::TextureRegion {
+protected:
+    // Coords is an array of coords suitable for passing directly to
+    // an implementation function, eg for rendering a GL_TRIANGLE_STRIP;
+    // must be initialised in derived constructor
+    float *mCoords;
 public:
     GLTextureRegion(GLTextureAtlas *atlas,
             float u0, float v0, float u1, float v1);
 
     GLTextureRegion(GLTextureAtlas *atlas, int x, int y, int w, int h);
+
+    virtual ~GLTextureRegion();
+
+    inline const float *getCoords() const { return mCoords; }
 };
 
 }

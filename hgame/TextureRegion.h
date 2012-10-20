@@ -43,10 +43,6 @@ protected:
     // Coordinates are normalised to 0.0-1.0 with origin at top-left
     TextureAtlas *mAtlas;
     float mU0, mV0, mU1, mV1;
-    // Coords is an array of coords suitable for passing directly to
-    // an implementation function, eg for rendering a GL_TRIANGLE_STRIP;
-    // must be initialised in derived constructor
-    float *mCoords;
 public:
     TextureRegion(TextureAtlas *atlas, float u0, float v0, float u1, float v1) :
             mAtlas(atlas), mU0(u0), mV0(v0), mU1(u1), mV1(v1)
@@ -67,8 +63,6 @@ public:
     inline float getV1() const { return mV1; }
 
     inline const TextureAtlas *getAtlas() const { return mAtlas; }
-
-    inline const float *getCoords() const { return mCoords; }
 };
 
 }

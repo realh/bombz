@@ -29,6 +29,8 @@
 
 #include "config.h"
 
+#include "hgl/GLTextureRegion.h"
+
 #include "hsdl/GLTextureAtlas.h"
 #include "hsdl/GLTextureRegion.h"
 
@@ -36,14 +38,14 @@ namespace hsdl {
 
 GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
             float u0, float v0, float u1, float v1) :
-        hgl::TextureRegion((hgame::TextureAtlas *) atlas, u0, v0, u1, v1)
+        hgl::GLTextureRegion((hgl::GLTextureAtlas *) atlas, u0, v0, u1, v1)
 {
     initCoords();
 }
 
 GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
         int x, int y, int w, int h) :
-        hgl::TextureRegion((hgame::TextureAtlas *) atlas, x, y, w, h)
+        hgl::GLTextureRegion((hgl::GLTextureAtlas *) atlas, x, y, w, h)
 {
     initCoords();
 }
