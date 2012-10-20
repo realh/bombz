@@ -33,7 +33,6 @@
 namespace bombz {
 
 Level::Level(ActivityHub *hub) :
-        hgame::Renderer(hub->getApplication()->getThreadFactory()),
         mLevel(new HUInt8[kWidth * kHeight]),
         mTmpLevel(new HUInt8[kWidth * kHeight]),
         mRc(0), mTileAtlas(0), mTileBatcher(0), mTileRegions(0), mHub(hub)

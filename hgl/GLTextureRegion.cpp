@@ -44,7 +44,8 @@ GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
 GLTextureRegion::GLTextureRegion(GLTextureAtlas *atlas,
         int x, int y, int w, int h) :
         // We're going to overwrite U/V so init them quickest way possible
-        hgame::TextureRegion((hgame::TextureAtlas *) atlas, 0f, 0f, 0f, 0f)
+        hgame::TextureRegion((hgame::TextureAtlas *) atlas,
+                0.0f, 0.0f, 0.0f, 0.0f)
 {
     // Note corners are brought inwards by half a pixel to prevent
     // artifacts at edges

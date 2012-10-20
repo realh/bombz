@@ -35,7 +35,7 @@
 namespace hgame {
 
 Activity::Activity(Application *app, const char *name) :
-        Renderer(app->getThreadFactory()),
+        RendererWithState(app->getThreadFactory()),
         mApplication(app), mLog(*(app->createLog(name))), mRunning(false),
         mName(strdup(name))
 {

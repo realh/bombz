@@ -48,14 +48,14 @@ WidgetGroup::~WidgetGroup()
 {
 }
 
-void addWidget(Widget *w)
+void WidgetGroup::addWidget(Widget *w)
 {
     mWidgets.push_back(w);
 }
 
 void WidgetGroup::render(RenderContext *rc)
 {
-    for (std::list<Widget *>::forward_iterator i = mWidgets.begin();
+    for (std::list<Widget *>::iterator i = mWidgets.begin();
             i != mWidgets.end(); ++i)
     {
         (*i)->render(rc);
@@ -64,7 +64,7 @@ void WidgetGroup::render(RenderContext *rc)
 
 bool WidgetGroup::onTapEvent(TapEvent *event)
 {
-    for (std::list<Widget *>.forward_iterator i = mWidgets.begin();
+    for (std::list<Widget *>::iterator i = mWidgets.begin();
             i != mWidgets.end(); ++i)
     {
         if ((*i)->onTapEvent(event))
@@ -80,10 +80,10 @@ struct WidgetAndPos {
     Image *h;
 #endif
     int x, y;
-    WidgetAndRect(Widget *pw, int x, int y);
+    WidgetAndPos(Widget *pw, int x, int y);
 };
 
-WidgetAndRect::WidgetAndRect(Widget *pw, int x_, int y_) :
+WidgetAndPos::WidgetAndPos(Widget *pw, int x_, int y_) :
             w(pw), i(pw->getImage()),
 #ifdef ENABLE_WIDGET_HIGHLIGHTING
             i(pw->getHighlightedImage()),
@@ -100,10 +100,10 @@ void WidgetGroup::initRendering(RenderContext *rc)
 {
     // First work out position of each widget region in atlas
     std::list<Widget *> cands = mWidgets;
-    sort(cands.begin(), cands.end(), sort_widget_width);
+    cands.sort(sort_widget_width);
     int width = round_to_power_of_2(cands.back()->getWidth());
     int height = 0;
-    std::list<WidgetAndRect> assigned;
+    std::list<WidgetAndPos> assigned;
     while (cands.size())
     {
         // Start a new row with widest widget
@@ -111,7 +111,7 @@ void WidgetGroup::initRendering(RenderContext *rc)
         cands.pop_back();
         int w = wg->getWidth();
         int tallest = wg->getHeight();
-        assigned.push_back(WidgetAndRect(wg, 0, height));
+        assigned.push_back(WidgetAndPos(wg, 0, height));
         // Can we fit another widget or more in the same row?
         int rem;
         while (cands.size() && cands.front()->getWidth() <= (rem = width - w))
@@ -121,9 +121,11 @@ void WidgetGroup::initRendering(RenderContext *rc)
             {
                 if ((wg = *i)->getWidth() <= rem)
                 {
-                    cands.remove(i);
+                    // Safe to alter list here because we're about to break
+                    // out of loop
+                    cands.remove(wg);
                     int h = wg->getWidth();
-                    assigned.push_back(WidgetAndRect(wg, w, height));
+                    assigned.push_back(WidgetAndPos(wg, w, height));
                     w += wg->getWidth();
                     if (h > tallest)
                         tallest = h;
@@ -140,7 +142,7 @@ void WidgetGroup::initRendering(RenderContext *rc)
 #ifdef ENABLE_WIDGET_HIGHLIGHTING
     Image *hmontage = assigned.front().i->createImage(width, height);
 #endif
-    for (std::list<WidgetAndRect>::iterator i = assigned.begin();
+    for (std::list<WidgetAndPos>::iterator i = assigned.begin();
             i != assigned.end(); ++i)
     {
         montage->blit(i->i, i->x, i->y, 0, 0,
