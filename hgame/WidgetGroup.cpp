@@ -86,7 +86,7 @@ struct WidgetAndPos {
 WidgetAndPos::WidgetAndPos(Widget *pw, int x_, int y_) :
             w(pw), i(pw->getImage()),
 #ifdef ENABLE_WIDGET_HIGHLIGHTING
-            i(pw->getHighlightedImage()),
+            h(pw->getHighlightedImage()),
 #endif
             x(x_), y(y_)
 {}
