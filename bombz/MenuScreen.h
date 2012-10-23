@@ -36,8 +36,7 @@
 
 #include <list>
 
-#include "hgame/Log.h"
-#include "hgame/Renderer.h"
+#include "hgame/Activity.h"
 #include "hgame/WidgetGroup.h"
 
 #include "bombz/Level.h"
@@ -46,7 +45,7 @@ namespace bombz {
 
 class ActivityHub;
 
-class MenuScreen, public Renderer {
+class MenuScreen, public Activity {
 private:
     hgame::WidgetGroup *mWidgetGroup;
     struct TextWidget {
@@ -59,10 +58,9 @@ private:
     };
     std::list<Widget> mWidgets;
 protected:
-    hgame::Log &mLog;
     ActivityHub *mHub;
 public:
-    MenuScreen(ActivityHub *hub, hgame::Log *log);
+    MenuScreen(Application *app, ActivityHub *hub, const char *name);
 
     ~MenuScreen();
 
