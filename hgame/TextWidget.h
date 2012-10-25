@@ -36,7 +36,6 @@
 
 #include "hgame/Font.h"
 #include "hgame/Platform.h"
-#include "hgame/Types.h"
 #include "hgame/Widget.h"
 
 namespace hgame {
@@ -53,7 +52,7 @@ public:
             Colour highlighted_colour,
 #endif
             int x, int y,
-            Alignment align = (Alignment) (ALIGN_LEFT | ALIGN_TOP),
+            Alignment align = Widget::DefaultAlignment,
             int shadow_offset = 0);
 
     ~TextWidget();

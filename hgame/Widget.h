@@ -36,9 +36,10 @@
 
 #include "hgame/Image.h"
 #include "hgame/RenderContext.h"
+#include "hgame/Sprite.h"
 #include "hgame/TapEvent.h"
 #include "hgame/TextureRegion.h"
-#include "hgame/Sprite.h"
+#include "hgame/Types.h"
 
 namespace hgame {
 
@@ -46,6 +47,9 @@ namespace hgame {
 // resources are usually part of a shared atlas, so it has a setTextureRegion
 // method instead
 class Widget : public TapListener {
+public:
+    static const Alignment kDefaultAlignment =
+            (Alignment) (ALIGN_LEFT | ALIGN_TOP);
 protected:
     TapListener *mListener;
     TextureRegion *mRegion;
