@@ -44,8 +44,14 @@ namespace hgame {
 class TextWidget : public Widget {
 private:
     Image *mImage;
+#if ENABLE_WIDGET_HIGHLIGHTING
+    Image *mHighlightedImage;
+#endif
 public:
     TextWidget(const char *text, Font *font, Colour colour,
+#if ENABLE_WIDGET_HIGHLIGHTING
+            Colour highlighted_colour,
+#endif
             int x, int y,
             Alignment align = (Alignment) (ALIGN_LEFT | ALIGN_TOP),
             int shadow_offset = 0);
@@ -53,6 +59,10 @@ public:
     ~TextWidget();
 
     Image *getImage();
+
+#if ENABLE_WIDGET_HIGHLIGHTING
+    Image *getHighlightedImage();
+#endif
 };
 
 }
