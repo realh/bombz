@@ -59,6 +59,8 @@ void ActivityHub::initRendering(hgame::RenderContext *rc)
     int scrts = rc->calculateTileSize(Level::kWidth, Level::kHeight);
     int srcts = platform->getBestPNGMatch(mScreenTileSize);
     bool reload_logo = false;
+    if (scrts != mScreenTileSize)
+        mLevel->deleteRendering(rc);
     if (srcts != mSrcTileSize)
     {
         reload_logo = mLogoSprite != 0;

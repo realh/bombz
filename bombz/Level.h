@@ -81,7 +81,6 @@ private:
     HUInt8 *mLevel;
     HUInt8 *mTmpLevel;
 
-    hgame::RenderContext *mRc;
     hgame::TextureAtlas *mTileAtlas;
     hgame::TextureAtlas *mAlphaAtlas;
     hgame::TileBatcher *mTileBatcher;
