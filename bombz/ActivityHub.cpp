@@ -56,17 +56,40 @@ ActivityHub::~ActivityHub()
 void ActivityHub::initRendering(hgame::RenderContext *rc)
 {
     hgame::Platform *platform = mApplication->getPlatform();
-    mScreenTileSize = rc->calculateTileSize(Level::kWidth, Level::kHeight);
-    mSrcTileSize = platform->getBestPNGMatch(mScreenTileSize);
+    int scrts = rc->calculateTileSize(Level::kWidth, Level::kHeight);
+    int srcts = platform->getBestPNGMatch(mScreenTileSize);
+    bool reload_logo = false;
+    if (srcts != mSrcTileSize)
+    {
+        reload_logo = mLogoSprite != 0;
+        deleteLogo();
+        delete mTileAtlas;
+        mTileAtlas = 0;
+        delete mAlphaAtlas;
+        mAlphaAtlas = 0;
+    }
+    else if (scrts != mScreenTileSize && mLogoSprite)
+    {
+        mLogoSprite->setPosition(scrts * 2, scrts * 2);
+    }
+    mScreenTileSize = scrts;
+    mSrcTileSize = srcts;
     mLog.d("Using source tile size %d", mSrcTileSize);
     rc->setNeedScaling(mSrcTileSize != mScreenTileSize);
-    hgame::Image *img = platform->loadPNG("tile_atlas.png", mSrcTileSize);
-    mTileAtlas = rc->uploadTexture(img);
-    delete img;
-    img = platform->loadPNG("alpha_atlas.png", mSrcTileSize);
-    mAlphaAtlas = rc->uploadTexture(img);
-    delete img;
-    loadLogo(rc);
+    if (!mTileAtlas)
+    {
+        hgame::Image *img = platform->loadPNG("tile_atlas.png", mSrcTileSize);
+        mTileAtlas = rc->uploadTexture(img);
+        delete img;
+    }
+    if (!mAlphaAtlas)
+    {
+        hgame::Image *img = platform->loadPNG("alpha_atlas.png", mSrcTileSize);
+        mAlphaAtlas = rc->uploadTexture(img);
+        delete img;
+    }
+    if (reload_logo)
+        loadLogo(rc);
     mLevel->initRendering(rc);
 }
 
@@ -82,14 +105,18 @@ void ActivityHub::deleteRendering(hgame::RenderContext *rc)
 
 void ActivityHub::loadLogo(hgame::RenderContext *rc)
 {
-    hgame::Image *img = getPlatform()->loadPNG("title_logo.png", mSrcTileSize);
-    mLogoAtlas = rc->uploadTexture(img);
-    delete img;
-    mLogoRegion = mLogoAtlas->createRegion(0, 0,
-            mSrcTileSize * 16, mSrcTileSize * 4);
-    mLogoSprite = rc->createSprite(mLogoRegion,
-            mScreenTileSize * 16, mScreenTileSize * 4);
-    mLogoSprite->setPosition(mScreenTileSize * 2, mScreenTileSize * 2);
+    if (!mLogoSprite)
+    {
+        hgame::Image *img = getPlatform()->loadPNG("title_logo.png",
+                mSrcTileSize);
+        mLogoAtlas = rc->uploadTexture(img);
+        delete img;
+        mLogoRegion = mLogoAtlas->createRegion(0, 0,
+                mSrcTileSize * 16, mSrcTileSize * 4);
+        mLogoSprite = rc->createSprite(mLogoRegion,
+                mScreenTileSize * 16, mScreenTileSize * 4);
+        mLogoSprite->setPosition(mScreenTileSize * 2, mScreenTileSize * 2);
+    }
 }
 
 void ActivityHub::deleteLogo()

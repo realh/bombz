@@ -57,7 +57,8 @@ public:
     virtual ~RendererWithState();
 
     // The difference between FREE and UNINITIALISED is that FREE is for
-    // freeing up resoureces only for current activity,
+    // freeing up resoureces only for current activity, UNINITIALISED is
+    // for shutting down application
     virtual void requestRenderState(RenderState new_state);
 
     // Called in rendering thread to call one of the following pure virtual
