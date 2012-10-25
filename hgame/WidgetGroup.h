@@ -55,6 +55,7 @@ public:
         return mAtlas;
     }
 
+    // Widgets are deleted
     virtual ~WidgetGroup();
 
     virtual void addWidget(Widget *w);

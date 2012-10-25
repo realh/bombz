@@ -176,6 +176,11 @@ void WidgetGroup::initRendering(RenderContext *rc)
 
 void WidgetGroup::deleteRendering(RenderContext *rc)
 {
+    for (std::list<Widget *>::iterator i = mWidgets.begin();
+            i != mWidgets.end(); ++i)
+    {
+        delete *i;
+    }
     delete mAtlas;
 }
 
