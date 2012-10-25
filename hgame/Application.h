@@ -111,8 +111,8 @@ public:
         return mActivity;
     }
 
-    // Shuts down current activity, optionally deleting it (del)
-    // and replaces it with new one
+    // clientChangeRendering() is called on old activity, if any, then it's
+    // optionally deleted. New activity is synced to old one's state.
     void setActivity(Activity *new_act, bool del = false);
 
     // Call to get everything going after setActivity()

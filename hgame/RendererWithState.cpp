@@ -53,10 +53,11 @@ void RendererWithState::requestRenderState(RenderState new_state)
 void RendererWithState::serviceRenderRequest(RenderContext *rc)
 {
     mRenderStateMutex->lock();
+    if (mRequestedRenderState == RENDER_STATE_CLIENT_CHANGE)
+        clientChangeRendering(rc);
     if ((mRequestedRenderState == RENDER_STATE_INITIALISED ||
             mRequestedRenderState == RENDER_STATE_RENDERING) &&
-            (mCurrentRenderState == RENDER_STATE_UNINITIALISED ||
-            mCurrentRenderState == RENDER_STATE_FREE))
+            mCurrentRenderState == RENDER_STATE_UNINITIALISED)
     {
         initRendering(rc);
     }
@@ -64,14 +65,14 @@ void RendererWithState::serviceRenderRequest(RenderContext *rc)
     {
         render(rc);
     }
-    if ((mRequestedRenderState == RENDER_STATE_UNINITIALISED ||
-            mRequestedRenderState == RENDER_STATE_FREE) &&
+    if (mRequestedRenderState == RENDER_STATE_UNINITIALISED &&
             (mCurrentRenderState == RENDER_STATE_INITIALISED ||
             mCurrentRenderState == RENDER_STATE_RENDERING))
     {
         deleteRendering(rc);
     }
-    mCurrentRenderState = mRequestedRenderState;
+    if (mRequestedRenderState != RENDER_STATE_CLIENT_CHANGE)
+        mCurrentRenderState = mRequestedRenderState;
     mRenderStateMutex->unlock();
 }
 

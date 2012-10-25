@@ -116,14 +116,22 @@ void Application::requestRenderWhileLocked(bool block)
 void Application::setActivity(Activity *new_act, bool del)
 {
     mRenderingCond->lock();
-    if (mActivity)
+    bool old_act = mActivity != 0;
+    Activity::RenderState rs = Activity::RENDER_STATE_UNINITIALISED;
+    if (old_act)
     {
-        mActivity->requestRenderState(Activity::RENDER_STATE_FREE);
+        rs = mActivity->getRenderState();
+        mActivity->requestRenderState(Activity::RENDER_STATE_CLIENT_CHANGE);
         requestRenderWhileLocked(true);
         if (del)
             delete mActivity;
     }
     mActivity = new_act;
+    if (old_act)
+    {
+        mActivity->requestRenderState(rs);
+        requestRenderWhileLocked(true);
+    }
     mRenderingCond->unlock();
 }
 

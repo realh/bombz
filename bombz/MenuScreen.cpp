@@ -88,6 +88,11 @@ void MenuScreen::deleteRendering(hgame::RenderContext *rc)
     mHub->deleteRendering(rc);
 }
 
+void MenuScreen::clientChangeRendering(hgame::RenderContext *rc)
+{
+    // Will be used to switch between screens
+}
+
 void MenuScreen::addTextWidget(const char *t, float x, float y,
         hgame::Alignment a)
 {

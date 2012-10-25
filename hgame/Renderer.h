@@ -48,7 +48,7 @@ public:
     // For RENDER_STATE_INITIALISED
     virtual void initRendering(RenderContext *rc) = 0;
 
-    // For RENDER_STATE_FREE/UNINITILISED
+    // For RENDER_STATE_UNINITILISED
     virtual void deleteRendering(RenderContext *rc) = 0;
 };
 

@@ -70,6 +70,8 @@ public:
 
     virtual void deleteRendering(hgame::RenderContext *rc);
 
+    virtual void clientChangeRendering(hgame::RenderContext *rc);
+
     // Coordinates are virtual, 0.0-1.0 in each direction; actual widgets
     // are not created until initRendering() when screen size is known
     virtual void addTextWidget(const char *t, float x, float y,

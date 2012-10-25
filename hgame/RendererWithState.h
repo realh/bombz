@@ -45,7 +45,12 @@ public:
         RENDER_STATE_UNINITIALISED,
         RENDER_STATE_INITIALISED,
         RENDER_STATE_RENDERING,
-        RENDER_STATE_FREE
+        RENDER_STATE_CLIENT_CHANGE
+        // CLIENT_CHANGE is eg for switching between screens, some resources
+        // need to be created, some destroyed. Should be called while current
+        // state is RENDERING. A clientChangeRendering() method may then set
+        // mRequestedRenderState to RENDERING to force the new screen to be
+        // rendered - or it can just call render() itself.
     };
 protected:
     volatile RenderState mCurrentRenderState;
@@ -56,14 +61,19 @@ public:
 
     virtual ~RendererWithState();
 
-    // The difference between FREE and UNINITIALISED is that FREE is for
-    // freeing up resoureces only for current activity, UNINITIALISED is
-    // for shutting down application
+    inline RenderState getRenderState() const
+    {
+        return mCurrentRenderState;
+    }
+
     virtual void requestRenderState(RenderState new_state);
 
-    // Called in rendering thread to call one of the following pure virtual
-    // functions depending on mRequestedRenderState
+    // Called in rendering thread to call one of Renderer's pure virtual
+    // functions or clientChangeRendering() depending on mRequestedRenderState
     virtual void serviceRenderRequest(RenderContext *rc);
+
+    // For RENDER_STATE_CLIENT_CHANGE
+    virtual void clientChangeRendering(RenderContext *rc) = 0;
 };
 
 }
