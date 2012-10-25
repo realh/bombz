@@ -45,26 +45,26 @@ namespace bombz {
 
 class ActivityHub;
 
-class MenuScreen, public Activity {
+class MenuScreen : public hgame::Activity {
 private:
     hgame::WidgetGroup *mWidgetGroup;
     struct TextWidget {
         const char *text;
         float x, y;
         hgame::Alignment alignment;
-        TextWidget(const char *t, int x_, int y_, Alignment a) :
+        TextWidget(const char *t, float x_, float y_, hgame::Alignment a) :
                 text(t), x(x_), y(y_), alignment(a)
         {}
     };
-    std::list<Widget> mWidgets;
+    std::list<TextWidget> mTextWidgets;
 protected:
     ActivityHub *mHub;
 public:
-    MenuScreen(Application *app, ActivityHub *hub, const char *name);
+    MenuScreen(hgame::Application *app, ActivityHub *hub, const char *name);
 
     ~MenuScreen();
 
-    virtual void render(RenderContext *rc);
+    virtual void render(hgame::RenderContext *rc);
 
     virtual void initRendering(hgame::RenderContext *rc);
 
@@ -72,7 +72,9 @@ public:
 
     // Coordinates are virtual, 0.0-1.0 in each direction; actual widgets
     // are not created until initRendering() when screen size is known
-    virtual void addTextWidget(const char *t, int x, int y, Alignment a);
+    virtual void addTextWidget(const char *t, float x, float y,
+            hgame::Alignment a = (hgame::Alignment)
+                    (hgame::ALIGN_CENTRE | hgame::ALIGN_TOP));
 };
 
 }

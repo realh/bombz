@@ -64,9 +64,9 @@ public:
 
     virtual bool onTapEvent(TapEvent *event);
 
-    virtual void initRendering(RenderContext *rc) = 0;
+    virtual void initRendering(RenderContext *rc);
 
-    virtual void deleteRendering(RenderContext *rc) = 0;
+    virtual void deleteRendering(RenderContext *rc);
 };
 
 }

@@ -52,7 +52,7 @@ public:
             Colour highlighted_colour,
 #endif
             int x, int y,
-            Alignment align = Widget::DefaultAlignment,
+            Alignment align = Widget::kDefaultAlignment,
             int shadow_offset = 0);
 
     ~TextWidget();

@@ -36,6 +36,12 @@
 
 namespace bombz {
 
+const hgame::Colour ActivityHub::kTextColour = hgame::Colour(0x000088ff);
+#if ENABLE_WIDGET_HIGHLIGHTING
+const hgame::Colour ActivityHub::kHighlightedTextColour =
+        hgame::Colour(0x880000ff);
+#endif
+
 ActivityHub::ActivityHub(hgame::Application *app) :
         mLog(*(app->createLog("BombzActivityHub"))),
         mApplication(app),

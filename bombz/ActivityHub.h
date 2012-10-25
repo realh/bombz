@@ -46,6 +46,11 @@
 namespace bombz {
 
 class ActivityHub {
+public:
+    static const hgame::Colour kTextColour;
+#if ENABLE_WIDGET_HIGHLIGHTING
+    static const hgame::Colour kHighlightedTextColour;
+#endif
 private:
     hgame::Log &mLog;
     hgame::Application *mApplication;
