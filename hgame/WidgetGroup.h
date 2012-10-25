@@ -45,16 +45,15 @@ namespace hgame {
 class WidgetGroup : public Renderer, public TapListener {
 protected:
     TextureAtlas *mAtlas;
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
-    TextureAtlas *mHighlightedAtlas;
-#endif
     std::list<Widget *> mWidgets;
 public:
     inline WidgetGroup() : mAtlas(0)
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
-            , mHighlightedAtlas(0)
-#endif
-     {}
+    {}
+
+    inline TextureAtlas *getAtlas()
+    {
+        return mAtlas;
+    }
 
     virtual ~WidgetGroup();
 

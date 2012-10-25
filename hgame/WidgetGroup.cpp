@@ -138,35 +138,44 @@ void WidgetGroup::initRendering(RenderContext *rc)
     height = round_to_power_of_2(height);
 
     // Make montage of all images
-    Image *montage = assigned.front().i->createImage(width, height);
+    Image *montage = assigned.front().i->createImage(width, height
 #ifdef ENABLE_WIDGET_HIGHLIGHTING
-    Image *hmontage = assigned.front().i->createImage(width, height);
+            * 2
 #endif
+            );
     for (std::list<WidgetAndPos>::iterator i = assigned.begin();
             i != assigned.end(); ++i)
     {
         montage->blit(i->i, i->x, i->y, 0, 0,
                 i->i->getWidth(),  i->i->getHeight());
 #ifdef ENABLE_WIDGET_HIGHLIGHTING
-        hmontage->blit(i->h, i->x, i->y, 0, 0,
+        montage->blit(i->h, i->x, i->y + height, 0, 0,
                 i->h->getWidth(),  i->h->getHeight());
 #endif
     }
 
-    // Upload textures
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
-    mHighlightedAtlas = rc->uploadTexture(hmontage);
-    delete hmontage;
-#endif
+    // Upload texture
     mAtlas = rc->uploadTexture(montage);
     delete montage;
+
+    // Set widgets' regions
+    for (std::list<WidgetAndPos>::iterator i = assigned.begin();
+            i != assigned.end(); ++i)
+    {
+#ifdef ENABLE_WIDGET_HIGHLIGHTING
+        i->w->setTextureRegions(rc, mAtlas->createRegion(i->x, i->y,
+                i->i->getWidth(), i->i->getHeight()),
+                mAtlas->createRegion(i->x, i->y + height,
+                i->i->getWidth(), i->i->getHeight()));
+#else
+        i->w->setTextureRegion(rc, mAtlas->createRegion(i->x, i->y,
+                i->i->getWidth(), i->i->getHeight()));
+#endif
+    }
 }
 
 void WidgetGroup::deleteRendering(RenderContext *rc)
 {
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
-    delete mHighlightedAtlas;
-#endif
     delete mAtlas;
 }
 
