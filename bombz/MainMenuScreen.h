@@ -55,7 +55,7 @@ private:
     void onQuitTapped();
 #endif
 public:
-    MainMenuScreen(hgame::Application *app, ActivityHub *hub);
+    MainMenuScreen(ActivityHub *hub);
 };
 
 }

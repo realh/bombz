@@ -35,9 +35,8 @@
 
 namespace bombz {
 
-MenuScreen::MenuScreen(hgame::Application *app, ActivityHub *hub,
-        const char *name) :
-        hgame::Activity(app, name),
+MenuScreen::MenuScreen(ActivityHub *hub, const char *name) :
+        hgame::Activity(hub->getApplication(), name),
         mWidgetGroup(0),
         mHub(hub)
 {
@@ -99,6 +98,29 @@ void MenuScreen::addTextWidget(const char *t, float x, float y,
         hgame::TapListener *listener, hgame::Alignment a)
 {
     mTextWidgets.push_back(TextWidget(t, x, y, a, listener));
+}
+
+int *MenuScreen::getBestModes()
+{
+    return mHub->getBestModes();
+}
+
+int MenuScreen::run()
+{
+    bool quit = false;
+    while (!quit)
+    {
+        hgame::Event *event = mApplication->getNextEvent();
+        if (event->getType() == hgame::EVENT_TAP)
+        {
+            mWidgetGroup->onTapEvent((hgame::TapEvent *) event);
+        }
+        else if (event->getType() == hgame::EVENT_STOP)
+        {
+            quit = true;
+        }
+    }
+    return 0;
 }
 
 }

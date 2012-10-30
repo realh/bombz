@@ -47,14 +47,14 @@ void MainMenuScreen::onQuitTapped()
 
 #endif
 
-MainMenuScreen::MainMenuScreen(hgame::Application *app, ActivityHub *hub) :
-        MenuScreen(app, hub, "BombzMainMenu")
+MainMenuScreen::MainMenuScreen(ActivityHub *hub) :
+        MenuScreen(hub, "BombzMainMenu")
 #ifdef HAVE_QUIT_WIDGET
         , mQuitListener(this)
 #endif
 {
 #ifdef HAVE_QUIT_WIDGET
-    addTextWidget(app->getPlatform()->translate("Quit"), 0.5, 0.35,
+    addTextWidget(mApplication->getPlatform()->translate("Quit"), 0.5, 0.35,
             &mQuitListener);
 #endif
 }

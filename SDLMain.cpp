@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 {
     hsdl::Application application(argc, argv);
     bombz::ActivityHub hub(&application);
-    // FIXME: Create an activity and set it to application
+    application.setActivity((hgame::Activity *) hub.getMainMenuScreen());
     application.start();
     return 0;
 }

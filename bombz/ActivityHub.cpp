@@ -33,6 +33,7 @@
 #include <vector>
 
 #include "bombz/ActivityHub.h"
+#include "bombz/MainMenuScreen.h"
 
 namespace bombz {
 
@@ -148,6 +149,11 @@ int *ActivityHub::getBestModes()
     modes[n * 2] = 0;
     modes[n * 2 + 1] = 0;
     return modes;
+}
+
+void ActivityHub::createMainMenuScreen()
+{
+    mMainMenuScrn = new MainMenuScreen(this);
 }
 
 }

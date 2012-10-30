@@ -62,7 +62,7 @@ private:
 protected:
     ActivityHub *mHub;
 public:
-    MenuScreen(hgame::Application *app, ActivityHub *hub, const char *name);
+    MenuScreen(ActivityHub *hub, const char *name);
 
     ~MenuScreen();
 
@@ -80,6 +80,10 @@ public:
             hgame::TapListener *listener,
             hgame::Alignment a = (hgame::Alignment)
                     (hgame::ALIGN_CENTRE | hgame::ALIGN_TOP));
+
+    int *getBestModes();
+
+    int run();
 };
 
 }
