@@ -212,11 +212,12 @@ hgame::Event *Application::getNextEvent(int tick_period_ms)
     return result;
 }
 
-void Application::stopThreads()
+void Application::stop()
 {
     pushEvent(new hgame::Event(hgame::EVENT_STOP, true));
     mActivityRunnable.stop();
     mEventRunnable.stop();
+    hgame::Application::stop();
 }
 
 }

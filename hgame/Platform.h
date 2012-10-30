@@ -40,6 +40,7 @@
 #include "hgame/Font.h"
 #include "hgame/Image.h"
 #include "hgame/Log.h"
+#include "hgame/Translate.h"
 #include "hgame/Types.h"
 
 namespace hgame {
@@ -52,7 +53,10 @@ public:
 };
 
 class Platform {
+protected:
+    Translate &mTranslate;
 public:
+    Platform(Translate *translator) : mTranslate(*translator) {}
 
     enum PlatformType {
         UNKNOWN,
@@ -62,6 +66,7 @@ public:
         ANDROID,
         IOS
     };
+    virtual PlatformType getPlatformType() const = 0;
 
     enum FileType {
         NOT_FOUND,
@@ -76,7 +81,6 @@ public:
     };
     static Endianness getEndianness();
 
-    virtual PlatformType getPlatformType() const = 0;
 
     // owner is used in Windows
     // This function ensures the directory exists
@@ -113,6 +117,11 @@ public:
 
     virtual Log *createLog(const char *name,
             Log::Level priority = Log::VERBOSE);
+
+    const char *translate(const char *tag)
+    {
+        return *mTranslate(tag);
+    }
 };
 
 }

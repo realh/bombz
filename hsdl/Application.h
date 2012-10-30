@@ -90,9 +90,9 @@ public:
     Application(int argc, char **argv);
     ~Application();
     void start();
+    void stop();
     void createRenderContext();
     hgame::Event *getNextEvent(int tick_period_ms);
-    void stopThreads();
 };
 
 }

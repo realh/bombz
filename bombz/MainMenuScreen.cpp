@@ -25,54 +25,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// HGame - a simple cross-platform game framework
-
-// Platform.h: Various functions giving info about and for manipulating
-//             the platform we're running on - SDL version
-
-#ifndef HSDL_PLATFORM_H
-#define HSDL_PLATFORM_H
+// Bombz - 2D puzzle game
 
 #include "config.h"
 
-#include "hgame/Log.h"
-#include "hgame/Platform.h"
+#include "bombz/MainMenuScreen.h"
 
-namespace hsdl {
+namespace bombz {
 
-class Platform : public hgame::Platform {
-private:
-    char *mAssetsDir;
-public:
-    hgame::Platform::PlatformType getPlatformType() const;
+#ifdef HAVE_QUIT_WIDGET
+bool MainMenuScreen::QuitListener::onTapEvent(hgame::TapEvent *e)
+{
+    mMMS->onQuitTapped();
+    return true;
+}
 
-    const char *getProfileFilename(const char *owner,
-            const char *appname, const char *leafname);
+void MainMenuScreen::onQuitTapped()
+{
+    mApplication->stop();
+}
 
-    // Returns the top-level directory holding game's assets
-    const char *getAssetsDirectory();
+#endif
 
-    // Returns full path to an asset given its leafname.
-    // leafname may include subdirs. '/' separators are converted to
-    // '\' on Windows.
-    // Result must be std::freed, not deleted.
-    char *getAsset(const char *leafname);
-
-    char getDirectorySeparator();
-
-    hgame::Image *loadPNG(const char *leafname);
-
-    hgame::Font *loadFont(unsigned int px);
-
-    Platform(int argc, char **argv);
-    ~Platform();
-
-protected:
-    hgame::Log &mLog;
-
-    void mkdirWithParents(const char *dir);
-};
+MainMenuScreen::MainMenuScreen(hgame::Application *app, ActivityHub *hub) :
+        MenuScreen(app, hub, "BombzMainMenu")
+#ifdef HAVE_QUIT_WIDGET
+        , mQuitListener(this)
+#endif
+{
+#ifdef HAVE_QUIT_WIDGET
+    addTextWidget(app->getPlatform()->translate("Quit"), 0.5, 0.35,
+            &mQuitListener);
+#endif
+}
 
 }
 
-#endif // HSDL_PLATFORM_H
+#endif // BOMBZ_MAIN_MENU_SCREEN_H

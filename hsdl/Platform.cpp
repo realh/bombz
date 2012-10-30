@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -30,7 +30,9 @@
 #include "hsdl/Exception.h"
 #include "hsdl/Font.h"
 #include "hsdl/Image.h"
+#include "hsdl/Log.h"
 #include "hsdl/Platform.h"
+#include "hsdl/Translate.h"
 
 #include <cerrno>
 #include <cstdio>
@@ -43,8 +45,6 @@
 
 #include <SDL_image.h>
 #include <SDL_platform.h>
-
-#include "hsdl/Log.h"
 
 namespace hsdl {
 
@@ -121,7 +121,7 @@ const char *Platform::getAssetsDirectory()
 {
     return mAssetsDir;
 }
-    
+
 char *Platform::getAsset(const char *leafname)
 {
     char *pathname;
@@ -144,7 +144,7 @@ char Platform::getDirectorySeparator()
         return '\\';
     return '/';
 }
-    
+
 hgame::Image *Platform::loadPNG(const char *leafname)
 {
     char *pathname = getAsset(leafname);
@@ -156,13 +156,14 @@ hgame::Image *Platform::loadPNG(const char *leafname)
     }
     return new Image(surf);
 }
-    
+
 hgame::Font *Platform::loadFont(unsigned int px)
 {
     return new Font(px);
 }
 
 Platform::Platform(int argc, char **argv) :
+        hgame::Platform(new Translate(this)),
         mLog(*new Log("sdl::Platform"))
 {
     char ds = getDirectorySeparator();

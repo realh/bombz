@@ -27,61 +27,37 @@
 
 // Bombz - 2D puzzle game
 
-// MenuScreen.h: Base class for menus
+// MainMenuScreen.h: The main menu screen
 
-#ifndef BOMBZ_MENU_SCREEN_H
-#define BOMBZ_MENU_SCREEN_H
+#ifndef BOMBZ_MAIN_MENU_SCREEN_H
+#define BOMBZ_MAIN_MENU_SCREEN_H
 
 #include "config.h"
 
-#include <list>
-
-#include "hgame/Activity.h"
-#include "hgame/WidgetGroup.h"
-
-#include "bombz/Level.h"
+#include "bombz/MenuScreen.h"
 
 namespace bombz {
 
-class ActivityHub;
-
-class MenuScreen : public hgame::Activity {
+class MainMenuScreen : public MenuScreen {
 private:
-    hgame::WidgetGroup *mWidgetGroup;
-    struct TextWidget {
-        const char *text;
-        float x, y;
-        hgame::Alignment alignment;
-        hgame::TapListener *listener;
-        TextWidget(const char *t, float x_, float y_,
-                hgame::Alignment a, hgame::TapListener *tap_listener) :
-                text(t), x(x_), y(y_), alignment(a), listener(tap_listener)
-        {}
+#ifdef HAVE_QUIT_WIDGET
+    class QuitListener : public hgame::TapListener {
+    private:
+        MainMenuScreen *mMMS;
+    public:
+        QuitListener(MainMenuScreen *m) : mMMS(m) {}
+
+        bool onTapEvent(hgame::TapEvent *e);
     };
-    std::list<TextWidget> mTextWidgets;
-protected:
-    ActivityHub *mHub;
+
+    QuitListener mQuitListener;
+
+    void onQuitTapped();
+#endif
 public:
-    MenuScreen(hgame::Application *app, ActivityHub *hub, const char *name);
-
-    ~MenuScreen();
-
-    virtual void render(hgame::RenderContext *rc);
-
-    virtual void initRendering(hgame::RenderContext *rc);
-
-    virtual void deleteRendering(hgame::RenderContext *rc);
-
-    virtual void clientChangeRendering(hgame::RenderContext *rc);
-
-    // Coordinates are virtual, 0.0-1.0 in each direction; actual widgets
-    // are not created until initRendering() when screen size is known
-    virtual void addTextWidget(const char *t, float x, float y,
-            hgame::TapListener *listener,
-            hgame::Alignment a = (hgame::Alignment)
-                    (hgame::ALIGN_CENTRE | hgame::ALIGN_TOP));
+    MainMenuScreen(hgame::Application *app, ActivityHub *hub);
 };
 
 }
 
-#endif // BOMBZ_MENU_SCREEN_H
+#endif // BOMBZ_MAIN_MENU_SCREEN_H

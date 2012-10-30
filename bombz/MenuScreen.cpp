@@ -68,13 +68,15 @@ void MenuScreen::initRendering(hgame::RenderContext *rc)
     for (std::list<TextWidget>::iterator i = mTextWidgets.begin();
             i != mTextWidgets.end(); ++i)
     {
-        mWidgetGroup->addWidget(new hgame::TextWidget(i->text,
+        hgame::TextWidget *w = new hgame::TextWidget(i->text,
                 font, ActivityHub::kTextColour,
 #if ENABLE_WIDGET_HIGHLIGHTING
                 ActivityHub::kHighlightedTextColour,
 #endif
                 int(i->x * ts * 20), int(i->y * ts * 15), i->alignment,
-                ts / 8));
+                ts / 8)
+        w->setTapListener(i->mTapListener);
+        mWidgetGroup->addWidget(w);
     }
     mWidgetGroup->initRendering(rc);
     delete font;
@@ -94,9 +96,9 @@ void MenuScreen::clientChangeRendering(hgame::RenderContext *rc)
 }
 
 void MenuScreen::addTextWidget(const char *t, float x, float y,
-        hgame::Alignment a)
+        hgame::TapListener *listener, hgame::Alignment a)
 {
-    mTextWidgets.push_back(TextWidget(t, x, y, a));
+    mTextWidgets.push_back(TextWidget(t, x, y, a, listener));
 }
 
 }
