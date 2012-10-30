@@ -45,6 +45,8 @@
 
 namespace bombz {
 
+class MenuScreen;
+
 class ActivityHub {
 public:
     static const hgame::Colour kTextColour;
@@ -62,6 +64,7 @@ private:
     int mScreenTileSize;
     int mSrcTileSize;
     Level *mLevel;
+    MenuScreen *mMainMenuScrn;
 public:
     ActivityHub(hgame::Application *app);
 
@@ -121,6 +124,15 @@ public:
     {
         return mLevel;
     }
+
+    inline MenuScreen *getMainMenuScreen()
+    {
+        if (!mMainMenuScrn)
+            createMainMenuScreen();
+        return mMainMenuScrn;
+    }
+private:
+    void createMainMenuScreen();
 };
 
 }
