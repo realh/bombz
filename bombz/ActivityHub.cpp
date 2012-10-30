@@ -51,6 +51,7 @@ ActivityHub::ActivityHub(hgame::Application *app) :
         mLogoRegion(0),
         mLogoSprite(0),
         mLevel(new Level(this)),
+        mRcIndex(-1),
         mMainMenuScrn(0)
 {
 }
@@ -62,26 +63,29 @@ ActivityHub::~ActivityHub()
 
 void ActivityHub::initRendering(hgame::RenderContext *rc)
 {
-    hgame::Platform *platform = mApplication->getPlatform();
-    mScreenTileSize = rc->calculateTileSize(Level::kWidth, Level::kHeight);
-    mSrcTileSize = platform->getBestPNGMatch(mScreenTileSize);
-    mLog.d("Using source tile size %d", mSrcTileSize);
-    bool reload_logo = mLogoSprite != 0;
-    deleteLogo();
-    delete mTileAtlas;
-    mTileAtlas = 0;
-    delete mAlphaAtlas;
-    mAlphaAtlas = 0;
-    rc->setNeedScaling(mSrcTileSize != mScreenTileSize);
-    hgame::Image *img = platform->loadPNG("tile_atlas.png", mSrcTileSize);
-    mTileAtlas = rc->uploadTexture(img);
-    delete img;
-    img = platform->loadPNG("alpha_atlas.png", mSrcTileSize);
-    mAlphaAtlas = rc->uploadTexture(img);
-    delete img;
-    if (reload_logo)
-        loadLogo(rc);
-    mLevel->initRendering(rc);
+    if (rc->getIndex() != mRcIndex)
+    {
+        hgame::Platform *platform = mApplication->getPlatform();
+        mScreenTileSize = rc->calculateTileSize(Level::kWidth, Level::kHeight);
+        mSrcTileSize = platform->getBestPNGMatch(mScreenTileSize);
+        mLog.d("Using source tile size %d", mSrcTileSize);
+        bool reload_logo = mLogoSprite != 0;
+        deleteLogo();
+        delete mTileAtlas;
+        mTileAtlas = 0;
+        delete mAlphaAtlas;
+        mAlphaAtlas = 0;
+        rc->setNeedScaling(mSrcTileSize != mScreenTileSize);
+        hgame::Image *img = platform->loadPNG("tile_atlas.png", mSrcTileSize);
+        mTileAtlas = rc->uploadTexture(img);
+        delete img;
+        img = platform->loadPNG("alpha_atlas.png", mSrcTileSize);
+        mAlphaAtlas = rc->uploadTexture(img);
+        delete img;
+        if (reload_logo)
+            loadLogo(rc);
+        mLevel->initRendering(rc);
+    }
 }
 
 void ActivityHub::deleteRendering(hgame::RenderContext *rc)
@@ -92,6 +96,7 @@ void ActivityHub::deleteRendering(hgame::RenderContext *rc)
     delete mTileAtlas;
     mTileAtlas = 0;
     deleteLogo();
+    mRcIndex = -1;
 }
 
 void ActivityHub::loadLogo(hgame::RenderContext *rc)

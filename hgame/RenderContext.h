@@ -48,6 +48,8 @@ class RenderContext {
 private:
     const TextureAtlas *mBoundTexture;
     bool mNeedScaling;
+    int mIndex;
+    static int smIndex;
 protected:
     Log &mLog;
 public:
@@ -95,6 +97,19 @@ public:
             doBindTexture(tex);
             mBoundTexture = tex;
         }
+    }
+
+    // This can be used to detect whether RenderContext has really changed
+    // in an initRendering request. -1 may be used to mean "no previous rc".
+    inline int getIndex() const
+    {
+        return mIndex;
+    }
+
+    // Therefore this must be called whenever there is a RenderContext change
+    inline void setIndex(int i = 0)
+    {
+        mIndex = i ? i : ++smIndex;
     }
 protected:
     virtual void doBindTexture(const TextureAtlas *tex) = 0;

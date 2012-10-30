@@ -64,6 +64,7 @@ private:
     int mScreenTileSize;
     int mSrcTileSize;
     Level *mLevel;
+    int mRcIndex;
     MenuScreen *mMainMenuScrn;
 public:
     ActivityHub(hgame::Application *app);

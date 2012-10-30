@@ -31,8 +31,10 @@
 
 namespace hgame {
 
+int RenderContext::smIndex = 0;
+
 RenderContext::RenderContext(Log *log) :
-        mBoundTexture(0), mNeedScaling(false), mLog(*log)
+        mBoundTexture(0), mNeedScaling(false), mIndex(++smIndex), mLog(*log)
 {
 }
 
