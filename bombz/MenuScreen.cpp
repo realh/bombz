@@ -74,8 +74,8 @@ void MenuScreen::initRendering(hgame::RenderContext *rc)
                 ActivityHub::kHighlightedTextColour,
 #endif
                 int(i->x * ts * 20), int(i->y * ts * 15), i->alignment,
-                ts / 8)
-        w->setTapListener(i->mTapListener);
+                ts / 8);
+        w->setTapListener(i->listener);
         mWidgetGroup->addWidget(w);
     }
     mWidgetGroup->initRendering(rc);

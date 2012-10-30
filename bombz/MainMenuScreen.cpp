@@ -60,5 +60,3 @@ MainMenuScreen::MainMenuScreen(hgame::Application *app, ActivityHub *hub) :
 }
 
 }
-
-#endif // BOMBZ_MAIN_MENU_SCREEN_H

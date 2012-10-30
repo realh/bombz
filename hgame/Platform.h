@@ -120,7 +120,7 @@ public:
 
     const char *translate(const char *tag)
     {
-        return *mTranslate(tag);
+        return mTranslate(tag);
     }
 };
 

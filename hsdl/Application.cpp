@@ -70,7 +70,7 @@ int SafeRunnable::run()
     if (result)
     {
         mStopped = true;
-        mApplication->stopThreads();
+        mApplication->stop();
     }
     return result;
 }

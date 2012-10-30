@@ -10,7 +10,7 @@ def add_envs(envs):
     envs["SRC_DIR"] = "${TOP_DIR}"
     envs["HCXXFLAGS"] = "${CXXFLAGS} -I${SRC_DIR} -I${BUILD_DIR} -D_GNU_SOURCE"
     envs["BOMBZ_CXXFLAGS"] = "${HCXXFLAGS} ${SDL_CFLAGS} ${OPENGL_CFLAGS} " \
-            "-DENABLE_WIDGET_HIGHLIGHTING"
+            "-DENABLE_WIDGET_HIGHLIGHTING -DHAVE_QUIT_WIDGET"
     envs["BOMBZ_LIBS"] = "${SDL_LIBS} ${OPENGL_LIBS}"
     envs["BUILD_SUBDIRS"] = "${BUILD_DIR}/hgame " \
             "${BUILD_DIR}/hgl " \
