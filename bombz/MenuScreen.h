@@ -76,7 +76,7 @@ public:
     // Should do the actual deleting
     virtual void freeRendering(hgame::RenderContext *rc);
 
-    virtual void clientChangeRendering(hgame::RenderContext *rc);
+    virtual void replaceRenderingScreen(hgame::RenderContext *rc);
 
     // Coordinates are virtual, 0.0-1.0 in each direction; actual widgets
     // are not created until initRendering() when screen size is known

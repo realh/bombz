@@ -93,7 +93,7 @@ void MenuScreen::freeRendering(hgame::RenderContext *rc)
     mWidgetGroup = 0;
 }
 
-void MenuScreen::clientChangeRendering(hgame::RenderContext *rc)
+void MenuScreen::replaceRenderingScreen(hgame::RenderContext *rc)
 {
     // Will be used to switch between screens
 }

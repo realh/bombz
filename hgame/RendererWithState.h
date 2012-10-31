@@ -45,10 +45,10 @@ public:
         RENDER_STATE_UNINITIALISED,
         RENDER_STATE_INITIALISED,
         RENDER_STATE_RENDERING,
-        RENDER_STATE_CLIENT_CHANGE
-        // CLIENT_CHANGE is eg for switching between screens, some resources
+        RENDER_STATE_REPLACE_SCREEN
+        // REPLACE_SCREEN is eg for switching between screens, some resources
         // need to be created, some destroyed. Should be called while current
-        // state is RENDERING. A clientChangeRendering() method may then set
+        // state is RENDERING. A replaceRenderingScreen() method may then set
         // mRequestedRenderState to RENDERING to force the new screen to be
         // rendered - or it can just call render() itself.
     };
@@ -69,11 +69,11 @@ public:
     virtual void requestRenderState(RenderState new_state);
 
     // Called in rendering thread to call one of Renderer's pure virtual
-    // functions or clientChangeRendering() depending on mRequestedRenderState
+    // functions or replaceRenderingScreen() depending on mRequestedRenderState
     virtual void serviceRenderRequest(RenderContext *rc);
 
-    // For RENDER_STATE_CLIENT_CHANGE
-    virtual void clientChangeRendering(RenderContext *rc) = 0;
+    // For RENDER_STATE_REPLACE_SCREEN
+    virtual void replaceRenderingScreen(RenderContext *rc) = 0;
 };
 
 }

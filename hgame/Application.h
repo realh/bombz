@@ -111,7 +111,7 @@ public:
         return mScreen;
     }
 
-    // clientChangeRendering() is called on old screen, if any, then it's
+    // replaceRenderingScreen() is called on old screen, if any, then it's
     // optionally deleted. New screen is synced to old one's state.
     void setScreen(Screen *new_act, bool del = false);
 

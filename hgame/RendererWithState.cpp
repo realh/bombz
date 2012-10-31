@@ -53,8 +53,8 @@ void RendererWithState::requestRenderState(RenderState new_state)
 void RendererWithState::serviceRenderRequest(RenderContext *rc)
 {
     mRenderStateMutex->lock();
-    if (mRequestedRenderState == RENDER_STATE_CLIENT_CHANGE)
-        clientChangeRendering(rc);
+    if (mRequestedRenderState == RENDER_STATE_REPLACE_SCREEN)
+        replaceRenderingScreen(rc);
     if ((mRequestedRenderState == RENDER_STATE_INITIALISED ||
             mRequestedRenderState == RENDER_STATE_RENDERING) &&
             mCurrentRenderState == RENDER_STATE_UNINITIALISED)
@@ -71,7 +71,7 @@ void RendererWithState::serviceRenderRequest(RenderContext *rc)
     {
         deleteRendering(rc);
     }
-    if (mRequestedRenderState != RENDER_STATE_CLIENT_CHANGE)
+    if (mRequestedRenderState != RENDER_STATE_REPLACE_SCREEN)
         mCurrentRenderState = mRequestedRenderState;
     mRenderStateMutex->unlock();
 }

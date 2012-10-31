@@ -121,7 +121,7 @@ void Application::setScreen(Screen *new_act, bool del)
     if (old_act)
     {
         rs = mScreen->getRenderState();
-        mScreen->requestRenderState(Screen::RENDER_STATE_CLIENT_CHANGE);
+        mScreen->requestRenderState(Screen::RENDER_STATE_REPLACE_SCREEN);
         requestRenderWhileLocked(true);
         if (del)
             delete mScreen;
