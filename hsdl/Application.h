@@ -57,12 +57,12 @@ public:
     virtual void stop();
 };
 
-class ActivityRunnable : public SafeRunnable {
+class ScreenRunnable : public SafeRunnable {
 private:
     Application *mApplication;
 public:
-    inline ActivityRunnable(Application *app) :
-            SafeRunnable(app, "ActivityRunnable")
+    inline ScreenRunnable(Application *app) :
+            SafeRunnable(app, "ScreenRunnable")
     {}
     int runSafely();
 };
@@ -72,7 +72,7 @@ private:
     Application *mApplication;
 public:
     inline EventRunnable(Application *app) :
-            SafeRunnable(app, "ActivityRunnable")
+            SafeRunnable(app, "ScreenRunnable")
     {}
     int runSafely();
     void stop();
@@ -82,8 +82,8 @@ class Application : public hgame::Application {
 private:
     hgame::HUInt32 mLastTick;
     hgame::Event *mSavedEvent;
-    ActivityRunnable mActivityRunnable;
-    hgame::Thread *mActivityThread;
+    ScreenRunnable mScreenRunnable;
+    hgame::Thread *mScreenThread;
     EventRunnable mEventRunnable;
     hgame::Thread *mEventThread;
 public:

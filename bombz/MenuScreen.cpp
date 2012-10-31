@@ -31,12 +31,12 @@
 
 #include "hgame/TextWidget.h"
 
-#include "bombz/ActivityHub.h"
+#include "bombz/ScreenHub.h"
 
 namespace bombz {
 
-MenuScreen::MenuScreen(ActivityHub *hub, const char *name) :
-        hgame::Activity(hub->getApplication(), name),
+MenuScreen::MenuScreen(ScreenHub *hub, const char *name) :
+        hgame::Screen(hub->getApplication(), name),
         mWidgetGroup(0),
         mHub(hub)
 {
@@ -68,9 +68,9 @@ void MenuScreen::initRendering(hgame::RenderContext *rc)
             i != mTextWidgets.end(); ++i)
     {
         hgame::TextWidget *w = new hgame::TextWidget(i->text,
-                font, ActivityHub::kTextColour,
+                font, ScreenHub::kTextColour,
 #if ENABLE_WIDGET_HIGHLIGHTING
-                ActivityHub::kHighlightedTextColour,
+                ScreenHub::kHighlightedTextColour,
 #endif
                 int(i->x * ts * 20), int(i->y * ts * 15), i->alignment,
                 ts / 8);

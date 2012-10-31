@@ -32,19 +32,19 @@
 #include <algorithm>
 #include <vector>
 
-#include "bombz/ActivityHub.h"
+#include "bombz/ScreenHub.h"
 #include "bombz/MainMenuScreen.h"
 
 namespace bombz {
 
-const hgame::Colour ActivityHub::kTextColour = hgame::Colour(0x000088ff);
+const hgame::Colour ScreenHub::kTextColour = hgame::Colour(0x000088ff);
 #if ENABLE_WIDGET_HIGHLIGHTING
-const hgame::Colour ActivityHub::kHighlightedTextColour =
+const hgame::Colour ScreenHub::kHighlightedTextColour =
         hgame::Colour(0x880000ff);
 #endif
 
-ActivityHub::ActivityHub(hgame::Application *app) :
-        mLog(*(app->createLog("BombzActivityHub"))),
+ScreenHub::ScreenHub(hgame::Application *app) :
+        mLog(*(app->createLog("BombzScreenHub"))),
         mApplication(app),
         mAlphaAtlas(0),
         mTileAtlas(0),
@@ -57,12 +57,12 @@ ActivityHub::ActivityHub(hgame::Application *app) :
 {
 }
 
-ActivityHub::~ActivityHub()
+ScreenHub::~ScreenHub()
 {
     delete mLevel;
 }
 
-void ActivityHub::initRendering(hgame::RenderContext *rc)
+void ScreenHub::initRendering(hgame::RenderContext *rc)
 {
     if (rc->getIndex() != mRcIndex)
     {
@@ -89,7 +89,7 @@ void ActivityHub::initRendering(hgame::RenderContext *rc)
     }
 }
 
-void ActivityHub::deleteRendering(hgame::RenderContext *rc)
+void ScreenHub::deleteRendering(hgame::RenderContext *rc)
 {
     mLevel->deleteRendering(rc);
     delete mAlphaAtlas;
@@ -102,7 +102,7 @@ void ActivityHub::deleteRendering(hgame::RenderContext *rc)
         mMainMenuScrn->freeRendering(rc);
 }
 
-void ActivityHub::loadLogo(hgame::RenderContext *rc)
+void ScreenHub::loadLogo(hgame::RenderContext *rc)
 {
     hgame::Image *img = getPlatform()->loadPNG("title_logo.png",
             mSrcTileSize);
@@ -115,7 +115,7 @@ void ActivityHub::loadLogo(hgame::RenderContext *rc)
     mLogoSprite->setPosition(mScreenTileSize * 2, mScreenTileSize * 2);
 }
 
-void ActivityHub::deleteLogo()
+void ScreenHub::deleteLogo()
 {
     delete mLogoSprite;
     mLogoSprite = 0;
@@ -125,7 +125,7 @@ void ActivityHub::deleteLogo()
     mLogoAtlas = 0;
 }
 
-int *ActivityHub::getBestModes()
+int *ScreenHub::getBestModes()
 {
     hgame::Platform *plat = getPlatform();
     char *pngs_dir = plat->joinPath(plat->getAssetsDirectory(), "pngs", NULL);
@@ -153,7 +153,7 @@ int *ActivityHub::getBestModes()
     return modes;
 }
 
-void ActivityHub::createMainMenuScreen()
+void ScreenHub::createMainMenuScreen()
 {
     mMainMenuScrn = new MainMenuScreen(this);
 }

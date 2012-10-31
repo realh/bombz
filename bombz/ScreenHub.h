@@ -27,14 +27,14 @@
 
 // Bombz - 2D puzzle game
 
-// ActivityHub.h: Data etc for all of Bombz's activities
+// ScreenHub.h: Data etc for all of Bombz's activities
 
 #ifndef BOMBZ_ACTIVITY_HUB_H
 #define BOMBZ_ACTIVITY_HUB_H
 
 #include "config.h"
 
-#include "hgame/Activity.h"
+#include "hgame/Screen.h"
 #include "hgame/Application.h"
 #include "hgame/Log.h"
 #include "hgame/Sprite.h"
@@ -47,7 +47,7 @@ namespace bombz {
 
 class MenuScreen;
 
-class ActivityHub {
+class ScreenHub {
 public:
     static const hgame::Colour kTextColour;
 #if ENABLE_WIDGET_HIGHLIGHTING
@@ -67,9 +67,9 @@ private:
     int mRcIndex;
     MenuScreen *mMainMenuScrn;
 public:
-    ActivityHub(hgame::Application *app);
+    ScreenHub(hgame::Application *app);
 
-    ~ActivityHub();
+    ~ScreenHub();
 
     void initRendering(hgame::RenderContext *rc);
 

@@ -55,7 +55,7 @@ public:
     TickEvent() : Event(EVENT_TICK) {}
 };
 
-class Activity;
+class Screen;
 
 class Application {
 protected:
@@ -63,7 +63,7 @@ protected:
     Platform *mPlatform;
     RenderContext *mRenderContext;
     ThreadFactory *mThreadFactory;
-    Activity *mActivity;
+    Screen *mScreen;
     hgame::Cond *mRenderingCond;
     volatile bool mRenderBlocking;
     volatile bool mRenderLooping;
@@ -106,20 +106,20 @@ public:
     // Wake up rendering thread to service a render/init/shutdown request
     virtual void requestRender();
 
-    inline Activity *getActivity()
+    inline Screen *getScreen()
     {
-        return mActivity;
+        return mScreen;
     }
 
-    // clientChangeRendering() is called on old activity, if any, then it's
-    // optionally deleted. New activity is synced to old one's state.
-    void setActivity(Activity *new_act, bool del = false);
+    // clientChangeRendering() is called on old screen, if any, then it's
+    // optionally deleted. New screen is synced to old one's state.
+    void setScreen(Screen *new_act, bool del = false);
 
-    // Call to get everything going after setActivity()
+    // Call to get everything going after setScreen()
     virtual void start() = 0;
 
-    // Call *from Activity* to shut everything down when finished; default
-    // implementation is equivalent to shutting down activity's rendering
+    // Call *from Screen* to shut everything down when finished; default
+    // implementation is equivalent to shutting down screen's rendering
     // if mRenderLooping is true
     virtual void stop();
 

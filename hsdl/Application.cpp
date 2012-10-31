@@ -34,7 +34,7 @@
 
 #include "SDL.h"
 
-#include "hgame/Activity.h"
+#include "hgame/Screen.h"
 #include "hgame/TapEvent.h"
 
 #include "hsdl/Application.h"
@@ -80,13 +80,13 @@ void SafeRunnable::stop()
     mStopped = true;
 }
 
-int ActivityRunnable::runSafely()
+int ScreenRunnable::runSafely()
 {
     int result = 1;
-    hgame::Activity *act;
-    while (!mStopped && (act = mApplication->getActivity()) != 0)
+    hgame::Screen *scrn;
+    while (!mStopped && (scrn = mApplication->getScreen()) != 0)
     {
-        result = act->run();
+        result = scrn->run();
     }
     return result;
 }
@@ -139,16 +139,16 @@ Application::Application(int argc, char **argv) :
                 new ThreadFactory()),
         mLastTick(SDL_GetTicks()),
         mSavedEvent(0),
-        mActivityRunnable(this),
-        mActivityThread(0),
+        mScreenRunnable(this),
+        mScreenThread(0),
         mEventRunnable(this),
         mEventThread(0)
 {
     hgame::Event::setPool(new hgame::EventPool(mThreadFactory));
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
         THROW(Exception, "Init failed");
-    mActivityThread = mThreadFactory->createThread(&mActivityRunnable,
-            "Activity thread");
+    mScreenThread = mThreadFactory->createThread(&mScreenRunnable,
+            "Screen thread");
     mEventThread = mThreadFactory->createThread(&mEventRunnable,
             "Event thread");
 }
@@ -156,17 +156,17 @@ Application::Application(int argc, char **argv) :
 Application::~Application()
 {
     SDL_Quit();
-    delete mActivityThread;
+    delete mScreenThread;
     delete mEventThread;
     mSavedEvent->dispose();
 }
 
 void Application::start()
 {
-    assert(mActivity != 0);
+    assert(mScreen != 0);
     try {
         createRenderContext();
-        mActivity->requestRenderState(hgame::Activity::RENDER_STATE_RENDERING);
+        mScreen->requestRenderState(hgame::Screen::RENDER_STATE_RENDERING);
     }
     catch (std::exception e)
     {
@@ -174,16 +174,16 @@ void Application::start()
         std::exit(1);
     }
     mEventThread->start();
-    mActivityThread->start();
+    mScreenThread->start();
     renderLoop();
     delete mRenderContext;
-    mActivityThread->wait();
+    mScreenThread->wait();
     mEventThread->wait();
 }
 
 void Application::createRenderContext()
 {
-    mRenderContext = new GLRenderContext(mActivity->getBestModes());
+    mRenderContext = new GLRenderContext(mScreen->getBestModes());
 }
 
 hgame::Event *Application::getNextEvent(int tick_period_ms)
@@ -215,7 +215,7 @@ hgame::Event *Application::getNextEvent(int tick_period_ms)
 void Application::stop()
 {
     pushEvent(new hgame::Event(hgame::EVENT_STOP, true));
-    mActivityRunnable.stop();
+    mScreenRunnable.stop();
     mEventRunnable.stop();
     hgame::Application::stop();
 }

@@ -1,12 +1,12 @@
 #include "hsdl/Application.h"
 
-#include "bombz/ActivityHub.h"
+#include "bombz/ScreenHub.h"
 
 int main(int argc, char **argv)
 {
     hsdl::Application application(argc, argv);
-    bombz::ActivityHub hub(&application);
-    application.setActivity((hgame::Activity *) hub.getMainMenuScreen());
+    bombz::ScreenHub hub(&application);
+    application.setScreen((hgame::Screen *) hub.getMainMenuScreen());
     application.start();
     return 0;
 }

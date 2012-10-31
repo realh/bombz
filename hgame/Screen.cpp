@@ -27,57 +27,23 @@
 
 // HGame - a simple cross-platform game framework
 
-// Activity.h: A game's activity
+#include "hgame/Screen.h"
 
-#ifndef HGAME_ACTIVITY_H
-#define HGAME_ACTIVITY_H
-
-#include "config.h"
-
-#include "hgame/Application.h"
-#include "hgame/RendererWithState.h"
+#include <cstdlib>
+#include <cstring>
 
 namespace hgame {
 
-class Activity : public RendererWithState, public Runnable {
-    // Note we implement Runnable. The run() function should consist mainly of
-    // a main loop which sets the mRunning flag when starting and regularly
-    // checks it, exiting the loop when it's false.
-    // It will usually have its own thread, so it should
-    // catch any unhandled exceptions at the top-level.
-protected:
-    Application *mApplication;
-    Log &mLog;
-    volatile bool mRunning;
-    char *mName;
-public:
-    Activity(Application *app, const char *name);
-
-    virtual ~Activity();
-
-    inline Application *getApplication()
-    {
-        return mApplication;
-
-    }
-
-    inline RenderContext *getRenderContext()
-    {
-        return mApplication->getRenderContext();
-
-    }
-
-    inline Platform *getPlatform()
-    {
-        return mApplication->getPlatform();
-    }
-
-    // Return a 0-terminated array of ints in pairs of x, y;
-    // sorted with best mode first;
-    // must be able to delete[] result
-    virtual int *getBestModes() = 0;
-};
-
+Screen::Screen(Application *app, const char *name) :
+        RendererWithState(app->getThreadFactory()),
+        mApplication(app), mLog(*(app->createLog(name))), mRunning(false),
+        mName(strdup(name))
+{
 }
 
-#endif // HGAME_ACTIVITY_H
+Screen::~Screen()
+{
+    std::free(mName);
+}
+
+}

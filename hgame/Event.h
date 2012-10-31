@@ -69,7 +69,7 @@ public:
     }
 };
 
-// Pool of events to reduce memory alloc activity
+// Pool of events to reduce memory alloc screen
 class EventPool {
 public:
     static const int kPoolSize = 16;

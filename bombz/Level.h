@@ -46,7 +46,7 @@ namespace bombz {
 
 typedef hgame::HUInt8 HUInt8;
 
-class ActivityHub;
+class ScreenHub;
 
 class Level : public hgame::Renderer {
 public:
@@ -91,10 +91,10 @@ private:
     hgame::TextureRegion *mExplo00Region;
     hgame::Sprite *mExplo00Sprite;
 
-    ActivityHub *mHub;
+    ScreenHub *mHub;
 
 public:
-    Level(ActivityHub *hub);
+    Level(ScreenHub *hub);
     ~Level();
 
     void initRendering(hgame::RenderContext *rc);

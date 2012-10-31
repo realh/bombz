@@ -55,7 +55,7 @@ private:
     void onQuitTapped();
 #endif
 public:
-    MainMenuScreen(ActivityHub *hub);
+    MainMenuScreen(ScreenHub *hub);
 };
 
 }

@@ -36,16 +36,16 @@
 
 #include <list>
 
-#include "hgame/Activity.h"
+#include "hgame/Screen.h"
 #include "hgame/WidgetGroup.h"
 
 #include "bombz/Level.h"
 
 namespace bombz {
 
-class ActivityHub;
+class ScreenHub;
 
-class MenuScreen : public hgame::Activity {
+class MenuScreen : public hgame::Screen {
 private:
     hgame::WidgetGroup *mWidgetGroup;
     struct TextWidget {
@@ -60,9 +60,9 @@ private:
     };
     std::list<TextWidget> mTextWidgets;
 protected:
-    ActivityHub *mHub;
+    ScreenHub *mHub;
 public:
-    MenuScreen(ActivityHub *hub, const char *name);
+    MenuScreen(ScreenHub *hub, const char *name);
 
     ~MenuScreen();
 
@@ -70,7 +70,7 @@ public:
 
     virtual void initRendering(hgame::RenderContext *rc);
 
-    // Should just forward to ActivityHub
+    // Should just forward to ScreenHub
     virtual void deleteRendering(hgame::RenderContext *rc);
 
     // Should do the actual deleting

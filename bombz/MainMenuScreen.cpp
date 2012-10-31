@@ -47,7 +47,7 @@ void MainMenuScreen::onQuitTapped()
 
 #endif
 
-MainMenuScreen::MainMenuScreen(ActivityHub *hub) :
+MainMenuScreen::MainMenuScreen(ScreenHub *hub) :
         MenuScreen(hub, "BombzMainMenu")
 #ifdef HAVE_QUIT_WIDGET
         , mQuitListener(this)

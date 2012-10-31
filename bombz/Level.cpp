@@ -27,12 +27,12 @@
 
 // Bombz - 2D puzzle game
 
-#include "bombz/ActivityHub.h"
+#include "bombz/ScreenHub.h"
 #include "bombz/Level.h"
 
 namespace bombz {
 
-Level::Level(ActivityHub *hub) :
+Level::Level(ScreenHub *hub) :
         mLevel(new HUInt8[kWidth * kHeight]),
         mTmpLevel(new HUInt8[kWidth * kHeight]),
         mTileAtlas(0), mTileBatcher(0), mTileRegions(0), mHub(hub)
@@ -96,7 +96,7 @@ void Level::deleteRendering(hgame::RenderContext *rc)
     mTileRegions = 0;
     delete mTileBatcher;
     mTileBatcher = 0;
-    // Atlases are owned by Activity, don't delete them
+    // Atlases are owned by Screen, don't delete them
     mAlphaAtlas = 0;
     mTileAtlas = 0;
 }

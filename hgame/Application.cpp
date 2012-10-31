@@ -28,7 +28,7 @@
 // HGame - a simple cross-platform game framework
 
 #include "hgame/Application.h"
-#include "hgame/Activity.h"
+#include "hgame/Screen.h"
 
 namespace hgame {
 
@@ -43,7 +43,7 @@ Application::Application(Platform *platform, const char *log_name,
         ThreadFactory *thread_fact) :
         mLog(*(platform->createLog(log_name))),
         mPlatform(platform), mRenderContext(0),
-        mThreadFactory(thread_fact), mActivity(0),
+        mThreadFactory(thread_fact), mScreen(0),
         mRenderingCond(createCond()),
         mRenderBlocking(false), mRenderLooping(false), mRenderWaiting(false),
         mEvQueue(thread_fact)
@@ -74,7 +74,7 @@ void Application::renderLoop()
         mRenderWaiting = false;
         mRenderingCond->unlock();
         try {
-            mActivity->serviceRenderRequest(mRenderContext);
+            mScreen->serviceRenderRequest(mRenderContext);
         }
         catch (std::exception e)
         {
@@ -113,23 +113,23 @@ void Application::requestRenderWhileLocked(bool block)
         mRenderingCond->wait();
 }
 
-void Application::setActivity(Activity *new_act, bool del)
+void Application::setScreen(Screen *new_act, bool del)
 {
     mRenderingCond->lock();
-    bool old_act = mActivity != 0;
-    Activity::RenderState rs = Activity::RENDER_STATE_UNINITIALISED;
+    bool old_act = mScreen != 0;
+    Screen::RenderState rs = Screen::RENDER_STATE_UNINITIALISED;
     if (old_act)
     {
-        rs = mActivity->getRenderState();
-        mActivity->requestRenderState(Activity::RENDER_STATE_CLIENT_CHANGE);
+        rs = mScreen->getRenderState();
+        mScreen->requestRenderState(Screen::RENDER_STATE_CLIENT_CHANGE);
         requestRenderWhileLocked(true);
         if (del)
-            delete mActivity;
+            delete mScreen;
     }
-    mActivity = new_act;
+    mScreen = new_act;
     if (old_act)
     {
-        mActivity->requestRenderState(rs);
+        mScreen->requestRenderState(rs);
         requestRenderWhileLocked(true);
     }
     mRenderingCond->unlock();
@@ -141,8 +141,8 @@ void Application::stop()
     if (mRenderLooping)
     {
         mRenderLooping = false;
-        if (mActivity)
-            mActivity->requestRenderState(Activity::RENDER_STATE_UNINITIALISED);
+        if (mScreen)
+            mScreen->requestRenderState(Screen::RENDER_STATE_UNINITIALISED);
         requestRenderWhileLocked(true);
     }
     mRenderingCond->unlock();
