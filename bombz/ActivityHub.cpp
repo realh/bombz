@@ -98,6 +98,8 @@ void ActivityHub::deleteRendering(hgame::RenderContext *rc)
     mTileAtlas = 0;
     deleteLogo();
     mRcIndex = -1;
+    if (mMainMenuScrn)
+        mMainMenuScrn->freeRendering(rc);
 }
 
 void ActivityHub::loadLogo(hgame::RenderContext *rc)

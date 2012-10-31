@@ -83,10 +83,14 @@ void MenuScreen::initRendering(hgame::RenderContext *rc)
 
 void MenuScreen::deleteRendering(hgame::RenderContext *rc)
 {
+    mHub->deleteRendering(rc);
+}
+
+void MenuScreen::freeRendering(hgame::RenderContext *rc)
+{
     mWidgetGroup->deleteRendering(rc);
     delete mWidgetGroup;
     mWidgetGroup = 0;
-    mHub->deleteRendering(rc);
 }
 
 void MenuScreen::clientChangeRendering(hgame::RenderContext *rc)

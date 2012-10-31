@@ -70,7 +70,11 @@ public:
 
     virtual void initRendering(hgame::RenderContext *rc);
 
+    // Should just forward to ActivityHub
     virtual void deleteRendering(hgame::RenderContext *rc);
+
+    // Should do the actual deleting
+    virtual void freeRendering(hgame::RenderContext *rc);
 
     virtual void clientChangeRendering(hgame::RenderContext *rc);
 
