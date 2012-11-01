@@ -35,6 +35,8 @@
 #include "config.h"
 
 #include <climits>
+#include <cstdarg>
+#include <exception>
 
 #if __GNUC__ >= 4
 #define H_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
@@ -194,6 +196,35 @@ enum Alignment {
     ALIGN_MIDDLE = 8,   // Vertical
     ALIGN_VMASK = 12
 };
+
+// An exception class which includes info about where it was thrown
+class Throwable : public std::exception {
+protected:
+    char *mRepr;
+    virtual const char *getClassName() const throw();
+
+    // Allows subclasses to construct more complex strings, must set repr
+    // in constructor
+    Throwable();
+public:
+    Throwable(const char *file, int line, const char *func,
+            const char *desc, ...)
+            throw()
+            H_GNUC_PRINTF(5, 6);
+    Throwable(const char *file, int line, const char *func,
+            int errno_code, const char *desc, ...)
+            throw()
+            H_GNUC_PRINTF(6, 7);
+    Throwable(const char *file, int line, const char *func,
+            const char *desc, std::va_list ap) throw();
+    Throwable(const char *file, int line, const char *func,
+            int errno_code, const char *desc, std::va_list ap) throw();
+    ~Throwable() throw();
+    virtual const char *what() const throw();
+};
+
+#define THROW(typ, args...) \
+        throw typ(__FILE__, __LINE__, __PRETTY_FUNCTION__, args)
 
 }
 

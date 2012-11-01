@@ -36,7 +36,7 @@
 
 #include <cstdarg>
 
-#include "hgame/Log.h"
+#include "hgame/Types.h"
 
 namespace hsdl {
 

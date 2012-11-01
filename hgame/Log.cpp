@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -45,7 +45,7 @@ void Log::logWrite(Level level, const char *message)
     if (level == FATAL)
         abort();
 }
-    
+
 const char *Log::getLevelName(Level level) const
 {
     switch (level)
@@ -77,7 +77,7 @@ Log::~Log()
     // Not delete because we used strdup()
     free(mTag);
 }
-    
+
 void Log::log(Level level, const char *format, ...)
 {
     if (level <= mPriority)
@@ -88,7 +88,7 @@ void Log::log(Level level, const char *format, ...)
         va_end(ap);
     }
 }
-    
+
 void Log::log(Level level, const char *format, va_list ap)
 {
     if (level <= mPriority)
@@ -134,61 +134,6 @@ void Log::d(const char * format, ...)
 void Log::v(const char * format, ...)
 {
     IMPLEMENT_LOG_LEVEL(VERBOSE);
-}
-        
-Throwable::Throwable() : mRepr(0) {}
-
-Throwable::Throwable(const char *file, int line, const char *func,
-            const char *desc, ...) throw()
-{
-    va_list ap;
-    va_start(ap, desc);
-    Throwable(file, line, func, desc, ap);
-    va_end(ap);
-}
-
-Throwable::Throwable(const char *file, int line, const char *func,
-            int errno_code, const char *desc, ...) throw()
-{
-    va_list ap;
-    va_start(ap, desc);
-    Throwable(file, line, func, errno_code, desc, ap);
-    va_end(ap);
-}
-
-Throwable::Throwable(const char *file, int line, const char *func,
-            const char *desc, va_list ap) throw()
-{
-    char *tmp;
-    vasprintf(&tmp, desc, ap);
-    asprintf(&mRepr, "Exception '%s' in %s at %s/%d: %s",
-            getClassName(), func, file, line, tmp);
-    free(tmp);
-}
-
-Throwable::Throwable(const char *file, int line, const char *func,
-            int errno_code, const char *desc, va_list ap) throw()
-{
-    char *tmp;
-    vasprintf(&tmp, desc, ap);
-    asprintf(&mRepr, "Errno exception '%s' in %s at %s/%d: %s - %s",
-            getClassName(), func, file, line, tmp, strerror(errno_code));
-    free(tmp);
-}
-
-Throwable::~Throwable() throw()
-{
-    free(mRepr);
-}
-
-const char *Throwable::getClassName() const throw()
-{
-    return "Throwable";
-}
-
-const char *Throwable::what() const throw()
-{
-    return mRepr;
 }
 
 }
