@@ -183,7 +183,8 @@ static void platform_mkdir(const char *dir)
 {
     if (mkdir(dir, 0755))
     {
-        THROW(hgame::Throwable, errno, "Unable to create directory '%s'", dir);
+        THROW(hgame::ErrnoException, errno,
+                "Unable to create directory '%s'", dir);
     }
 }
 
@@ -220,7 +221,7 @@ void Platform::mkdirWithParents(const char *dir)
     }
     else
     {
-        THROW(hgame::Throwable, errno,
+        THROW(hgame::ErrnoException, errno,
                 "Unable to create directory '%s': stat error", dir);
     }
 }

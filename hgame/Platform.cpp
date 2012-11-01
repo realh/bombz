@@ -126,7 +126,7 @@ Platform::FileType Platform::getFileType(const char *filename)
     {
         if (errno != ENOENT)
         {
-            THROW(Throwable, errno, "Error accessing file '%s'", filename);
+            THROW(ErrnoException, errno, "Error accessing file '%s'", filename);
         }
     }
     else if (S_ISREG(info.st_mode))
@@ -189,7 +189,7 @@ CommonDirectoryListing::CommonDirectoryListing(const char *dirname)
     mDir = opendir(dirname);
     if (!mDir)
     {
-        THROW(Throwable, errno, "Error opening directory '%s'", dirname);
+        THROW(ErrnoException, errno, "Error opening directory '%s'", dirname);
     }
 }
 
@@ -206,7 +206,7 @@ const char *CommonDirectoryListing::getNext()
     {
         if (errno)
         {
-            THROW(Throwable, errno, "Error reading directory");
+            THROW(ErrnoException, errno, "Error reading directory");
         }
         return 0;
     }

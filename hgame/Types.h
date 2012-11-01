@@ -212,15 +212,27 @@ public:
             throw()
             H_GNUC_PRINTF(5, 6);
     Throwable(const char *file, int line, const char *func,
+            const char *desc, std::va_list ap) throw();
+    ~Throwable() throw();
+    virtual const char *what() const throw();
+};
+
+class ErrnoException : public Throwable {
+private:
+    int mErrno;
+public:
+    ErrnoException(const char *file, int line, const char *func,
             int errno_code, const char *desc, ...)
             throw()
             H_GNUC_PRINTF(6, 7);
-    Throwable(const char *file, int line, const char *func,
-            const char *desc, std::va_list ap) throw();
-    Throwable(const char *file, int line, const char *func,
+
+    ErrnoException(const char *file, int line, const char *func,
             int errno_code, const char *desc, std::va_list ap) throw();
-    ~Throwable() throw();
-    virtual const char *what() const throw();
+
+    inline int getErrno() const throw()
+    {
+        return mErrno;
+    }
 };
 
 #define THROW(typ, args...) \

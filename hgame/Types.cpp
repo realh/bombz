@@ -42,7 +42,7 @@ using namespace std;
 Throwable::Throwable() : mRepr(0) {}
 
 Throwable::Throwable(const char *file, int line, const char *func,
-            const char *desc, ...) throw()
+        const char *desc, ...) throw()
 {
     va_list ap;
     va_start(ap, desc);
@@ -51,31 +51,12 @@ Throwable::Throwable(const char *file, int line, const char *func,
 }
 
 Throwable::Throwable(const char *file, int line, const char *func,
-            int errno_code, const char *desc, ...) throw()
-{
-    va_list ap;
-    va_start(ap, desc);
-    Throwable(file, line, func, errno_code, desc, ap);
-    va_end(ap);
-}
-
-Throwable::Throwable(const char *file, int line, const char *func,
-            const char *desc, va_list ap) throw()
+        const char *desc, va_list ap) throw()
 {
     char *tmp;
     vasprintf(&tmp, desc, ap);
     asprintf(&mRepr, "Exception '%s' in %s at %s/%d: %s",
             getClassName(), func, file, line, tmp);
-    free(tmp);
-}
-
-Throwable::Throwable(const char *file, int line, const char *func,
-            int errno_code, const char *desc, va_list ap) throw()
-{
-    char *tmp;
-    vasprintf(&tmp, desc, ap);
-    asprintf(&mRepr, "Errno exception '%s' in %s at %s/%d: %s - %s",
-            getClassName(), func, file, line, tmp, strerror(errno_code));
     free(tmp);
 }
 
@@ -92,6 +73,27 @@ const char *Throwable::getClassName() const throw()
 const char *Throwable::what() const throw()
 {
     return mRepr;
+}
+
+ErrnoException::ErrnoException(const char *file, int line, const char *func,
+        int errno_code, const char *desc, ...) throw() :
+        mErrno(errno_code)
+{
+    va_list ap;
+    va_start(ap, desc);
+    ErrnoException(file, line, func, errno_code, desc, ap);
+    va_end(ap);
+}
+
+ErrnoException::ErrnoException(const char *file, int line, const char *func,
+        int errno_code, const char *desc, va_list ap) throw() :
+        mErrno(errno_code)
+{
+    char *tmp;
+    vasprintf(&tmp, desc, ap);
+    asprintf(&mRepr, "Errno exception '%s' in %s at %s/%d: %s - %s",
+            getClassName(), func, file, line, tmp, strerror(errno_code));
+    free(tmp);
 }
 
 }
