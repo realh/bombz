@@ -33,18 +33,17 @@
 
 #include "hsdl/GLRenderContext.h"
 
-#include "hgame/Log.h"
-
 #include "hgl/GLTextureAtlas.h"
 
 #include "hsdl/GLSprite.h"
 #include "hsdl/GLTileBatcher.h"
 #include "hsdl/Image.h"
+#include "hsdl/Log.h"
 
 namespace hsdl {
 
 GLRenderContext::GLRenderContext(int *best_modes) :
-        hgl::GLRenderContext(new hgame::Log("GLRenderContext"))
+        hgl::GLRenderContext(new hsdl::Log("GLRenderContext"))
 {
     SDL_Rect **modes = SDL_ListModes(0, SDL_FULLSCREEN | SDL_HWSURFACE);
     int w, h;

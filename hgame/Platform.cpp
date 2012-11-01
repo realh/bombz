@@ -179,11 +179,6 @@ int Platform::getBestPNGMatch(int tile_size)
     return best;
 }
 
-Log *Platform::createLog(const char *name, Log::Level priority)
-{
-    return new Log(name, priority);
-}
-
 CommonDirectoryListing::CommonDirectoryListing(const char *dirname)
 {
     mDir = opendir(dirname);

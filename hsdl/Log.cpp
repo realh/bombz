@@ -27,62 +27,32 @@
 
 // HGame - a simple cross-platform game framework
 
-// Log.h: Interface for logging loosely based on Android's API
+// Log.cpp: Simple logging implementation
 
-#ifndef HGAME_LOG_H
-#define HGAME_LOG_H
+#include "hsdl/Log.h"
 
-#include "config.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
-#include <cstdarg>
+#include "hsdl/Thread.h"
 
-#include "hgame/Thread.h"
-#include "hgame/Types.h"
+namespace hsdl {
 
-namespace hgame {
+using namespace std;
 
-class Log
+Log::Log(const char *tag, Level priority) :
+        hgame::Log(tag, priority)
 {
-public:
-    enum Level {
-        FATAL,      // Causes abort
-        ERROR,
-        WARNING,
-        INFO,
-        DEBUG,
-        VERBOSE
-    };
-
-    static const char *getLevelName(Level level);
-
-    // Only messages with given priority or higher will be logged
-    Log(const char *tag, Level priority = VERBOSE);
-
-    virtual ~Log();
-
-    virtual void logWrite(Level level, const char *message) = 0;
-
-    // Formats a message before passing it on to logWrite while mutex is locked.
-    virtual void log(Level level, const char *format, ...)
-            H_GNUC_PRINTF(3, 4);
-    virtual void log(Level level, const char *format, std::va_list ap);
-
-    void f(const char *format, ...) H_GNUC_PRINTF(2, 3);
-    void e(const char *format, ...) H_GNUC_PRINTF(2, 3);
-    void w(const char *format, ...) H_GNUC_PRINTF(2, 3);
-    void i(const char *format, ...) H_GNUC_PRINTF(2, 3);
-    void d(const char *format, ...) H_GNUC_PRINTF(2, 3);
-    void v(const char *format, ...) H_GNUC_PRINTF(2, 3);
-
-protected:
-    // Derived constructors must initialise mutex lazily
-    static Mutex *smMutex;
-    char *mTag;
-private:
-    Mutex *mMutex;
-    Level mPriority;
-};
-
+    if (!smMutex)
+        smMutex = new Mutex();
 }
 
-#endif // HGAME_LOG_H
+void Log::logWrite(Level level, const char *message)
+{
+    fprintf(stderr, "%-7s '%s': %s\n", getLevelName(level), mTag, message);
+    if (level == FATAL)
+        abort();
+}
+
+}

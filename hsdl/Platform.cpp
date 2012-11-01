@@ -226,4 +226,9 @@ void Platform::mkdirWithParents(const char *dir)
     }
 }
 
+hgame::Log *Platform::createLog(const char *name, hgame::Log::Level priority)
+{
+    return new Log(name, priority);
+}
+
 }

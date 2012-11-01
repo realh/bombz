@@ -38,6 +38,8 @@
 #include "hgame/Log.h"
 #include "hgame/Platform.h"
 
+#include "hsdl/Thread.h"
+
 namespace hsdl {
 
 class Platform : public hgame::Platform {
@@ -66,6 +68,9 @@ public:
 
     Platform(int argc, char **argv);
     ~Platform();
+
+    hgame::Log *createLog(const char *name,
+            hgame::Log::Level priority = hgame::Log::VERBOSE);
 
 protected:
     hgame::Log &mLog;

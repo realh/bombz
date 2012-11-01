@@ -116,7 +116,7 @@ public:
     int getBestPNGMatch(int tile_size);
 
     virtual Log *createLog(const char *name,
-            Log::Level priority = Log::VERBOSE);
+            Log::Level priority = Log::VERBOSE) = 0;
 
     const char *translate(const char *tag)
     {

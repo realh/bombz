@@ -39,14 +39,9 @@ namespace hgame {
 
 using namespace std;
 
-void Log::logWrite(Level level, const char *message)
-{
-    fprintf(stderr, "%-7s '%s': %s\n", getLevelName(level), mTag, message);
-    if (level == FATAL)
-        abort();
-}
+Mutex *Log::smMutex;
 
-const char *Log::getLevelName(Level level) const
+const char *Log::getLevelName(Level level)
 {
     switch (level)
     {
@@ -66,11 +61,9 @@ const char *Log::getLevelName(Level level) const
     return NULL;
 }
 
-Log::Log(const char *tag, Level priority)
-{
-    mTag = strdup(tag);
-    mPriority = priority;
-}
+Log::Log(const char *tag, Level priority) :
+        mTag(strdup(tag)), mPriority(priority)
+{}
 
 Log::~Log()
 {
@@ -95,7 +88,9 @@ void Log::log(Level level, const char *format, va_list ap)
     {
         char *s;
         vasprintf(&s, format, ap);
+        smMutex->lock();
         logWrite(level, s);
+        smMutex->release();
         free(s);
     }
 }
