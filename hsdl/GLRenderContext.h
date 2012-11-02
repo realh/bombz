@@ -45,13 +45,15 @@ class GLRenderContext : public hgl::GLRenderContext {
 private:
     SDL_Surface *mSurface;
 public:
-    // See hgame/Application.h for an explanation of best_modes
+    // See hgame/Screen.h for an explanation of best_modes
     GLRenderContext(int *best_modes);
     hgame::TextureAtlas *uploadTexture(hgame::Image *img);
     hgame::Sprite *createSprite(hgame::TextureRegion *texture,
             int width, int height);
     hgame::TileBatcher *createTileBatcher(int nColumns, int nRows,
             int tile_size);
+private:
+    void initSurface(int w, int h, int vw, int vh, int antialias = 0);
 };
 
 }

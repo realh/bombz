@@ -52,12 +52,34 @@ private:
     static int smIndex;
 protected:
     Log &mLog;
+    int mWidth;
+    int mHeight;
+    int mViewportWidth;
+    int mViewportHeight;
 public:
     RenderContext(Log *log);
     virtual ~RenderContext();
 
-    virtual int getWidth() const = 0;
-    virtual int getHeight() const = 0;
+    int getWidth() const
+    {
+        return mWidth;
+    }
+
+    int getHeight() const
+    {
+        return mHeight;
+    }
+
+    // Viewport size is based on modes negotiation, not setViewport()
+    int getViewportWidth() const
+    {
+        return mViewportWidth;
+    }
+
+    int getViewportHeight() const
+    {
+        return mViewportHeight;
+    }
 
     // img dimensions must be powers of 2 in case using OpenGL
     // This object must take ownership of img or delete it
@@ -111,6 +133,9 @@ public:
     {
         mIndex = i ? i : ++smIndex;
     }
+
+    // Sets viewport for 2D rendering.
+    virtual void setViewport2D(int left, int top, int width, int height) = 0;
 protected:
     virtual void doBindTexture(const TextureAtlas *tex) = 0;
 };

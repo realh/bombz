@@ -66,6 +66,8 @@ private:
     Level *mLevel;
     int mRcIndex;
     MenuScreen *mMainMenuScrn;
+    int mLeftMargin, mTopMargin;
+    int mVpWidth, mVpHeight;
 public:
     ScreenHub(hgame::Application *app);
 
@@ -133,6 +135,11 @@ public:
         return mMainMenuScrn;
     }
 private:
+    inline void setRcViewport(hgame::RenderContext *rc)
+    {
+        rc->setViewport2D(mLeftMargin, mTopMargin, mVpWidth, mVpHeight);
+    }
+
     void createMainMenuScreen();
 };
 

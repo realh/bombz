@@ -44,19 +44,21 @@
 namespace hgl {
 
 class GLRenderContext : public hgame::RenderContext {
-protected:
-    int mWidth;
-    int mHeight;
 public:
-    int getWidth() const;
-    int getHeight() const;
-
     GLRenderContext(hgame::Log *log) :
-            hgame::RenderContext(log), mWidth(0), mHeight(0)
+            hgame::RenderContext(log)
     {}
+
     ~GLRenderContext();
+
+    void setViewport2D(int left, int top, int width, int height);
 protected:
     void doBindTexture(const hgame::TextureAtlas *tex);
+
+    // Sets up GL for texture mapping etc with glEnable[ClientState].
+    // width and height are screen size, vp_w and vp_h are size of viewport
+    // within it, chosen based on "best modes".
+    virtual void initGL(int width, int height, int vp_w, int vp_h);
 private:
     bool mNeedScaling;
 };

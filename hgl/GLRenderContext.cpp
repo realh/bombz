@@ -32,16 +32,6 @@
 
 namespace hgl {
 
-int GLRenderContext::getWidth() const
-{
-    return mWidth;
-}
-
-int GLRenderContext::getHeight() const
-{
-    return mHeight;
-}
-
 void GLRenderContext::doBindTexture(const hgame::TextureAtlas *tex)
 {
     glBindTexture(GL_TEXTURE_2D,
@@ -50,6 +40,29 @@ void GLRenderContext::doBindTexture(const hgame::TextureAtlas *tex)
 
 GLRenderContext::~GLRenderContext()
 {
+}
+
+void GLRenderContext::initGL(int width, int height, int vp_w, int vp_h)
+{
+    mWidth = width;
+    mHeight = height;
+    mViewportWidth = vp_w;
+    mViewportHeight = vp_h;
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnable(GL_TEXTURE_2D);
+    glClearColor(0, 0, 0, 1);
+}
+
+void GLRenderContext::setViewport2D(int left, int top, int width, int height)
+{
+    int bottom = mHeight - (height + top);
+    glViewport(left, bottom, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    // Params are left, right, bottom, top, near, far.
+    // By flipping top and bottom we get origin at top instead of bottom.
+    glOrtho(0, width, height, 0, 1, -1);
 }
 
 }

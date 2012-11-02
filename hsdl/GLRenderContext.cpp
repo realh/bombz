@@ -46,15 +46,18 @@ GLRenderContext::GLRenderContext(int *best_modes) :
         hgl::GLRenderContext(new hsdl::Log("GLRenderContext"))
 {
     SDL_Rect **modes = SDL_ListModes(0, SDL_FULLSCREEN | SDL_HWSURFACE);
-    int w, h;
+    int w, h;   // Actual mode
+    int vw = 0, vh = 0; // Viewport size
+    bool scaling = true;
     if (!modes)
     {
         THROW(hgame::Throwable, "No screen modes available");
     }
     else if ((long) modes == -1)
     {
-        w = best_modes[0];
-        h = best_modes[1];
+        vw = w = best_modes[0];
+        vh = h = best_modes[1];
+        scaling = false;
     }
     else
     {
@@ -70,7 +73,6 @@ GLRenderContext::GLRenderContext(int *best_modes) :
         int highest_w = 0;
         int highest_h = 0;
         int m;
-        bool scaling = true;
         bool exact = false;
         // Try to find highest resolution that doesn't need scaling
         for (m = 0; best_modes[2 * m]; ++m)
@@ -101,8 +103,8 @@ GLRenderContext::GLRenderContext(int *best_modes) :
                 {
                     if (!exact || modes[n]->h > best_h)
                     {
-                        best_w = modes[n]->w;
-                        best_h = modes[n]->h;
+                        vw = best_w = modes[n]->w;
+                        vh = best_h = modes[n]->h;
                         best_vh = cvh;
                         exact = true;
                         scaling = false;
@@ -114,8 +116,8 @@ GLRenderContext::GLRenderContext(int *best_modes) :
                 {
                     if (scaling || modes[n]->h > best_h)
                     {
-                        best_w = modes[n]->w;
-                        best_h = modes[n]->h;
+                        vw = best_w = modes[n]->w;
+                        vh = best_h = modes[n]->h;
                         best_vh = cvh;
                         scaling = false;
                     }
@@ -141,8 +143,59 @@ GLRenderContext::GLRenderContext(int *best_modes) :
             h = best_h;
         }
     }
-    mLog.i("Using video mode %d x %d", w, h);
-    std::exit(0);
+    // Use windowed mode for now, easier to test and debug
+    w = 960;
+    h = 720;
+    scaling = false;
+
+    if (!vw)
+    {
+        int m;
+        for (m = 0; best_modes[2 * m]; ++m)
+        {
+            if (best_modes[2 * m] <= w && best_modes[2 * m + 1] <= h)
+                break;
+        }
+        if (!best_modes[2 * m])
+            m = 0;
+        vw = best_modes[2 * m];
+        vh = best_modes[2 * m + 1];
+    }
+    if (vw > w || vh > h)
+    {
+        float game_aspect = (float) vw / (float) vh;
+        if ((float) w / (float) h >= game_aspect)
+        {
+            // Screen is wider than game
+            vh = h;
+            vw = int((float) vh * game_aspect);
+
+        }
+        else
+        {
+            // Screen is taller than game
+            vw = w;
+            vh = int((float) vw / game_aspect);
+        }
+    }
+    mLog.i("Using video mode %dx%d, viewport %xx%d", w, h, vw, vh);
+
+    initSurface(w, h, vw, vh, scaling ? 2 : 0);
+}
+
+void GLRenderContext::initSurface(int w, int h, int vw, int vh, int antialias)
+{
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+    //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, antialias ? 1 : 0);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, antialias ? antialias : 1);
+    mSurface = SDL_SetVideoMode(w, h, 32,
+            SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_OPENGL /* | SDL_FULLSCREEN */);
+    initGL(w, h, vw, vh);
 }
 
 hgame::TextureAtlas *GLRenderContext::uploadTexture(hgame::Image *img)

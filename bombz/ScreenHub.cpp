@@ -70,6 +70,11 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
         mScreenTileSize = rc->calculateTileSize(Level::kWidth, Level::kHeight);
         mSrcTileSize = platform->getBestPNGMatch(mScreenTileSize);
         mLog.d("Using source tile size %d", mSrcTileSize);
+        mVpWidth = mSrcTileSize * Level::kWidth;
+        mVpHeight = mSrcTileSize * Level::kHeight;
+        // FIXME: In mobile versions margins will depend on touchscreen controls
+        mLeftMargin = (rc->getWidth() - mVpWidth) / 2;
+        mTopMargin = (rc->getHeight() - mVpHeight) / 2;
         bool reload_logo = mLogoSprite != 0;
         deleteLogo();
         delete mTileAtlas;
@@ -86,6 +91,9 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
         if (reload_logo)
             loadLogo(rc);
         mLevel->initRendering(rc);
+        // FIXME: Needs to be done in render() in mobile versions because
+        // of on-screen controls
+        setRcViewport(rc);
     }
 }
 
