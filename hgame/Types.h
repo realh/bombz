@@ -217,9 +217,29 @@ public:
     virtual const char *what() const throw();
 };
 
-class ErrnoException : public Throwable {
-private:
-    int mErrno;
+class ExceptionWithCode : public Throwable {
+protected:
+    int mCode;
+
+    ExceptionWithCode();
+public:
+    ExceptionWithCode(const char *file, int line, const char *func,
+            int code, const char *desc, ...)
+            throw()
+            H_GNUC_PRINTF(6, 7);
+
+    ExceptionWithCode(const char *file, int line, const char *func,
+            int code, const char *desc, std::va_list ap) throw();
+
+    inline int getCode() const throw()
+    {
+        return mCode;
+    }
+
+    virtual const char *getClassName() const throw();
+};
+
+class ErrnoException : public ExceptionWithCode {
 public:
     ErrnoException(const char *file, int line, const char *func,
             int errno_code, const char *desc, ...)
@@ -227,12 +247,22 @@ public:
             H_GNUC_PRINTF(6, 7);
 
     ErrnoException(const char *file, int line, const char *func,
+            const char *desc, ...)
+            throw()
+            H_GNUC_PRINTF(5, 6);
+
+    ErrnoException(const char *file, int line, const char *func,
+            const char *desc, std::va_list ap) throw();
+
+    ErrnoException(const char *file, int line, const char *func,
             int errno_code, const char *desc, std::va_list ap) throw();
 
     inline int getErrno() const throw()
     {
-        return mErrno;
+        return mCode;
     }
+
+    virtual const char *getClassName() const throw();
 };
 
 #define THROW(typ, args...) \

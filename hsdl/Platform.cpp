@@ -163,7 +163,6 @@ hgame::Font *Platform::loadFont(unsigned int px)
 }
 
 Platform::Platform(int argc, char **argv) :
-        hgame::Platform(new Translate(this)),
         mLog(*new Log("sdl::Platform"))
 {
     char ds = getDirectorySeparator();
@@ -172,6 +171,7 @@ Platform::Platform(int argc, char **argv) :
     *strrchr(dir, ds) = 0;
     asprintf(&mAssetsDir, "%s%cshare%c%s", dir, ds, ds, APPNAME_LOWER);
     free(dir);
+    mTranslate = new Translate(this);
 }
 
 Platform::~Platform()

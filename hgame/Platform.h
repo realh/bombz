@@ -54,9 +54,11 @@ public:
 
 class Platform {
 protected:
-    Translate &mTranslate;
+    // Must be initialised by derived constructor
+    Translate *mTranslate;
 public:
-    Platform(Translate *translator) : mTranslate(*translator) {}
+    // Yuck
+    Platform() : mTranslate(0) {}
 
     enum PlatformType {
         UNKNOWN,
@@ -120,7 +122,7 @@ public:
 
     const char *translate(const char *tag)
     {
-        return mTranslate(tag);
+        return (*mTranslate)(tag);
     }
 };
 

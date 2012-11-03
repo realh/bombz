@@ -31,6 +31,7 @@
 
 #include "hgame/Types.h"
 
+#include <cerrno>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -75,9 +76,44 @@ const char *Throwable::what() const throw()
     return mRepr;
 }
 
+ExceptionWithCode::ExceptionWithCode() : mCode(0) {}
+
+ExceptionWithCode::ExceptionWithCode(const char *file, int line,
+        const char *func, int code, const char *desc, ...) throw()
+{
+    va_list ap;
+    va_start(ap, desc);
+    ExceptionWithCode(file, line, func, code, desc, ap);
+    va_end(ap);
+}
+
+ExceptionWithCode::ExceptionWithCode(const char *file, int line,
+        const char *func, int code, const char *desc, va_list ap) throw() :
+        mCode(code)
+{
+    char *tmp;
+    vasprintf(&tmp, desc, ap);
+    asprintf(&mRepr, "Exception '%s' with code %d in %s at %s/%d: %s - %s",
+            getClassName(), code, func, file, line, tmp, strerror(code));
+    free(tmp);
+}
+
+const char *ExceptionWithCode::getClassName() const throw()
+{
+    return "ExceptionWithCode";
+}
+
 ErrnoException::ErrnoException(const char *file, int line, const char *func,
-        int errno_code, const char *desc, ...) throw() :
-        mErrno(errno_code)
+        const char *desc, ...) throw()
+{
+    va_list ap;
+    va_start(ap, desc);
+    ErrnoException(file, line, func, desc, ap);
+    va_end(ap);
+}
+
+ErrnoException::ErrnoException(const char *file, int line, const char *func,
+        int errno_code, const char *desc, ...) throw()
 {
     va_list ap;
     va_start(ap, desc);
@@ -86,14 +122,30 @@ ErrnoException::ErrnoException(const char *file, int line, const char *func,
 }
 
 ErrnoException::ErrnoException(const char *file, int line, const char *func,
-        int errno_code, const char *desc, va_list ap) throw() :
-        mErrno(errno_code)
+        const char *desc, va_list ap) throw()
 {
+    mCode = errno;
+    char *tmp;
+    vasprintf(&tmp, desc, ap);
+    asprintf(&mRepr, "Errno exception '%s' in %s at %s/%d: %s - %s",
+            getClassName(), func, file, line, tmp, strerror(errno));
+    free(tmp);
+}
+
+ErrnoException::ErrnoException(const char *file, int line, const char *func,
+        int errno_code, const char *desc, va_list ap) throw()
+{
+    mCode = errno_code;
     char *tmp;
     vasprintf(&tmp, desc, ap);
     asprintf(&mRepr, "Errno exception '%s' in %s at %s/%d: %s - %s",
             getClassName(), func, file, line, tmp, strerror(errno_code));
     free(tmp);
+}
+
+const char *ErrnoException::getClassName() const throw()
+{
+    return "ErrnoException";
 }
 
 }
