@@ -93,8 +93,8 @@ ExceptionWithCode::ExceptionWithCode(const char *file, int line,
 {
     char *tmp;
     vasprintf(&tmp, desc, ap);
-    asprintf(&mRepr, "Exception '%s' with code %d in %s at %s/%d: %s - %s",
-            getClassName(), code, func, file, line, tmp, strerror(code));
+    asprintf(&mRepr, "'%s' (%d) in %s at %s/%d: %s",
+            getClassName(), code, func, file, line, tmp);
     free(tmp);
 }
 
@@ -127,7 +127,7 @@ ErrnoException::ErrnoException(const char *file, int line, const char *func,
     mCode = errno;
     char *tmp;
     vasprintf(&tmp, desc, ap);
-    asprintf(&mRepr, "Errno exception '%s' in %s at %s/%d: %s - %s",
+    asprintf(&mRepr, "'%s' in %s at %s/%d: %s - %s",
             getClassName(), func, file, line, tmp, strerror(errno));
     free(tmp);
 }
@@ -138,7 +138,7 @@ ErrnoException::ErrnoException(const char *file, int line, const char *func,
     mCode = errno_code;
     char *tmp;
     vasprintf(&tmp, desc, ap);
-    asprintf(&mRepr, "Errno exception '%s' in %s at %s/%d: %s - %s",
+    asprintf(&mRepr, "'%s' in %s at %s/%d: %s - %s",
             getClassName(), func, file, line, tmp, strerror(errno_code));
     free(tmp);
 }
