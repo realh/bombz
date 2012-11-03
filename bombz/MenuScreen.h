@@ -88,6 +88,8 @@ public:
     int *getBestModes();
 
     int run();
+
+    bool mWork;
 };
 
 }

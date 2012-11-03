@@ -80,7 +80,6 @@ Translate::Translate(Platform *platform) : mBuffer(0)
             if (i >= len)
                 break;
             mBuffer[i++] = 0;
-            fprintf(stderr, "Adding translation: %s:%s\n", tag, msg);
             mHash[tag] = msg;
         }
     }

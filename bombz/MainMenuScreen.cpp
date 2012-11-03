@@ -53,6 +53,7 @@ MainMenuScreen::MainMenuScreen(ScreenHub *hub) :
         , mQuitListener(this)
 #endif
 {
+    mLog.v("Creating MainMenuScreen %p", this);
 #ifdef HAVE_QUIT_WIDGET
     addTextWidget(mApplication->getPlatform()->translate("Quit"), 0.5, 0.35,
             &mQuitListener);

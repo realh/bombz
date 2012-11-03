@@ -48,6 +48,8 @@
 #error "OpenGL is currently compulsory"
 #endif
 
+#include "bombz/MenuScreen.h"
+
 namespace hsdl {
 
 SafeRunnable::SafeRunnable(Application *app, const char *name) :
@@ -86,6 +88,7 @@ int ScreenRunnable::runSafely()
     hgame::Screen *scrn;
     while (!mStopped && (scrn = mApplication->getScreen()) != 0)
     {
+        mLog.v("runSafely() calling scrn(%p)->run()", scrn);
         result = scrn->run();
     }
     return result;
@@ -173,6 +176,7 @@ void Application::start()
         mLog.f("Exception initialising render context: %s", e.what());
         std::exit(1);
     }
+    mLog.v("Application::start() calling fake run() on %p", mScreen);
     mEventThread->start();
     mScreenThread->start();
     renderLoop();

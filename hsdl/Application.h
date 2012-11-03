@@ -72,7 +72,7 @@ private:
     Application *mApplication;
 public:
     inline EventRunnable(Application *app) :
-            SafeRunnable(app, "ScreenRunnable")
+            SafeRunnable(app, "EventRunnable")
     {}
     int runSafely();
     void stop();
