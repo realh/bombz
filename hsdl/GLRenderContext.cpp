@@ -180,7 +180,9 @@ GLRenderContext::GLRenderContext(int *best_modes) :
     }
     mLog.i("Using video mode %dx%d, viewport %xx%d", w, h, vw, vh);
 
-    initSurface(w, h, vw, vh, scaling ? 2 : 0);
+    //initSurface(w, h, vw, vh, scaling ? 2 : 0);
+    // Can't find GLX visual if AA is enabled: intel driver "feature"?
+    initSurface(w, h, vw, vh, 0);
 }
 
 void GLRenderContext::initSurface(int w, int h, int vw, int vh, int antialias)
@@ -192,7 +194,7 @@ void GLRenderContext::initSurface(int w, int h, int vw, int vh, int antialias)
     //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, antialias ? 1 : 0);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, antialias ? antialias : 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, antialias);
     mSurface = SDL_SetVideoMode(w, h, 32,
             SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_OPENGL /* | SDL_FULLSCREEN */);
     initGL(w, h, vw, vh);
