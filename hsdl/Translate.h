@@ -34,6 +34,7 @@
 
 #include "config.h"
 
+#include <cstring>
 #include <map>
 
 #include "hgame/Translate.h"
@@ -42,7 +43,15 @@ namespace hsdl {
 
 class Translate : public hgame::Translate {
 private:
-    std::map<const char *, const char *> mHash;
+    class CompStrKey {
+    public:
+        bool operator()(const char *k1, const char *k2) const
+        {
+            return std::strcmp(k1 ? k1 : "", k2 ? k2: "") < 0;
+        }
+    };
+
+    std::map<const char *, const char *, CompStrKey> mHash;
     char *mBuffer;
 public:
     Translate(class Platform *platform);
