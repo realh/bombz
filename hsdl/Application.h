@@ -58,8 +58,6 @@ public:
 };
 
 class ScreenRunnable : public SafeRunnable {
-private:
-    Application *mApplication;
 public:
     inline ScreenRunnable(Application *app) :
             SafeRunnable(app, "ScreenRunnable")
@@ -68,8 +66,6 @@ public:
 };
 
 class EventRunnable : public SafeRunnable {
-private:
-    Application *mApplication;
 public:
     inline EventRunnable(Application *app) :
             SafeRunnable(app, "EventRunnable")

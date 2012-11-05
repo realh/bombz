@@ -39,7 +39,6 @@ MenuScreen::MenuScreen(ScreenHub *hub, const char *name) :
         hgame::Screen(hub->getApplication(), name),
         mWidgetGroup(0),
         mHub(hub)
-        , mWork(false)
 {
     mHub->getLevel()->reset(true);
 }
@@ -112,9 +111,6 @@ int *MenuScreen::getBestModes()
 
 int MenuScreen::run()
 {
-    mLog.v("Entering MenuScreen::run(), work = %d", mWork);
-    if (!mWork)
-        return 0;
     bool quit = false;
     while (!quit)
     {
