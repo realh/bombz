@@ -64,7 +64,7 @@ int SafeRunnable::run()
     try {
         result = runSafely();
     }
-    catch (std::exception e)
+    catch (std::exception &e)
     {
         mLog.e("Exception: %s", e.what());
         result = 1;
@@ -171,7 +171,7 @@ void Application::start()
         createRenderContext();
         mScreen->requestRenderState(hgame::Screen::RENDER_STATE_RENDERING);
     }
-    catch (std::exception e)
+    catch (std::exception &e)
     {
         mLog.f("Exception initialising render context: %s", e.what());
         std::exit(1);

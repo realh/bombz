@@ -110,7 +110,7 @@ Image *Platform::loadPNG(const char *leafname, int size)
         delete[] name;
         return img;
     }
-    catch (exception e)
+    catch (exception &e)
     {
         delete[] name;
         throw e;
@@ -169,7 +169,7 @@ int Platform::getBestPNGMatch(int tile_size)
             }
         }
     }
-    catch (exception e) {
+    catch (exception &e) {
         delete dir;
         delete[] pathname;
         throw e;

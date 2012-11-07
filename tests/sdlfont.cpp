@@ -117,7 +117,7 @@ int main(int argc, char **argv)
         delete plain;
 #endif
     }
-    catch (hsdl::Exception e)
+    catch (hsdl::Exception &e)
     {
         fprintf(stderr, "%s\n", e.what());
         exit(1);

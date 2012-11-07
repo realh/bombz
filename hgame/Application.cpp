@@ -76,7 +76,7 @@ void Application::renderLoop()
         try {
             mScreen->serviceRenderRequest(mRenderContext);
         }
-        catch (std::exception e)
+        catch (std::exception &e)
         {
             mLog.e("Rendering exception: %s", e.what());
             mRenderLooping = false;

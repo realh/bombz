@@ -29,6 +29,9 @@
 
 #include "hgl/GLTextureAtlas.h"
 
+#include <cstdio>
+using namespace std;
+
 namespace hgl {
 
 int GLTextureAtlas::getWidth() const
@@ -45,6 +48,8 @@ GLTextureAtlas::GLTextureAtlas(GLRenderContext *rc, int w, int h,
         int scale_method) :
         mWidth(w), mHeight(h)
 {
+    fprintf(stderr, "Created GLTextureAtlas %p (hgame %p)\n",
+            this, (const hgame::TextureAtlas *) this);
     glGenTextures(1, &mTextureId);
     rc->bindTexture((const hgame::TextureAtlas *) this);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, scale_method);
