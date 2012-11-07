@@ -30,12 +30,16 @@
 #include "bombz/ScreenHub.h"
 #include "bombz/Level.h"
 
+#include "hsdl/GLTextureRegion.h"
+
 namespace bombz {
 
 Level::Level(ScreenHub *hub) :
         mLevel(new HUInt8[kWidth * kHeight]),
         mTmpLevel(new HUInt8[kWidth * kHeight]),
-        mTileAtlas(0), mTileBatcher(0), mTileRegions(0), mHub(hub)
+        mTileAtlas(0), mAlphaAtlas(0), mTileBatcher(0),
+        mTileRegions(0), mExplo00Region(0), mExplo00Sprite(0),
+        mHub(hub)
 {
     reset();
 }
@@ -48,37 +52,34 @@ Level::~Level()
 
 void Level::initRendering(hgame::RenderContext *rc)
 {
-    if (!mTileBatcher)
+    mTileAtlas = mHub->getTileAtlas();
+    mAlphaAtlas = mHub->getAlphaAtlas();
+    mScreenTileSize = mHub->getScreenTileSize();
+    mSrcTileSize = mHub->getSrcTileSize();
+    mTileBatcher = rc->createTileBatcher(kWidth, kHeight, mScreenTileSize);
+    mTileRegions = new hgame::TextureRegion *[BOMB2_FUSED_LAST + 1];
+    int n;
+    for (n = BLANK; n <= BOMB2; ++n)
+        mTileRegions[n] = createRegion(n, 0);
+    // EXPLO00 is a special case
+    mTileRegions[EXPLO00] = createRegion(0, 0);
+    for (n = EXPLO00 + 1; n <= EXPLO11; ++n)
+        mTileRegions[n] = createRegion(n - 1, 0);
+    for (n = CHROME00; n <= CHROME15; ++n)
+        mTileRegions[n] = createRegion(n - CHROME00 + 17);
+    int m;
+    for (m = 0, n = BOMB1_FUSED_FIRST; n <= BOMB1_FUSED_LAST; ++n, ++m)
     {
-        mTileAtlas = mHub->getTileAtlas();
-        mAlphaAtlas = mHub->getAlphaAtlas();
-        mScreenTileSize = mHub->getScreenTileSize();
-        mSrcTileSize = mHub->getSrcTileSize();
-        mTileBatcher = rc->createTileBatcher(kWidth, kHeight, mScreenTileSize);
-        mTileRegions = new hgame::TextureRegion *[BOMB2_FUSED_LAST + 1];
-        int n;
-        for (n = BLANK; n <= BOMB2; ++n)
-            mTileRegions[n] = createRegion(n, 0);
-        // EXPLO00 is a special case
-        mTileRegions[EXPLO00] = createRegion(0, 0);
-        for (n = EXPLO00 + 1; n <= EXPLO11; ++n)
-            mTileRegions[n] = createRegion(n - 1, 0);
-        for (n = CHROME00; n <= CHROME15; ++n)
-            mTileRegions[n] = createRegion(n - CHROME00 + 17);
-        int m;
-        for (m = 0, n = BOMB1_FUSED_FIRST; n <= BOMB1_FUSED_LAST; ++n, ++m)
-        {
-            mTileRegions[n] = createRegion(((m & 4) == 0) ? BOMB1 : BLANK);
-        }
-        for (m = 0, n = BOMB2_FUSED_FIRST; n <= BOMB2_FUSED_LAST; ++n, ++m)
-        {
-            mTileRegions[n] = createRegion(((m & 4) == 0) ? BOMB2 : BLANK);
-        }
-        mExplo00Region = mAlphaAtlas->createRegion(1, 1,
-                mSrcTileSize * 3, mSrcTileSize * 3);
-        mExplo00Sprite = rc->createSprite(mExplo00Region,
-                mScreenTileSize * 3, mScreenTileSize * 3);
+        mTileRegions[n] = createRegion(((m & 4) == 0) ? BOMB1 : BLANK);
     }
+    for (m = 0, n = BOMB2_FUSED_FIRST; n <= BOMB2_FUSED_LAST; ++n, ++m)
+    {
+        mTileRegions[n] = createRegion(((m & 4) == 0) ? BOMB2 : BLANK);
+    }
+    mExplo00Region = mAlphaAtlas->createRegion(1, 1,
+            mSrcTileSize * 3, mSrcTileSize * 3);
+    mExplo00Sprite = rc->createSprite(mExplo00Region,
+            mScreenTileSize * 3, mScreenTileSize * 3);
 }
 
 void Level::deleteRendering(hgame::RenderContext *rc)
@@ -87,13 +88,16 @@ void Level::deleteRendering(hgame::RenderContext *rc)
     mExplo00Sprite = 0;
     delete mExplo00Region;
     mExplo00Region = 0;
-    for (int n = BLANK; n <= BOMB2_FUSED_LAST; ++n)
+    if (mTileRegions)
     {
-        delete mTileRegions[n];
-        mTileRegions[n] = 0;
+        for (int n = BLANK; n <= BOMB2_FUSED_LAST; ++n)
+        {
+            delete mTileRegions[n];
+            mTileRegions[n] = 0;
+        }
+        delete[] mTileRegions;
+        mTileRegions = 0;
     }
-    delete[] mTileRegions;
-    mTileRegions = 0;
     delete mTileBatcher;
     mTileBatcher = 0;
     // Atlases are owned by Screen, don't delete them

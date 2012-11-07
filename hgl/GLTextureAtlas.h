@@ -34,11 +34,13 @@
 
 #include "config.h"
 
+#include "hgame/TextureAtlas.h"
+
 #include "hgl/GLRenderContext.h"
 
 namespace hgl {
 
-class GLTextureAtlas {
+class GLTextureAtlas : public hgame::TextureAtlas {
 private:
     int mWidth, mHeight;
     GLuint mTextureId;
@@ -50,7 +52,7 @@ public:
     // scale_method is eg GL_LINEAR or GL_NEAREST
     GLTextureAtlas(GLRenderContext *rc, int width, int height,
             int scale_method);
-    ~GLTextureAtlas();
+    virtual ~GLTextureAtlas();
 };
 
 }

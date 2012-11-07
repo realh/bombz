@@ -119,7 +119,9 @@ int EventRunnable::runSafely()
         }
         else
         {
-            THROW(Exception, "SDL_WaitEvent error");
+            mLog.d("SDL_WaitEvent error");
+            mStopped = true;
+            //THROW(Exception, "SDL_WaitEvent error");
         }
     }
     return 0;

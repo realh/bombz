@@ -29,8 +29,16 @@
 
 #include "hsdl/GLTextureAtlas.h"
 #include "hsdl/GLTextureRegion.h"
+#include "hsdl/GLRenderContext.h"
 
 namespace hsdl {
+
+GLTextureAtlas::GLTextureAtlas(GLRenderContext *rc, int width, int height,
+        int scale_method) :
+        hgl::GLTextureAtlas((hgl::GLRenderContext *) rc,
+            width, height, scale_method)
+{
+}
 
 hgame::TextureRegion *
 GLTextureAtlas::createRegion(float u0, float v0, float u1, float v1)

@@ -33,9 +33,8 @@
 
 #include "hsdl/GLRenderContext.h"
 
-#include "hgl/GLTextureAtlas.h"
-
 #include "hsdl/GLSprite.h"
+#include "hsdl/GLTextureAtlas.h"
 #include "hsdl/GLTileBatcher.h"
 #include "hsdl/Image.h"
 #include "hsdl/Log.h"
@@ -225,7 +224,7 @@ hgame::TextureAtlas *GLRenderContext::uploadTexture(hgame::Image *img)
     {
         THROW(hgame::Throwable, "Unsupported bytes per pixel: %d", bpp);
     }
-    hgl::GLTextureAtlas *atlas = new hgl::GLTextureAtlas(this, w, h,
+    GLTextureAtlas *atlas = new GLTextureAtlas(this, w, h,
             getNeedScaling() ? GL_LINEAR : GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, bpp, w, h, 0, tex_fmt, GL_UNSIGNED_BYTE,
             surf->pixels);

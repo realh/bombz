@@ -90,6 +90,7 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
         delete img;
         if (reload_logo)
             loadLogo(rc);
+        mLevel->deleteRendering(rc);
         mLevel->initRendering(rc);
         // FIXME: Needs to be done in render() in mobile versions because
         // of on-screen controls

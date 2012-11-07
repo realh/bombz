@@ -40,6 +40,8 @@ namespace hsdl {
 
 class GLTextureAtlas : public hgl::GLTextureAtlas {
 public:
+    GLTextureAtlas(class GLRenderContext *rc, int width, int height,
+            int scale_method);
     hgame::TextureRegion *createRegion(float u0, float v0, float u1, float v1);
     hgame::TextureRegion *createRegion(int x, int y, int w, int h);
 };
