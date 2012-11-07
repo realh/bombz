@@ -118,7 +118,6 @@ void Application::setScreen(Screen *new_scrn, bool del)
     mRenderingCond->lock();
     bool old_scrn = mScreen != 0;
     mLog.v("Setting screen %p, old_scrn %d", new_scrn, old_scrn);
-    new_scrn->run();
     Screen::RenderState rs = Screen::RENDER_STATE_UNINITIALISED;
     if (old_scrn)
     {
@@ -129,8 +128,6 @@ void Application::setScreen(Screen *new_scrn, bool del)
             delete mScreen;
     }
     mScreen = new_scrn;
-    mLog.v("Trying run() again");
-    mScreen->run();
     if (old_scrn)
     {
         mScreen->requestRenderState(rs);

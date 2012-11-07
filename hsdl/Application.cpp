@@ -68,6 +68,7 @@ int SafeRunnable::run()
     {
         mLog.e("Exception: %s", e.what());
         result = 1;
+        throw;
     }
     if (result)
     {

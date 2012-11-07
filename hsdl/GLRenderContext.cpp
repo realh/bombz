@@ -229,7 +229,6 @@ hgame::TextureAtlas *GLRenderContext::uploadTexture(hgame::Image *img)
             getNeedScaling() ? GL_LINEAR : GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, bpp, w, h, 0, tex_fmt, GL_UNSIGNED_BYTE,
             surf->pixels);
-    delete img;
     return (hgame::TextureAtlas *) atlas;
 }
 
