@@ -201,7 +201,7 @@ void GLRenderContext::initSurface(int w, int h, int vw, int vh, int antialias)
 
 hgame::TextureAtlas *GLRenderContext::uploadTexture(hgame::Image *img)
 {
-    SDL_Surface *surf = ((Image *) img)->getSurface();
+    SDL_Surface *surf = (dynamic_cast<Image *>(img))->getSurface();
     int w = surf->w;
     int h = surf->h;
     GLint bpp = surf->format->BytesPerPixel;

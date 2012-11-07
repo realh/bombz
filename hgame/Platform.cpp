@@ -149,7 +149,7 @@ Platform::FileType Platform::getFileType(const char *filename)
 
 DirectoryListing *Platform::listDirectory(const char *dirname)
 {
-    return (DirectoryListing *) new CommonDirectoryListing(dirname);
+    return new CommonDirectoryListing(dirname);
 }
 
 int Platform::getBestPNGMatch(int tile_size)

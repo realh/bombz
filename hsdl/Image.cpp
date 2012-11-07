@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -40,7 +40,7 @@ Image::~Image()
 {
     SDL_FreeSurface(mSurface);
 }
-    
+
 int Image::getWidth() const
 {
     return mSurface->w;
@@ -50,7 +50,7 @@ int Image::getHeight() const
 {
     return mSurface->h;
 }
-    
+
 hgame::Image *Image::createImage(int w, int h)
 {
     Uint32 rm, gm, bm, am;
@@ -148,7 +148,7 @@ void Image::setPixelRawValue(void *addr, hgame::HUInt32 pix)
 void Image::blit(hgame::Image *src0, int dest_x, int dest_y,
         int src_x, int src_y, int w, int h)
 {
-    Image *src = (Image *) src0;
+    Image *src = dynamic_cast<Image *> src0;
     SDL_Rect src_rect;
     SDL_Rect dest_rect;
     src_rect.x = src_x;

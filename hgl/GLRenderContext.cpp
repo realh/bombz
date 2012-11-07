@@ -35,7 +35,7 @@ namespace hgl {
 void GLRenderContext::doBindTexture(const hgame::TextureAtlas *tex)
 {
     glBindTexture(GL_TEXTURE_2D,
-            ((const GLTextureAtlas *) tex)->getTextureId());
+            (dynamic_cast<const GLTextureAtlas *>(tex))->getTextureId());
 }
 
 GLRenderContext::~GLRenderContext()
