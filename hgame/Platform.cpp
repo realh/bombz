@@ -163,7 +163,7 @@ int Platform::getBestPNGMatch(int tile_size)
         {
             int size = atoi(leafname);
             if ((size >= tile_size && (best < tile_size || size < best)) ||
-                    size > best)
+                    (size < tile_size && size > best) || best == 0)
             {
                 best = size;
             }
