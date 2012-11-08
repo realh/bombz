@@ -68,6 +68,7 @@ private:
     MenuScreen *mMainMenuScrn;
     int mLeftMargin, mTopMargin;
     int mVpWidth, mVpHeight;
+    bool mWantLogo;
 public:
     ScreenHub(hgame::Application *app);
 
@@ -76,10 +77,6 @@ public:
     void initRendering(hgame::RenderContext *rc);
 
     void deleteRendering(hgame::RenderContext *rc);
-
-    void loadLogo(hgame::RenderContext *rc);
-
-    void deleteLogo();
 
     int *getBestModes();
 
@@ -134,11 +131,21 @@ public:
             createMainMenuScreen();
         return mMainMenuScrn;
     }
+
+    // Call immediately before initRendering
+    inline void setWantLogo(bool want = true)
+    {
+        mWantLogo = want;
+    }
 private:
     inline void setRcViewport(hgame::RenderContext *rc)
     {
         rc->setViewport2D(mLeftMargin, mTopMargin, mVpWidth, mVpHeight);
     }
+
+    void loadLogo(hgame::RenderContext *rc);
+
+    void deleteLogo();
 
     void createMainMenuScreen();
 };

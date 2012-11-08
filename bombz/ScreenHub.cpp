@@ -53,7 +53,8 @@ ScreenHub::ScreenHub(hgame::Application *app) :
         mLogoSprite(0),
         mLevel(new Level(this)),
         mRcIndex(-1),
-        mMainMenuScrn(0)
+        mMainMenuScrn(0),
+        mWantLogo(false)
 {
 }
 
@@ -75,7 +76,6 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
         // FIXME: In mobile versions margins will depend on touchscreen controls
         mLeftMargin = (rc->getWidth() - mVpWidth) / 2;
         mTopMargin = (rc->getHeight() - mVpHeight) / 2;
-        bool reload_logo = mLogoSprite != 0;
         deleteLogo();
         delete mTileAtlas;
         mTileAtlas = 0;
@@ -88,13 +88,14 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
         img = platform->loadPNG("alpha_atlas.png", mSrcTileSize);
         mAlphaAtlas = rc->uploadTexture(img);
         delete img;
-        if (reload_logo)
+        if (mWantLogo)
             loadLogo(rc);
         mLevel->deleteRendering(rc);
         mLevel->initRendering(rc);
         // FIXME: Needs to be done in render() in mobile versions because
         // of on-screen controls
         setRcViewport(rc);
+        mRcIndex = rc->getIndex();
     }
 }
 

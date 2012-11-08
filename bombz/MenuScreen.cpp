@@ -59,6 +59,7 @@ void MenuScreen::render(hgame::RenderContext *rc)
 
 void MenuScreen::initRendering(hgame::RenderContext *rc)
 {
+    mHub->setWantLogo(true);
     mHub->initRendering(rc);
     int ts = mHub->getScreenTileSize();
     delete mWidgetGroup;
