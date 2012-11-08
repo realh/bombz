@@ -61,16 +61,14 @@ Application::~Application()
 void Application::renderLoop()
 {
     mRenderingCond->lock();
-    bool wait = !(mRenderWaiting = true);
+    bool wait = !mRenderWaiting;
     mRenderLooping = true;
-    mRenderingCond->unlock();
-    // Have to do an extra loop if wait is false even if mRenderLooping is false
+    // Have to do an extra loop if wait is true even if mRenderLooping is false
     // because it means stop() was called during last loop
     while (mRenderLooping || wait)
     {
         if (wait)
             mRenderingCond->wait();
-        mRenderingCond->lock();
         mRenderWaiting = false;
         mRenderingCond->unlock();
         try {
@@ -90,8 +88,8 @@ void Application::renderLoop()
             mRenderingCond->signal();
             mRenderBlocking = false;
         }
-        mRenderingCond->unlock();
     }
+    mRenderingCond->unlock();
 }
 
 void Application::requestRender()
