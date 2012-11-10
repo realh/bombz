@@ -105,6 +105,7 @@ int EventRunnable::runSafely()
             {
                 case SDL_QUIT:
                     mStopped = true;
+                    mApplication->stop();
                     break;
                 case SDL_MOUSEBUTTONDOWN:
                     if (mApplication->getTapEventsEnabled() &&
@@ -163,7 +164,8 @@ Application::~Application()
     SDL_Quit();
     delete mScreenThread;
     delete mEventThread;
-    mSavedEvent->dispose();
+    if (mSavedEvent)
+        mSavedEvent->dispose();
 }
 
 void Application::start()
@@ -182,6 +184,7 @@ void Application::start()
     mScreenThread->start();
     renderLoop();
     delete mRenderContext;
+    mRenderContext = 0;
     mScreenThread->wait();
     mEventThread->wait();
 }

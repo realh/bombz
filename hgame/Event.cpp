@@ -36,6 +36,20 @@
 
 namespace hgame {
 
+const char *EventQuark::toString() const
+{
+    static struct {
+        union {
+            char q[4];
+            HUInt32 v;
+        } u;
+        char t[4];
+    } s;
+    s.u.v = mValue;
+    s.t[0] = 0;
+    return s.u.q;
+}
+
 EventPool::EventPool(ThreadFactory *tf) :
         mMutex(tf->createMutex())
 {

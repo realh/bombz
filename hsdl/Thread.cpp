@@ -131,8 +131,8 @@ Thread::~Thread()
         // This will leak, but getting here means we're already bugged
         if (name)
             name = strdup(name);
+        SDL_KillThread(mThread);
     }
-    SDL_KillThread(mThread);
     mThread = NULL;
     delete mNameMutex;
     if (mRunning)

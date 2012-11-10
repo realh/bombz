@@ -113,6 +113,7 @@ int *MenuScreen::getBestModes()
 int MenuScreen::run()
 {
     bool quit = false;
+    mApplication->setTapEventsEnabled(true);
     while (!quit)
     {
         hgame::Event *event = mApplication->getNextEvent();

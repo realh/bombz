@@ -63,12 +63,16 @@ void Application::renderLoop()
     mRenderingCond->lock();
     bool wait = !mRenderWaiting;
     mRenderLooping = true;
-    // Have to do an extra loop if wait is true even if mRenderLooping is false
+    // Have to do an extra loop if wait is false even if mRenderLooping is false
     // because it means stop() was called during last loop
-    while (mRenderLooping || wait)
+    while (mRenderLooping || !wait)
     {
         if (wait)
+        {
+            mRenderWaiting = true;
             mRenderingCond->wait();
+        }
+        wait = !mRenderWaiting;
         mRenderWaiting = false;
         mRenderingCond->unlock();
         try {
@@ -80,8 +84,6 @@ void Application::renderLoop()
             mRenderLooping = false;
         }
         mRenderingCond->lock();
-        wait = !mRenderWaiting;
-        mRenderWaiting = true;
         if (mRenderBlocking)
         {
             // Use same cond "in reverse"
@@ -104,18 +106,23 @@ void Application::requestRenderWhileLocked(bool block)
     if (block)
         mRenderBlocking = true;
     if (mRenderWaiting)
+    {
         mRenderingCond->signal();
+    }
     else
+    {
         mRenderWaiting = true;
+    }
     if (block)
+    {
         mRenderingCond->wait();
+    }
 }
 
 void Application::setScreen(Screen *new_scrn, bool del)
 {
     mRenderingCond->lock();
     bool old_scrn = mScreen != 0;
-    mLog.v("Setting screen %p, old_scrn %d", new_scrn, old_scrn);
     Screen::RenderState rs = Screen::RENDER_STATE_UNINITIALISED;
     if (old_scrn)
     {
@@ -131,7 +138,6 @@ void Application::setScreen(Screen *new_scrn, bool del)
         mScreen->requestRenderState(rs);
         requestRenderWhileLocked(true);
     }
-    mLog.v("Leaving setScreen()");
     mRenderingCond->unlock();
 }
 

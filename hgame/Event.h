@@ -67,6 +67,8 @@ public:
     {
         return mValue == that.mValue;
     }
+
+    const char *toString() const;
 };
 
 // Pool of events to reduce memory alloc screen
