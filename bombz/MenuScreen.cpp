@@ -49,16 +49,21 @@ MenuScreen::~MenuScreen()
 
 void MenuScreen::render(hgame::RenderContext *rc)
 {
+    mLog.v("MenuScreen::render");
     rc->bindTexture(mHub->getTileAtlas());
     mHub->getLevel()->render(rc);
     rc->bindTexture(mHub->getLogoAtlas());
     mHub->getLogoSprite()->render(rc);
-    rc->bindTexture(mWidgetGroup->getAtlas());
-    mWidgetGroup->render(rc);
+    if (mWidgetGroup)
+    {
+        rc->bindTexture(mWidgetGroup->getAtlas());
+        mWidgetGroup->render(rc);
+    }
 }
 
 void MenuScreen::initRendering(hgame::RenderContext *rc)
 {
+    mLog.v("MenuScreen::initRendering");
     mHub->setWantLogo(true);
     mHub->initRendering(rc);
     int ts = mHub->getScreenTileSize();
@@ -89,9 +94,12 @@ void MenuScreen::deleteRendering(hgame::RenderContext *rc)
 
 void MenuScreen::freeRendering(hgame::RenderContext *rc)
 {
-    mWidgetGroup->deleteRendering(rc);
-    delete mWidgetGroup;
-    mWidgetGroup = 0;
+    if (mWidgetGroup)
+    {
+        mWidgetGroup->deleteRendering(rc);
+        delete mWidgetGroup;
+        mWidgetGroup = 0;
+    }
 }
 
 void MenuScreen::replaceRenderingScreen(hgame::RenderContext *rc)
@@ -114,10 +122,13 @@ int MenuScreen::run()
 {
     bool quit = false;
     mApplication->setTapEventsEnabled(true);
+    mLog.v("MenuScreen::run() requesting render");
+    requestRenderState(hgame::RendererWithState::RENDER_STATE_RENDERING);
+    mApplication->requestRender(true);
     while (!quit)
     {
         hgame::Event *event = mApplication->getNextEvent();
-        if (event->getType() == hgame::EVENT_TAP)
+        if (event->getType() == hgame::EVENT_TAP && mWidgetGroup)
         {
             mWidgetGroup->onTapEvent((hgame::TapEvent *) event);
         }

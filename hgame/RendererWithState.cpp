@@ -64,6 +64,7 @@ void RendererWithState::serviceRenderRequest(RenderContext *rc)
     if (mRequestedRenderState == RENDER_STATE_RENDERING)
     {
         render(rc);
+        rc->flipBuffers();
     }
     if (mRequestedRenderState == RENDER_STATE_UNINITIALISED &&
             (mCurrentRenderState == RENDER_STATE_INITIALISED ||

@@ -243,4 +243,9 @@ hgame::TileBatcher *GLRenderContext::createTileBatcher(int nColumns, int nRows,
     return new GLTileBatcher(this, nColumns, nRows, tile_size);
 }
 
+void GLRenderContext::flipBuffers()
+{
+    SDL_GL_SwapBuffers();
+}
+
 }

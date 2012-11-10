@@ -69,7 +69,8 @@ public:
     virtual void requestRenderState(RenderState new_state);
 
     // Called in rendering thread to call one of Renderer's pure virtual
-    // functions or replaceRenderingScreen() depending on mRequestedRenderState
+    // functions or replaceRenderingScreen() depending on mRequestedRenderState.
+    // Automatically calls rc->flipBuffers() after render().
     virtual void serviceRenderRequest(RenderContext *rc);
 
     // For RENDER_STATE_REPLACE_SCREEN

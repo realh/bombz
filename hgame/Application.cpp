@@ -94,10 +94,10 @@ void Application::renderLoop()
     mRenderingCond->unlock();
 }
 
-void Application::requestRender()
+void Application::requestRender(bool block)
 {
     mRenderingCond->lock();
-    requestRenderWhileLocked();
+    requestRenderWhileLocked(block);
     mRenderingCond->unlock();
 }
 

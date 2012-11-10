@@ -135,6 +135,9 @@ public:
 
     // Sets viewport for 2D rendering.
     virtual void setViewport2D(int left, int top, int width, int height) = 0;
+
+    // Update display after rendering is complete
+    virtual void flipBuffers() = 0;
 protected:
     virtual void doBindTexture(const TextureAtlas *tex) = 0;
 };

@@ -104,7 +104,7 @@ public:
     }
 
     // Wake up rendering thread to service a render/init/shutdown request
-    virtual void requestRender();
+    virtual void requestRender(bool block = false);
 
     inline Screen *getScreen()
     {

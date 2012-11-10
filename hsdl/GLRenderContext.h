@@ -52,6 +52,7 @@ public:
             int width, int height);
     hgame::TileBatcher *createTileBatcher(int nColumns, int nRows,
             int tile_size);
+    void flipBuffers();
 private:
     void initSurface(int w, int h, int vw, int vh, int antialias = 0);
 };
