@@ -9,8 +9,7 @@ def add_envs(envs):
     envs["BIN_DIR"] = "${TOP_DIR}/bin"
     envs["SRC_DIR"] = "${TOP_DIR}"
     envs["HCXXFLAGS"] = "${CXXFLAGS} -I${SRC_DIR} -I${BUILD_DIR} -D_GNU_SOURCE"
-    envs["BOMBZ_CXXFLAGS"] = "${HCXXFLAGS} ${SDL_CFLAGS} ${OPENGL_CFLAGS} " \
-            "-DENABLE_WIDGET_HIGHLIGHTING -DHAVE_QUIT_WIDGET"
+    envs["BOMBZ_CXXFLAGS"] = "${HCXXFLAGS} ${SDL_CFLAGS} ${OPENGL_CFLAGS} "
     envs["BOMBZ_LIBS"] = "${SDL_LIBS} ${OPENGL_LIBS}"
     envs["BUILD_SUBDIRS"] = "${BUILD_DIR}/hgame " \
             "${BUILD_DIR}/hgl " \
@@ -25,6 +24,9 @@ def init(ctx):
     __already_run = True
 
     if ctx.mode == 'configure':
+
+        ctx.define("ENABLE_WIDGET_HIGHLIGHTING", 1)
+        ctx.define("HAVE_QUIT_WIDGET", 1)
 
         ctx.arg_disable("opengl", "Disable OpenGL rendering " \
                 "(for future compatibility - currently OpenGL is compulsory)")
