@@ -85,6 +85,7 @@ void Level::initRendering(hgame::RenderContext *rc)
 
 void Level::deleteRendering(hgame::RenderContext *rc)
 {
+    (void) rc;
     delete mExplo00Sprite;
     mExplo00Sprite = 0;
     delete mExplo00Region;

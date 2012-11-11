@@ -75,6 +75,7 @@ void GLTileBatcher::setTextureAt(hgame::TextureRegion *tex, int x, int y)
 
 void GLTileBatcher::render(hgame::RenderContext *rc)
 {
+    (void) rc;
     // Do one row at a time because there may be a limit to how many
     // verts we can do in one go
     int nVerts = mNColumns * 4;

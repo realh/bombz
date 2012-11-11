@@ -176,6 +176,7 @@ void WidgetGroup::initRendering(RenderContext *rc)
 
 void WidgetGroup::deleteRendering(RenderContext *rc)
 {
+    (void) rc;
     for (std::list<Widget *>::iterator i = mWidgets.begin();
             i != mWidgets.end(); ++i)
     {

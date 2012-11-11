@@ -35,7 +35,8 @@ Widget::Widget(int x, int y, int w, int h) :
         mListener(0), mRegion(0), mSprite(0),
         mX0(x), mY0(y), mX1(x + w), mY1(y + h)
 #ifdef ENABLE_WIDGET_HIGHLIGHTING
-        , mHighlightedRegion(0), mHighlightedSprite(0)
+        , mHighlightedRegion(0), mHighlightedSprite(0),
+        mHighlighted(false)
 #endif
 {}
 

@@ -38,6 +38,9 @@ TextWidget::TextWidget(const char *text, Font *font, Colour colour,
         int x, int y, Alignment align, int shadow_offset) :
         Widget(x, y, x, y)
 {
+#if !ENABLE_SHADOW
+    (void) shadow_offset;
+#endif
     mImage = font->render(colour, text);
 #if ENABLE_WIDGET_HIGHLIGHTING
     mHighlightedImage = font->render(highlighted_colour, text);

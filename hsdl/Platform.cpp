@@ -165,6 +165,7 @@ hgame::Font *Platform::loadFont(unsigned int px)
 Platform::Platform(int argc, char **argv) :
         mLog(*new Log("sdl::Platform"))
 {
+    (void) argc;
     char ds = getDirectorySeparator();
     char *dir = strdup(argv[0]);
     *strrchr(dir, ds) = 0;
