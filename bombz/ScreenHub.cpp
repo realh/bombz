@@ -37,7 +37,7 @@
 
 namespace bombz {
 
-const hgame::Colour ScreenHub::kTextColour = hgame::Colour(0x000088ff);
+const hgame::Colour ScreenHub::kTextColour = hgame::Colour(0x0000aaff);
 #if ENABLE_WIDGET_HIGHLIGHTING
 const hgame::Colour ScreenHub::kHighlightedTextColour =
         hgame::Colour(0x880000ff);
