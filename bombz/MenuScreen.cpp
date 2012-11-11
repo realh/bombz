@@ -49,7 +49,6 @@ MenuScreen::~MenuScreen()
 
 void MenuScreen::render(hgame::RenderContext *rc)
 {
-    mLog.v("MenuScreen::render");
     rc->bindTexture(mHub->getTileAtlas());
     mHub->getLevel()->render(rc);
     rc->bindTexture(mHub->getLogoAtlas());
@@ -63,7 +62,6 @@ void MenuScreen::render(hgame::RenderContext *rc)
 
 void MenuScreen::initRendering(hgame::RenderContext *rc)
 {
-    mLog.v("MenuScreen::initRendering");
     mHub->setWantLogo(true);
     mHub->initRendering(rc);
     int ts = mHub->getScreenTileSize();
@@ -122,7 +120,6 @@ int MenuScreen::run()
 {
     bool quit = false;
     mApplication->setTapEventsEnabled(true);
-    mLog.v("MenuScreen::run() requesting render");
     requestRenderState(hgame::RendererWithState::RENDER_STATE_RENDERING);
     mApplication->requestRender(true);
     while (!quit)
