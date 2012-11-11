@@ -33,6 +33,9 @@
 
 #include <cstring>
 
+#include <cstdio>
+using namespace std;
+
 namespace hsdl {
 
 GLTileBatcher::GLTileBatcher(GLRenderContext *rc,
@@ -41,7 +44,8 @@ GLTileBatcher::GLTileBatcher(GLRenderContext *rc,
         mRc(rc)
 {
     // Interleaving vertices and text coords may allow slightly more
-    // efficient memory access
+    // efficient memory access.
+    // 4 points per quad * 2 (x, y) * 2 (screen & tex coords)
     int nCoords = nColumns * nRows * 4 * 2 * 2;
     mVertices = new float[nCoords];
     int i = 0;
@@ -54,9 +58,10 @@ GLTileBatcher::GLTileBatcher(GLRenderContext *rc,
             mVertices[i++] = float(x * tile_size);
             mVertices[i++] = float((y + 1) * tile_size);
             mVertices[i++] = float((x + 1) * tile_size);
-            mVertices[i++] = float(y * tile_size);
-            mVertices[i++] = float((x + 1) * tile_size);
             mVertices[i++] = float((y + 1) * tile_size);
+            mVertices[i++] = float((x + 1) * tile_size);
+            mVertices[i++] = float(y * tile_size);
+            i += 8;
         }
     }
 }
@@ -70,10 +75,31 @@ void GLTileBatcher::setTextureAt(hgame::TextureRegion *tex, int x, int y)
 {
     std::memcpy(mVertices + (y * mNColumns + x) * 16 + 8,
             ((hgl::GLTextureRegion *) tex)->getCoords(), 8 * sizeof(float));
+    int n = (y * mNColumns + x) * 16 + 8;
+    mVertices[n++] = 0;
+    mVertices[n++] = 0;
+    mVertices[n++] = 0;
+    mVertices[n++] = 1;
+    mVertices[n++] = 1;
+    mVertices[n++] = 1;
+    mVertices[n++] = 1;
+    mVertices[n++] = 0;
 }
 
 void GLTileBatcher::render(hgame::RenderContext *rc)
 {
+    int n;
+    for (n = 0; n < 8; n += 2)
+    {
+        fprintf(stderr, "(%6.1f, %6.1f)  ", mVertices[n], mVertices[n + 1]);
+    }
+    fprintf(stderr, "\n");
+    for (n = 8; n < 16; n += 2)
+    {
+        fprintf(stderr, "(%6.4f, %6.4f)  ", mVertices[n], mVertices[n + 1]);
+    }
+    fprintf(stderr, "\n");
+
     // Do one row at a time because there may be a limit to how many
     // verts we can do in one go
     int nVerts = mNColumns * 4;

@@ -110,7 +110,7 @@ void Level::render(hgame::RenderContext *rc)
     int n, x, y;
     for (n = 0, y = 0; y < kHeight; ++y)
     {
-        for (x = 0; x < kWidth; ++x)
+        for (x = 0; x < kWidth; ++x, ++n)
             mTileBatcher->setTextureAt(mTileRegions[mLevel[n]], x, y);
     }
     rc->bindTexture(mTileAtlas);
@@ -118,7 +118,7 @@ void Level::render(hgame::RenderContext *rc)
     rc->bindTexture(mAlphaAtlas);
     for (n = 0, y = 0; y < kHeight; ++y)
     {
-        for (x = 0; x < kWidth; ++x)
+        for (x = 0; x < kWidth; ++x, ++n)
         {
             if (mLevel[n] == EXPLO00)
             {
@@ -135,7 +135,7 @@ void Level::reset(bool with_frame)
     int n, x, y;
     for (n = 0, y = 0; y < kHeight; ++y)
     {
-        for (x = 0; x < kWidth; ++x)
+        for (x = 0; x < kWidth; ++x, ++n)
         {
             HUInt8 t = BLANK;
             if (with_frame)
