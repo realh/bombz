@@ -122,7 +122,7 @@ void ScreenHub::loadLogo(hgame::RenderContext *rc)
             mSrcTileSize * 16, mSrcTileSize * 4);
     mLogoSprite = rc->createSprite(mLogoRegion,
             mScreenTileSize * 16, mScreenTileSize * 4);
-    mLogoSprite->setPosition(mScreenTileSize * 2, mScreenTileSize * 2);
+    mLogoSprite->setPosition(mScreenTileSize * 2, (mScreenTileSize * 4) / 3);
 }
 
 void ScreenHub::deleteLogo()
