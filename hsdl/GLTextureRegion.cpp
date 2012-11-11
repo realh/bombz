@@ -54,15 +54,16 @@ void GLTextureRegion::initCoords()
 {
     // These coords are for a GL_QUAD, see
     // http://immersedcode.org/2011/4/7/sdl-surface-to-texture/
+    // Top-left, bottom-left, bottom-right, top-right
     mCoords = new float[8];
     mCoords[0] = mU0;
     mCoords[1] = mV0;
     mCoords[2] = mU0;
     mCoords[3] = mV1;
     mCoords[4] = mU1;
-    mCoords[5] = mV0;
+    mCoords[5] = mV1;
     mCoords[6] = mU1;
-    mCoords[7] = mV1;
+    mCoords[7] = mV0;
 }
 
 }

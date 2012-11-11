@@ -46,14 +46,17 @@ GLSprite::GLSprite(GLRenderContext *rc, hgame::TextureRegion *texture,
 
 void GLSprite::setPosition(int x, int y)
 {
+    // These coords are for a GL_QUAD, see
+    // http://immersedcode.org/2011/4/7/sdl-surface-to-texture/
+    // Top-left, bottom-left, bottom-right, top-right
     mVertices[0] = (float) x;
     mVertices[1] = (float) y;
     mVertices[2] = (float) x;
     mVertices[3] = (float) (y + mH);
     mVertices[4] = (float) (x + mW);
-    mVertices[5] = (float) y;
+    mVertices[5] = (float) (y +mH);
     mVertices[6] = (float) (x + mW);
-    mVertices[7] = (float) (y + mH);
+    mVertices[7] = (float) y;
 }
 
 void GLSprite::render(hgame::RenderContext *rc)
