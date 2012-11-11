@@ -59,6 +59,8 @@ protected:
     // width and height are screen size, vp_w and vp_h are size of viewport
     // within it, chosen based on "best modes".
     virtual void initGL(int width, int height, int vp_w, int vp_h);
+
+    virtual void enableBlend(bool enable = true);
 private:
     bool mNeedScaling;
 };

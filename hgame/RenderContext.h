@@ -138,6 +138,9 @@ public:
 
     // Update display after rendering is complete
     virtual void flipBuffers() = 0;
+
+    virtual void enableBlend(bool enable = true) = 0;
+
 protected:
     virtual void doBindTexture(const TextureAtlas *tex) = 0;
 };
