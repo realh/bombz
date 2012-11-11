@@ -48,7 +48,7 @@ def init(ctx):
         ctx.define("WITH_SDL", 1)
         # FIXME: Font should be configurable with default to shipped Bitstream
         ctx.define("WITH_FONT",
-                "/usr/share/fonts/truetype/freefont/FreeSans.ttf")
+                "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf")
         ctx.define_from_var("ENABLE_SHADOWS")
 
     elif ctx.mode == 'build':
