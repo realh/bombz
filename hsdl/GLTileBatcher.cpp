@@ -77,15 +77,6 @@ void GLTileBatcher::setTextureAt(hgame::TextureRegion *tex, int x, int y)
 {
     std::memcpy(mVertices + (y * mNColumns + x) * 16 + 8,
             ((hgl::GLTextureRegion *) tex)->getCoords(), 8 * sizeof(float));
-    int n = (y * mNColumns + x) * 16 + 8;
-    mVertices[n++] = 0;
-    mVertices[n++] = 0;
-    mVertices[n++] = 0;
-    mVertices[n++] = 1;
-    mVertices[n++] = 1;
-    mVertices[n++] = 1;
-    mVertices[n++] = 1;
-    mVertices[n++] = 0;
 }
 
 void GLTileBatcher::render(hgame::RenderContext *rc)
@@ -110,8 +101,8 @@ void GLTileBatcher::render(hgame::RenderContext *rc)
     // stride is 4 * 2 * 2 coords * 4 bytes per float
     for (int y = 0; y < mNRows; ++y)
     {
-        glVertexPointer(2, GL_FLOAT, 64, mVertices);
-        glTexCoordPointer(2, GL_FLOAT, 64, mVertices + 8);
+        glVertexPointer(2, GL_FLOAT, 64, mVertices + y * mNColumns * 16);
+        glTexCoordPointer(2, GL_FLOAT, 64, mVertices + y * mNColumns * 16 + 8);
         glDrawArrays(GL_QUADS, 0, nVerts);
     }
 }
