@@ -33,11 +33,6 @@
 
 #include <cstring>
 
-/*
-#include <cstdio>
-using namespace std;
-*/
-
 namespace hsdl {
 
 GLTileBatcher::GLTileBatcher(GLRenderContext *rc,
@@ -80,20 +75,6 @@ void GLTileBatcher::setTextureAt(hgame::TextureRegion *tex, int x, int y)
 
 void GLTileBatcher::render(hgame::RenderContext *rc)
 {
-    /*
-    int n;
-    for (n = 0; n < 8; n += 2)
-    {
-        fprintf(stderr, "(%6.1f, %6.1f)  ", mVertices[n], mVertices[n + 1]);
-    }
-    fprintf(stderr, "\n");
-    for (n = 8; n < 16; n += 2)
-    {
-        fprintf(stderr, "(%6.4f, %6.4f)  ", mVertices[n], mVertices[n + 1]);
-    }
-    fprintf(stderr, "\n");
-    */
-
     // Do one row at a time because there may be a limit to how many
     // verts we can do in one go
     int nVerts = mNColumns * 4;

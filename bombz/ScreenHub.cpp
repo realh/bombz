@@ -51,7 +51,7 @@ ScreenHub::ScreenHub(hgame::Application *app) :
         mLogoAtlas(0),
         mLogoRegion(0),
         mLogoSprite(0),
-        mLevel(new Level(this)),
+        mLevel(new Level(this, app->createLog("Bombz level"))),
         mRcIndex(-1),
         mMainMenuScrn(0),
         mWantLogo(false)

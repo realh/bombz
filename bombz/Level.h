@@ -34,6 +34,7 @@
 
 #include "config.h"
 
+#include "hgame/Log.h"
 #include "hgame/RenderContext.h"
 #include "hgame/Renderer.h"
 #include "hgame/Sprite.h"
@@ -93,8 +94,10 @@ private:
 
     ScreenHub *mHub;
 
+    hgame::Log &mLog;
+
 public:
-    Level(ScreenHub *hub);
+    Level(ScreenHub *hub, hgame::Log *log);
     ~Level();
 
     void initRendering(hgame::RenderContext *rc);

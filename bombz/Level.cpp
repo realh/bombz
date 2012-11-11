@@ -34,12 +34,12 @@
 
 namespace bombz {
 
-Level::Level(ScreenHub *hub) :
+Level::Level(ScreenHub *hub, hgame::Log *log) :
         mLevel(new HUInt8[kWidth * kHeight]),
         mTmpLevel(new HUInt8[kWidth * kHeight]),
         mTileAtlas(0), mAlphaAtlas(0), mTileBatcher(0),
         mTileRegions(0), mExplo00Region(0), mExplo00Sprite(0),
-        mHub(hub)
+        mHub(hub), mLog(*log)
 {
     reset();
 }
@@ -52,6 +52,7 @@ Level::~Level()
 
 void Level::initRendering(hgame::RenderContext *rc)
 {
+    mLog.v("Creating tile textures");
     mTileAtlas = mHub->getTileAtlas();
     mAlphaAtlas = mHub->getAlphaAtlas();
     mScreenTileSize = mHub->getScreenTileSize();
