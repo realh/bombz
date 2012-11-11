@@ -38,14 +38,14 @@ TextWidget::TextWidget(const char *text, Font *font, Colour colour,
         int x, int y, Alignment align, int shadow_offset) :
         Widget(x, y, x, y)
 {
-#if !ENABLE_SHADOW
+#if !ENABLE_SHADOWS
     (void) shadow_offset;
 #endif
     mImage = font->render(colour, text);
 #if ENABLE_WIDGET_HIGHLIGHTING
     mHighlightedImage = font->render(highlighted_colour, text);
 #endif
-#if ENABLE_SHADOW
+#if ENABLE_SHADOWS
     if (shadow_offset)
     {
         Image *img = mImage;
@@ -57,7 +57,7 @@ TextWidget::TextWidget(const char *text, Font *font, Colour colour,
         delete img;
 #endif  // ENABLE_WIDGET_HIGHLIGHTING
     }
-#endif  // ENABLE_SHADOW
+#endif  // ENABLE_SHADOWS
     int w = mImage->getWidth();
     int h = mImage->getHeight();
     switch (align & ALIGN_HMASK)
