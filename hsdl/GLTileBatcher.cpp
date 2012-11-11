@@ -45,11 +45,10 @@ GLTileBatcher::GLTileBatcher(GLRenderContext *rc,
         hgame::TileBatcher(nColumns, nRows, tile_size),
         mRc(rc)
 {
-    // Interleaving vertices and text coords may allow slightly more
-    // efficient memory access.
-    // 4 points per quad * 2 (x, y) * 2 (screen & tex coords)
-    int nCoords = nColumns * nRows * 4 * 2 * 2;
+    // 4 points per quad * 2 (x, y)
+    int nCoords = nColumns * nRows * 4 * 2;
     mVertices = new float[nCoords];
+    mTexCoords = new float[nCoords];
     int i = 0;
     for (int y = 0; y < nRows; ++y)
     {
@@ -63,7 +62,6 @@ GLTileBatcher::GLTileBatcher(GLRenderContext *rc,
             mVertices[i++] = float((y + 1) * tile_size);
             mVertices[i++] = float((x + 1) * tile_size);
             mVertices[i++] = float(y * tile_size);
-            i += 8;
         }
     }
 }
@@ -71,11 +69,12 @@ GLTileBatcher::GLTileBatcher(GLRenderContext *rc,
 GLTileBatcher::~GLTileBatcher()
 {
     delete mVertices;
+    delete mTexCoords;
 }
 
 void GLTileBatcher::setTextureAt(hgame::TextureRegion *tex, int x, int y)
 {
-    std::memcpy(mVertices + (y * mNColumns + x) * 16 + 8,
+    std::memcpy(mTexCoords + (y * mNColumns + x) * 8,
             ((hgl::GLTextureRegion *) tex)->getCoords(), 8 * sizeof(float));
 }
 
@@ -101,8 +100,8 @@ void GLTileBatcher::render(hgame::RenderContext *rc)
     // stride is 4 * 2 * 2 coords * 4 bytes per float
     for (int y = 0; y < mNRows; ++y)
     {
-        glVertexPointer(2, GL_FLOAT, 64, mVertices + y * mNColumns * 16);
-        glTexCoordPointer(2, GL_FLOAT, 64, mVertices + y * mNColumns * 16 + 8);
+        glVertexPointer(2, GL_FLOAT, 0, mVertices + y * mNColumns * 8);
+        glTexCoordPointer(2, GL_FLOAT, 0, mTexCoords + y * mNColumns * 8);
         glDrawArrays(GL_QUADS, 0, nVerts);
     }
 }
