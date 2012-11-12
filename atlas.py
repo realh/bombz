@@ -1,3 +1,5 @@
+#import math
+
 import cairo
 import rsvg
 
@@ -333,3 +335,24 @@ def make_title_logo(dest, source, width, height):
     h2 = round_to_powerof2(height)
     surf = svg_to_cairo(source, width, height, True, 1, w2, h2)
     surf.write_to_png(dest)
+
+
+# We don't need this because it turns out to return the same value for every
+# pixel size
+def get_best_packing(size, ntiles, limit = 2048):
+    """ Works out the most efficient way to pack ntiles squares of uniform
+    size into a texture atlas,returning the number of columns. limit is
+    the maximum number of pixels in either direction. """
+    best_pix = limit * limit
+    best_cols = int(math.sqrt(ntiles))
+    for cols in range(best_cols, ntiles + 1):
+        if cols * size > limit:
+            break
+        rows = int(ntiles / cols)
+        if ntiles % cols:
+            rows += 1
+        pix = round_to_powerof2(cols * size) * round_to_powerof2(rows * size)
+        if pix < best_pix:
+            best_cols = cols
+            best_pix = pix
+    return best_cols

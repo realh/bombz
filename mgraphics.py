@@ -14,6 +14,7 @@ def init(ctx):
     if __already_run:
         return
     __already_run = True
+
     if ctx.mode == 'build':
 
         for size in [48, 72]:
