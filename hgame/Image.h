@@ -77,6 +77,8 @@ public:
 #if ENABLE_SHADOWS
     // Create a new image which is copy of current one with drop shadow
     Image *createShadow(int offset);
+private:
+    static const float kShadowOpacity = 0.6f;
 #endif
 };
 

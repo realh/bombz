@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -63,7 +63,7 @@ void Image::fillGaussTable()
             smGaussTable[j][i] /= total;
         }
     }
-    
+
     /*
     for (j = 0; j <= 2 * kSpan; ++j)
     {
@@ -128,7 +128,7 @@ Image *Image::createShadow(int offset)
                 }
             }
             shadow->setAlphaAt(x0 + offset, y0 + offset,
-                    (HUInt8) (alpha * 255.0));
+                    (HUInt8) (alpha * 255.0 * kShadowOpacity));
         }
     }
     shadow->unlock();
@@ -150,7 +150,7 @@ void Image::blit(Image *src, int dest_x, int dest_y,
     int src_h = src->getHeight();
     int dest_w = getWidth();
     int dest_h = getHeight();
-    
+
     if (dest_x >= dest_w || dest_y > dest_h || src_x >= src_w || src_y >= src_h)
         return;
     if (src_x + w > src_w)
@@ -181,5 +181,5 @@ void Image::blit(Image *src, int dest_x, int dest_y,
         }
     }
 }
-            
+
 }
