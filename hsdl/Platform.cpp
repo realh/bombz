@@ -96,7 +96,8 @@ const char *Platform::getProfileFilename(const char *owner, const char *domain,
             break;
         case hgame::Platform::MAC:
             var = "HOME";
-            asprintf(&body, "Library%c%s", ds, appname);
+            asprintf(&body, "Library%cApplication Support%c%s%c%s",
+                    ds, ds, owner, ds, appname);
             break;
         case hgame::Platform::POSIX:
             var = "XDG_CONFIG_HOME";

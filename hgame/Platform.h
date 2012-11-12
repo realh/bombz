@@ -85,7 +85,7 @@ public:
     static Endianness getEndianness();
 
 
-    // owner is used in Windows and Mac, domain in Linux
+    // owner is used in Windows and Mac, domain in Linux etc
     // This function ensures the directory exists
     // Return value is overwritten on subsequent calls
     virtual const char *getProfileFilename(const char *owner,
