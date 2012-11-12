@@ -27,8 +27,11 @@
 
 // Bombz - 2D puzzle game
 
-#include "bombz/ScreenHub.h"
 #include "bombz/Level.h"
+
+#include <cstdlib>
+
+#include "bombz/ScreenHub.h"
 
 #include "hsdl/GLTextureRegion.h"
 
@@ -36,7 +39,7 @@ namespace bombz {
 
 Level::Level(ScreenHub *hub, hgame::Log *log) :
         mLevel(new HUInt8[kWidth * kHeight]),
-        mTmpLevel(new HUInt8[kWidth * kHeight]),
+        mTmpLevel(0),
         mTileAtlas(0), mAlphaAtlas(0), mTileBatcher(0),
         mTileRegions(0), mExplo00Region(0), mExplo00Sprite(0),
         mHub(hub), mLog(*log)
@@ -46,7 +49,6 @@ Level::Level(ScreenHub *hub, hgame::Log *log) :
 
 Level::~Level()
 {
-    delete[] mTmpLevel;
     delete[] mLevel;
 }
 
@@ -158,6 +160,15 @@ void Level::reset(bool with_frame)
             mLevel[n] = t;
         }
     }
+    resetVars();
+}
+
+void Level::resetVars()
+{
+    mnBombs = 0;
+    mBombActivity = false;
+    mStartX = mStartY = 0;
+    mTimeLimit = 180;
 }
 
 hgame::TextureRegion *Level::createRegion(int x, int y)
@@ -170,5 +181,342 @@ hgame::TextureRegion *Level::createRegion(int n)
 {
     return createRegion(n % kAtlasColumns, n / kAtlasColumns);
 }
+
+void Level::loadFromText(const char *text)
+{
+    resetVars();
+    const char *s = text;
+    int n = 0;
+    for (int y = 0; y < kHeight; ++y)
+    {
+        for (int x = 0; x < kWidth; ++x, ++n, ++s)
+        {
+            switch (*s)
+            {
+                case ' ':
+                    mLevel[n] = BLANK;
+                    break;
+                case '.':
+                    mLevel[n] = EARTH;
+                    break;
+                case 'D':
+                    mLevel[n] = MATCH;
+                    break;
+                case 'B':
+                    mLevel[n] = PICKET;
+                    break;
+                case 'O':
+                    mLevel[n] = BOMB1;
+                    ++mnBombs;
+                    break;
+                case '0':
+                    mLevel[n] = BOMB1_FUSED_FIRST;
+                    ++mnBombs;
+                    mBombActivity = true;
+                    break;
+                case 'S':
+                    mLevel[n] = BLANK;
+                    mStartX = x;
+                    mStartY = y;
+                    break;
+                case 'X':
+                    mLevel[n] = CHROME15;
+                    break;
+                default:
+                    mLevel[n] = BLANK;
+                    break;
+            }
+        }
+        skipNL(&s);
+    }
+    mTimeLimit = std::atoi(s);
+    skipLine(&s);
+    prettify();
+}
+
+void Level::prettify()
+{
+    mTmpLevel = new HUInt8[kWidth * kHeight];
+    hollowChrome();
+    shapeChrome();
+    randomiseBombs();
+    delete[] mTmpLevel;
+    mTmpLevel = 0;
+}
+
+void Level::hollowChrome()
+{
+    int n = 0;
+    for (int y = 0; y < kHeight; ++y)
+    {
+        for (int x = 0; x < kWidth; ++x, ++n)
+        {
+            if (isChromeAt(x, y))
+            {
+                bool nonChrome = false;
+                for (int y0 = y - 1; !nonChrome && y0 <= y + 1; ++y0)
+                {
+                    for (int x0 = x - 1; !nonChrome && x0 <= x + 1; ++x0)
+                    {
+                        if (!isChromeAt(x0, y0))
+                        {
+                            nonChrome = true;
+                        }
+                    }
+                }
+                mTmpLevel[n] = nonChrome ? CHROME15 : BLANK;
+            }
+            else
+            {
+                mTmpLevel[n] = mLevel[n];
+            }
+        }
+    }
+    swapTmpLevel();
+}
+
+void Level::shapeChrome()
+{
+    int n = 0;
+    for (int y = 0; y < kHeight; ++y)
+    {
+        for (int x = 0; x < kWidth; ++x, ++n)
+        {
+            if (isChromeAt(x, y))
+            {
+                bool left = isChromeAt(x - 1, y);
+                bool right = isChromeAt(x + 1, y);
+                bool above = isChromeAt(x, y - 1);
+                bool below = isChromeAt(x, y + 1);
+                if (left)
+                {
+                    if (right)
+                    {
+                        if (above)
+                        {
+                            if (below)
+                            {
+                                //   |
+                                // --+--
+                                //   |
+                                mTmpLevel[n] = CHROME00 + 8;
+                            }
+                            else
+                            {
+                                //   |
+                                // --+--
+                                //
+                                mTmpLevel[n] = CHROME00 + 11;
+                            }
+                        }
+                        else	// left && right && !above
+                        {
+                            if (below)
+                            {
+                                //
+                                // --+--
+                                //   |
+                                mTmpLevel[n] = CHROME00 + 13;
+                            }
+                            else
+                            {
+                                //
+                                // --+--
+                                //
+                                mTmpLevel[n] = CHROME00 + 1;
+                            }
+                        }
+                    }
+                    else	// left && !right
+                    {
+                        if (above)
+                        {
+                            if (below)
+                            {
+                                //   |
+                                // --+
+                                //   |
+                                mTmpLevel[n] = CHROME00 + 12;
+                            }
+                            else
+                            {
+                                //   |
+                                // --+
+                                //
+                                mTmpLevel[n] = CHROME00 + 5;
+                            }
+                        }
+                        else	// left && !right && !above
+                        {
+                            if (below)
+                            {
+                                //
+                                // --+
+                                //   |
+                                mTmpLevel[n] = CHROME00 + 2;
+                            }
+                            else
+                            {
+                                //
+                                // --+
+                                //
+                                mTmpLevel[n] = CHROME00 + 9;
+                            }
+                        }
+                    }
+                }
+                else	// !left
+                {
+                    if (right)
+                    {
+                        if (above)
+                        {
+                            if (below)
+                            {
+                                //   |
+                                //   +--
+                                //   |
+                                mTmpLevel[n] = CHROME00 + 14;
+                            }
+                            else
+                            {
+                                //   |
+                                //   +--
+                                //
+                                mTmpLevel[n] = CHROME00 + 4;
+                            }
+                        }
+                        else	// !left && right && !above
+                        {
+                            if (below)
+                            {
+                                //
+                                //   +--
+                                //   |
+                                mTmpLevel[n] = CHROME00;
+                            }
+                            else
+                            {
+                                //
+                                //   +--
+                                //
+                                mTmpLevel[n] = CHROME00 + 7;
+                            }
+                        }
+                    }
+                    else	// !left && !right
+                    {
+                        if (above)
+                        {
+                            if (below)
+                            {
+                                //   |
+                                //   +
+                                //   |
+                                mTmpLevel[n] = CHROME00 + 3;
+                            }
+                            else
+                            {
+                                //   |
+                                //   +
+                                //
+                                mTmpLevel[n] = CHROME00 + 10;
+                            }
+                        }
+                        else	// !left && right && !above
+                        {
+                            if (below)
+                            {
+                                //
+                                //   +
+                                //   |
+                                mTmpLevel[n] = CHROME00 + 6;
+                            }
+                            else
+                            {
+                                //
+                                //   +
+                                //
+                                mTmpLevel[n] = CHROME00 + 15;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                mTmpLevel[n] = mLevel[n];
+            }
+        }
+    }
+    swapTmpLevel();
+    disconnectTs();
+}
+
+/**
+ * If we have two parallel rows or columns they will be unnecessarily
+ * linked with T sections ie for a nicer look we can replace:
+ *
+ *    ===========         ===========
+ *    ==+=+=+=+==         ===========
+ *      | | | |     with
+ *    ==+=+=+=+==         ===========
+ *    ===========         ===========
+ */
+void Level::disconnectTs()
+{
+    // Don't need to use tmpLvl for this
+    int n = 0;
+    for (int y = 0; y < kHeight; ++y)
+    {
+        for (int x = 0; x < kWidth; ++x, ++n)
+        {
+            int tile = getTileAt(x, y);
+            if (tile == CHROME00 + 13)
+            {
+                // --+--
+                //   |
+                if (getTileAt(x, y + 1) == CHROME00 + 11)
+                {
+                    //   |
+                    // --+--
+                    mLevel[n] = CHROME00 + 1;	        // --+--
+                    mLevel[n + kWidth] = CHROME00 + 1;  // --+--
+                }
+            }
+            else if (tile == CHROME00 + 14)
+            {
+                // |
+                // +--
+                // |
+                if (getTileAt(x + 1, y) == CHROME00 + 12)
+                {
+                    //   |
+                    // --+
+                    //   |
+                    mLevel[n] = CHROME00 + 3;           //   ||
+                    mLevel[n + 1] = CHROME00 + 3;       //   ++
+                                                        //   ||
+                }
+            }
+        }
+    }
+}
+
+void Level::randomiseBombs()
+{
+    int n = 0;
+    for (int y = 0; y < kHeight; ++y)
+    {
+        for (int x = 0; x < kWidth; ++x, ++n)
+        {
+            if (mLevel[n] == BOMB1 && std::rand() % 2)
+                mLevel[n] = BOMB2;
+            else if (mLevel[n] == BOMB1_FUSED_FIRST && std::rand() % 2)
+                mLevel[n] = BOMB2_FUSED_FIRST;
+        }
+    }
+}
+
 
 }

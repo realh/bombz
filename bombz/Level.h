@@ -96,6 +96,11 @@ private:
 
     hgame::Log &mLog;
 
+    int mnBombs;
+    int mStartX, mStartY;
+    int mTimeLimit;
+    bool mBombActivity;
+
 public:
     Level(ScreenHub *hub, hgame::Log *log);
     ~Level();
@@ -107,10 +112,59 @@ public:
     void render(hgame::RenderContext *rc);
 
     void reset(bool with_frame = true);
+
+    void loadFromText(const char *text);
 private:
     hgame::TextureRegion *createRegion(int x, int y);
 
     hgame::TextureRegion *createRegion(int n);
+
+    void resetVars();
+
+    inline static void skipNL(char const **s)
+    {
+        char c;
+        while ((c = **s) == '\n' || c == '\r')
+            ++*s;
+    }
+
+    inline static void skipLine(char const **s)
+    {
+        char c;
+        while ((c = **s) != '\n' && c != '\r')
+            ++*s;
+        skipNL(s);
+    }
+
+    void prettify();
+
+    void hollowChrome();
+
+    void shapeChrome();
+
+    void disconnectTs();
+
+    void randomiseBombs();
+
+    inline HUInt8 getTileAt(int x, int y)
+    {
+        if (x < 0 || x >= kWidth || y < 0 || y >= kHeight)
+            return BLANK;
+        return mLevel[y * kWidth + x];
+    }
+
+    inline bool isChromeAt(int x, int y)
+    {
+        int t = getTileAt(x, y);
+        return t >= CHROME00 && t <= CHROME15;
+    }
+
+    inline void swapTmpLevel()
+    {
+        HUInt8 *tmp = mTmpLevel;
+        mTmpLevel = mLevel;
+        mLevel = tmp;
+    }
 };
 
 }
