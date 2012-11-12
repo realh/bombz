@@ -53,6 +53,19 @@ private:
 
     void onPlayTapped();
 
+    class ChooseLevelListener : public hgame::TapListener {
+    private:
+        MainMenuScreen *mMMS;
+    public:
+        ChooseLevelListener(MainMenuScreen *m) : mMMS(m) {}
+
+        bool onTapEvent(hgame::TapEvent *e);
+    };
+
+    ChooseLevelListener mChooseLevelListener;
+
+    void onChooseLevelTapped();
+
 #ifdef HAVE_QUIT_WIDGET
     class QuitListener : public hgame::TapListener {
     private:

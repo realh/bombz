@@ -44,6 +44,17 @@ void MainMenuScreen::onPlayTapped()
 {
 }
 
+bool MainMenuScreen::ChooseLevelListener::onTapEvent(hgame::TapEvent *e)
+{
+    (void) e;
+    mMMS->onChooseLevelTapped();
+    return true;
+}
+
+void MainMenuScreen::onChooseLevelTapped()
+{
+}
+
 #ifdef HAVE_QUIT_WIDGET
 bool MainMenuScreen::QuitListener::onTapEvent(hgame::TapEvent *e)
 {
@@ -61,18 +72,22 @@ void MainMenuScreen::onQuitTapped()
 
 MainMenuScreen::MainMenuScreen(ScreenHub *hub) :
         MenuScreen(hub, "BombzMainMenu"),
-        mPlayListener(this)
+        mPlayListener(this),
+        mChooseLevelListener(this)
 #ifdef HAVE_QUIT_WIDGET
         , mQuitListener(this)
 #endif
 {
     float y = kMenuItemTop;
-    addTextWidget(mApplication->getPlatform()->translate("Play"), 0.5, y,
-            &mPlayListener);
+    addTextWidget(mApplication->getPlatform()->translate("Play"),
+            0.5, y, &mPlayListener);
+    y += kMenuItemStride;
+    addTextWidget(mApplication->getPlatform()->translate("Choose Level"),
+            0.5, y, &mChooseLevelListener);
     y += kMenuItemStride;
 #ifdef HAVE_QUIT_WIDGET
-    addTextWidget(mApplication->getPlatform()->translate("Quit"), 0.5, y,
-            &mQuitListener);
+    addTextWidget(mApplication->getPlatform()->translate("Quit"),
+            0.5, y, &mQuitListener);
 #endif
 }
 
