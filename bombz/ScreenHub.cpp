@@ -37,7 +37,7 @@
 
 namespace bombz {
 
-const hgame::Colour ScreenHub::kTextColour = hgame::Colour(0x000088ff);
+const hgame::Colour ScreenHub::kTextColour = hgame::Colour(0x0000aaff);
 #if ENABLE_WIDGET_HIGHLIGHTING
 const hgame::Colour ScreenHub::kHighlightedTextColour =
         hgame::Colour(0x880000ff);
@@ -51,7 +51,7 @@ ScreenHub::ScreenHub(hgame::Application *app) :
         mLogoAtlas(0),
         mLogoRegion(0),
         mLogoSprite(0),
-        mLevel(new Level(this)),
+        mLevel(new Level(this, app->createLog("Bombz level"))),
         mRcIndex(-1),
         mMainMenuScrn(0),
         mWantLogo(false)
@@ -122,7 +122,7 @@ void ScreenHub::loadLogo(hgame::RenderContext *rc)
             mSrcTileSize * 16, mSrcTileSize * 4);
     mLogoSprite = rc->createSprite(mLogoRegion,
             mScreenTileSize * 16, mScreenTileSize * 4);
-    mLogoSprite->setPosition(mScreenTileSize * 2, mScreenTileSize * 2);
+    mLogoSprite->setPosition(mScreenTileSize * 2, (mScreenTileSize * 4) / 3);
 }
 
 void ScreenHub::deleteLogo()

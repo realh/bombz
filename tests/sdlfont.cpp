@@ -24,11 +24,13 @@ static int png_colortype_from_surface(SDL_Surface *surface)
 
 static void png_user_warn(png_structp ctx, png_const_charp str)
 {
+    (void) ctx;
     fprintf(stderr, "libpng: warning: %s\n", str);
 }
 
 void png_user_error(png_structp ctx, png_const_charp str)
 {
+    (void) ctx;
     fprintf(stderr, "libpng: error: %s\n", str);
 }
 

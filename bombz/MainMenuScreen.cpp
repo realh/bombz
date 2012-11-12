@@ -36,6 +36,7 @@ namespace bombz {
 #ifdef HAVE_QUIT_WIDGET
 bool MainMenuScreen::QuitListener::onTapEvent(hgame::TapEvent *e)
 {
+    (void) e;
     mMMS->onQuitTapped();
     return true;
 }

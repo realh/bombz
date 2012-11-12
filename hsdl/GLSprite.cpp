@@ -61,6 +61,7 @@ void GLSprite::setPosition(int x, int y)
 
 void GLSprite::render(hgame::RenderContext *rc)
 {
+    (void) rc;
     glVertexPointer(2, GL_FLOAT, 0, mVertices);
     glTexCoordPointer(2, GL_FLOAT, 0,
             ((hgl::GLTextureRegion *) mTexture)->getCoords());

@@ -65,4 +65,17 @@ void GLRenderContext::setViewport2D(int left, int top, int width, int height)
     glOrtho(0, width, height, 0, 1, -1);
 }
 
+void GLRenderContext::enableBlend(bool enable)
+{
+    if (enable)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+    else
+    {
+        glDisable(GL_BLEND);
+    }
+}
+
 }

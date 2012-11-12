@@ -19,13 +19,19 @@ def init(ctx):
 
         for size in [48, 72]:
 
+            # Fudge to get size, could really do with some sort of
+            # arbitrary arg support in maitch
+            def size_from_targ(targets):
+                return int(targets[0].rsplit('/', 2)[1])
+
             # Create dest directories
             ctx.add_rule(Rule(rule = "mkdir -p ${TGT}",
                     targets = "${LOCAL_PNGS_DIR}/%d" % size))
 
             # Tile atlas
             def tile_atlas_rule_func(ctx, env, targets, sources):
-                atlas.make_game_tile_atlas(targets[0], sources, size)
+                atlas.make_game_tile_atlas(targets[0], sources,
+                        size_from_targ(targets))
             ctx.add_rule(Rule(rule = tile_atlas_rule_func,
                     targets = "${LOCAL_PNGS_DIR}/%d/tile_atlas.png" % size,
                     sources = ["svgs/floor.svg", "texture/dirt.png"] + \
@@ -40,7 +46,8 @@ def init(ctx):
 
             # Alpha atlas
             def alpha_atlas_rule_func(ctx, env, targets, sources):
-                atlas.make_game_alpha_atlas(targets[0], sources, size)
+                atlas.make_game_alpha_atlas(targets[0], sources,
+                        size_from_targ(targets))
             ctx.add_rule(Rule(rule = alpha_atlas_rule_func,
                     targets = "${LOCAL_PNGS_DIR}/%d/alpha_atlas.png" % size,
                     sources = ["svgs/%s.svg" % s for s in ["explo00"] + \
@@ -50,8 +57,7 @@ def init(ctx):
                     where = TOP))
 
             def title_logo_rule_func(ctx, env, targets, sources):
-                # Fudge to get size
-                sz = int(targets[0].rsplit('/', 2)[1])
+                sz = size_from_targ(targets)
                 atlas.make_title_logo(targets[0], sources[0], sz * 16, sz * 4)
             ctx.add_rule(Rule(rule = title_logo_rule_func,
                     targets = "${LOCAL_PNGS_DIR}/%d/title_logo.png" % size,

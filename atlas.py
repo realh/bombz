@@ -262,14 +262,14 @@ def make_game_tile_atlas(dest, sources, size = 72, columns = 6):
     dest = output PNG filename.
     sources is a flat list of SVG filenames; the first must be floor and it must
     end with the chrome subsections in order tl, tr, bl, br, horiz, vert. PNGs
-    may be use dinstead, but then you must use .svg suffix (lower case is
+    may be used instead, but then you must use .svg suffix (lower case is
     compulsory) for SVGs. """
-    tl = load_and_clip(sources[-6], 0, 0)
-    tr = load_and_clip(sources[-5], 1, 0)
-    bl = load_and_clip(sources[-4], 0, 1)
-    br = load_and_clip(sources[-3], 1, 1)
-    horiz = load_and_clip(sources[-2], 1, 1)
-    vert = load_and_clip(sources[-1], 1, 1)
+    tl = load_and_clip(sources[-6], 0, 0, size)
+    tr = load_and_clip(sources[-5], 1, 0, size)
+    bl = load_and_clip(sources[-4], 0, 1, size)
+    br = load_and_clip(sources[-3], 1, 1, size)
+    horiz = load_and_clip(sources[-2], 1, 1, size)
+    vert = load_and_clip(sources[-1], 1, 1, size)
     sources = sources[:-6]
     def mc(*a):
         sources.append(montage(cairo.FORMAT_ARGB32,

@@ -44,6 +44,7 @@ class GLTileBatcher : public hgame::TileBatcher {
 private:
     GLRenderContext *mRc;
     float *mVertices;
+    float *mTexCoords;
 public:
     GLTileBatcher(GLRenderContext *rc, int nColumns, int nRows, int tile_size);
     ~GLTileBatcher();
