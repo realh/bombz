@@ -61,6 +61,10 @@ private:
 
     bool onChooseLevelTapped();
 
+    TapListener mSettingsListener;
+
+    bool onSettingsTapped();
+
 #ifdef HAVE_QUIT_WIDGET
     TapListener mQuitListener;
 

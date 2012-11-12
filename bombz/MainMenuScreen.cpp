@@ -49,6 +49,11 @@ bool MainMenuScreen::onChooseLevelTapped()
     return true;
 }
 
+bool MainMenuScreen::onSettingsTapped()
+{
+    return true;
+}
+
 #ifdef HAVE_QUIT_WIDGET
 bool MainMenuScreen::onQuitTapped()
 {
@@ -61,7 +66,8 @@ bool MainMenuScreen::onQuitTapped()
 MainMenuScreen::MainMenuScreen(ScreenHub *hub) :
         MenuScreen(hub, "BombzMainMenu"),
         mPlayListener(this, &MainMenuScreen::onPlayTapped),
-        mChooseLevelListener(this, &MainMenuScreen::onChooseLevelTapped)
+        mChooseLevelListener(this, &MainMenuScreen::onChooseLevelTapped),
+        mSettingsListener(this, &MainMenuScreen::onSettingsTapped)
 #ifdef HAVE_QUIT_WIDGET
         , mQuitListener(this, &MainMenuScreen::onQuitTapped)
 #endif
@@ -72,6 +78,9 @@ MainMenuScreen::MainMenuScreen(ScreenHub *hub) :
     y += kMenuItemStride;
     addTextWidget(mApplication->getPlatform()->translate("Choose Level"),
             0.5, y, &mChooseLevelListener);
+    y += kMenuItemStride;
+    addTextWidget(mApplication->getPlatform()->translate("Settings"),
+            0.5, y, &mSettingsListener);
     y += kMenuItemStride;
 #ifdef HAVE_QUIT_WIDGET
     addTextWidget(mApplication->getPlatform()->translate("Quit"),
