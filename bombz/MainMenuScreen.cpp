@@ -33,49 +33,37 @@
 
 namespace bombz {
 
-bool MainMenuScreen::PlayListener::onTapEvent(hgame::TapEvent *e)
+bool MainMenuScreen::TapListener::onTapEvent(hgame::TapEvent *e)
 {
     (void) e;
-    mMMS->onPlayTapped();
+    return (mMMS->*mMethod)();
+}
+
+bool MainMenuScreen::onPlayTapped()
+{
     return true;
 }
 
-void MainMenuScreen::onPlayTapped()
+bool MainMenuScreen::onChooseLevelTapped()
 {
-}
-
-bool MainMenuScreen::ChooseLevelListener::onTapEvent(hgame::TapEvent *e)
-{
-    (void) e;
-    mMMS->onChooseLevelTapped();
     return true;
-}
-
-void MainMenuScreen::onChooseLevelTapped()
-{
 }
 
 #ifdef HAVE_QUIT_WIDGET
-bool MainMenuScreen::QuitListener::onTapEvent(hgame::TapEvent *e)
-{
-    (void) e;
-    mMMS->onQuitTapped();
-    return true;
-}
-
-void MainMenuScreen::onQuitTapped()
+bool MainMenuScreen::onQuitTapped()
 {
     mApplication->stop();
+    return true;
 }
 
 #endif
 
 MainMenuScreen::MainMenuScreen(ScreenHub *hub) :
         MenuScreen(hub, "BombzMainMenu"),
-        mPlayListener(this),
-        mChooseLevelListener(this)
+        mPlayListener(this, &MainMenuScreen::onPlayTapped),
+        mChooseLevelListener(this, &MainMenuScreen::onChooseLevelTapped)
 #ifdef HAVE_QUIT_WIDGET
-        , mQuitListener(this)
+        , mQuitListener(this, &MainMenuScreen::onQuitTapped)
 #endif
 {
     float y = kMenuItemTop;

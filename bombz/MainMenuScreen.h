@@ -40,45 +40,31 @@ namespace bombz {
 
 class MainMenuScreen : public MenuScreen {
 private:
-    class PlayListener : public hgame::TapListener {
+    typedef bool (MainMenuScreen::*TapListenerMethod)();
+    class TapListener : public hgame::TapListener {
     private:
         MainMenuScreen *mMMS;
+        TapListenerMethod mMethod;
     public:
-        PlayListener(MainMenuScreen *m) : mMMS(m) {}
+        TapListener(MainMenuScreen *s, TapListenerMethod m) :
+                mMMS(s), mMethod(m)
+        {}
 
         bool onTapEvent(hgame::TapEvent *e);
     };
 
-    PlayListener mPlayListener;
+    TapListener mPlayListener;
 
-    void onPlayTapped();
+    bool onPlayTapped();
 
-    class ChooseLevelListener : public hgame::TapListener {
-    private:
-        MainMenuScreen *mMMS;
-    public:
-        ChooseLevelListener(MainMenuScreen *m) : mMMS(m) {}
+    TapListener mChooseLevelListener;
 
-        bool onTapEvent(hgame::TapEvent *e);
-    };
-
-    ChooseLevelListener mChooseLevelListener;
-
-    void onChooseLevelTapped();
+    bool onChooseLevelTapped();
 
 #ifdef HAVE_QUIT_WIDGET
-    class QuitListener : public hgame::TapListener {
-    private:
-        MainMenuScreen *mMMS;
-    public:
-        QuitListener(MainMenuScreen *m) : mMMS(m) {}
+    TapListener mQuitListener;
 
-        bool onTapEvent(hgame::TapEvent *e);
-    };
-
-    QuitListener mQuitListener;
-
-    void onQuitTapped();
+    bool onQuitTapped();
 #endif
 public:
     MainMenuScreen(ScreenHub *hub);
