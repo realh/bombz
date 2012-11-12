@@ -46,6 +46,9 @@ namespace bombz {
 class ScreenHub;
 
 class MenuScreen : public hgame::Screen {
+public:
+    static const float kMenuItemTop = 0.35f;
+    static const float kMenuItemStride = 0.1f;
 private:
     hgame::WidgetGroup *mWidgetGroup;
     struct TextWidget {

@@ -54,8 +54,8 @@ MainMenuScreen::MainMenuScreen(ScreenHub *hub) :
 #endif
 {
 #ifdef HAVE_QUIT_WIDGET
-    addTextWidget(mApplication->getPlatform()->translate("Quit"), 0.5, 0.35,
-            &mQuitListener);
+    addTextWidget(mApplication->getPlatform()->translate("Quit"), 0.5,
+            kMenuItemTop, &mQuitListener);
 #endif
 }
 
