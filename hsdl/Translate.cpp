@@ -29,13 +29,15 @@
 
 #include "hsdl/Translate.h"
 
-#include "hgame/Types.h"
-
-#include "hsdl/Platform.h"
-
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+
+#include <stdexcept>
+
+#include "hgame/Types.h"
+
+#include "hsdl/Platform.h"
 
 namespace hsdl {
 
@@ -43,7 +45,12 @@ using namespace std;
 
 const char *Translate::operator()(const char *tag) const
 {
-    return mHash.at(tag);
+    try {
+        return mHash.at(tag);
+    }
+    catch (out_of_range) {
+        return tag;
+    }
 }
 
 Translate::Translate(Platform *platform) : mBuffer(0)
