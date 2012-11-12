@@ -117,6 +117,26 @@ Image *Platform::loadPNG(const char *leafname, int size)
     }
 }
 
+char *Platform::loadText(const char *leafname, size_t *psize)
+{
+    char *name = joinPath(getAssetsDirectory(), leafname, NULL);
+    FILE *fp = fopen(name, "r");
+    delete[] name;
+    if (!fp)
+    {
+        THROW(ErrnoException, errno, "Unable to load '%s'", leafname);
+    }
+    fseek(fp, 0, SEEK_END);
+    size_t sz = ftell(fp);
+    if (psize)
+        *psize = sz;
+    char *buf = new char[sz];
+    rewind(fp);
+    fread(buf, 1, sz, fp);
+    fclose(fp);
+    return buf;
+}
+
 Platform::FileType Platform::getFileType(const char *filename)
 {
     char *path = joinPath(getAssetsDirectory(), filename, NULL);

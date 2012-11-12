@@ -36,6 +36,7 @@
 #include "config.h"
 
 #include <cstdarg>
+#include <cstddef>
 
 #include "hgame/Font.h"
 #include "hgame/Image.h"
@@ -93,11 +94,16 @@ public:
     virtual char getDirectorySeparator() = 0;
 
     // ... must be NULL-terminated
+    // delete[] result
     char *joinPath(const char *first, ...) H_GNUC_NULL_TERMINATED;
     char *joinPath(const char *first, std::va_list ap);
 
     // leafname is relative to app's assets folder
     virtual Image *loadPNG(const char *leafname) = 0;
+
+    // leafname is relative to app's assets folder.
+    // Result should be delete[]d.
+    virtual char *loadText(const char *leafname, std::size_t *psize = 0);
 
     // Convenience function to load ${ASSETS}/pngs/size/leafname
     Image *loadPNG(const char *leafname, int size);
