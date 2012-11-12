@@ -108,7 +108,7 @@ const char *Platform::getProfileFilename(const char *owner, const char *domain,
                 setenv(var, xdg_home, 0);
                 free(xdg_home);
             }
-            asprintf(&body, "%s%s", domain, appname);
+            asprintf(&body, "%s%c%s", domain, ds, appname);
             break;
         default:
             THROW(hgame::Throwable, "Unsupported platform type %d", pt);
