@@ -33,6 +33,17 @@
 
 namespace bombz {
 
+bool MainMenuScreen::PlayListener::onTapEvent(hgame::TapEvent *e)
+{
+    (void) e;
+    mMMS->onPlayTapped();
+    return true;
+}
+
+void MainMenuScreen::onPlayTapped()
+{
+}
+
 #ifdef HAVE_QUIT_WIDGET
 bool MainMenuScreen::QuitListener::onTapEvent(hgame::TapEvent *e)
 {
@@ -49,14 +60,19 @@ void MainMenuScreen::onQuitTapped()
 #endif
 
 MainMenuScreen::MainMenuScreen(ScreenHub *hub) :
-        MenuScreen(hub, "BombzMainMenu")
+        MenuScreen(hub, "BombzMainMenu"),
+        mPlayListener(this)
 #ifdef HAVE_QUIT_WIDGET
         , mQuitListener(this)
 #endif
 {
+    float y = kMenuItemTop;
+    addTextWidget(mApplication->getPlatform()->translate("Play"), 0.5, y,
+            &mPlayListener);
+    y += kMenuItemStride;
 #ifdef HAVE_QUIT_WIDGET
-    addTextWidget(mApplication->getPlatform()->translate("Quit"), 0.5,
-            kMenuItemTop, &mQuitListener);
+    addTextWidget(mApplication->getPlatform()->translate("Quit"), 0.5, y,
+            &mQuitListener);
 #endif
 }
 

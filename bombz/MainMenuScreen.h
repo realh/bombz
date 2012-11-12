@@ -40,6 +40,19 @@ namespace bombz {
 
 class MainMenuScreen : public MenuScreen {
 private:
+    class PlayListener : public hgame::TapListener {
+    private:
+        MainMenuScreen *mMMS;
+    public:
+        PlayListener(MainMenuScreen *m) : mMMS(m) {}
+
+        bool onTapEvent(hgame::TapEvent *e);
+    };
+
+    PlayListener mPlayListener;
+
+    void onPlayTapped();
+
 #ifdef HAVE_QUIT_WIDGET
     class QuitListener : public hgame::TapListener {
     private:
