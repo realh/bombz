@@ -85,10 +85,11 @@ public:
     static Endianness getEndianness();
 
 
-    // owner is used in Windows
+    // owner is used in Windows and Mac, domain in Linux
     // This function ensures the directory exists
     // Return value is overwritten on subsequent calls
     virtual const char *getProfileFilename(const char *owner,
+            const char *domain,
             const char *appname, const char *leafname) = 0;
 
     virtual char getDirectorySeparator() = 0;

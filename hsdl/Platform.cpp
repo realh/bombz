@@ -81,10 +81,10 @@ hgame::Platform::PlatformType Platform::getPlatformType() const
 #endif
 }
 
-const char *Platform::getProfileFilename(const char *owner,
+const char *Platform::getProfileFilename(const char *owner, const char *domain,
             const char *appname, const char *leafname)
 {
-    const char *var = "HOME";
+    const char *var = 0;
     char ds = getDirectorySeparator();
     char *body;
     hgame::Platform::PlatformType pt = getPlatformType();
@@ -95,13 +95,22 @@ const char *Platform::getProfileFilename(const char *owner,
             asprintf(&body, "%s%c%s", owner, ds, appname);
             break;
         case hgame::Platform::MAC:
+            var = "HOME";
             asprintf(&body, "Library%c%s", ds, appname);
             break;
         case hgame::Platform::POSIX:
-            asprintf(&body, ".%s", appname);
+            var = "XDG_CONFIG_HOME";
+            if (!getenv(var))
+            {
+                char *xdg_home;
+                asprintf(&xdg_home, "%s%c.config", getenv("HOME"), ds);
+                setenv(var, xdg_home, 0);
+                free(xdg_home);
+            }
+            asprintf(&body, "%s%s", domain, appname);
             break;
         default:
-            mLog.f("Unsupported platform type %d", pt);
+            THROW(hgame::Throwable, "Unsupported platform type %d", pt);
             break;
     }
     const char *varval = getenv(var);

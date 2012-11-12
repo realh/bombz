@@ -48,7 +48,7 @@ private:
 public:
     hgame::Platform::PlatformType getPlatformType() const;
 
-    const char *getProfileFilename(const char *owner,
+    const char *getProfileFilename(const char *owner, const char *domain,
             const char *appname, const char *leafname);
 
     // Returns the top-level directory holding game's assets
