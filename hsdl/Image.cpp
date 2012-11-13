@@ -32,7 +32,7 @@
 #include "hgame/Log.h"
 #include "hgame/Platform.h"
 
-#include "hsdl/Exception.h"
+#include "hsdl/Types.h"
 
 namespace hsdl {
 

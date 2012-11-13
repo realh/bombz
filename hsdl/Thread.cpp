@@ -29,7 +29,7 @@
 
 #include "hsdl/Thread.h"
 
-#include "hsdl/Exception.h"
+#include "hsdl/Types.h"
 
 namespace hsdl {
 

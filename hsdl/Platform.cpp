@@ -27,7 +27,7 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "hsdl/Exception.h"
+#include "hsdl/Types.h"
 #include "hsdl/Font.h"
 #include "hsdl/Image.h"
 #include "hsdl/Log.h"

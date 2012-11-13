@@ -38,7 +38,7 @@
 #include "hgame/TapEvent.h"
 
 #include "hsdl/Application.h"
-#include "hsdl/Exception.h"
+#include "hsdl/Types.h"
 #include "hsdl/Log.h"
 #include "hsdl/Platform.h"
 #include "hsdl/Thread.h"

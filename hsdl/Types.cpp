@@ -27,29 +27,34 @@
 
 // HGame - a simple cross-platform game framework
 
-// Exception.h: Exception caused by SDL error
-
-#ifndef HSDL_EXCEPTION_H
-#define HSDL_EXCEPTION_H
-
-#include "config.h"
+#include "hsdl/Types.h"
 
 #include <cstdarg>
+#include <cstdlib>
+#include <cstring>
 
-#include "hgame/Types.h"
+#include "SDL_error.h"
 
 namespace hsdl {
 
-class Exception : public hgame::Throwable {
-public:
-    const char *getClassName() const throw();
+using namespace std;
 
-    Exception(const char *file, int line, const char *func,
-            const char *desc, ...)
-            throw()
-            H_GNUC_PRINTF(5, 6);
-};
-
+const char *Exception::getClassName() const throw()
+{
+    return "hsdl::Exception";
 }
 
-#endif // HSDL_EXCEPTION_H
+Exception::Exception(const char *file, int line, const char *func,
+            const char *desc, ...) throw()
+{
+    va_list(ap);
+    va_start(ap, desc);
+    char *usrmsg;
+    vasprintf(&usrmsg, desc, ap);
+    va_end(ap);
+    asprintf(&mRepr, "'%s': %s in %s at %d of %s",
+            SDL_GetError(), usrmsg, func, line, file);
+    free(usrmsg);
+}
+
+}

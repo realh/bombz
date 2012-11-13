@@ -27,34 +27,39 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "hsdl/Exception.h"
+// Types.h: Types specific to SDL implementation
+
+#ifndef HSDL_TYPES_H
+#define HSDL_TYPES_H
+
+#include "config.h"
 
 #include <cstdarg>
-#include <cstdlib>
-#include <cstring>
 
-#include "SDL_error.h"
+#include "hgame/Types.h"
 
 namespace hsdl {
 
-using namespace std;
+class Exception : public hgame::Throwable {
+public:
+    const char *getClassName() const throw();
 
-const char *Exception::getClassName() const throw()
-{
-    return "hsdl::Exception";
+    Exception(const char *file, int line, const char *func,
+            const char *desc, ...)
+            throw()
+            H_GNUC_PRINTF(5, 6);
+};
+
+// A comparator so const char * can be used as map keys
+// without overhead of string
+class CompStrKey {
+public:
+    bool operator()(const char *k1, const char *k2) const
+    {
+        return std::strcmp(k1 ? k1 : "", k2 ? k2: "") < 0;
+    }
+};
+
 }
 
-Exception::Exception(const char *file, int line, const char *func,
-            const char *desc, ...) throw()
-{
-    va_list(ap);
-    va_start(ap, desc);
-    char *usrmsg;
-    vasprintf(&usrmsg, desc, ap);
-    va_end(ap);
-    asprintf(&mRepr, "'%s': %s in %s at %d of %s",
-            SDL_GetError(), usrmsg, func, line, file);
-    free(usrmsg);
-}
-
-}
+#endif // HSDL_TYPES_H
