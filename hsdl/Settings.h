@@ -27,51 +27,57 @@
 
 // HGame - a simple cross-platform game framework
 
-// Settings.h: Key-value based settings for user prefs and game state
+// Settings.h: Key-value based settings for user prefs and game state (SDL)
 
-#ifndef HGAME_SETTINGS_H
-#define HGAME_SETTINGS_H
+#ifndef HSDL_SETTINGS_H
+#define HSDL_SETTINGS_H
 
 #include "config.h"
 
-namespace hgame {
+#include <map>
+#include <string>
 
-class Settings {
-    // d parameter of set() is default value
+#include "hgame/Settings.h"
+
+class hgame::Platform;
+
+namespace hsdl {
+
+class Settings : public hgame::Settings {
+private:
+    std::map<std::string, std::string> mHash;
+    char *mFilename;
 public:
-    virtual ~Settings();
+    Settings(hgame::Platform *plat,
+            const char *owner, const char *domain, const char *appname);
 
-    virtual void set(const char *k, const char *v) = 0;
+    ~Settings();
 
-    // Note result may be overwritten on subsequent calls
-    virtual const char *get(const char *k, const char *d) = 0;
+    void set(const char *k, const char *v);
 
-    virtual void set(const char *k, int v) = 0;
+    const char *get(const char *k, const char *d);
 
-    virtual int get(const char *k, int d) = 0;
+    void set(const char *k, int v);
 
-    inline void set(const char *k, bool v)
+    int get(const char *k, int d);
+
+    void set(const char *k, float v);
+
+    float get(const char *k, float d);
+
+    void enableEditing();
+
+    void commit();
+private:
+    // So that public set methods can act efficiently
+    inline void set(std::string &k, std::string &v)
     {
-        set(k, int(v));
+        mHash[k] = v;
     }
 
-    inline bool get(const char *k, bool d)
-    {
-        return bool(get(k, int(d)));
-    }
-
-    virtual void set(const char *k, float v) = 0;
-
-    virtual float get(const char *k, float d) = 0;
-
-    // On some platforms this is necessary before calling set*()
-    virtual void enableEditing() = 0;
-
-    // Saves settings to storage
-    // Also undoes enableEditing() where appropriate
-    virtual void commit();
+    std::string &get(std::string &k, std::string &d);
 };
 
 }
 
-#endif // HGAME_SETTINGS_H
+#endif // HSDL_SETTINGS_H

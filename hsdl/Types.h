@@ -35,6 +35,7 @@
 #include "config.h"
 
 #include <cstdarg>
+#include <cstring>
 
 #include "hgame/Types.h"
 

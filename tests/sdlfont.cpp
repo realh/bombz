@@ -1,7 +1,7 @@
 #include "config.h"
 #include "hsdl/Application.h"
-#include "hsdl/Exception.h"
 #include "hsdl/Image.h"
+#include "hsdl/Types.h"
 
 #include <cstdio>
 #include <cstdlib>
