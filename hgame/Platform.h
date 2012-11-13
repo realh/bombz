@@ -46,6 +46,8 @@
 
 namespace hgame {
 
+class Settings;
+
 class DirectoryListing {
 public:
     virtual ~DirectoryListing();
@@ -58,7 +60,6 @@ protected:
     // Must be initialised by derived constructor
     Translate *mTranslate;
 public:
-    // Yuck
     Platform() : mTranslate(0) {}
 
     enum PlatformType {
@@ -131,6 +132,9 @@ public:
     {
         return (*mTranslate)(tag);
     }
+
+    virtual Settings *createSettings(const char *owner, const char *domain,
+            const char *appname) = 0;
 };
 
 }

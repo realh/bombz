@@ -69,7 +69,7 @@ public:
 
     // Saves settings to storage
     // Also undoes enableEditing() where appropriate
-    virtual void commit();
+    virtual void commit() = 0;
 };
 
 }

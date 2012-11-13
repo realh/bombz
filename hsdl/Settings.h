@@ -37,9 +37,8 @@
 #include <map>
 #include <string>
 
+#include "hgame/Platform.h"
 #include "hgame/Settings.h"
-
-class hgame::Platform;
 
 namespace hsdl {
 
@@ -69,13 +68,11 @@ public:
 
     void commit();
 private:
-    // So that public set methods can act efficiently
-    inline void set(std::string &k, std::string &v)
-    {
-        mHash[k] = v;
-    }
+    template<class T>
+    void set(const char *k, T v);
 
-    std::string &get(std::string &k, std::string &d);
+    template<class T>
+    T get(const char *k, T d);
 };
 
 }

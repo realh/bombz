@@ -32,6 +32,7 @@
 #include "hsdl/Image.h"
 #include "hsdl/Log.h"
 #include "hsdl/Platform.h"
+#include "hsdl/Settings.h"
 #include "hsdl/Translate.h"
 
 #include <cerrno>
@@ -240,6 +241,12 @@ void Platform::mkdirWithParents(const char *dir)
 hgame::Log *Platform::createLog(const char *name, hgame::Log::Level priority)
 {
     return new Log(name, priority);
+}
+
+hgame::Settings *Platform::createSettings(const char *owner, const char *domain,
+        const char *appname)
+{
+    return new Settings(this, owner, domain, appname);
 }
 
 }

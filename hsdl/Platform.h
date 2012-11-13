@@ -72,6 +72,9 @@ public:
     hgame::Log *createLog(const char *name,
             hgame::Log::Level priority = hgame::Log::VERBOSE);
 
+    hgame::Settings *createSettings(const char *owner, const char *domain,
+            const char *appname);
+
 protected:
     hgame::Log &mLog;
 

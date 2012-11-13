@@ -33,6 +33,7 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 #include "hgame/Platform.h"
 
@@ -54,7 +55,11 @@ Settings::Settings(hgame::Platform *plat,
         {
             size_t colon = line.find(':');
             if (colon)
-                set(line.substr(0, colon), line.substr(colon + 1));
+            {
+                string k = line.substr(0, colon);
+                string v = line.substr(colon + 1);
+                mHash[k] = v;
+            }
         }
     }
 }
@@ -64,44 +69,56 @@ Settings::~Settings()
     free(mFilename);
 }
 
+template<class T>
+void Settings::set(const char *k, T v)
+{
+    ostringstream ss;
+    ss << v;
+    mHash[string(k)] = ss.str();
+}
+
+template<class T>
+T Settings::get(const char *k, T d)
+{
+    map<string, string>::iterator it = mHash.find(string(k));
+    if (it == mHash.end())
+    {
+        return d;
+    }
+    istringstream ss(it->second);
+    T result;
+    ss >> result;
+    return result;
+}
+
 void Settings::set(const char *k, const char *v)
 {
-    set(string(k), string(v));
+    set<const char *>(k, v);
 }
 
 const char *Settings::get(const char *k, const char *d)
 {
-    return get(string(k), string(d)).c_str();
+    return get<string>(k, d).c_str();
 }
 
 void Settings::set(const char *k, int v)
 {
-    string s << v;
-    set(string(k), s);
+    set<int>(k, v);
 }
 
 int Settings::get(const char *k, int d)
 {
-    string s << d;
-    int result;
-    s = get(string(k), s);
-    s >> result;
-    return result;
+    return get<int>(k, d);
 }
 
 void Settings::set(const char *k, float v)
 {
-    string s << v;
-    set(string(k), s);
+    set<float>(k, v);
 }
 
 float Settings::get(const char *k, float d)
 {
-    string s << d;
-    float result;
-    s = get(string(k), s);
-    s >> result;
-    return result;
+    return get<float>(k, d);
 }
 
 void Settings::enableEditing()
@@ -115,21 +132,11 @@ void Settings::commit()
     {
         THROW(hgame::ErrnoException, "Unable to commit settings");
     }
-    mHash.iterator it;
+    map<string, string>::iterator it;
     for (it = mHash.begin(); it != mHash.end(); ++it)
     {
         f << it->first << ':' << it->second << endl;
     }
-}
-
-string &Settings::get(string &k, string &d)
-{
-    mHash.iterator it = mHash.find(k);
-    if (it == mHash.end)
-    {
-        return d;
-    }
-    return *it;
 }
 
 }
