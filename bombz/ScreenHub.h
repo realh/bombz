@@ -42,6 +42,7 @@
 #include "hgame/TextureRegion.h"
 
 #include "bombz/Level.h"
+#include "bombz/Settings.h"
 
 namespace bombz {
 
@@ -69,6 +70,7 @@ private:
     int mLeftMargin, mTopMargin;
     int mVpWidth, mVpHeight;
     bool mWantLogo;
+    Settings *mSettings;
 public:
     ScreenHub(hgame::Application *app);
 
@@ -136,6 +138,11 @@ public:
     inline void setWantLogo(bool want = true)
     {
         mWantLogo = want;
+    }
+
+    inline Settings *getSettings()
+    {
+        return mSettings;
     }
 private:
     inline void setRcViewport(hgame::RenderContext *rc)
