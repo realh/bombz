@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <vector>
 
+#include "bombz/GameScreen.h"
 #include "bombz/ScreenHub.h"
 #include "bombz/MainMenuScreen.h"
 
@@ -54,7 +55,7 @@ ScreenHub::ScreenHub(hgame::Application *app) :
         mLevel(new Level(this, app->createLog("Bombz level"))),
         mRcIndex(-1),
         mMainMenuScrn(0),
-        mWantLogo(false), mWantAlpha(false),
+        mWantLogo(false),
         mSettings(new Settings(app->getPlatform()->createSettings(
                 "realh", "realh.co.uk", "Bombz")))
 {
@@ -69,9 +70,9 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
 {
     if (rc->getIndex() != mRcIndex)
     {
-        hgame::Platform *platform = mApplication->getPlatform();
         mScreenTileSize = rc->calculateTileSize(Level::kWidth, Level::kHeight);
-        mSrcTileSize = platform->getBestPNGMatch(mScreenTileSize);
+        mSrcTileSize =
+                mApplication->getPlatform()->getBestPNGMatch(mScreenTileSize);
         mLog.d("Using source tile size %d", mSrcTileSize);
         mVpWidth = mSrcTileSize * Level::kWidth;
         mVpHeight = mSrcTileSize * Level::kHeight;
@@ -83,11 +84,8 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
         delete mTileAtlas;
         mTileAtlas = 0;
         rc->setNeedScaling(mSrcTileSize != mScreenTileSize);
-        hgame::Image *img = platform->loadPNG("tile_atlas.png", mSrcTileSize);
-        mTileAtlas = rc->uploadTexture(img);
-        delete img;
-        if (mWantAlpha)
-            loadAlpha(rc);
+        loadTiles(rc);
+        loadAlpha(rc);
         if (mWantLogo)
             loadLogo(rc);
         mLevel->deleteRendering(rc);
@@ -101,23 +99,46 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
 
 void ScreenHub::deleteRendering(hgame::RenderContext *rc)
 {
-    mLevel->deleteRendering(rc);
-    deleteAlpha();
-    delete mTileAtlas;
-    mTileAtlas = 0;
-    deleteLogo();
-    mRcIndex = -1;
     if (mMainMenuScrn)
         mMainMenuScrn->freeRendering(rc);
+    mLevel->deleteRendering(rc);
+    deleteTiles();
+    deleteAlpha();
+    deleteLogo();
+    mRcIndex = -1;
 }
 
 void ScreenHub::replaceRenderingScreen(hgame::RenderContext *rc)
 {
     (void) rc;
-    if (!mWantAlpha)
-        deleteAlpha();
     if (!mWantLogo)
         deleteLogo();
+}
+
+void ScreenHub::loadTiles(hgame::RenderContext *rc)
+{
+    hgame::Image *img = getPlatform()->loadPNG("tile_atlas.png", mSrcTileSize);
+    mTileAtlas = rc->uploadTexture(img);
+    delete img;
+}
+
+void ScreenHub::deleteTiles()
+{
+    delete mTileAtlas;
+    mTileAtlas = 0;
+}
+
+void ScreenHub::loadAlpha(hgame::RenderContext *rc)
+{
+    hgame::Image *img = getPlatform()->loadPNG("alpha_atlas.png", mSrcTileSize);
+    mAlphaAtlas = rc->uploadTexture(img);
+    delete img;
+}
+
+void ScreenHub::deleteAlpha()
+{
+    delete mAlphaAtlas;
+    mAlphaAtlas = 0;
 }
 
 void ScreenHub::loadLogo(hgame::RenderContext *rc)
@@ -141,19 +162,6 @@ void ScreenHub::deleteLogo()
     mLogoRegion = 0;
     delete mLogoAtlas;
     mLogoAtlas = 0;
-}
-
-void ScreenHub::loadAlpha(hgame::RenderContext *rc)
-{
-    hgame::Image *img = getPlatform()->loadPNG("alpha_atlas.png", mSrcTileSize);
-    mAlphaAtlas = rc->uploadTexture(img);
-    delete img;
-}
-
-void ScreenHub::deleteAlpha()
-{
-    delete mAlphaAtlas;
-    mAlphaAtlas = 0;
 }
 
 int *ScreenHub::getBestModes()
@@ -187,6 +195,23 @@ int *ScreenHub::getBestModes()
 void ScreenHub::createMainMenuScreen()
 {
     mMainMenuScrn = new MainMenuScreen(this);
+}
+
+void ScreenHub::createGameScreen()
+{
+    mGameScrn = new GameScreen(this);
+}
+
+void ScreenHub::deleteMainMenuScreen()
+{
+    delete mMainMenuScrn;
+    mMainMenuScrn = 0;
+}
+
+void ScreenHub::deleteGameScreen()
+{
+    delete mGameScrn;
+    mGameScrn = 0;
 }
 
 }

@@ -29,7 +29,9 @@
 
 #include "config.h"
 
+#include "bombz/GameScreen.h"
 #include "bombz/MainMenuScreen.h"
+#include "bombz/ScreenHub.h"
 
 namespace bombz {
 
@@ -41,6 +43,8 @@ bool MainMenuScreen::TapListener::onTapEvent(hgame::TapEvent *e)
 
 bool MainMenuScreen::onPlayTapped()
 {
+    mApplication->setScreen(mHub->getGameScreen());
+    mHub->deleteMainMenuScreen();
     return true;
 }
 

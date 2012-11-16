@@ -46,6 +46,7 @@
 
 namespace bombz {
 
+class GameScreen;
 class MenuScreen;
 
 class ScreenHub {
@@ -67,9 +68,10 @@ private:
     Level *mLevel;
     int mRcIndex;
     MenuScreen *mMainMenuScrn;
+    GameScreen *mGameScrn;
     int mLeftMargin, mTopMargin;
     int mVpWidth, mVpHeight;
-    bool mWantLogo, mWantAlpha;
+    bool mWantLogo;
     Settings *mSettings;
 public:
     ScreenHub(hgame::Application *app);
@@ -136,16 +138,21 @@ public:
         return mMainMenuScrn;
     }
 
+    inline GameScreen *getGameScreen()
+    {
+        if (!mGameScrn)
+            createGameScreen();
+        return mGameScrn;
+    }
+
+    void deleteMainMenuScreen();
+
+    void deleteGameScreen();
+
     // Call immediately before initRendering or replaceClientRendering
     inline void setWantLogo(bool want = true)
     {
         mWantLogo = want;
-    }
-
-    // Call immediately before initRendering or replaceClientRendering
-    inline void setWantAlpha(bool want = true)
-    {
-        mWantAlpha = want;
     }
 
     inline Settings *getSettings()
@@ -158,15 +165,21 @@ private:
         rc->setViewport2D(mLeftMargin, mTopMargin, mVpWidth, mVpHeight);
     }
 
-    void loadLogo(hgame::RenderContext *rc);
+    void loadTiles(hgame::RenderContext *rc);
 
-    void deleteLogo();
+    void deleteTiles();
 
     void loadAlpha(hgame::RenderContext *rc);
 
     void deleteAlpha();
 
+    void loadLogo(hgame::RenderContext *rc);
+
+    void deleteLogo();
+
     void createMainMenuScreen();
+
+    void createGameScreen();
 };
 
 }

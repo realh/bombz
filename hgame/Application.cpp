@@ -119,7 +119,7 @@ void Application::requestRenderWhileLocked(bool block)
     }
 }
 
-void Application::setScreen(Screen *new_scrn, bool del)
+void Application::setScreen(Screen *new_scrn)
 {
     mRenderingCond->lock();
     bool old_scrn = mScreen != 0;
@@ -129,8 +129,6 @@ void Application::setScreen(Screen *new_scrn, bool del)
         rs = mScreen->getRenderState();
         mScreen->requestRenderState(Screen::RENDER_STATE_REPLACE_SCREEN);
         requestRenderWhileLocked(true);
-        if (del)
-            delete mScreen;
     }
     mScreen = new_scrn;
     if (old_scrn)

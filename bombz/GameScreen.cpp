@@ -61,7 +61,6 @@ void GameScreen::render(hgame::RenderContext *rc)
 
 void GameScreen::initRendering(hgame::RenderContext *rc)
 {
-    mHub->setWantAlpha(true);
     mHub->initRendering(rc);
 }
 
