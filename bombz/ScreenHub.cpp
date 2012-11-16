@@ -55,6 +55,7 @@ ScreenHub::ScreenHub(hgame::Application *app) :
         mLevel(new Level(this, app->createLog("Bombz level"))),
         mRcIndex(-1),
         mMainMenuScrn(0),
+        mGameScrn(0),
         mWantLogo(false),
         mSettings(new Settings(app->getPlatform()->createSettings(
                 "realh", "realh.co.uk", "Bombz")))
