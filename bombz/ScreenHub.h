@@ -69,7 +69,7 @@ private:
     MenuScreen *mMainMenuScrn;
     int mLeftMargin, mTopMargin;
     int mVpWidth, mVpHeight;
-    bool mWantLogo;
+    bool mWantLogo, mWantAlpha;
     Settings *mSettings;
 public:
     ScreenHub(hgame::Application *app);
@@ -79,6 +79,8 @@ public:
     void initRendering(hgame::RenderContext *rc);
 
     void deleteRendering(hgame::RenderContext *rc);
+
+    void replaceRenderingScreen(hgame::RenderContext *rc);
 
     int *getBestModes();
 
@@ -153,6 +155,10 @@ private:
     void loadLogo(hgame::RenderContext *rc);
 
     void deleteLogo();
+
+    void loadAlpha(hgame::RenderContext *rc);
+
+    void deleteAlpha();
 
     void createMainMenuScreen();
 };

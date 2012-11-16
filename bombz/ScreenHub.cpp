@@ -54,7 +54,7 @@ ScreenHub::ScreenHub(hgame::Application *app) :
         mLevel(new Level(this, app->createLog("Bombz level"))),
         mRcIndex(-1),
         mMainMenuScrn(0),
-        mWantLogo(false),
+        mWantLogo(false), mWantAlpha(false),
         mSettings(new Settings(app->getPlatform()->createSettings(
                 "realh", "realh.co.uk", "Bombz")))
 {
@@ -79,17 +79,15 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
         mLeftMargin = (rc->getWidth() - mVpWidth) / 2;
         mTopMargin = (rc->getHeight() - mVpHeight) / 2;
         deleteLogo();
+        deleteAlpha();
         delete mTileAtlas;
         mTileAtlas = 0;
-        delete mAlphaAtlas;
-        mAlphaAtlas = 0;
         rc->setNeedScaling(mSrcTileSize != mScreenTileSize);
         hgame::Image *img = platform->loadPNG("tile_atlas.png", mSrcTileSize);
         mTileAtlas = rc->uploadTexture(img);
         delete img;
-        img = platform->loadPNG("alpha_atlas.png", mSrcTileSize);
-        mAlphaAtlas = rc->uploadTexture(img);
-        delete img;
+        if (mWantAlpha)
+            loadAlpha(rc);
         if (mWantLogo)
             loadLogo(rc);
         mLevel->deleteRendering(rc);
@@ -104,14 +102,22 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
 void ScreenHub::deleteRendering(hgame::RenderContext *rc)
 {
     mLevel->deleteRendering(rc);
-    delete mAlphaAtlas;
-    mAlphaAtlas = 0;
+    deleteAlpha();
     delete mTileAtlas;
     mTileAtlas = 0;
     deleteLogo();
     mRcIndex = -1;
     if (mMainMenuScrn)
         mMainMenuScrn->freeRendering(rc);
+}
+
+void ScreenHub::replaceRenderingScreen(hgame::RenderContext *rc)
+{
+    (void) rc;
+    if (!mWantAlpha)
+        deleteAlpha();
+    if (!mWantLogo)
+        deleteLogo();
 }
 
 void ScreenHub::loadLogo(hgame::RenderContext *rc)
@@ -135,6 +141,19 @@ void ScreenHub::deleteLogo()
     mLogoRegion = 0;
     delete mLogoAtlas;
     mLogoAtlas = 0;
+}
+
+void ScreenHub::loadAlpha(hgame::RenderContext *rc)
+{
+    hgame::Image *img = getPlatform()->loadPNG("alpha_atlas.png", mSrcTileSize);
+    mAlphaAtlas = rc->uploadTexture(img);
+    delete img;
+}
+
+void ScreenHub::deleteAlpha()
+{
+    delete mAlphaAtlas;
+    mAlphaAtlas = 0;
 }
 
 int *ScreenHub::getBestModes()

@@ -104,8 +104,7 @@ void MenuScreen::freeRendering(hgame::RenderContext *rc)
 
 void MenuScreen::replaceRenderingScreen(hgame::RenderContext *rc)
 {
-    (void) rc;
-    // Will be used to switch between screens
+    mHub->replaceRenderingScreen(rc);
 }
 
 void MenuScreen::addTextWidget(const char *t, float x, float y,
