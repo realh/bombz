@@ -29,6 +29,7 @@
 
 #include "bombz/Level.h"
 
+#include <cstdio>
 #include <cstdlib>
 
 #include "bombz/ScreenHub.h"
@@ -180,6 +181,16 @@ hgame::TextureRegion *Level::createRegion(int x, int y)
 hgame::TextureRegion *Level::createRegion(int n)
 {
     return createRegion(n % kAtlasColumns, n / kAtlasColumns);
+}
+
+void Level::loadByNumber(int n)
+{
+    char *leafname;
+    hgame::Platform *plat = mHub->getPlatform();
+    asprintf(&leafname, "levels%c%02d", plat->getDirectorySeparator(), n);
+    char *txt = plat->loadText(leafname);
+    loadFromText(txt);
+    delete[] txt;
 }
 
 void Level::loadFromText(const char *text)

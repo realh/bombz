@@ -114,6 +114,8 @@ public:
     void reset(bool with_frame = true);
 
     void loadFromText(const char *text);
+
+    void loadByNumber(int n);
 private:
     hgame::TextureRegion *createRegion(int x, int y);
 

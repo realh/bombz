@@ -136,10 +136,16 @@ public:
         return mMainMenuScrn;
     }
 
-    // Call immediately before initRendering
+    // Call immediately before initRendering or replaceClientRendering
     inline void setWantLogo(bool want = true)
     {
         mWantLogo = want;
+    }
+
+    // Call immediately before initRendering or replaceClientRendering
+    inline void setWantAlpha(bool want = true)
+    {
+        mWantAlpha = want;
     }
 
     inline Settings *getSettings()
