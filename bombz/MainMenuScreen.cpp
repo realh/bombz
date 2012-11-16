@@ -43,6 +43,7 @@ bool MainMenuScreen::TapListener::onTapEvent(hgame::TapEvent *e)
 
 bool MainMenuScreen::onPlayTapped()
 {
+    mHub->setWantLogo(false);
     mApplication->setScreen(mHub->getGameScreen());
     mHub->deleteMainMenuScreen();
     return true;
