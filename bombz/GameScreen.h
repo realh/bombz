@@ -36,6 +36,8 @@
 
 #include "hgame/Screen.h"
 
+#include "bombz/Pusher.h"
+
 namespace bombz {
 
 class Level;
@@ -44,6 +46,7 @@ class ScreenHub;
 class GameScreen : public hgame::Screen {
 private:
     Level *mLevel;
+    Pusher *mPusher;
     ScreenHub *mHub;
 public:
     GameScreen(ScreenHub *hub);

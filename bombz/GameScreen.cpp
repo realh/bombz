@@ -38,14 +38,17 @@ namespace bombz {
 GameScreen::GameScreen(ScreenHub *hub) :
         hgame::Screen(hub->getApplication(), "Bombz game"),
         mLevel(hub->getLevel()),
+        mPusher(new Pusher(hub, hub->getPlatform()->createLog("Bombz pusher"))),
         mHub(hub)
 {
     Settings *settings = mHub->getSettings();
     mLevel->loadByNumber(settings->getLastLevel() + 1);
+    mPusher->reset();
 }
 
 GameScreen::~GameScreen()
 {
+    delete mPusher;
 }
 
 void GameScreen::render(hgame::RenderContext *rc)
@@ -53,15 +56,18 @@ void GameScreen::render(hgame::RenderContext *rc)
     rc->enableBlend(false);
     rc->bindTexture(mHub->getTileAtlas());
     mHub->getLevel()->render(rc);
+    // Rendering level already enables blending and binds alpha
     /*
     rc->enableBlend(true);
     rc->bindTexture(mHub->getAlphaAtlas());
     */
+    mPusher->render(rc);
 }
 
 void GameScreen::initRendering(hgame::RenderContext *rc)
 {
     mHub->initRendering(rc);
+    mPusher->initRendering(rc);
 }
 
 void GameScreen::deleteRendering(hgame::RenderContext *rc)
@@ -71,6 +77,7 @@ void GameScreen::deleteRendering(hgame::RenderContext *rc)
 
 void GameScreen::freeRendering(hgame::RenderContext *rc)
 {
+    mPusher->deleteRendering(rc);
 }
 
 void GameScreen::replaceRenderingScreen(hgame::RenderContext *rc)
