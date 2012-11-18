@@ -27,30 +27,22 @@
 
 // HGame - a simple cross-platform game framework
 
-// Controls.h: Abstract base class for reading state of controller
+// KeyControls.h: Reads state of control keys in SDL
 
-#ifndef HGAME_CONTROLS_H
-#define HGAME_CONTROLS_H
+#ifndef HSDL_KEY_CONTROLS_H
+#define HSDL_KEY_CONTROLS_H
 
 #include "config.h"
 
-namespace hgame {
+#include "hgame/Controls.h"
 
-class Controls {
+namespace hsdl {
+
+class KeyControls : public hgame::Controls {
 public:
-    // This is a bitmask
-    enum Keys {
-        NONE = 0,
-        LEFT = 1,
-        RIGHT = 2,
-        UP = 4,
-        DOWN = 8
-    };
-
-    virtual Keys getControlsState() = 0;
-
+    Keys getControlsState();
 };
 
 }
 
-#endif // HGAME_CONTROLS_H
+#endif // HSDL_KEY_CONTROLS_H

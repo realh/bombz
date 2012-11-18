@@ -46,7 +46,8 @@ Application::Application(Platform *platform, const char *log_name,
         mThreadFactory(thread_fact), mScreen(0),
         mRenderingCond(createCond()),
         mRenderBlocking(false), mRenderLooping(false), mRenderWaiting(false),
-        mEvQueue(thread_fact)
+        mEvQueue(thread_fact),
+        mControls(0)
 {
 }
 
