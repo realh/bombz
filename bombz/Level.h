@@ -116,6 +116,16 @@ public:
     void loadFromText(const char *text);
 
     void loadByNumber(int n);
+
+    inline int getStartX() const
+    {
+        return mStartX;
+    }
+
+    inline int getStartY() const
+    {
+        return mStartY;
+    }
 private:
     hgame::TextureRegion *createRegion(int x, int y);
 

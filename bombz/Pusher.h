@@ -25,48 +25,57 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// HGame - a simple cross-platform game framework
+// Bombz - 2D puzzle game
 
-// Sprite: A textured quadrilateral
+// Pusher.h: Manages the main character
 
-#ifndef HGAME_SPRITE_H
-#define HGAME_SPRITE_H
+#ifndef BOMBZ_PUSHER_H
+#define BOMBZ_PUSHER_H
 
 #include "config.h"
 
+#include "hgame/Log.h"
 #include "hgame/RenderContext.h"
+#include "hgame/Renderer.h"
+#include "hgame/Sprite.h"
 #include "hgame/TextureRegion.h"
 
-namespace hgame {
+namespace bombz {
 
-class Sprite {
-protected:
-    TextureRegion *mTexture;
-    int mW, mH;             // size
+class Level;
+class ScreenHub;
+
+// Must be created after level
+class Pusher : public hgame::Renderer {
+private:
+    enum Direction { LEFT, RIGHT, UP, DOWN };
+
+    int mTileX, mTileY;
+    int mInterX, mInterY;
+    Direction mDirection;
+
+    int mScreenTileSize;
+    int mSrcTileSize;
+
+    hgame::TextureRegion *mTextures[4];     // Left, right, up, down
+    hgame::Sprite *mSprite;
+
+    ScreenHub *mHub;
+    Level *mLevel;
+
+    hgame::Log &mLog;
 public:
-    // All dimensions are in viewport space
-    Sprite(TextureRegion *texture, int width, int height) :
-            mTexture(texture), mW(width), mH(height)
-            {}
-    virtual ~Sprite();
+    Pusher(ScreenHub *hub, hgame::Log *log);
 
-    virtual void setPosition(int x, int y) = 0;
+    void reset();
 
-    // Calling function must set everything up first, including
-    // binding the texture if necessary
-    virtual void render(RenderContext *rc) = 0;
+    void initRendering(hgame::RenderContext *rc);
 
-    inline void bind(RenderContext *rc)
-    {
-        rc->bindTexture(mTexture->getAtlas());
-    }
+    void deleteRendering(hgame::RenderContext *rc);
 
-    inline void setTexture(TextureRegion *tex)
-    {
-        mTexture = tex;
-    }
+    void render(hgame::RenderContext *rc);
 };
 
 }
 
-#endif // HGAME_SPRITE_H
+#endif // BOMBZ_PUSHER_H

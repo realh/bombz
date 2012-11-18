@@ -34,8 +34,6 @@
 
 #include "bombz/ScreenHub.h"
 
-#include "hsdl/GLTextureRegion.h"
-
 namespace bombz {
 
 Level::Level(ScreenHub *hub, hgame::Log *log) :
@@ -80,7 +78,7 @@ void Level::initRendering(hgame::RenderContext *rc)
     {
         mTileRegions[n] = createRegion(((m & 4) == 0) ? BOMB2 : BLANK);
     }
-    mExplo00Region = mAlphaAtlas->createRegion(1, 1,
+    mExplo00Region = mAlphaAtlas->createRegion(0, 0,
             mSrcTileSize * 3, mSrcTileSize * 3);
     mExplo00Sprite = rc->createSprite(mExplo00Region,
             mScreenTileSize * 3, mScreenTileSize * 3);
@@ -120,6 +118,7 @@ void Level::render(hgame::RenderContext *rc)
     }
     rc->bindTexture(mTileAtlas);
     mTileBatcher->render(rc);
+    rc->enableBlend(true);
     rc->bindTexture(mAlphaAtlas);
     for (n = 0, y = 0; y < kHeight; ++y)
     {
@@ -168,6 +167,7 @@ void Level::resetVars()
 {
     mnBombs = 0;
     mBombActivity = false;
+    mLog.v("Level::resetVars (%p)", this);
     mStartX = mStartY = 0;
     mTimeLimit = 180;
 }
