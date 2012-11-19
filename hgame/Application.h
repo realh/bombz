@@ -34,6 +34,7 @@
 
 #include "config.h"
 
+#include "hgame/Controls.h"
 #include "hgame/Event.h"
 #include "hgame/Log.h"
 #include "hgame/Platform.h"
@@ -70,6 +71,7 @@ protected:
     volatile bool mRenderWaiting;
     volatile bool mTapEventsEnabled;
     EventQueue mEvQueue;
+    Controls *mControls;
 public:
     inline RenderContext *getRenderContext() { return mRenderContext; }
 
@@ -151,6 +153,15 @@ public:
         return mTapEventsEnabled;
     }
 
+    inline Controls *getControls()
+    {
+        return mControls;
+    }
+
+    inline Controls::Keys getControlsState()
+    {
+        return mControls->getControlsState();
+    }
 protected:
     // Allows stop() to do the same as requestRender() without an unsafe
     // extra unlock/lock. Mutex is still locked on exit from this method.

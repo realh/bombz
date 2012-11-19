@@ -64,6 +64,7 @@ void Pusher::initRendering(hgame::RenderContext *rc)
 
 void Pusher::deleteRendering(hgame::RenderContext *rc)
 {
+    (void) rc;
     delete mSprite;
     for (int n = 0; n < 4; ++n)
     {

@@ -38,10 +38,12 @@
 #include "hgame/TapEvent.h"
 
 #include "hsdl/Application.h"
-#include "hsdl/Types.h"
+#include "hsdl/KeyControls.h"
 #include "hsdl/Log.h"
 #include "hsdl/Platform.h"
 #include "hsdl/Thread.h"
+#include "hsdl/Types.h"
+
 #if ENABLE_OPENGL == 1
 #include "hsdl/GLRenderContext.h"
 #else
@@ -150,6 +152,7 @@ Application::Application(int argc, char **argv) :
         mEventRunnable(this),
         mEventThread(0)
 {
+    mControls = new KeyControls();
     hgame::Event::setPool(new hgame::EventPool(mThreadFactory));
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
         THROW(Exception, "Init failed");
