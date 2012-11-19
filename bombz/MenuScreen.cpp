@@ -38,7 +38,7 @@ namespace bombz {
 MenuScreen::MenuScreen(ScreenHub *hub, const char *name) :
         hgame::Screen(hub->getApplication(), name),
         mWidgetGroup(0),
-        mHub(hub)
+        mHub(hub), mQuit(false)
 {
     mHub->getLevel()->reset(true);
 }
@@ -120,11 +120,10 @@ int *MenuScreen::getBestModes()
 
 int MenuScreen::run()
 {
-    bool quit = false;
     mApplication->setTapEventsEnabled(true);
     requestRenderState(hgame::RendererWithState::RENDER_STATE_RENDERING);
     mApplication->requestRender(true);
-    while (!quit)
+    while (!mQuit)
     {
         hgame::Event *event = mApplication->getNextEvent();
         if (event->getType() == hgame::EVENT_TAP && mWidgetGroup)
@@ -133,7 +132,7 @@ int MenuScreen::run()
         }
         else if (event->getType() == hgame::EVENT_STOP)
         {
-            quit = true;
+            mQuit = true;
         }
     }
     return 0;

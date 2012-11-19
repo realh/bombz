@@ -98,10 +98,15 @@ int GameScreen::run()
     mApplication->requestRender(true);
     while (!quit)
     {
-        hgame::Event *event = mApplication->getNextEvent();
+        hgame::Event *event = mApplication->getNextEvent(kPeriod);
         if (event->getType() == hgame::EVENT_STOP)
         {
             quit = true;
+        }
+        else if (event->getType() == hgame::EVENT_TICK)
+        {
+            if (mPusher->tick())
+                mApplication->requestRender(false);
         }
     }
     return 0;

@@ -44,6 +44,8 @@ class Level;
 class ScreenHub;
 
 class GameScreen : public hgame::Screen {
+public:
+    static const int kPeriod = 1000 / 50;
 private:
     Level *mLevel;
     Pusher *mPusher;

@@ -64,6 +64,7 @@ private:
     std::list<TextWidget> mTextWidgets;
 protected:
     ScreenHub *mHub;
+    bool mQuit;
 public:
     MenuScreen(ScreenHub *hub, const char *name);
 

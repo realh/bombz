@@ -96,6 +96,70 @@ void Pusher::reset()
 bool Pusher::tick()
 {
     bool refresh = false;
+    if (!mMoving)
+    {
+        hgame::Controls::Keys keys = mHub->getApplication()->getControlsState();
+        bool left = keys & hgame::Controls::LEFT;
+        bool right = keys & hgame::Controls::RIGHT;
+        bool up = keys & hgame::Controls::UP;
+        bool down = keys & hgame::Controls::DOWN;
+        // 2 opposite directions at once cancel each other out
+        if (left && right)
+        {
+            left = right = false;
+        }
+        if (up && down)
+        {
+            up = down = false;
+        }
+        // If user is pressing horiz & vert simultaneously, alternate based
+        // on previous direction
+        if ((left || right) && (up || down))
+        {
+            if (mDirection == UP || mDirection == DOWN)
+            {
+                if (checkHoriz(left, right))
+                {
+                    up = down = false;
+                }
+                else
+                {
+                    left = right = false;
+                }
+            }
+            else
+            {
+                if (checkVert(up, down))
+                {
+                    left = right = false;
+                }
+                else
+                {
+                    up = down = false;
+                }
+            }
+        }
+        if (left)
+        {
+            mMoving = true;
+            mDirection = LEFT;
+        }
+        else if (right)
+        {
+            mMoving = true;
+            mDirection = RIGHT;
+        }
+        else if (up)
+        {
+            mMoving = true;
+            mDirection = UP;
+        }
+        else if (down)
+        {
+            mMoving = true;
+            mDirection = DOWN;
+        }
+    }
     if (mMoving)
     {
         refresh = true;
@@ -139,10 +203,17 @@ bool Pusher::tick()
                 break;
         }
     }
-    if (!mMoving)
-    {
-    }
+    return refresh;
 }
 
+bool Pusher::checkHoriz(bool left, bool right)
+{
+    return (left && mTileX > 0) || (right && mTileX < Level::kWidth - 1);
+}
+
+bool Pusher::checkVert(bool up, bool down)
+{
+    return (up && mTileY > 0) || (down && mTileY < Level::kHeight - 1);
+}
 
 }

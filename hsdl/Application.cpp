@@ -91,7 +91,9 @@ int ScreenRunnable::runSafely()
     hgame::Screen *scrn;
     while (!mStopped && (scrn = mApplication->getScreen()) != 0)
     {
+        mLog.d("Running screen %p", scrn);
         result = scrn->run();
+        mLog.d("Screen %p exited", scrn);
     }
     return result;
 }
@@ -207,18 +209,16 @@ hgame::Event *Application::getNextEvent(int tick_period_ms)
         return result;
     }
     int timeout = tick_period_ms - (SDL_GetTicks() - mLastTick);
-    if (timeout < 0)
+    if (timeout < 0 || timeout > tick_period_ms)
         timeout = 0;
     result = mEvQueue.getNextEvent(timeout);
     Uint32 now = SDL_GetTicks();
-    if (now - mLastTick >= (Uint32) tick_period_ms)
+    if (!result || (!result->getPriority() &&
+            now - mLastTick >= (Uint32) tick_period_ms))
     {
-        if (!result || !result->getPriority())
-        {
-            mLastTick = now;
-            mSavedEvent = result;
-            return new hgame::TickEvent();
-        }
+        mLastTick = now;
+        mSavedEvent = result;
+        return new hgame::TickEvent();
     }
     return result;
 }
