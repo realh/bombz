@@ -81,11 +81,10 @@ public:
     // Returns true if movement etc requires screen refresh
     bool tick();
 private:
-    // Returns true if should move horizontally
-    bool checkHoriz(bool left, bool right);
-
-    // Returns true if should move vertically
-    bool checkVert(bool up, bool down);
+    // Clear approprate directions depending on whether we can move.
+    // Returns true if we can move.
+    bool checkHoriz(bool *left, bool *right, bool *up, bool *down);
+    bool checkVert(bool *left, bool *right, bool *up, bool *down);
 };
 
 }

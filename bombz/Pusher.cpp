@@ -112,32 +112,17 @@ bool Pusher::tick()
         {
             up = down = false;
         }
-        // If user is pressing horiz & vert simultaneously, alternate based
-        // on previous direction
-        if ((left || right) && (up || down))
+        // In case user is pressing horiz & vert simultaneously,
+        // alternate based on previous direction
+        if (mDirection == UP || mDirection == DOWN)
         {
-            if (mDirection == UP || mDirection == DOWN)
-            {
-                if (checkHoriz(left, right))
-                {
-                    up = down = false;
-                }
-                else
-                {
-                    left = right = false;
-                }
-            }
-            else
-            {
-                if (checkVert(up, down))
-                {
-                    left = right = false;
-                }
-                else
-                {
-                    up = down = false;
-                }
-            }
+            if (!checkHoriz(&left, &right, &up, &down))
+                checkVert(&left, &right, &up, &down);
+        }
+        else
+        {
+            if (!checkVert(&left, &right, &up, &down))
+                checkHoriz(&left, &right, &up, &down);
         }
         if (left)
         {
@@ -206,14 +191,32 @@ bool Pusher::tick()
     return refresh;
 }
 
-bool Pusher::checkHoriz(bool left, bool right)
+bool Pusher::checkHoriz(bool *left, bool *right, bool *up, bool *down)
 {
-    return (left && mTileX > 0) || (right && mTileX < Level::kWidth - 1);
+    if ((*left && mTileX > 0) || (*right && mTileX < Level::kWidth - 1))
+    {
+        *up = *down = false;
+        return true;
+    }
+    else
+    {
+        *left = *right = false;
+    }
+    return false;
 }
 
-bool Pusher::checkVert(bool up, bool down)
+bool Pusher::checkVert(bool *left, bool *right, bool *up, bool *down)
 {
-    return (up && mTileY > 0) || (down && mTileY < Level::kHeight - 1);
+    if ((*up && mTileY > 0) || (*down && mTileY < Level::kHeight - 1))
+    {
+        *left = *right = false;
+        return true;
+    }
+    else
+    {
+        *up = *down = false;
+    }
+    return false;
 }
 
 }
