@@ -48,11 +48,14 @@ class ScreenHub;
 // Must be created after level
 class Pusher : public hgame::Renderer {
 private:
+    static const int kStepsPerTile = 16;
+
     enum Direction { LEFT, RIGHT, UP, DOWN };
 
     int mTileX, mTileY;
     int mInterX, mInterY;
     Direction mDirection;
+    bool mMoving;
 
     int mScreenTileSize;
     int mSrcTileSize;
@@ -74,6 +77,9 @@ public:
     void deleteRendering(hgame::RenderContext *rc);
 
     void render(hgame::RenderContext *rc);
+
+    // Returns true if movement etc requires screen refresh
+    bool tick();
 };
 
 }

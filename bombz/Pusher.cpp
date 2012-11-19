@@ -76,9 +76,9 @@ void Pusher::render(hgame::RenderContext *rc)
 {
     mSprite->setTexture(mTextures[mDirection]);
     mSprite->setPosition(mTileX * mScreenTileSize +
-            (mInterX * mScreenTileSize) / 16,
+            (mInterX * mScreenTileSize) / kStepsPerTile,
             mTileY * mScreenTileSize +
-            (mInterY * mScreenTileSize) / 16);
+            (mInterY * mScreenTileSize) / kStepsPerTile);
     mSprite->render(rc);
 }
 
@@ -89,8 +89,59 @@ void Pusher::reset()
     mInterX = 0;
     mInterY = 0;
     mDirection = RIGHT;
+    mMoving = false;
 }
 
+bool Pusher::tick()
+{
+    bool refresh = false;
+    if (mMoving)
+    {
+        refresh = true;
+        switch (mDirection)
+        {
+            case LEFT:
+                mInterX -= 1;
+                if (mInterX == -kStepsPerTile)
+                {
+                    mInterX = 0;
+                    --mTileX;
+                    mMoving = false;
+                }
+                break;
+            case RIGHT:
+                mInterX += 1;
+                if (mInterX == kStepsPerTile)
+                {
+                    mInterX = 0;
+                    ++mTileX;
+                    mMoving = false;
+                }
+                break;
+            case UP:
+                mInterY -= 1;
+                if (mInterY == -kStepsPerTile)
+                {
+                    mInterY = 0;
+                    --mTileY;
+                    mMoving = false;
+                }
+                break;
+            case DOWN:
+                mInterY += 1;
+                if (mInterY == kStepsPerTile)
+                {
+                    mInterY = 0;
+                    ++mTileY;
+                    mMoving = false;
+                }
+                break;
+        }
+    }
+    if (!mMoving)
+    {
+    }
+}
 
 
 }
