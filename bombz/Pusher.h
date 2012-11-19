@@ -48,7 +48,7 @@ class ScreenHub;
 // Must be created after level
 class Pusher : public hgame::Renderer {
 private:
-    static const int kStepsPerTile = 16;
+    static const int kStepsPerTile = 8;
 
     enum Direction { LEFT, RIGHT, UP, DOWN };
 
