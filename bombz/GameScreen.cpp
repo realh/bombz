@@ -105,7 +105,9 @@ int GameScreen::run()
         }
         else if (event->getType() == hgame::EVENT_TICK)
         {
-            if (mPusher->tick())
+            bool refresh = mPusher->tick();
+            refresh = mLevel->tick() || refresh;
+            if (refresh)
                 mApplication->requestRender(false);
         }
     }

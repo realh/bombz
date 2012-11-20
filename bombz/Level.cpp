@@ -528,7 +528,7 @@ void Level::randomiseBombs()
     }
 }
 
-bool Level::canMoveTo(int x, int y, int dx, int dy, bool bomb)
+bool Level::canMoveTo(int x, int y, int dx, int dy, bool have_match, bool bomb)
 {
     if (x < 0 || x >= kWidth || y < 0 || y >= kHeight)
         return false;
@@ -546,8 +546,10 @@ bool Level::canMoveTo(int x, int y, int dx, int dy, bool bomb)
         case BOMB2:
             if (bomb)
                 return false;
+            else if (have_match)
+                return true;
             else
-                return canMoveTo(x + dx, y + dy, dx, dy, true);
+                return canMoveTo(x + dx, y + dy, dx, dy, false, true);
             break;
         default:
             if (c >= EXPLO00 && c <= EXPLO11)
@@ -555,6 +557,87 @@ bool Level::canMoveTo(int x, int y, int dx, int dy, bool bomb)
             break;
     }
     return false;
+}
+
+bool Level::tick()
+{
+    if (!mBombActivity)
+        return false;
+    mBombActivity = false;
+    for (int y = 0; y < kHeight; ++y)
+    {
+        for (int x = 0; x < kWidth; ++x)
+        {
+            int c = getTileAt(x, y);
+            if ((c >= BOMB1_FUSED_FIRST && c < BOMB1_FUSED_LAST) ||
+                    (c >= BOMB2_FUSED_FIRST && c < BOMB2_FUSED_LAST) ||
+                    (c >= EXPLO00 && c < EXPLO11))
+            {
+                setTileAt(x, y, c + 1);
+                mBombActivity = true;
+            }
+            else if (c == BOMB1_FUSED_LAST || c == BOMB2_FUSED_LAST)
+            {
+                --mnBombs;
+                mBombActivity = true;
+                for (int y0 = (y >= 1 ? y - 1 : y);
+                        y0 <= (y < kHeight - 1 ? y + 1 : y);
+                        ++y0)
+                {
+                    for (int x0 = (x >= 1 ? x - 1 : x);
+                            x0 <= (x < kWidth - 1 ? x + 1 : x);
+                            ++x0)
+                    {
+                        if (y == y0 && x == x0)
+                        {
+                            setTileAt(x, y, EXPLO00);
+                        }
+                        else
+                        {
+                            exploAt(x0, y0, y0 < y || (y0 == y && x0 < x));
+                        }
+                    }
+                }
+            }
+            else if (c == EXPLO11)
+            {
+                makeBlank(x, y);
+            }
+        }
+    }
+    return true;
+}
+
+// If behind it means this cell has already been processed by tick(),
+// otherwise it's about to be processed
+void Level::exploAt(int x, int y, bool behind)
+{
+    int c = getTileAt(x, y);
+    if (c == BOMB1 ||
+            (c >= BOMB1_FUSED_FIRST &&
+            c <= BOMB1_FUSED_LAST))
+    {
+        if (behind)
+            setTileAt(x, y, BOMB1_FUSED_LAST);
+        else
+            setTileAt(x, y, BOMB1_FUSED_LAST - 1);
+    }
+    else if (c == BOMB2 ||
+            (c >= BOMB2_FUSED_FIRST &&
+            c <= BOMB2_FUSED_LAST))
+    {
+        if (behind)
+            setTileAt(x, y, BOMB2_FUSED_LAST);
+        else
+            setTileAt(x, y, BOMB2_FUSED_LAST - 1);
+    }
+    else if (c < CHROME00 || c > CHROME15)
+    {
+        if (behind)
+            setTileAt(x, y, EXPLO00 + 1);
+        else
+            setTileAt(x, y, EXPLO00);
+    }
 }
 
 }

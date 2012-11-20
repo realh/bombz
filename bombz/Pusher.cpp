@@ -183,15 +183,16 @@ bool Pusher::tick()
         {
             if (mHaveMatch)
             {
+                mLog.v("Lighting bomb");
                 if (c == Level::BOMB1)
                 {
                     mLevel->setTileAt(mTileX + dx, mTileY +dy,
-                            Level::BOMB1_FUSED_FIRST);
+                            Level::BOMB1_FUSED_FIRST, true);
                 }
                 else
                 {
                     mLevel->setTileAt(mTileX + dx, mTileY +dy,
-                            Level::BOMB2_FUSED_FIRST);
+                            Level::BOMB2_FUSED_FIRST, true);
                 }
                 mMoving = false;
                 mHaveMatch = false;
@@ -243,8 +244,8 @@ bool Pusher::tick()
 
 bool Pusher::checkHoriz(bool *left, bool *right, bool *up, bool *down)
 {
-    if ((*left && mLevel->canMoveTo(mTileX - 1, mTileY, -1, 0)) ||
-            (*right && mLevel->canMoveTo(mTileX + 1, mTileY, 1, 0)))
+    if ((*left && mLevel->canMoveTo(mTileX - 1, mTileY, -1, 0, mHaveMatch)) ||
+            (*right && mLevel->canMoveTo(mTileX + 1, mTileY, 1, 0, mHaveMatch)))
     {
         *up = *down = false;
         return true;
@@ -258,8 +259,8 @@ bool Pusher::checkHoriz(bool *left, bool *right, bool *up, bool *down)
 
 bool Pusher::checkVert(bool *left, bool *right, bool *up, bool *down)
 {
-    if ((*up && mLevel->canMoveTo(mTileX, mTileY - 1, 0, -1)) ||
-            (*down && mLevel->canMoveTo(mTileX, mTileY + 1, 0, 1)))
+    if ((*up && mLevel->canMoveTo(mTileX, mTileY - 1, 0, -1, mHaveMatch)) ||
+            (*down && mLevel->canMoveTo(mTileX, mTileY + 1, 0, 1, mHaveMatch)))
     {
         *left = *right = false;
         return true;

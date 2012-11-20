@@ -58,8 +58,11 @@ public:
 
     static const int kExploTicks = 12;
     static const int kFuseTicks = 60;
+    /*
     static const int kEasyExtraFuse = 20;
     static const int kMaxFuseTicks = kFuseTicks + kEasyExtraFuse;
+    */
+    static const int kMaxFuseTicks = kFuseTicks;
 
     enum {
         BLANK,
@@ -128,17 +131,21 @@ public:
     }
 
     // bomb == true means test whether a bomb can be pushed there rather
-    // than whether pusher can move there
-    bool canMoveTo(int x, int y, int dx, int dy, bool bomb = false);
+    // than whether pusher can move there.
+    // Returns true if have_match and there's a bomb there
+    bool canMoveTo(int x, int y, int dx, int dy,
+            bool have_match, bool bomb = false);
 
     inline void makeBlank(int x, int y)
     {
         setTileAt(x, y, BLANK);
     }
 
-    inline void setTileAt(int x, int y, HUInt8 t)
+    inline void setTileAt(int x, int y, HUInt8 t, bool activate = false)
     {
         mLevel[y * kWidth + x] = t;
+        if (activate)
+            mBombActivity = true;
     }
 
     inline HUInt8 getTileAt(int x, int y)
@@ -153,6 +160,9 @@ public:
         int t = getTileAt(x, y);
         return t >= CHROME00 && t <= CHROME15;
     }
+
+    // Returns true if screen needs refreshing
+    bool tick();
 private:
     hgame::TextureRegion *createRegion(int x, int y);
 
@@ -191,6 +201,8 @@ private:
         mTmpLevel = mLevel;
         mLevel = tmp;
     }
+
+    void exploAt(int x, int y, bool behind);
 };
 
 }
