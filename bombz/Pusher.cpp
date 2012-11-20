@@ -37,7 +37,7 @@ Pusher::Pusher(ScreenHub *hub, hgame::Log *log) :
         mSprite(0),
         mHub(hub), mLevel(hub->getLevel()), mLog(*log)
 {
-    for (int n = 0; n < 4; ++n)
+    for (int n = 0; n < 6; ++n)
     {
         mTextures[n] = 0;
     }
@@ -50,13 +50,17 @@ void Pusher::initRendering(hgame::RenderContext *rc)
     hgame::TextureAtlas *atlas = mHub->getAlphaAtlas();
     mScreenTileSize = mHub->getScreenTileSize();
     mSrcTileSize = mHub->getSrcTileSize();
-    mTextures[LEFT] = atlas->createRegion(mSrcTileSize * 3, 0,
+    mTextures[0] = atlas->createRegion(mSrcTileSize * 3, 0,
             mSrcTileSize, mSrcTileSize);
-    mTextures[RIGHT] = atlas->createRegion(mSrcTileSize * 4, 0,
+    mTextures[1] = atlas->createRegion(mSrcTileSize * 4, 0,
             mSrcTileSize, mSrcTileSize);
-    mTextures[UP] = atlas->createRegion(mSrcTileSize * 3, mSrcTileSize,
+    mTextures[2] = atlas->createRegion(mSrcTileSize * 3, mSrcTileSize,
             mSrcTileSize, mSrcTileSize);
-    mTextures[DOWN] = atlas->createRegion(mSrcTileSize * 4, mSrcTileSize,
+    mTextures[3] = atlas->createRegion(mSrcTileSize * 4, mSrcTileSize,
+            mSrcTileSize, mSrcTileSize);
+    mTextures[4] = atlas->createRegion(mSrcTileSize * 3, mSrcTileSize * 2,
+            mSrcTileSize, mSrcTileSize);
+    mTextures[5] = atlas->createRegion(mSrcTileSize * 4, mSrcTileSize * 2,
             mSrcTileSize, mSrcTileSize);
     mSprite = rc->createSprite(mTextures[1],
             mScreenTileSize, mScreenTileSize);
@@ -75,12 +79,34 @@ void Pusher::deleteRendering(hgame::RenderContext *rc)
 
 void Pusher::render(hgame::RenderContext *rc)
 {
+    int x = mTileX * mScreenTileSize +
+            (mInterX * mScreenTileSize) / kStepsPerTile;
+    int y = mTileY * mScreenTileSize +
+            (mInterY * mScreenTileSize) / kStepsPerTile;
     mSprite->setTexture(mTextures[mDirection]);
-    mSprite->setPosition(mTileX * mScreenTileSize +
-            (mInterX * mScreenTileSize) / kStepsPerTile,
-            mTileY * mScreenTileSize +
-            (mInterY * mScreenTileSize) / kStepsPerTile);
+    mSprite->setPosition(x, y);
     mSprite->render(rc);
+    if (mPushingBomb)
+    {
+        mSprite->setTexture(mTextures[(mPushingBomb == Level::BOMB2) ? 5 : 4]);
+        switch (mDirection)
+        {
+            case LEFT:
+                x -= mScreenTileSize;
+                break;
+            case RIGHT:
+                x += mScreenTileSize;
+                break;
+            case UP:
+                y -= mScreenTileSize;
+                break;
+            case DOWN:
+                y += mScreenTileSize;
+                break;
+        }
+        mSprite->setPosition(x, y);
+        mSprite->render(rc);
+    }
 }
 
 void Pusher::reset()
@@ -168,6 +194,7 @@ bool Pusher::tick()
                             Level::BOMB2_FUSED_FIRST);
                 }
                 mMoving = false;
+                mHaveMatch = false;
             }
             else
             {
@@ -216,8 +243,8 @@ bool Pusher::tick()
 
 bool Pusher::checkHoriz(bool *left, bool *right, bool *up, bool *down)
 {
-    if ((*left && mLevel->canMoveTo(mTileX - 1, mTileY, -1, 0, mHaveMatch)) ||
-            (*right && mLevel->canMoveTo(mTileX + 1, mTileY, 1, 0, mHaveMatch)))
+    if ((*left && mLevel->canMoveTo(mTileX - 1, mTileY, -1, 0)) ||
+            (*right && mLevel->canMoveTo(mTileX + 1, mTileY, 1, 0)))
     {
         *up = *down = false;
         return true;
@@ -231,8 +258,8 @@ bool Pusher::checkHoriz(bool *left, bool *right, bool *up, bool *down)
 
 bool Pusher::checkVert(bool *left, bool *right, bool *up, bool *down)
 {
-    if ((*up && mLevel->canMoveTo(mTileX, mTileY - 1, 0, -1, mHaveMatch)) ||
-            (*down && mLevel->canMoveTo(mTileX, mTileY + 1, 0, 1, mHaveMatch)))
+    if ((*up && mLevel->canMoveTo(mTileX, mTileY - 1, 0, -1)) ||
+            (*down && mLevel->canMoveTo(mTileX, mTileY + 1, 0, 1)))
     {
         *left = *right = false;
         return true;

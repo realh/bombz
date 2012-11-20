@@ -62,7 +62,7 @@ private:
     int mScreenTileSize;
     int mSrcTileSize;
 
-    hgame::TextureRegion *mTextures[4];     // Left, right, up, down
+    hgame::TextureRegion *mTextures[6];     // Left, right, up, down, bomb1, b2
     hgame::Sprite *mSprite;
 
     ScreenHub *mHub;
