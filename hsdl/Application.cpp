@@ -91,9 +91,7 @@ int ScreenRunnable::runSafely()
     hgame::Screen *scrn;
     while (!mStopped && (scrn = mApplication->getScreen()) != 0)
     {
-        mLog.d("Running screen %p", scrn);
         result = scrn->run();
-        mLog.d("Screen %p exited", scrn);
     }
     return result;
 }

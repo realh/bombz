@@ -119,7 +119,7 @@ const char *Platform::getProfileFilename(const char *owner, const char *domain,
     char *dirname;
     asprintf(&dirname, "%s%c%s", varval, ds, body);
     free(body);
-    mLog.d("Ensuring directory '%s' exists for profile file '%s'",
+    mLog.v("Ensuring directory '%s' exists for profile file '%s'",
             dirname, leafname);
     mkdirWithParents(dirname);
     char *filename;

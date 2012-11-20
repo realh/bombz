@@ -177,7 +177,7 @@ GLRenderContext::GLRenderContext(int *best_modes) :
             vh = int((float) vw / game_aspect);
         }
     }
-    mLog.i("Using video mode %dx%d, viewport %xx%d", w, h, vw, vh);
+    mLog.i("Using video mode %dx%d, viewport %dx%d", w, h, vw, vh);
 
     //initSurface(w, h, vw, vh, scaling ? 2 : 0);
     // Can't find GLX visual if AA is enabled: intel driver "feature"?

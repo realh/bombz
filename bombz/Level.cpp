@@ -167,7 +167,6 @@ void Level::resetVars()
 {
     mnBombs = 0;
     mBombActivity = false;
-    mLog.v("Level::resetVars (%p)", this);
     mStartX = mStartY = 0;
     mTimeLimit = 180;
 }
