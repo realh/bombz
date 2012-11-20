@@ -63,10 +63,11 @@ void Level::initRendering(hgame::RenderContext *rc)
     int n;
     for (n = BLANK; n <= BOMB2; ++n)
         mTileRegions[n] = createRegion(n, 0);
-    // EXPLO00 is a special case
-    mTileRegions[EXPLO00] = createRegion(0, 0);
     for (n = EXPLO00 + 1; n <= EXPLO11; ++n)
-        mTileRegions[n] = createRegion(n - 1, 0);
+    {
+        mTileRegions[n] = createRegion(n - 1);
+    }
+    mTileRegions[PRE_EXPLO] = createRegion(0, 0);
     for (n = CHROME00; n <= CHROME15; ++n)
         mTileRegions[n] = createRegion(n - CHROME00 + 17);
     int m;
@@ -78,6 +79,8 @@ void Level::initRendering(hgame::RenderContext *rc)
     {
         mTileRegions[n] = createRegion(((m & 4) == 0) ? BOMB2 : BLANK);
     }
+    // EXPLO00 is a special case
+    mTileRegions[EXPLO00] = createRegion(BLANK);
     mExplo00Region = mAlphaAtlas->createRegion(0, 0,
             mSrcTileSize * 3, mSrcTileSize * 3);
     mExplo00Sprite = rc->createSprite(mExplo00Region,
@@ -568,17 +571,21 @@ bool Level::tick()
     {
         for (int x = 0; x < kWidth; ++x)
         {
-            int c = getTileAt(x, y);
+            HUInt8 c = getTileAt(x, y);
             if ((c >= BOMB1_FUSED_FIRST && c < BOMB1_FUSED_LAST) ||
                     (c >= BOMB2_FUSED_FIRST && c < BOMB2_FUSED_LAST) ||
-                    (c >= EXPLO00 && c < EXPLO11))
+                    (c > EXPLO00 && c < EXPLO11))
             {
                 setTileAt(x, y, c + 1);
                 mBombActivity = true;
             }
-            else if (c == BOMB1_FUSED_LAST || c == BOMB2_FUSED_LAST)
+            else if (c == PRE_EXPLO)
             {
-                --mnBombs;
+                setTileAt(x, y, EXPLO00 + 1);
+                mBombActivity = true;
+            }
+            else if (c == EXPLO00)
+            {
                 mBombActivity = true;
                 for (int y0 = (y >= 1 ? y - 1 : y);
                         y0 <= (y < kHeight - 1 ? y + 1 : y);
@@ -588,16 +595,15 @@ bool Level::tick()
                             x0 <= (x < kWidth - 1 ? x + 1 : x);
                             ++x0)
                     {
-                        if (y == y0 && x == x0)
-                        {
-                            setTileAt(x, y, EXPLO00);
-                        }
-                        else
-                        {
-                            exploAt(x0, y0, y0 < y || (y0 == y && x0 < x));
-                        }
+                        exploAt(x0, y0, y0 < y || (y0 == y && x0 <= x));
                     }
                 }
+            }
+            else if (c == BOMB1_FUSED_LAST || c == BOMB2_FUSED_LAST)
+            {
+                --mnBombs;
+                mBombActivity = true;
+                setTileAt(x, y, EXPLO00);
             }
             else if (c == EXPLO11)
             {
@@ -636,7 +642,7 @@ void Level::exploAt(int x, int y, bool behind)
         if (behind)
             setTileAt(x, y, EXPLO00 + 1);
         else
-            setTileAt(x, y, EXPLO00);
+            setTileAt(x, y, PRE_EXPLO);
     }
 }
 
