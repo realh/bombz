@@ -145,6 +145,8 @@ GLRenderContext::GLRenderContext(int *best_modes) :
     // Use windowed mode for now, easier to test and debug
     w = 960;
     h = 720;
+    vw = 0;
+    vh = 0;
     scaling = false;
 
     if (!vw)
