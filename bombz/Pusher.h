@@ -56,6 +56,7 @@ private:
     int mInterX, mInterY;
     Direction mDirection;
     bool mMoving;
+    bool mHaveMatch;
 
     int mScreenTileSize;
     int mSrcTileSize;
@@ -85,6 +86,9 @@ private:
     // Returns true if we can move.
     bool checkHoriz(bool *left, bool *right, bool *up, bool *down);
     bool checkVert(bool *left, bool *right, bool *up, bool *down);
+
+    // Called to update level when halfway to a new tile
+    void gotHalfway();
 };
 
 }

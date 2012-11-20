@@ -130,6 +130,24 @@ public:
     // bomb == true means test whether a bomb can be pushed there rather
     // than whether pusher can move there
     bool canMoveTo(int x, int y, int dx, int dy, bool bomb = false);
+
+    inline void makeBlank(int x, int y)
+    {
+        mLevel[y * kWidth + x] = BLANK;
+    }
+
+    inline HUInt8 getTileAt(int x, int y)
+    {
+        if (x < 0 || x >= kWidth || y < 0 || y >= kHeight)
+            return BLANK;
+        return mLevel[y * kWidth + x];
+    }
+
+    inline bool isChromeAt(int x, int y)
+    {
+        int t = getTileAt(x, y);
+        return t >= CHROME00 && t <= CHROME15;
+    }
 private:
     hgame::TextureRegion *createRegion(int x, int y);
 
@@ -161,19 +179,6 @@ private:
     void disconnectTs();
 
     void randomiseBombs();
-
-    inline HUInt8 getTileAt(int x, int y)
-    {
-        if (x < 0 || x >= kWidth || y < 0 || y >= kHeight)
-            return BLANK;
-        return mLevel[y * kWidth + x];
-    }
-
-    inline bool isChromeAt(int x, int y)
-    {
-        int t = getTileAt(x, y);
-        return t >= CHROME00 && t <= CHROME15;
-    }
 
     inline void swapTmpLevel()
     {

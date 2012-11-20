@@ -91,6 +91,7 @@ void Pusher::reset()
     mInterY = 0;
     mDirection = RIGHT;
     mMoving = false;
+    mHaveMatch = false;
 }
 
 bool Pusher::tick()
@@ -158,6 +159,10 @@ bool Pusher::tick()
                     --mTileX;
                     mMoving = false;
                 }
+                else if (mInterX == -kStepsPerTile / 2)
+                {
+                    gotHalfway();
+                }
                 break;
             case RIGHT:
                 mInterX += 1;
@@ -166,6 +171,10 @@ bool Pusher::tick()
                     mInterX = 0;
                     ++mTileX;
                     mMoving = false;
+                }
+                else if (mInterX == kStepsPerTile / 2)
+                {
+                    gotHalfway();
                 }
                 break;
             case UP:
@@ -176,6 +185,10 @@ bool Pusher::tick()
                     --mTileY;
                     mMoving = false;
                 }
+                else if (mInterY == -kStepsPerTile / 2)
+                {
+                    gotHalfway();
+                }
                 break;
             case DOWN:
                 mInterY += 1;
@@ -184,6 +197,10 @@ bool Pusher::tick()
                     mInterY = 0;
                     ++mTileY;
                     mMoving = false;
+                }
+                else if (mInterY == kStepsPerTile / 2)
+                {
+                    gotHalfway();
                 }
                 break;
         }
@@ -219,6 +236,36 @@ bool Pusher::checkVert(bool *left, bool *right, bool *up, bool *down)
         *up = *down = false;
     }
     return false;
+}
+
+void Pusher::gotHalfway()
+{
+    int x = mTileX;
+    int y = mTileY;
+    switch (mDirection)
+    {
+        case LEFT:
+            x -= 1;
+            break;
+        case RIGHT:
+            x += 1;
+            break;
+        case UP:
+            y -= 1;
+            break;
+        case DOWN:
+            y += 1;
+            break;
+    }
+    HUInt8 c = mLevel->getTileAt(x, y);
+    switch (c)
+    {
+        case Level::MATCH:
+            mHaveMatch = true;
+        case Level::EARTH:
+            mLevel->makeBlank(x, y);
+            break;
+    }
 }
 
 }
