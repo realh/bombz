@@ -193,7 +193,8 @@ bool Pusher::tick()
 
 bool Pusher::checkHoriz(bool *left, bool *right, bool *up, bool *down)
 {
-    if ((*left && mTileX > 0) || (*right && mTileX < Level::kWidth - 1))
+    if ((*left && mLevel->canMoveTo(mTileX - 1, mTileY, -1, 0)) ||
+            (*right && mLevel->canMoveTo(mTileX + 1, mTileY, 1, 0)))
     {
         *up = *down = false;
         return true;
@@ -207,7 +208,8 @@ bool Pusher::checkHoriz(bool *left, bool *right, bool *up, bool *down)
 
 bool Pusher::checkVert(bool *left, bool *right, bool *up, bool *down)
 {
-    if ((*up && mTileY > 0) || (*down && mTileY < Level::kHeight - 1))
+    if ((*up && mLevel->canMoveTo(mTileX, mTileY - 1, 0, -1)) ||
+            (*down && mLevel->canMoveTo(mTileX, mTileY + 1, 0, 1)))
     {
         *left = *right = false;
         return true;

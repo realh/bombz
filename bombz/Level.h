@@ -126,6 +126,10 @@ public:
     {
         return mStartY;
     }
+
+    // bomb == true means test whether a bomb can be pushed there rather
+    // than whether pusher can move there
+    bool canMoveTo(int x, int y, int dx, int dy, bool bomb = false);
 private:
     hgame::TextureRegion *createRegion(int x, int y);
 

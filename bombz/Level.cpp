@@ -529,5 +529,37 @@ void Level::randomiseBombs()
     }
 }
 
+bool Level::canMoveTo(int x, int y, int dx, int dy, bool bomb)
+{
+    if (x < 0 || x >= kWidth || y < 0 || y >= kHeight)
+        return false;
+    HUInt8 c = mLevel[y * kWidth + x];
+    switch (c)
+    {
+        case BLANK:
+            return true;
+        case EARTH:
+        case MATCH:
+            return !bomb;
+        case PICKET:
+            return false;
+        case BOMB1:
+        case BOMB2:
+            if (bomb)
+            {
+                return false;
+            }
+            else
+            {
+                return canMoveTo(x + dx, y + dy, dx, dy, true);
+            }
+            break;
+        default:
+            if (c >= EXPLO00 && c <= EXPLO11)
+                return true;
+            break;
+    }
+    return false;
+}
 
 }
