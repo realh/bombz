@@ -57,6 +57,7 @@ private:
     Direction mDirection;
     bool mMoving;
     bool mHaveMatch;
+    hgame::HUInt8 mPushingBomb;
 
     int mScreenTileSize;
     int mSrcTileSize;
@@ -89,6 +90,9 @@ private:
 
     // Called to update level when halfway to a new tile
     void gotHalfway();
+
+    // Got to new tile in directions represented by x and y (-1 to 1)
+    void gotToNewTile(int dx, int dy);
 };
 
 }

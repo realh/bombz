@@ -92,6 +92,7 @@ void Pusher::reset()
     mDirection = RIGHT;
     mMoving = false;
     mHaveMatch = false;
+    mPushingBomb = 0;
 }
 
 bool Pusher::tick()
@@ -154,54 +155,30 @@ bool Pusher::tick()
             case LEFT:
                 mInterX -= 1;
                 if (mInterX == -kStepsPerTile)
-                {
-                    mInterX = 0;
-                    --mTileX;
-                    mMoving = false;
-                }
+                    gotToNewTile(-1, 0);
                 else if (mInterX == -kStepsPerTile / 2)
-                {
                     gotHalfway();
-                }
                 break;
             case RIGHT:
                 mInterX += 1;
                 if (mInterX == kStepsPerTile)
-                {
-                    mInterX = 0;
-                    ++mTileX;
-                    mMoving = false;
-                }
+                    gotToNewTile(1, 0);
                 else if (mInterX == kStepsPerTile / 2)
-                {
                     gotHalfway();
-                }
                 break;
             case UP:
                 mInterY -= 1;
                 if (mInterY == -kStepsPerTile)
-                {
-                    mInterY = 0;
-                    --mTileY;
-                    mMoving = false;
-                }
+                    gotToNewTile(0, -1);
                 else if (mInterY == -kStepsPerTile / 2)
-                {
                     gotHalfway();
-                }
                 break;
             case DOWN:
                 mInterY += 1;
                 if (mInterY == kStepsPerTile)
-                {
-                    mInterY = 0;
-                    ++mTileY;
-                    mMoving = false;
-                }
+                    gotToNewTile(0, 1);
                 else if (mInterY == kStepsPerTile / 2)
-                {
                     gotHalfway();
-                }
                 break;
         }
     }
@@ -265,6 +242,19 @@ void Pusher::gotHalfway()
         case Level::EARTH:
             mLevel->makeBlank(x, y);
             break;
+    }
+}
+
+void Pusher::gotToNewTile(int dx, int dy)
+{
+    mInterX = mInterY = 0;
+    mTileX += dx;
+    mTileY += dy;
+    mMoving = false;
+    if (mPushingBomb)
+    {
+        mLevel->setTileAt(mTileX + dx, mTileY + dy, mPushingBomb);
+        mPushingBomb = 0;
     }
 }
 

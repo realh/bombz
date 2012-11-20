@@ -133,7 +133,12 @@ public:
 
     inline void makeBlank(int x, int y)
     {
-        mLevel[y * kWidth + x] = BLANK;
+        setTileAt(x, y, BLANK);
+    }
+
+    inline void setTileAt(int x, int y, HUInt8 t)
+    {
+        mLevel[y * kWidth + x] = t;
     }
 
     inline HUInt8 getTileAt(int x, int y)
