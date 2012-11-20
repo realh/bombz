@@ -126,25 +126,54 @@ bool Pusher::tick()
             if (!checkVert(&left, &right, &up, &down))
                 checkHoriz(&left, &right, &up, &down);
         }
+        int dx = 0;
+        int dy = 0;
         if (left)
         {
             mMoving = true;
             mDirection = LEFT;
+            dx = -1;
         }
         else if (right)
         {
             mMoving = true;
             mDirection = RIGHT;
+            dx = 1;
         }
         else if (up)
         {
             mMoving = true;
             mDirection = UP;
+            dy = -1;
         }
         else if (down)
         {
             mMoving = true;
             mDirection = DOWN;
+            dy = 1;
+        }
+        HUInt8 c = mLevel->getTileAt(mTileX + dx, mTileY +dy);
+        if (c == Level::BOMB1 || c == Level::BOMB2)
+        {
+            if (mHaveMatch)
+            {
+                if (c == Level::BOMB1)
+                {
+                    mLevel->setTileAt(mTileX + dx, mTileY +dy,
+                            Level::BOMB1_FUSED_FIRST);
+                }
+                else
+                {
+                    mLevel->setTileAt(mTileX + dx, mTileY +dy,
+                            Level::BOMB2_FUSED_FIRST);
+                }
+                mMoving = false;
+            }
+            else
+            {
+                mPushingBomb = c;
+                mLevel->makeBlank(mTileX + dx, mTileY +dy);
+            }
         }
     }
     if (mMoving)
@@ -187,8 +216,8 @@ bool Pusher::tick()
 
 bool Pusher::checkHoriz(bool *left, bool *right, bool *up, bool *down)
 {
-    if ((*left && mLevel->canMoveTo(mTileX - 1, mTileY, -1, 0)) ||
-            (*right && mLevel->canMoveTo(mTileX + 1, mTileY, 1, 0)))
+    if ((*left && mLevel->canMoveTo(mTileX - 1, mTileY, -1, 0, mHaveMatch)) ||
+            (*right && mLevel->canMoveTo(mTileX + 1, mTileY, 1, 0, mHaveMatch)))
     {
         *up = *down = false;
         return true;
@@ -202,8 +231,8 @@ bool Pusher::checkHoriz(bool *left, bool *right, bool *up, bool *down)
 
 bool Pusher::checkVert(bool *left, bool *right, bool *up, bool *down)
 {
-    if ((*up && mLevel->canMoveTo(mTileX, mTileY - 1, 0, -1)) ||
-            (*down && mLevel->canMoveTo(mTileX, mTileY + 1, 0, 1)))
+    if ((*up && mLevel->canMoveTo(mTileX, mTileY - 1, 0, -1, mHaveMatch)) ||
+            (*down && mLevel->canMoveTo(mTileX, mTileY + 1, 0, 1, mHaveMatch)))
     {
         *left = *right = false;
         return true;

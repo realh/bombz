@@ -546,13 +546,9 @@ bool Level::canMoveTo(int x, int y, int dx, int dy, bool bomb)
         case BOMB1:
         case BOMB2:
             if (bomb)
-            {
                 return false;
-            }
             else
-            {
                 return canMoveTo(x + dx, y + dy, dx, dy, true);
-            }
             break;
         default:
             if (c >= EXPLO00 && c <= EXPLO11)
