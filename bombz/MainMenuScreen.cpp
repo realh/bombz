@@ -60,7 +60,7 @@ bool MainMenuScreen::onSettingsTapped()
     return true;
 }
 
-#ifdef HAVE_QUIT_WIDGET
+#if HAVE_QUIT_WIDGET
 bool MainMenuScreen::onQuitTapped()
 {
     mApplication->stop();
@@ -74,7 +74,7 @@ MainMenuScreen::MainMenuScreen(ScreenHub *hub) :
         mPlayListener(this, &MainMenuScreen::onPlayTapped),
         mChooseLevelListener(this, &MainMenuScreen::onChooseLevelTapped),
         mSettingsListener(this, &MainMenuScreen::onSettingsTapped)
-#ifdef HAVE_QUIT_WIDGET
+#if HAVE_QUIT_WIDGET
         , mQuitListener(this, &MainMenuScreen::onQuitTapped)
 #endif
 {
@@ -88,7 +88,7 @@ MainMenuScreen::MainMenuScreen(ScreenHub *hub) :
     addTextWidget(mApplication->getPlatform()->translate("Settings"),
             0.5, y, &mSettingsListener);
     y += kMenuItemStride;
-#ifdef HAVE_QUIT_WIDGET
+#if HAVE_QUIT_WIDGET
     addTextWidget(mApplication->getPlatform()->translate("Quit"),
             0.5, y, &mQuitListener);
 #endif

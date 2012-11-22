@@ -76,7 +76,7 @@ bool WidgetGroup::onTapEvent(TapEvent *event)
 struct WidgetAndPos {
     Widget *w;
     Image *i;
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
+#if ENABLE_WIDGET_HIGHLIGHTING
     Image *h;
 #endif
     int x, y;
@@ -85,7 +85,7 @@ struct WidgetAndPos {
 
 WidgetAndPos::WidgetAndPos(Widget *pw, int x_, int y_) :
             w(pw), i(pw->getImage()),
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
+#if ENABLE_WIDGET_HIGHLIGHTING
             h(pw->getHighlightedImage()),
 #endif
             x(x_), y(y_)
@@ -139,7 +139,7 @@ void WidgetGroup::initRendering(RenderContext *rc)
 
     // Make montage of all images
     Image *montage = assigned.front().i->createImage(width, height
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
+#if ENABLE_WIDGET_HIGHLIGHTING
             * 2
 #endif
             );
@@ -148,7 +148,7 @@ void WidgetGroup::initRendering(RenderContext *rc)
     {
         montage->blit(i->i, i->x, i->y, 0, 0,
                 i->i->getWidth(),  i->i->getHeight());
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
+#if ENABLE_WIDGET_HIGHLIGHTING
         montage->blit(i->h, i->x, i->y + height, 0, 0,
                 i->h->getWidth(),  i->h->getHeight());
 #endif
@@ -162,7 +162,7 @@ void WidgetGroup::initRendering(RenderContext *rc)
     for (std::list<WidgetAndPos>::iterator i = assigned.begin();
             i != assigned.end(); ++i)
     {
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
+#if ENABLE_WIDGET_HIGHLIGHTING
         i->w->setTextureRegions(rc, mAtlas->createRegion(i->x, i->y,
                 i->i->getWidth(), i->i->getHeight()),
                 mAtlas->createRegion(i->x, i->y + height,

@@ -55,7 +55,7 @@ protected:
     TextureRegion *mRegion;
     Sprite *mSprite;
     int mX0, mY0, mX1, mY1;
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
+#if ENABLE_WIDGET_HIGHLIGHTING
     TextureRegion *mHighlightedRegion;
     Sprite *mHighlightedSprite;
     bool mHighlighted;
@@ -76,7 +76,7 @@ public:
     // Caller takes ownership of image
     virtual Image *getImage() = 0;
 
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
+#if ENABLE_WIDGET_HIGHLIGHTING
     virtual Image *getHighlightedImage() = 0;
 
     // Takes ownership of regions

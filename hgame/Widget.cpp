@@ -34,7 +34,7 @@ namespace hgame {
 Widget::Widget(int x, int y, int w, int h) :
         mListener(0), mRegion(0), mSprite(0),
         mX0(x), mY0(y), mX1(x + w), mY1(y + h)
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
+#if ENABLE_WIDGET_HIGHLIGHTING
         , mHighlightedRegion(0), mHighlightedSprite(0),
         mHighlighted(false)
 #endif
@@ -42,7 +42,7 @@ Widget::Widget(int x, int y, int w, int h) :
 
 Widget::~Widget()
 {
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
+#if ENABLE_WIDGET_HIGHLIGHTING
     delete mHighlightedSprite;
     delete mHighlightedRegion;
 #endif
@@ -59,7 +59,7 @@ bool Widget::onTapEvent(TapEvent *event)
     return false;
 }
 
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
+#if ENABLE_WIDGET_HIGHLIGHTING
 void Widget::setTextureRegions(RenderContext *rc,
         TextureRegion *region, TextureRegion *highlighted_region)
 {
@@ -82,7 +82,7 @@ void Widget::setTextureRegion(RenderContext *rc, TextureRegion *region)
 
 void Widget::render(RenderContext *rc)
 {
-#ifdef ENABLE_WIDGET_HIGHLIGHTING
+#if ENABLE_WIDGET_HIGHLIGHTING
     if (mHighlighted)
         mHighlightedSprite->render(rc);
     else
