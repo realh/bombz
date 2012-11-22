@@ -105,7 +105,7 @@ void Cond::signal()
 
 void Cond::broadcast()
 {
-    if (SDL_CondSignal(mCond))
+    if (SDL_CondBroadcast(mCond))
     {
         THROW(Exception, "Error broadcasting on cond");
     }
