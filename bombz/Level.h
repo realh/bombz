@@ -35,13 +35,8 @@
 #include "config.h"
 
 #include "hgame/Log.h"
-#include "hgame/RenderContext.h"
-#include "hgame/Renderer.h"
-#include "hgame/Sprite.h"
-#include "hgame/TextureAtlas.h"
-#include "hgame/TextureRegion.h"
-#include "hgame/TileBatcher.h"
-#include "hgame/Types.h"
+
+#include "bombz/LevelBase.h"
 
 namespace bombz {
 
@@ -49,13 +44,8 @@ typedef hgame::HUInt8 HUInt8;
 
 class ScreenHub;
 
-class Level : public hgame::Renderer {
+class Level : public LevelBase {
 public:
-    static const int kWidth = 20;
-    static const int kHeight = 15;
-
-    static const int kAtlasColumns = 6;
-
     static const int kExploTicks = 12;
     static const int kFuseTicks = 60;
     /*
@@ -65,17 +55,6 @@ public:
     static const int kMaxFuseTicks = kFuseTicks;
 
     enum {
-        BLANK,
-        EARTH,
-        MATCH,
-        PICKET,
-        BOMB1,
-        BOMB2,
-        EXPLO00,
-        EXPLO11 = EXPLO00 + 11,
-        PRE_EXPLO,
-        CHROME00,
-        CHROME15 = CHROME00 + 15,
         BOMB1_FUSED_FIRST = CHROME15 + 1,
         BOMB1_FUSED_LAST = (int) (BOMB1_FUSED_FIRST + kMaxFuseTicks - 1),
         BOMB2_FUSED_FIRST = BOMB1_FUSED_LAST + 1,
@@ -86,21 +65,13 @@ private:
     HUInt8 *mLevel;
     HUInt8 *mTmpLevel;
 
-    hgame::TextureAtlas *mTileAtlas;
     hgame::TextureAtlas *mAlphaAtlas;
-    hgame::TileBatcher *mTileBatcher;
-    int mScreenTileSize;
-    int mSrcTileSize;
-
-    hgame::TextureRegion **mTileRegions;
     hgame::TextureRegion *mExplo00Region;
     hgame::Sprite *mExplo00Sprite;
 
-    ScreenHub *mHub;
-
     hgame::Log &mLog;
 
-    int mnBombs;
+    int mNBombs;
     int mStartX, mStartY;
     int mTimeLimit;
     bool mBombActivity;
@@ -115,7 +86,7 @@ public:
 
     void render(hgame::RenderContext *rc);
 
-    void reset(bool with_frame = true);
+    void reset(bool with_frame = false);
 
     void loadFromText(const char *text);
 
@@ -165,10 +136,6 @@ public:
     // Returns true if screen needs refreshing
     bool tick();
 private:
-    hgame::TextureRegion *createRegion(int x, int y);
-
-    hgame::TextureRegion *createRegion(int n);
-
     void resetVars();
 
     inline static void skipNL(char const **s)

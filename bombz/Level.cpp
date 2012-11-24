@@ -37,11 +37,10 @@
 namespace bombz {
 
 Level::Level(ScreenHub *hub, hgame::Log *log) :
-        mLevel(new HUInt8[kWidth * kHeight]),
-        mTmpLevel(0),
-        mTileAtlas(0), mAlphaAtlas(0), mTileBatcher(0),
-        mTileRegions(0), mExplo00Region(0), mExplo00Sprite(0),
-        mHub(hub), mLog(*log)
+        LevelBase(hub),
+        mLevel(new HUInt8[kWidth * kHeight]), mTmpLevel(0),
+        mAlphaAtlas(0), mExplo00Region(0), mExplo00Sprite(0),
+        mLog(*log)
 {
     reset();
 }
@@ -54,11 +53,8 @@ Level::~Level()
 void Level::initRendering(hgame::RenderContext *rc)
 {
     mLog.v("Creating tile textures");
-    mTileAtlas = mHub->getTileAtlas();
+    LevelBase::initRendering(rc);
     mAlphaAtlas = mHub->getAlphaAtlas();
-    mScreenTileSize = mHub->getScreenTileSize();
-    mSrcTileSize = mHub->getSrcTileSize();
-    mTileBatcher = rc->createTileBatcher(kWidth, kHeight, mScreenTileSize);
     mTileRegions = new hgame::TextureRegion *[BOMB2_FUSED_LAST + 1];
     int n;
     for (n = BLANK; n <= BOMB2; ++n)
@@ -89,7 +85,6 @@ void Level::initRendering(hgame::RenderContext *rc)
 
 void Level::deleteRendering(hgame::RenderContext *rc)
 {
-    (void) rc;
     delete mExplo00Sprite;
     mExplo00Sprite = 0;
     delete mExplo00Region;
@@ -104,11 +99,9 @@ void Level::deleteRendering(hgame::RenderContext *rc)
         delete[] mTileRegions;
         mTileRegions = 0;
     }
-    delete mTileBatcher;
-    mTileBatcher = 0;
     // Atlases are owned by Screen, don't delete them
     mAlphaAtlas = 0;
-    mTileAtlas = 0;
+    LevelBase::deleteRendering(rc);
 }
 
 void Level::render(hgame::RenderContext *rc)
@@ -168,21 +161,10 @@ void Level::reset(bool with_frame)
 
 void Level::resetVars()
 {
-    mnBombs = 0;
+    mNBombs = 0;
     mBombActivity = false;
     mStartX = mStartY = 0;
     mTimeLimit = 180;
-}
-
-hgame::TextureRegion *Level::createRegion(int x, int y)
-{
-    return mTileAtlas->createRegion(x * mSrcTileSize, y * mSrcTileSize,
-            mSrcTileSize, mSrcTileSize);
-}
-
-hgame::TextureRegion *Level::createRegion(int n)
-{
-    return createRegion(n % kAtlasColumns, n / kAtlasColumns);
 }
 
 void Level::loadByNumber(int n)
@@ -220,11 +202,11 @@ void Level::loadFromText(const char *text)
                     break;
                 case 'O':
                     mLevel[n] = BOMB1;
-                    ++mnBombs;
+                    ++mNBombs;
                     break;
                 case '0':
                     mLevel[n] = BOMB1_FUSED_FIRST;
-                    ++mnBombs;
+                    ++mNBombs;
                     mBombActivity = true;
                     break;
                 case 'S':
@@ -601,7 +583,7 @@ bool Level::tick()
             }
             else if (c == BOMB1_FUSED_LAST || c == BOMB2_FUSED_LAST)
             {
-                --mnBombs;
+                --mNBombs;
                 mBombActivity = true;
                 setTileAt(x, y, EXPLO00);
             }
