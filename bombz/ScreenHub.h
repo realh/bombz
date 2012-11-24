@@ -44,6 +44,7 @@
 #include "bombz/Background.h"
 #include "bombz/Level.h"
 #include "bombz/Settings.h"
+#include "bombz/Tiles.h"
 
 namespace bombz {
 
@@ -59,22 +60,20 @@ public:
 private:
     hgame::Log &mLog;
     hgame::Application *mApplication;
+    Settings *mSettings;
     hgame::TextureAtlas *mAlphaAtlas;
-    hgame::TextureAtlas *mTileAtlas;
     hgame::TextureAtlas *mLogoAtlas;
     hgame::TextureRegion *mLogoRegion;
     hgame::Sprite *mLogoSprite;
-    int mScreenTileSize;
-    int mSrcTileSize;
+    Tiles *mTiles;
+    Background *mBackground;
     Level *mLevel;
     int mRcIndex;
     MenuScreen *mMainMenuScrn;
     GameScreen *mGameScrn;
     int mLeftMargin, mTopMargin;
     int mVpWidth, mVpHeight;
-    bool mWantLogo;     // Also implies want Background
-    Settings *mSettings;
-    Background *mBackground;
+    bool mWantLogo;
 public:
     ScreenHub(hgame::Application *app);
 
@@ -105,7 +104,7 @@ public:
 
     inline hgame::TextureAtlas *getTileAtlas()
     {
-        return mTileAtlas;
+        return mTiles->getTileAtlas();
     }
 
     inline hgame::TextureAtlas *getLogoAtlas()
@@ -120,12 +119,12 @@ public:
 
     inline int getScreenTileSize() const
     {
-        return mScreenTileSize;
+        return mTiles->getScreenTileSize();
     }
 
     inline int getSrcTileSize() const
     {
-        return mSrcTileSize;
+        return mTiles->getSrcTileSize();
     }
 
     inline Level *getLevel() const
@@ -171,10 +170,6 @@ private:
     {
         rc->setViewport2D(mLeftMargin, mTopMargin, mVpWidth, mVpHeight);
     }
-
-    void loadTiles(hgame::RenderContext *rc);
-
-    void deleteTiles();
 
     void loadAlpha(hgame::RenderContext *rc);
 

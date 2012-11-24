@@ -88,7 +88,7 @@ void Pusher::render(hgame::RenderContext *rc)
     mSprite->render(rc);
     if (mPushingBomb)
     {
-        mSprite->setTexture(mTextures[(mPushingBomb == Level::BOMB2) ? 5 : 4]);
+        mSprite->setTexture(mTextures[(mPushingBomb == Tiles::BOMB2) ? 5 : 4]);
         switch (mDirection)
         {
             case LEFT:
@@ -178,21 +178,21 @@ bool Pusher::tick()
             mDirection = DOWN;
             dy = 1;
         }
-        HUInt8 c = mLevel->getTileAt(mTileX + dx, mTileY +dy);
-        if (c == Level::BOMB1 || c == Level::BOMB2)
+        hgame::HUInt8 c = mLevel->getTileAt(mTileX + dx, mTileY +dy);
+        if (c == Tiles::BOMB1 || c == Tiles::BOMB2)
         {
             if (mHaveMatch)
             {
                 mLog.v("Lighting bomb");
-                if (c == Level::BOMB1)
+                if (c == Tiles::BOMB1)
                 {
                     mLevel->setTileAt(mTileX + dx, mTileY +dy,
-                            Level::BOMB1_FUSED_FIRST, true);
+                            Tiles::BOMB1_FUSED_FIRST, true);
                 }
                 else
                 {
                     mLevel->setTileAt(mTileX + dx, mTileY +dy,
-                            Level::BOMB2_FUSED_FIRST, true);
+                            Tiles::BOMB2_FUSED_FIRST, true);
                 }
                 mMoving = false;
                 mHaveMatch = false;
@@ -291,12 +291,12 @@ void Pusher::gotHalfway()
             y += 1;
             break;
     }
-    HUInt8 c = mLevel->getTileAt(x, y);
+    hgame::HUInt8 c = mLevel->getTileAt(x, y);
     switch (c)
     {
-        case Level::MATCH:
+        case Tiles::MATCH:
             mHaveMatch = true;
-        case Level::EARTH:
+        case Tiles::EARTH:
             mLevel->makeBlank(x, y);
             break;
     }

@@ -47,19 +47,19 @@ const hgame::Colour ScreenHub::kHighlightedTextColour =
 ScreenHub::ScreenHub(hgame::Application *app) :
         mLog(*(app->createLog("BombzScreenHub"))),
         mApplication(app),
+        mSettings(new Settings(app->getPlatform()->createSettings(
+                "realh", "realh.co.uk", "Bombz"))),
         mAlphaAtlas(0),
-        mTileAtlas(0),
         mLogoAtlas(0),
         mLogoRegion(0),
         mLogoSprite(0),
-        mLevel(new Level(this, app->createLog("Bombz level"))),
+        mTiles(new Tiles(this)),
+        mBackground(new Background(mTiles)),
+        mLevel(new Level(this, mTiles, app->createLog("Bombz level"))),
         mRcIndex(-1),
         mMainMenuScrn(0),
         mGameScrn(0),
-        mWantLogo(false),
-        mSettings(new Settings(app->getPlatform()->createSettings(
-                "realh", "realh.co.uk", "Bombz"))),
-        mBackground(new Background(this))
+        mWantLogo(false)
 {
 }
 
@@ -67,32 +67,26 @@ ScreenHub::~ScreenHub()
 {
     delete mLevel;
     delete mBackground;
+    delete mTiles;
 }
 
 void ScreenHub::initRendering(hgame::RenderContext *rc)
 {
     if (rc->getIndex() != mRcIndex)
     {
-        mScreenTileSize = rc->calculateTileSize(Level::kWidth, Level::kHeight);
-        mSrcTileSize =
-                mApplication->getPlatform()->getBestPNGMatch(mScreenTileSize);
-        mLog.d("Using source tile size %d", mSrcTileSize);
-        mVpWidth = mSrcTileSize * Level::kWidth;
-        mVpHeight = mSrcTileSize * Level::kHeight;
+        mTiles->deleteRendering(rc);
+        mTiles->initRendering(rc);
+        mLog.d("Using source tile size %d", mTiles->getSrcTileSize());
+        mVpWidth = mTiles->getSrcTileSize() * Level::kWidth;
+        mVpHeight = mTiles->getSrcTileSize() * Level::kHeight;
         // FIXME: In mobile versions margins will depend on touchscreen controls
         mLeftMargin = (rc->getWidth() - mVpWidth) / 2;
         mTopMargin = (rc->getHeight() - mVpHeight) / 2;
         deleteLogo();
         deleteAlpha();
-        delete mTileAtlas;
-        mTileAtlas = 0;
-        rc->setNeedScaling(mSrcTileSize != mScreenTileSize);
-        loadTiles(rc);
         loadAlpha(rc);
         if (mWantLogo)
             loadLogo(rc);
-        // FIXME: We could completely delete and create level and background
-        // here depending on whether they're wanted
         mLevel->deleteRendering(rc);
         mLevel->initRendering(rc);
         mBackground->deleteRendering(rc);
@@ -110,7 +104,7 @@ void ScreenHub::deleteRendering(hgame::RenderContext *rc)
         mMainMenuScrn->freeRendering(rc);
     mLevel->deleteRendering(rc);
     mBackground->deleteRendering(rc);
-    deleteTiles();
+    mTiles->deleteRendering(rc);
     deleteAlpha();
     deleteLogo();
     mRcIndex = -1;
@@ -123,22 +117,10 @@ void ScreenHub::replaceRenderingScreen(hgame::RenderContext *rc)
         deleteLogo();
 }
 
-void ScreenHub::loadTiles(hgame::RenderContext *rc)
-{
-    hgame::Image *img = getPlatform()->loadPNG("tile_atlas.png", mSrcTileSize);
-    mTileAtlas = rc->uploadTexture(img);
-    delete img;
-}
-
-void ScreenHub::deleteTiles()
-{
-    delete mTileAtlas;
-    mTileAtlas = 0;
-}
-
 void ScreenHub::loadAlpha(hgame::RenderContext *rc)
 {
-    hgame::Image *img = getPlatform()->loadPNG("alpha_atlas.png", mSrcTileSize);
+    hgame::Image *img = getPlatform()->loadPNG("alpha_atlas.png",
+            mTiles->getSrcTileSize());
     mAlphaAtlas = rc->uploadTexture(img);
     delete img;
 }
@@ -151,15 +133,14 @@ void ScreenHub::deleteAlpha()
 
 void ScreenHub::loadLogo(hgame::RenderContext *rc)
 {
-    hgame::Image *img = getPlatform()->loadPNG("title_logo.png",
-            mSrcTileSize);
+    int src_ts = mTiles->getSrcTileSize();
+    int scr_ts = mTiles->getScreenTileSize();
+    hgame::Image *img = getPlatform()->loadPNG("title_logo.png", src_ts);
     mLogoAtlas = rc->uploadTexture(img);
     delete img;
-    mLogoRegion = mLogoAtlas->createRegion(0, 0,
-            mSrcTileSize * 16, mSrcTileSize * 4);
-    mLogoSprite = rc->createSprite(mLogoRegion,
-            mScreenTileSize * 16, mScreenTileSize * 4);
-    mLogoSprite->setPosition(mScreenTileSize * 2, (mScreenTileSize * 4) / 3);
+    mLogoRegion = mLogoAtlas->createRegion(0, 0, src_ts * 16, src_ts * 4);
+    mLogoSprite = rc->createSprite(mLogoRegion, scr_ts * 16, scr_ts * 4);
+    mLogoSprite->setPosition(scr_ts * 2, (scr_ts * 4) / 3);
 }
 
 void ScreenHub::deleteLogo()

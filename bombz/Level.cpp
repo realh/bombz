@@ -36,11 +36,10 @@
 
 namespace bombz {
 
-Level::Level(ScreenHub *hub, hgame::Log *log) :
-        LevelBase(hub),
+Level::Level(ScreenHub *hub, Tiles *tiles, hgame::Log *log) :
+        mHub(hub), mTiles(tiles), mLog(*log),
         mLevel(new HUInt8[kWidth * kHeight]), mTmpLevel(0),
-        mAlphaAtlas(0), mExplo00Region(0), mExplo00Sprite(0),
-        mLog(*log)
+        mAlphaAtlas(0), mExplo00Region(0), mExplo00Sprite(0)
 {
     reset();
 }
@@ -52,35 +51,11 @@ Level::~Level()
 
 void Level::initRendering(hgame::RenderContext *rc)
 {
-    mLog.v("Creating tile textures");
-    LevelBase::initRendering(rc);
     mAlphaAtlas = mHub->getAlphaAtlas();
-    mTileRegions = new hgame::TextureRegion *[BOMB2_FUSED_LAST + 1];
-    int n;
-    for (n = BLANK; n <= BOMB2; ++n)
-        mTileRegions[n] = createRegion(n, 0);
-    for (n = EXPLO00 + 1; n <= EXPLO11; ++n)
-    {
-        mTileRegions[n] = createRegion(n - 1);
-    }
-    mTileRegions[PRE_EXPLO] = createRegion(0, 0);
-    for (n = CHROME00; n <= CHROME15; ++n)
-        mTileRegions[n] = createRegion(n - CHROME00 + 17);
-    int m;
-    for (m = 0, n = BOMB1_FUSED_FIRST; n <= BOMB1_FUSED_LAST; ++n, ++m)
-    {
-        mTileRegions[n] = createRegion(((m & 4) == 0) ? BOMB1 : BLANK);
-    }
-    for (m = 0, n = BOMB2_FUSED_FIRST; n <= BOMB2_FUSED_LAST; ++n, ++m)
-    {
-        mTileRegions[n] = createRegion(((m & 4) == 0) ? BOMB2 : BLANK);
-    }
-    // EXPLO00 is a special case
-    mTileRegions[EXPLO00] = createRegion(BLANK);
     mExplo00Region = mAlphaAtlas->createRegion(0, 0,
-            mSrcTileSize * 3, mSrcTileSize * 3);
+            mTiles->getSrcTileSize() * 3, mTiles->getSrcTileSize() * 3);
     mExplo00Sprite = rc->createSprite(mExplo00Region,
-            mScreenTileSize * 3, mScreenTileSize * 3);
+            mTiles->getScreenTileSize() * 3, mTiles->getScreenTileSize() * 3);
 }
 
 void Level::deleteRendering(hgame::RenderContext *rc)
@@ -89,19 +64,8 @@ void Level::deleteRendering(hgame::RenderContext *rc)
     mExplo00Sprite = 0;
     delete mExplo00Region;
     mExplo00Region = 0;
-    if (mTileRegions)
-    {
-        for (int n = BLANK; n <= BOMB2_FUSED_LAST; ++n)
-        {
-            delete mTileRegions[n];
-            mTileRegions[n] = 0;
-        }
-        delete[] mTileRegions;
-        mTileRegions = 0;
-    }
-    // Atlases are owned by Screen, don't delete them
+    // Atlas is owned by Screen, don't delete it
     mAlphaAtlas = 0;
-    LevelBase::deleteRendering(rc);
 }
 
 void Level::render(hgame::RenderContext *rc)
@@ -110,20 +74,20 @@ void Level::render(hgame::RenderContext *rc)
     for (n = 0, y = 0; y < kHeight; ++y)
     {
         for (x = 0; x < kWidth; ++x, ++n)
-            mTileBatcher->setTextureAt(mTileRegions[mLevel[n]], x, y);
+            mTiles->setTileAt(mLevel[n], x, y);
     }
-    rc->bindTexture(mTileAtlas);
-    mTileBatcher->render(rc);
+    mTiles->render(rc);
     rc->enableBlend(true);
     rc->bindTexture(mAlphaAtlas);
     for (n = 0, y = 0; y < kHeight; ++y)
     {
         for (x = 0; x < kWidth; ++x, ++n)
         {
-            if (mLevel[n] == EXPLO00)
+            if (mLevel[n] == Tiles::EXPLO00)
             {
-                mExplo00Sprite->setPosition((x - 1) * mScreenTileSize,
-                        (y - 1) * mScreenTileSize);
+                mExplo00Sprite->setPosition(
+                        (x - 1) * mTiles->getScreenTileSize(),
+                        (y - 1) * mTiles->getScreenTileSize());
                 mExplo00Sprite->render(rc);
             }
         }
@@ -137,7 +101,7 @@ void Level::reset()
     {
         for (x = 0; x < kWidth; ++x, ++n)
         {
-            mLevel[n] = BLANK;
+            mLevel[n] = Tiles::BLANK;
         }
     }
     resetVars();
@@ -173,36 +137,36 @@ void Level::loadFromText(const char *text)
             switch (*s)
             {
                 case ' ':
-                    mLevel[n] = BLANK;
+                    mLevel[n] = Tiles::BLANK;
                     break;
                 case '.':
-                    mLevel[n] = EARTH;
+                    mLevel[n] = Tiles::EARTH;
                     break;
                 case 'D':
-                    mLevel[n] = MATCH;
+                    mLevel[n] = Tiles::MATCH;
                     break;
                 case 'B':
-                    mLevel[n] = PICKET;
+                    mLevel[n] = Tiles::PICKET;
                     break;
                 case 'O':
-                    mLevel[n] = BOMB1;
+                    mLevel[n] = Tiles::BOMB1;
                     ++mNBombs;
                     break;
                 case '0':
-                    mLevel[n] = BOMB1_FUSED_FIRST;
+                    mLevel[n] = Tiles::BOMB1_FUSED_FIRST;
                     ++mNBombs;
                     mBombActivity = true;
                     break;
                 case 'S':
-                    mLevel[n] = BLANK;
+                    mLevel[n] = Tiles::BLANK;
                     mStartX = x;
                     mStartY = y;
                     break;
                 case 'X':
-                    mLevel[n] = CHROME15;
+                    mLevel[n] = Tiles::CHROME15;
                     break;
                 default:
-                    mLevel[n] = BLANK;
+                    mLevel[n] = Tiles::BLANK;
                     break;
             }
         }
@@ -243,7 +207,7 @@ void Level::hollowChrome()
                         }
                     }
                 }
-                mTmpLevel[n] = nonChrome ? CHROME15 : BLANK;
+                mTmpLevel[n] = nonChrome ? Tiles::CHROME15 : Tiles::BLANK;
             }
             else
             {
@@ -257,6 +221,7 @@ void Level::hollowChrome()
 void Level::shapeChrome()
 {
     int n = 0;
+    const HUInt8 C = Tiles::CHROME00;
     for (int y = 0; y < kHeight; ++y)
     {
         for (int x = 0; x < kWidth; ++x, ++n)
@@ -278,14 +243,14 @@ void Level::shapeChrome()
                                 //   |
                                 // --+--
                                 //   |
-                                mTmpLevel[n] = CHROME00 + 8;
+                                mTmpLevel[n] = C + 8;
                             }
                             else
                             {
                                 //   |
                                 // --+--
                                 //
-                                mTmpLevel[n] = CHROME00 + 11;
+                                mTmpLevel[n] = C + 11;
                             }
                         }
                         else	// left && right && !above
@@ -295,14 +260,14 @@ void Level::shapeChrome()
                                 //
                                 // --+--
                                 //   |
-                                mTmpLevel[n] = CHROME00 + 13;
+                                mTmpLevel[n] = C + 13;
                             }
                             else
                             {
                                 //
                                 // --+--
                                 //
-                                mTmpLevel[n] = CHROME00 + 1;
+                                mTmpLevel[n] = C + 1;
                             }
                         }
                     }
@@ -315,14 +280,14 @@ void Level::shapeChrome()
                                 //   |
                                 // --+
                                 //   |
-                                mTmpLevel[n] = CHROME00 + 12;
+                                mTmpLevel[n] = C + 12;
                             }
                             else
                             {
                                 //   |
                                 // --+
                                 //
-                                mTmpLevel[n] = CHROME00 + 5;
+                                mTmpLevel[n] = C + 5;
                             }
                         }
                         else	// left && !right && !above
@@ -332,14 +297,14 @@ void Level::shapeChrome()
                                 //
                                 // --+
                                 //   |
-                                mTmpLevel[n] = CHROME00 + 2;
+                                mTmpLevel[n] = C + 2;
                             }
                             else
                             {
                                 //
                                 // --+
                                 //
-                                mTmpLevel[n] = CHROME00 + 9;
+                                mTmpLevel[n] = C + 9;
                             }
                         }
                     }
@@ -355,14 +320,14 @@ void Level::shapeChrome()
                                 //   |
                                 //   +--
                                 //   |
-                                mTmpLevel[n] = CHROME00 + 14;
+                                mTmpLevel[n] = C + 14;
                             }
                             else
                             {
                                 //   |
                                 //   +--
                                 //
-                                mTmpLevel[n] = CHROME00 + 4;
+                                mTmpLevel[n] = C + 4;
                             }
                         }
                         else	// !left && right && !above
@@ -372,14 +337,14 @@ void Level::shapeChrome()
                                 //
                                 //   +--
                                 //   |
-                                mTmpLevel[n] = CHROME00;
+                                mTmpLevel[n] = C;
                             }
                             else
                             {
                                 //
                                 //   +--
                                 //
-                                mTmpLevel[n] = CHROME00 + 7;
+                                mTmpLevel[n] = C + 7;
                             }
                         }
                     }
@@ -392,14 +357,14 @@ void Level::shapeChrome()
                                 //   |
                                 //   +
                                 //   |
-                                mTmpLevel[n] = CHROME00 + 3;
+                                mTmpLevel[n] = C + 3;
                             }
                             else
                             {
                                 //   |
                                 //   +
                                 //
-                                mTmpLevel[n] = CHROME00 + 10;
+                                mTmpLevel[n] = C + 10;
                             }
                         }
                         else	// !left && right && !above
@@ -409,14 +374,14 @@ void Level::shapeChrome()
                                 //
                                 //   +
                                 //   |
-                                mTmpLevel[n] = CHROME00 + 6;
+                                mTmpLevel[n] = C + 6;
                             }
                             else
                             {
                                 //
                                 //   +
                                 //
-                                mTmpLevel[n] = CHROME00 + 15;
+                                mTmpLevel[n] = C + 15;
                             }
                         }
                     }
@@ -446,36 +411,37 @@ void Level::disconnectTs()
 {
     // Don't need to use tmpLvl for this
     int n = 0;
+    const HUInt8 C = Tiles::CHROME00;
     for (int y = 0; y < kHeight; ++y)
     {
         for (int x = 0; x < kWidth; ++x, ++n)
         {
             int tile = getTileAt(x, y);
-            if (tile == CHROME00 + 13)
+            if (tile == C + 13)
             {
                 // --+--
                 //   |
-                if (getTileAt(x, y + 1) == CHROME00 + 11)
+                if (getTileAt(x, y + 1) == C + 11)
                 {
                     //   |
                     // --+--
-                    mLevel[n] = CHROME00 + 1;	        // --+--
-                    mLevel[n + kWidth] = CHROME00 + 1;  // --+--
+                    mLevel[n] = C + 1;	                // --+--
+                    mLevel[n + kWidth] = C + 1;  // --+--
                 }
             }
-            else if (tile == CHROME00 + 14)
+            else if (tile == C + 14)
             {
                 // |
                 // +--
                 // |
-                if (getTileAt(x + 1, y) == CHROME00 + 12)
+                if (getTileAt(x + 1, y) == C + 12)
                 {
                     //   |
                     // --+
                     //   |
-                    mLevel[n] = CHROME00 + 3;           //   ||
-                    mLevel[n + 1] = CHROME00 + 3;       //   ++
-                                                        //   ||
+                    mLevel[n] = C + 3;      //   ||
+                    mLevel[n + 1] = C + 3;  //   ++
+                                            //   ||
                 }
             }
         }
@@ -489,10 +455,10 @@ void Level::randomiseBombs()
     {
         for (int x = 0; x < kWidth; ++x, ++n)
         {
-            if (mLevel[n] == BOMB1 && std::rand() % 2)
-                mLevel[n] = BOMB2;
-            else if (mLevel[n] == BOMB1_FUSED_FIRST && std::rand() % 2)
-                mLevel[n] = BOMB2_FUSED_FIRST;
+            if (mLevel[n] == Tiles::BOMB1 && std::rand() % 2)
+                mLevel[n] = Tiles::BOMB2;
+            else if (mLevel[n] == Tiles::BOMB1_FUSED_FIRST && std::rand() % 2)
+                mLevel[n] = Tiles::BOMB2_FUSED_FIRST;
         }
     }
 }
@@ -504,15 +470,15 @@ bool Level::canMoveTo(int x, int y, int dx, int dy, bool have_match, bool bomb)
     HUInt8 c = mLevel[y * kWidth + x];
     switch (c)
     {
-        case BLANK:
+        case Tiles::BLANK:
             return true;
-        case EARTH:
-        case MATCH:
+        case Tiles::EARTH:
+        case Tiles::MATCH:
             return !bomb;
-        case PICKET:
+        case Tiles::PICKET:
             return false;
-        case BOMB1:
-        case BOMB2:
+        case Tiles::BOMB1:
+        case Tiles::BOMB2:
             if (bomb)
                 return false;
             else if (have_match)
@@ -521,7 +487,7 @@ bool Level::canMoveTo(int x, int y, int dx, int dy, bool have_match, bool bomb)
                 return canMoveTo(x + dx, y + dy, dx, dy, false, true);
             break;
         default:
-            if (c >= EXPLO00 && c <= EXPLO11)
+            if (c >= Tiles::EXPLO00 && c <= Tiles::EXPLO11)
                 return true;
             break;
     }
@@ -538,19 +504,21 @@ bool Level::tick()
         for (int x = 0; x < kWidth; ++x)
         {
             HUInt8 c = getTileAt(x, y);
-            if ((c >= BOMB1_FUSED_FIRST && c < BOMB1_FUSED_LAST) ||
-                    (c >= BOMB2_FUSED_FIRST && c < BOMB2_FUSED_LAST) ||
-                    (c > EXPLO00 && c < EXPLO11))
+            if ((c >= Tiles::BOMB1_FUSED_FIRST &&
+                        c < Tiles::BOMB1_FUSED_LAST) ||
+                    (c >= Tiles::BOMB2_FUSED_FIRST &&
+                        c < Tiles::BOMB2_FUSED_LAST) ||
+                    (c > Tiles::EXPLO00 && c < Tiles::EXPLO11))
             {
                 setTileAt(x, y, c + 1);
                 mBombActivity = true;
             }
-            else if (c == PRE_EXPLO)
+            else if (c == Tiles::PRE_EXPLO)
             {
-                setTileAt(x, y, EXPLO00 + 1);
+                setTileAt(x, y, Tiles::EXPLO00 + 1);
                 mBombActivity = true;
             }
-            else if (c == EXPLO00)
+            else if (c == Tiles::EXPLO00)
             {
                 mBombActivity = true;
                 for (int y0 = (y >= 1 ? y - 1 : y);
@@ -565,13 +533,14 @@ bool Level::tick()
                     }
                 }
             }
-            else if (c == BOMB1_FUSED_LAST || c == BOMB2_FUSED_LAST)
+            else if (c == Tiles::BOMB1_FUSED_LAST ||
+                    c == Tiles::BOMB2_FUSED_LAST)
             {
                 --mNBombs;
                 mBombActivity = true;
-                setTileAt(x, y, EXPLO00);
+                setTileAt(x, y, Tiles::EXPLO00);
             }
-            else if (c == EXPLO11)
+            else if (c == Tiles::EXPLO11)
             {
                 makeBlank(x, y);
             }
@@ -585,30 +554,30 @@ bool Level::tick()
 void Level::exploAt(int x, int y, bool behind)
 {
     int c = getTileAt(x, y);
-    if (c == BOMB1 ||
-            (c >= BOMB1_FUSED_FIRST &&
-            c <= BOMB1_FUSED_LAST))
+    if (c == Tiles::BOMB1 ||
+            (c >= Tiles::BOMB1_FUSED_FIRST &&
+            c <= Tiles::BOMB1_FUSED_LAST))
     {
         if (behind)
-            setTileAt(x, y, BOMB1_FUSED_LAST);
+            setTileAt(x, y, Tiles::BOMB1_FUSED_LAST);
         else
-            setTileAt(x, y, BOMB1_FUSED_LAST - 1);
+            setTileAt(x, y, Tiles::BOMB1_FUSED_LAST - 1);
     }
-    else if (c == BOMB2 ||
-            (c >= BOMB2_FUSED_FIRST &&
-            c <= BOMB2_FUSED_LAST))
+    else if (c == Tiles::BOMB2 ||
+            (c >= Tiles::BOMB2_FUSED_FIRST &&
+            c <= Tiles::BOMB2_FUSED_LAST))
     {
         if (behind)
-            setTileAt(x, y, BOMB2_FUSED_LAST);
+            setTileAt(x, y, Tiles::BOMB2_FUSED_LAST);
         else
-            setTileAt(x, y, BOMB2_FUSED_LAST - 1);
+            setTileAt(x, y, Tiles::BOMB2_FUSED_LAST - 1);
     }
-    else if (c < CHROME00 || c > CHROME15)
+    else if (c < Tiles::CHROME00 || c > Tiles::CHROME15)
     {
         if (behind)
-            setTileAt(x, y, EXPLO00 + 1);
+            setTileAt(x, y, Tiles::EXPLO00 + 1);
         else
-            setTileAt(x, y, PRE_EXPLO);
+            setTileAt(x, y, Tiles::PRE_EXPLO);
     }
 }
 

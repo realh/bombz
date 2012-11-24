@@ -29,68 +29,42 @@
 
 #include "bombz/Background.h"
 
-#include "bombz/ScreenHub.h"
+#include "bombz/Level.h"
 
 namespace bombz {
 
-Background::~Background()
-{
-}
-
 void Background::initRendering(hgame::RenderContext *rc)
 {
-    LevelBase::initRendering(rc);
-    mTileRegions = new hgame::TextureRegion *[CHROME15 + 1];
-    mTileRegions[BLANK] = createRegion(0, 0);
-    int n;
-    for (n = EARTH; n < CHROME00; ++n)
-        mTileRegions[n] = 0;
-    for (n = CHROME00; n <= CHROME15; ++n)
-        mTileRegions[n] = createRegion(n - CHROME00 + 17);
-    int x, y;
-    for (n = 0, y = 0; y < kHeight; ++y)
-    {
-        for (x = 0; x < kWidth; ++x, ++n)
-        {
-            HUInt8 t = BLANK;
-            if (y == 0 && x == 0)
-                t = CHROME00;
-            else if (y == 0 && x == kWidth - 1)
-                t = CHROME00 + 2;
-            else if (y == kHeight - 1 && x == 0)
-                t = CHROME00 + 4;
-            else if (y == kHeight - 1 && x == kWidth - 1)
-                t = CHROME00 + 5;
-            else if (y == 0 || y == kHeight - 1)
-                t = CHROME00 + 1;
-            else if (x == 0 || x == kWidth - 1)
-                t = CHROME00 + 3;
-            mTileBatcher->setTextureAt(mTileRegions[t], x, y);
-        }
-    }
 }
 
 void Background::deleteRendering(hgame::RenderContext *rc)
 {
-    if (mTileRegions)
-    {
-        delete mTileRegions[BLANK];
-        mTileRegions[BLANK] = 0;
-        for (int n = CHROME00; n <= CHROME15; ++n)
-        {
-            delete mTileRegions[n];
-            mTileRegions[n] = 0;
-        }
-        delete[] mTileRegions;
-        mTileRegions = 0;
-    }
-    LevelBase::deleteRendering(rc);
 }
 
 void Background::render(hgame::RenderContext *rc)
 {
-    rc->bindTexture(mTileAtlas);
-    mTileBatcher->render(rc);
+    int n, x, y;
+    for (n = 0, y = 0; y < Level::kHeight; ++y)
+    {
+        for (x = 0; x < Level::kWidth; ++x, ++n)
+        {
+            int t = Tiles::BLANK;
+            if (y == 0 && x == 0)
+                t = Tiles::CHROME00;
+            else if (y == 0 && x == Level::kWidth - 1)
+                t = Tiles::CHROME00 + 2;
+            else if (y == Level::kHeight - 1 && x == 0)
+                t = Tiles::CHROME00 + 4;
+            else if (y == Level::kHeight - 1 && x == Level::kWidth - 1)
+                t = Tiles::CHROME00 + 5;
+            else if (y == 0 || y == Level::kHeight - 1)
+                t = Tiles::CHROME00 + 1;
+            else if (x == 0 || x == Level::kWidth - 1)
+                t = Tiles::CHROME00 + 3;
+            mTiles->setTileAt(t, x, y);
+        }
+    }
+    mTiles->render(rc);
 }
 
 }

@@ -27,10 +27,10 @@
 
 // Bombz - 2D puzzle game
 
-// LevelBase.h: Base class for proper Level and menu background
+// Tiles.h: Tile texture management and rendering
 
-#ifndef BOMBZ_LEVEL_BASE_H
-#define BOMBZ_LEVEL_BASE_H
+#ifndef BOMBZ_TILES_H
+#define BOMBZ_TILES_H
 
 #include "config.h"
 
@@ -46,13 +46,19 @@ namespace bombz {
 
 class ScreenHub;
 
-class LevelBase : public hgame::Renderer {
+class Tiles : public hgame::Renderer {
 public:
-    static const int kWidth = 20;
-    static const int kHeight = 15;
     static const int kAtlasColumns = 6;
 
-    enum {
+    static const int kExploTicks = 12;
+    static const int kFuseTicks = 60;
+    /*
+    static const int kEasyExtraFuse = 20;
+    static const int kMaxFuseTicks = kFuseTicks + kEasyExtraFuse;
+    */
+    static const int kMaxFuseTicks = kFuseTicks;
+
+    enum TileType {
         BLANK,
         EARTH,
         MATCH,
@@ -63,9 +69,13 @@ public:
         EXPLO11 = EXPLO00 + 11,
         PRE_EXPLO,
         CHROME00,
-        CHROME15 = CHROME00 + 15
+        CHROME15 = CHROME00 + 15,
+        BOMB1_FUSED_FIRST = CHROME15 + 1,
+        BOMB1_FUSED_LAST = (int) (BOMB1_FUSED_FIRST + kMaxFuseTicks - 1),
+        BOMB2_FUSED_FIRST = BOMB1_FUSED_LAST + 1,
+        BOMB2_FUSED_LAST = (int) (BOMB2_FUSED_FIRST + kMaxFuseTicks - 1)
     };
-protected:
+private:
     hgame::TextureAtlas *mTileAtlas;
     hgame::TileBatcher *mTileBatcher;
     int mScreenTileSize;
@@ -75,15 +85,40 @@ protected:
 
     ScreenHub *mHub;
 public:
-    LevelBase(ScreenHub *hub);
-    virtual ~LevelBase();
+    Tiles(ScreenHub *hub);
+    virtual ~Tiles();
 
-    // Doesn't create regions
-    virtual void initRendering(hgame::RenderContext *rc);
+    void initRendering(hgame::RenderContext *rc);
 
-    // Doesn't delete regions
-    virtual void deleteRendering(hgame::RenderContext *rc);
-protected:
+    void deleteRendering(hgame::RenderContext *rc);
+
+    void render(hgame::RenderContext *rc);
+
+    inline int getScreenTileSize() const
+    {
+        return mScreenTileSize;
+    }
+
+    inline int getSrcTileSize() const
+    {
+        return mSrcTileSize;
+    }
+
+    inline hgame::TextureAtlas *getTileAtlas() const
+    {
+        return mTileAtlas;
+    }
+
+    inline hgame::TileBatcher *getTileBatcher() const
+    {
+        return mTileBatcher;
+    }
+
+    inline void setTileAt(int t, int x, int y)
+    {
+        mTileBatcher->setTextureAt(mTileRegions[t], x, y);
+    }
+private:
     hgame::TextureRegion *createRegion(int x, int y);
 
     hgame::TextureRegion *createRegion(int n);
@@ -91,4 +126,4 @@ protected:
 
 }
 
-#endif // BOMBZ_LEVEL_BASE_H
+#endif // BOMBZ_TILES_H

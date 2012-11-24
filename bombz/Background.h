@@ -34,18 +34,18 @@
 
 #include "config.h"
 
-#include "hgame/Log.h"
+#include "hgame/Renderer.h"
 
-#include "bombz/LevelBase.h"
+#include "bombz/Tiles.h"
 
 namespace bombz {
 
-class Background : public LevelBase {
+class Background {
+private:
+    Tiles *mTiles;
 public:
-    Background(ScreenHub *hub) : LevelBase(hub)
+    Background(Tiles *tiles) : mTiles(tiles)
     {}
-
-    ~Background();
 
     void initRendering(hgame::RenderContext *rc);
 

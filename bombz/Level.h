@@ -36,30 +36,22 @@
 
 #include "hgame/Log.h"
 
-#include "bombz/LevelBase.h"
+#include "bombz/Tiles.h"
 
 namespace bombz {
 
-typedef hgame::HUInt8 HUInt8;
+class ScreenHub;
 
-class Level : public LevelBase {
+class Level : public hgame::Renderer {
 public:
-    static const int kExploTicks = 12;
-    static const int kFuseTicks = 60;
-    /*
-    static const int kEasyExtraFuse = 20;
-    static const int kMaxFuseTicks = kFuseTicks + kEasyExtraFuse;
-    */
-    static const int kMaxFuseTicks = kFuseTicks;
-
-    enum {
-        BOMB1_FUSED_FIRST = CHROME15 + 1,
-        BOMB1_FUSED_LAST = (int) (BOMB1_FUSED_FIRST + kMaxFuseTicks - 1),
-        BOMB2_FUSED_FIRST = BOMB1_FUSED_LAST + 1,
-        BOMB2_FUSED_LAST = (int) (BOMB2_FUSED_FIRST + kMaxFuseTicks - 1)
-    };
-
+    static const int kWidth = 20;
+    static const int kHeight = 15;
 private:
+    ScreenHub *mHub;
+    Tiles *mTiles;
+    hgame::Log &mLog;
+
+    typedef hgame::HUInt8 HUInt8;
     HUInt8 *mLevel;
     HUInt8 *mTmpLevel;
 
@@ -67,15 +59,13 @@ private:
     hgame::TextureRegion *mExplo00Region;
     hgame::Sprite *mExplo00Sprite;
 
-    hgame::Log &mLog;
-
     int mNBombs;
     int mStartX, mStartY;
     int mTimeLimit;
     bool mBombActivity;
 
 public:
-    Level(ScreenHub *hub, hgame::Log *log);
+    Level(ScreenHub *hub, Tiles *tiles, hgame::Log *log);
     ~Level();
 
     void initRendering(hgame::RenderContext *rc);
@@ -108,7 +98,7 @@ public:
 
     inline void makeBlank(int x, int y)
     {
-        setTileAt(x, y, BLANK);
+        setTileAt(x, y, Tiles::BLANK);
     }
 
     inline void setTileAt(int x, int y, HUInt8 t, bool activate = false)
@@ -121,14 +111,14 @@ public:
     inline HUInt8 getTileAt(int x, int y)
     {
         if (x < 0 || x >= kWidth || y < 0 || y >= kHeight)
-            return BLANK;
+            return Tiles::BLANK;
         return mLevel[y * kWidth + x];
     }
 
     inline bool isChromeAt(int x, int y)
     {
         int t = getTileAt(x, y);
-        return t >= CHROME00 && t <= CHROME15;
+        return t >= Tiles::CHROME00 && t <= Tiles::CHROME15;
     }
 
     // Returns true if screen needs refreshing
