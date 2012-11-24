@@ -84,7 +84,7 @@ public:
 
     void render(hgame::RenderContext *rc);
 
-    void reset(bool with_frame = false);
+    void reset();
 
     void loadFromText(const char *text);
 

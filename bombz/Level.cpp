@@ -130,30 +130,14 @@ void Level::render(hgame::RenderContext *rc)
     }
 }
 
-void Level::reset(bool with_frame)
+void Level::reset()
 {
     int n, x, y;
     for (n = 0, y = 0; y < kHeight; ++y)
     {
         for (x = 0; x < kWidth; ++x, ++n)
         {
-            HUInt8 t = BLANK;
-            if (with_frame)
-            {
-                if (y == 0 && x == 0)
-                    t = CHROME00;
-                else if (y == 0 && x == kWidth - 1)
-                    t = CHROME00 + 2;
-                else if (y == kHeight - 1 && x == 0)
-                    t = CHROME00 + 4;
-                else if (y == kHeight - 1 && x == kWidth - 1)
-                    t = CHROME00 + 5;
-                else if (y == 0 || y == kHeight - 1)
-                    t = CHROME00 + 1;
-                else if (x == 0 || x == kWidth - 1)
-                    t = CHROME00 + 3;
-            }
-            mLevel[n] = t;
+            mLevel[n] = BLANK;
         }
     }
     resetVars();
