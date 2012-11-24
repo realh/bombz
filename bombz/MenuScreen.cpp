@@ -40,7 +40,6 @@ MenuScreen::MenuScreen(ScreenHub *hub, const char *name) :
         mWidgetGroup(0),
         mHub(hub), mQuit(false)
 {
-    mHub->getLevel()->reset(true);
 }
 
 MenuScreen::~MenuScreen()
@@ -51,7 +50,7 @@ void MenuScreen::render(hgame::RenderContext *rc)
 {
     rc->enableBlend(false);
     rc->bindTexture(mHub->getTileAtlas());
-    mHub->getLevel()->render(rc);
+    mHub->getBackground()->render(rc);
     rc->enableBlend(true);
     rc->bindTexture(mHub->getLogoAtlas());
     mHub->getLogoSprite()->render(rc);

@@ -58,13 +58,15 @@ ScreenHub::ScreenHub(hgame::Application *app) :
         mGameScrn(0),
         mWantLogo(false),
         mSettings(new Settings(app->getPlatform()->createSettings(
-                "realh", "realh.co.uk", "Bombz")))
+                "realh", "realh.co.uk", "Bombz"))),
+        mBackground(new Background(this))
 {
 }
 
 ScreenHub::~ScreenHub()
 {
     delete mLevel;
+    delete mBackground;
 }
 
 void ScreenHub::initRendering(hgame::RenderContext *rc)
@@ -89,8 +91,12 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
         loadAlpha(rc);
         if (mWantLogo)
             loadLogo(rc);
+        // FIXME: We could completely delete and create level and background
+        // here depending on whether they're wanted
         mLevel->deleteRendering(rc);
         mLevel->initRendering(rc);
+        mBackground->deleteRendering(rc);
+        mBackground->initRendering(rc);
         // FIXME: Needs to be done in render() in mobile versions because
         // of on-screen controls
         setRcViewport(rc);
@@ -103,6 +109,7 @@ void ScreenHub::deleteRendering(hgame::RenderContext *rc)
     if (mMainMenuScrn)
         mMainMenuScrn->freeRendering(rc);
     mLevel->deleteRendering(rc);
+    mBackground->deleteRendering(rc);
     deleteTiles();
     deleteAlpha();
     deleteLogo();

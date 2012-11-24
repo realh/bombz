@@ -39,8 +39,6 @@
 #include "hgame/Screen.h"
 #include "hgame/WidgetGroup.h"
 
-#include "bombz/Level.h"
-
 namespace bombz {
 
 class ScreenHub;

@@ -41,6 +41,7 @@
 #include "hgame/TextureAtlas.h"
 #include "hgame/TextureRegion.h"
 
+#include "bombz/Background.h"
 #include "bombz/Level.h"
 #include "bombz/Settings.h"
 
@@ -71,8 +72,9 @@ private:
     GameScreen *mGameScrn;
     int mLeftMargin, mTopMargin;
     int mVpWidth, mVpHeight;
-    bool mWantLogo;
+    bool mWantLogo;     // Also implies want Background
     Settings *mSettings;
+    Background *mBackground;
 public:
     ScreenHub(hgame::Application *app);
 
@@ -129,6 +131,11 @@ public:
     inline Level *getLevel() const
     {
         return mLevel;
+    }
+
+    inline Background *getBackground() const
+    {
+        return mBackground;
     }
 
     inline MenuScreen *getMainMenuScreen()
