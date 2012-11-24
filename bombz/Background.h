@@ -27,49 +27,33 @@
 
 // Bombz - 2D puzzle game
 
-#include "bombz/LevelBase.h"
+// Background.h: Sort of dummy level for background of menus
 
-#include "bombz/ScreenHub.h"
+#ifndef BOMBZ_BACKGROUND_H
+#define BOMBZ_BACKGROUND_H
+
+#include "config.h"
+
+#include "hgame/Log.h"
+
+#include "bombz/LevelBase.h"
 
 namespace bombz {
 
-LevelBase::LevelBase(ScreenHub *hub) :
-        mTileAtlas(0), mTileBatcher(0), mTileRegions(0), mHub(hub)
-{
-}
+class Background : public LevelBase {
+public:
+    Background(ScreenHub *hub) : LevelBase(hub)
+    {}
 
-LevelBase::~LevelBase()
-{
-}
+    ~Background();
 
-void LevelBase::initRendering(hgame::RenderContext *rc)
-{
-    mTileAtlas = mHub->getTileAtlas();
-    mScreenTileSize = mHub->getScreenTileSize();
-    mSrcTileSize = mHub->getSrcTileSize();
-    delete mTileBatcher;
-    mTileBatcher = rc->createTileBatcher(kWidth, kHeight, mScreenTileSize);
-    delete[] mTileRegions;
-}
+    void initRendering(hgame::RenderContext *rc);
 
-void LevelBase::deleteRendering(hgame::RenderContext *rc)
-{
-    (void) rc;
-    delete mTileBatcher;
-    mTileBatcher = 0;
-    // Atlases are owned by Screen, don't delete them
-    mTileAtlas = 0;
-}
+    void deleteRendering(hgame::RenderContext *rc);
 
-hgame::TextureRegion *LevelBase::createRegion(int x, int y)
-{
-    return mTileAtlas->createRegion(x * mSrcTileSize, y * mSrcTileSize,
-            mSrcTileSize, mSrcTileSize);
-}
-
-hgame::TextureRegion *LevelBase::createRegion(int n)
-{
-    return createRegion(n % kAtlasColumns, n / kAtlasColumns);
-}
+    void render(hgame::RenderContext *rc);
+};
 
 }
+
+#endif // BOMBZ_LEVEL_H

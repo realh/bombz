@@ -42,8 +42,6 @@ namespace bombz {
 
 typedef hgame::HUInt8 HUInt8;
 
-class ScreenHub;
-
 class Level : public LevelBase {
 public:
     static const int kExploTicks = 12;
