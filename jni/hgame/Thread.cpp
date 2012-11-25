@@ -50,4 +50,8 @@ Thread::~Thread()
     std::free(mName);
 }
 
+ThreadFactory::~ThreadFactory()
+{
+}
+
 }

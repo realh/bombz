@@ -88,6 +88,7 @@ protected:
 
 class ThreadFactory {
 public:
+	virtual ~ThreadFactory();
     virtual Mutex *createMutex() = 0;
     virtual Cond *createCond(Mutex *mutex = 0) = 0;
     virtual Thread *createThread(Runnable *r, const char *name) = 0;
