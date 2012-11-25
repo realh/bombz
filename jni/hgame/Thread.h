@@ -71,20 +71,17 @@ public:
 
 class Thread {
 public:
-    Thread(Runnable *r, const char *name = 0) : mRunnable(r)
-    {
-        mName = name ? strdup(name) : 0;
-    }
+    Thread(Runnable *r, const char *name = 0) :
+            mName(strdup(name)), mRunnable(r)
+    {}
     virtual void start() = 0;
     virtual int wait() = 0;
     virtual ~Thread();
     inline const char *getName()
     {
-        return mName ? mName : getImplementationName();
+        return mName;
     }
 protected:
-    // This may store result in mName so not const
-    virtual const char *getImplementationName() = 0;
     char *mName;
     Runnable *mRunnable;
 };
@@ -93,7 +90,7 @@ class ThreadFactory {
 public:
     virtual Mutex *createMutex() = 0;
     virtual Cond *createCond(Mutex *mutex = 0) = 0;
-    virtual Thread *createThread(Runnable *r, const char *name = 0) = 0;
+    virtual Thread *createThread(Runnable *r, const char *name) = 0;
 };
 
 }

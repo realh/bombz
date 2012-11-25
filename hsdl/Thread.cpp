@@ -119,7 +119,6 @@ hgame::Mutex *Cond::getMutex()
 Thread::Thread(hgame::Runnable *r, const char *name) :
         hgame::Thread(r, name), mThread(0), mRunning(false)
 {
-    mNameMutex = new Mutex();
 }
 
 Thread::~Thread()
@@ -127,14 +126,11 @@ Thread::~Thread()
     const char *name = 0;
     if (mRunning)
     {
-        name = getName();
         // This will leak, but getting here means we're already bugged
-        if (name)
-            name = strdup(name);
+        name = strdup(getName());
         SDL_KillThread(mThread);
     }
     mThread = NULL;
-    delete mNameMutex;
     if (mRunning)
     {
         THROW(Exception, "Thread '%s' destroyed without waiting", name);
@@ -159,20 +155,6 @@ int Thread::wait()
     }
     SDL_WaitThread(mThread, &result);
     return result;
-}
-
-const char *Thread::getImplementationName()
-{
-    mNameMutex->lock();
-    if (!mName)
-    {
-        if (mThread)
-            asprintf(&mName, "SDL thread %u", SDL_GetThreadID(mThread));
-        else
-            mName = strdup("Anonymous thread");
-    }
-    mNameMutex->release();
-    return mName;
 }
 
 int Thread::launch(void *handle)
