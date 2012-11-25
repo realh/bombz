@@ -66,6 +66,19 @@ public:
     hgame::Mutex *getMutex();
 };
 
+class Thread : public hgame::Thread {
+private:
+    pthread_t mThread;
+    bool mRunning;
+public:
+    Thread(hgame::Runnable *r, const char *name);
+    ~Thread();
+    void start();
+    int wait();
+private:
+    static void *launch(void *thread);
+};
+
 class ThreadFactory : public hgame::ThreadFactory {
 public:
 	virtual ~ThreadFactory();
@@ -75,8 +88,7 @@ public:
     // If mutex not given, one will be created
     hgame::Cond *createCond(hgame::Mutex *mutex = 0);
 
-    // Actual threads are created by the JVM so this should never be called
-    hgame::Thread *createThread(hgame::Runnable *r, const char *name = 0);
+    hgame::Thread *createThread(hgame::Runnable *r, const char *name);
 };
 
 

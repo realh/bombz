@@ -121,6 +121,58 @@ hgame::Mutex *Cond::getMutex()
     return (hgame::Mutex *) mMutex;
 }
 
+Thread::Thread(hgame::Runnable *r, const char *name) :
+        hgame::Thread(r, name), mThread(0), mRunning(false)
+{
+}
+
+Thread::~Thread()
+{
+    const char *name = 0;
+    if (mRunning)
+    {
+        // This will leak, but getting here means we're already bugged
+        name = strdup(getName());
+        pthread_kill(mThread, SIGKILL);
+    }
+    if (mRunning)
+    {
+        THROW(hgame::Throwable,
+        		"Thread '%s' destroyed without waiting", name);
+    }
+}
+
+void Thread::start()
+{
+    if (mThread)
+    {
+        THROW(hgame::Throwable, "Thread '%s' was already started", getName());
+    }
+    pthread_create(&mThread, 0, launch, reinterpret_cast<void *>(this));
+}
+
+int Thread::wait()
+{
+    void *result;
+    if (!mThread)
+    {
+        THROW(hgame::Throwable,
+        		"Waiting for unstarted thread '%s'", getName());
+    }
+    pthread_join(mThread, &result);
+    return int(result);
+}
+
+void *Thread::launch(void *handle)
+{
+    Thread *thread = reinterpret_cast<Thread *>(handle);
+    thread->mRunning = true;
+    void *result = thread->mRunnable->run();
+    thread->mRunning = false;
+    return result;
+}
+
+
 hgame::Mutex *ThreadFactory::createMutex()
 {
     return new Mutex();
@@ -134,7 +186,7 @@ hgame::Cond *ThreadFactory::createCond(hgame::Mutex *mutex)
 hgame::Thread *ThreadFactory::createThread(hgame::Runnable *r,
 		const char *name)
 {
-    return 0;
+    return new Thread(r, name);
 }
 
 }
