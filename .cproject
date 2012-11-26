@@ -35,6 +35,7 @@
 									<listOptionValue builtIn="false" value="&quot;${env_var:ANDROID_NDK}/platforms/android-14/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:ANDROID_NDK}/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BombzNative/jni}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:ANDROID_NDK}/sources/android/native_app_glue&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.266402257" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -44,6 +45,7 @@
 								<option id="gnu.c.compiler.option.include.paths.554385670" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${env_var:ANDROID_NDK}/platforms/android-14/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:ANDROID_NDK}/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:ANDROID_NDK}/sources/android/native_app_glue&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1086009387" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -61,6 +63,7 @@
 								<option id="gnu.both.asm.option.include.paths.2007433518" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${env_var:ANDROID_NDK}/platforms/android-14/arch-arm/usr/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${env_var:ANDROID_NDK}/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${env_var:ANDROID_NDK}/sources/android/native_app_glue&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1997534065" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
