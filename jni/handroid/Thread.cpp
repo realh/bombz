@@ -121,9 +121,21 @@ hgame::Mutex *Cond::getMutex()
     return (hgame::Mutex *) mMutex;
 }
 
-Thread::Thread(hgame::Runnable *r, const char *name) :
-        hgame::Thread(r, name), mThread(0), mRunning(false)
+
+pthread_key_t Thread::smCurrentThreadKey;
+bool Thread::smKeyIsSet = false;
+pthread_mutex_t Thread::smKeyMutex = PTHREAD_MUTEX_INITIALIZER;
+
+Thread::Thread(JavaVM *jvm, hgame::Runnable *r, const char *name) :
+        hgame::Thread(r, name), mThread(0), mRunning(false), mJVM(jvm)
 {
+	pthread_mutex_lock(&smKeyMutex);
+	if (!smKeyIsSet)
+	{
+		pthread_key_create(&smCurrentThreadKey, 0);
+		smKeyIsSet = true;
+	}
+	pthread_mutex_unlock(&smKeyMutex);
 }
 
 Thread::~Thread()
@@ -165,11 +177,25 @@ int Thread::wait()
 
 void *Thread::launch(void *handle)
 {
+	pthread_setspecific(smCurrentThreadKey, this);
     Thread *thread = reinterpret_cast<Thread *>(handle);
     thread->mRunning = true;
     void *result = thread->mRunnable->run();
     thread->mRunning = false;
+    thread->mJVM->DetachCurrentThread();
     return result;
+}
+
+Thread *Thread::getCurrentThread()
+{
+	void *result = 0;
+	pthread_mutex_lock(&smKeyMutex);
+	if (smKeyIsSet)
+		result = pthread_getspecific(smCurrentThreadKey);
+	else
+		result = 0;
+	pthread_mutex_unlock(&smKeyMutex);
+	return reinterpret_cast<Thread *>(result);
 }
 
 
@@ -186,7 +212,7 @@ hgame::Cond *ThreadFactory::createCond(hgame::Mutex *mutex)
 hgame::Thread *ThreadFactory::createThread(hgame::Runnable *r,
 		const char *name)
 {
-    return new Thread(r, name);
+    return new Thread(mJVM, r, name);
 }
 
 }

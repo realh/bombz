@@ -57,10 +57,12 @@ public:
 
 class Platform {
 protected:
-    // Must be initialised by derived constructor
     Translate *mTranslate;
+    Log &mLog;
 public:
-    Platform() : mTranslate(0) {}
+    Platform(Translate *trans, Log *log) :
+    		mTranslate(trans), mLog(*log)
+	{}
 
     enum PlatformType {
         UNKNOWN,

@@ -70,17 +70,27 @@ class Thread : public hgame::Thread {
 private:
     pthread_t mThread;
     bool mRunning;
+    JavaVM *mJVM;
+    static pthread_key_t smCurrentThreadKey;
+    static bool smKeyIsSet;
+    static pthread_mutex_t smKeyMutex;
 public:
-    Thread(hgame::Runnable *r, const char *name);
+    Thread(JavaVM *jvm, hgame::Runnable *r, const char *name);
     ~Thread();
     void start();
     int wait();
+    static Thread *getCurrentThread();
 private:
     static void *launch(void *thread);
 };
 
 class ThreadFactory : public hgame::ThreadFactory {
+private:
+	JavaVM *mJVM;
 public:
+	ThreadFactory(JavaVM *jvm) : mJVM(jvm)
+	{}
+
 	virtual ~ThreadFactory();
 
     hgame::Mutex *createMutex();

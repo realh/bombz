@@ -173,8 +173,9 @@ hgame::Font *Platform::loadFont(unsigned int px)
     return new Font(px);
 }
 
+// Note can't create Translate before mAssetsDir
 Platform::Platform(int argc, char **argv) :
-        mLog(*new Log("sdl::Platform"))
+		hgame::Platform(0, new Log("hsdl::Platform"))
 {
     (void) argc;
     char ds = getDirectorySeparator();
