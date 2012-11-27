@@ -124,6 +124,13 @@ hgame::Settings *Platform::createSettings(const char *owner, const char *domain,
 JNIEnv *Platform::getJNIEnv()
 {
 	Thread *thread = getCurrentThread();
+	JavaVMAttachArgs aargs;
+	aargs.version = JNI_VERSION_1_6;
+	aargs.name = thread ? thread->getName() : "Parent thread";
+	aargs.group = 0;
+	JNIEnv *env;
+	if (mJVM->AttachCurrentThread(&env, &aargs) != JNI_OK)
+		abort();
 }
 
 }
