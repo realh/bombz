@@ -7,8 +7,8 @@ __already_run = False
 
 def add_envs(envs):
     envs["BIN_DIR"] = "${TOP_DIR}/bin"
-    envs["SRC_DIR"] = "${TOP_DIR}"
-    envs["HCXXFLAGS"] = "${CXXFLAGS} -I${SRC_DIR} -I${BUILD_DIR} -D_GNU_SOURCE"
+    envs["SRC_DIR"] = "${TOP_DIR}/jni"
+    envs["HCXXFLAGS"] = "${CXXFLAGS} -I${BUILD_DIR} -I${SRC_DIR} -D_GNU_SOURCE"
     envs["BOMBZ_CXXFLAGS"] = "${HCXXFLAGS} ${SDL_CFLAGS} ${OPENGL_CFLAGS} "
     envs["BOMBZ_LIBS"] = "${SDL_LIBS} ${OPENGL_LIBS}"
     envs["BUILD_SUBDIRS"] = "${BUILD_DIR}/hgame " \

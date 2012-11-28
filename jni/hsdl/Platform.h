@@ -76,8 +76,6 @@ public:
             const char *appname);
 
 protected:
-    hgame::Log &mLog;
-
     void mkdirWithParents(const char *dir);
 };
 
