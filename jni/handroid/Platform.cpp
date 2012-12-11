@@ -87,11 +87,10 @@ hgame::Font *Platform::loadFont(unsigned int px)
 }
 
 // FIXME: Create a Translate obj
-Platform::Platform(JNIEnv *jenv) :
-		hgame::Platform(0, new Log("handroid::Platform"))
+Platform::Platform(android_app *app) :
+		hgame::Platform(0, new Log("handroid::Platform")),
+		mApp(app), mJVM(app->activity->vm)
 {
-	if (jenv->GetJavaVM(&mJVM) != JNI_OK)
-		abort();
 	/*
     (void) argc;
     char ds = getDirectorySeparator();
@@ -131,6 +130,7 @@ JNIEnv *Platform::getJNIEnv()
 	JNIEnv *env;
 	if (mJVM->AttachCurrentThread(&env, &aargs) != JNI_OK)
 		abort();
+	return env;
 }
 
 }

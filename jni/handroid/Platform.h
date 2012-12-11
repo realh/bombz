@@ -36,6 +36,7 @@
 #include "config.h"
 
 #include <jni.h>
+#include <android/android_native_app_glue.h>
 
 #include "hgame/Log.h"
 #include "hgame/Platform.h"
@@ -47,6 +48,7 @@ namespace handroid {
 class Platform : public hgame::Platform {
 private:
     //char *mAssetsDir;
+    android_app *mApp;
     JavaVM *mJVM;
 public:
     hgame::Platform::PlatformType getPlatformType() const;
@@ -69,7 +71,7 @@ public:
 
     hgame::Font *loadFont(unsigned int px);
 
-    Platform(JNIEnv *jenv);
+    Platform(android_app *app);
     ~Platform();
 
     hgame::Log *createLog(const char *name,
@@ -86,6 +88,11 @@ public:
     inline Thread *getCurrentThread()
     {
     	return Thread::getCurrentThread();
+    }
+
+    inline android_app *getAndroidApp()
+    {
+        return mApp;
     }
 
 protected:

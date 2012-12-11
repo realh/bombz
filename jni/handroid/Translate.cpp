@@ -27,31 +27,60 @@
 
 // HGame - a simple cross-platform game framework
 
-// Translate.h: Interface for looking up strings by a tag (SDL implementation)
+#include "handroid/Translate.h"
 
-#ifndef HSDL_TRANSLATE_H
-#define HSDL_TRANSLATE_H
+#include <cstdlib>
+#include <stdexcept>
 
-#include "config.h"
-
-#include <map>
-
-#include "hgame/Translate.h"
-
-#include "hgame/Types.h"
+#include "handroid/Platform.h"
 
 namespace hsdl {
 
-class Translate : public hgame::Translate {
-private:
-    std::map<const char *, const char *, CompStrKey> mHash;
-    char *mBuffer;
-public:
-    Translate(class Platform *platform);
-    ~Translate();
-    const char *operator()(const char *tag) const;
+const char *Translate::smTags = {
+        "Play",
+        "Choose_Level",
+        "Quit",
+        0
 };
 
+const char *Translate::operator()(const char *tag) const
+{
+    try {
+        return mHash.at(tag);
+    }
+    catch (std::out_of_range) {
+        return tag;
+    }
 }
 
-#endif // HSDL_TRANSLATE_H
+Translate::Translate(Platform *platform)
+{
+    JNIEnv *jenv = platform->getJNIEnv();
+    jobject act = platform->getAndroidApp()->activity->clazz;
+    jclass act_class = jenv->GetObjectClass(jenv);
+    jmethodID getString_method = jenv->GetMethodId(act_class, "getString",
+            "(L)L");
+    jclass r_class = jenv->FindClass("uk/co/realh/bombznative/R");
+    int n;
+    for (n = 0; smTags[n]; ++n)
+    {
+        jstring tag = jenv->NewStringUTF(smTags[n]);
+        jstring value = jenv->CallObjectMethod(act, getString_method, tag);
+        const char *value_s = jenv->GetStringUTFChars(value);
+        mHash[smTags[n]] = strdup(value_s);
+        jenv->ReleaseStringUTFChars(value_s);
+        jenv->DeleteLocalRef(value);
+        jenv->DeleteLocalRef(tag);
+    }
+}
+
+Translate::~Translate()
+{
+    map<char *, char *, CompStrKey>::iterator it;
+    for (it = mHash.begin(); it != mHash.end(); ++it)
+    {
+        std::free(it->second);
+    }
+}
+
+}

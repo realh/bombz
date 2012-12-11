@@ -27,31 +27,33 @@
 
 // HGame - a simple cross-platform game framework
 
-// Translate.h: Interface for looking up strings by a tag (SDL implementation)
+// Translate.h: Interface for looking up strings by a tag
+//              (Android implementation)
 
-#ifndef HSDL_TRANSLATE_H
-#define HSDL_TRANSLATE_H
+#ifndef HANDROID_TRANSLATE_H
+#define HANDROID_TRANSLATE_H
 
 #include "config.h"
 
 #include <map>
 
 #include "hgame/Translate.h"
-
 #include "hgame/Types.h"
 
-namespace hsdl {
+namespace handroid {
+
+class Platform;
 
 class Translate : public hgame::Translate {
 private:
-    std::map<const char *, const char *, CompStrKey> mHash;
-    char *mBuffer;
+    std::map<char *, char *, CompStrKey> mHash;
+    static const char *smTags;
 public:
-    Translate(class Platform *platform);
+    Translate(Platform *platform);
     ~Translate();
     const char *operator()(const char *tag) const;
 };
 
 }
 
-#endif // HSDL_TRANSLATE_H
+#endif // HANDROID_TRANSLATE_H

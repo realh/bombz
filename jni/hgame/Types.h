@@ -36,6 +36,7 @@
 
 #include <climits>
 #include <cstdarg>
+#include <cstring>
 #include <exception>
 
 #if __GNUC__ >= 4
@@ -195,6 +196,16 @@ enum Alignment {
     ALIGN_BOTTOM = 4,
     ALIGN_MIDDLE = 8,   // Vertical
     ALIGN_VMASK = 12
+};
+
+// A comparator so const char * can be used as map keys
+// without overhead of string
+class CompStrKey {
+public:
+    bool operator()(const char *k1, const char *k2) const
+    {
+        return std::strcmp(k1 ? k1 : "", k2 ? k2: "") < 0;
+    }
 };
 
 // An exception class which includes info about where it was thrown
