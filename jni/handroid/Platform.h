@@ -50,6 +50,7 @@ private:
     //char *mAssetsDir;
     android_app *mApp;
     JavaVM *mJVM;
+    const char *mAppPackagName;
 public:
     hgame::Platform::PlatformType getPlatformType() const;
 
@@ -71,7 +72,8 @@ public:
 
     hgame::Font *loadFont(unsigned int px);
 
-    Platform(android_app *app);
+    // app_pkg_name must be static
+    Platform(android_app *app, const char *app_pkg_name);
     ~Platform();
 
     hgame::Log *createLog(const char *name,
@@ -93,6 +95,21 @@ public:
     inline android_app *getAndroidApp()
     {
         return mApp;
+    }
+
+    inline ANativeActivity *getNativeActivity()
+    {
+        return mApp->-activity;
+    }
+
+    inline jobject getJActivity()
+    {
+        return mApp->-activity>clazz;
+    }
+
+    inline const char *getAppPkgName() const
+    {
+    	return mAppPkgName;
     }
 
 protected:

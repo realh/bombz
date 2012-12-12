@@ -87,9 +87,10 @@ hgame::Font *Platform::loadFont(unsigned int px)
 }
 
 // FIXME: Create a Translate obj
-Platform::Platform(android_app *app) :
+Platform::Platform(android_app *app, const char *app_pkg_name) :
 		hgame::Platform(0, new Log("handroid::Platform")),
-		mApp(app), mJVM(app->activity->vm)
+		mApp(app), mJVM(app->activity->vm),
+		mAppPkgName(app_pkg_name)
 {
 	/*
     (void) argc;

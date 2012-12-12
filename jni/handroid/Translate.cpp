@@ -34,14 +34,9 @@
 
 #include "handroid/Platform.h"
 
-namespace hsdl {
+#include "uk_co_realh_hgame_handroid_TranslateHelper.h"
 
-const char *Translate::smTags = {
-        "Play",
-        "Choose_Level",
-        "Quit",
-        0
-};
+namespace hsdl {
 
 const char *Translate::operator()(const char *tag) const
 {
@@ -56,21 +51,32 @@ const char *Translate::operator()(const char *tag) const
 Translate::Translate(Platform *platform)
 {
     JNIEnv *jenv = platform->getJNIEnv();
-    jobject act = platform->getAndroidApp()->activity->clazz;
-    jclass act_class = jenv->GetObjectClass(jenv);
-    jmethodID getString_method = jenv->GetMethodId(act_class, "getString",
-            "(L)L");
-    jclass r_class = jenv->FindClass("uk/co/realh/bombznative/R");
-    int n;
-    for (n = 0; smTags[n]; ++n)
+    // Create a TranslateHelper
+    jclass helper_class = jenv->FindClass(
+    		"uk/co/realh/hgame/handroid/TranslateHelper");
+    jmethodID ctor = 0;
+    jobject helper = 0;
+    jobject pkg_name = 0;
+    if (helper_class)
+		ctor = jenv->GetMethodID(helper_class, "<init>", "(LJL)V");
+    if (ctor)
+    	pkg_name = jenv->NewStringUTF(platform->getAppPkgName);
+    if (pkg_name)
     {
-        jstring tag = jenv->NewStringUTF(smTags[n]);
-        jstring value = jenv->CallObjectMethod(act, getString_method, tag);
-        const char *value_s = jenv->GetStringUTFChars(value);
-        mHash[smTags[n]] = strdup(value_s);
-        jenv->ReleaseStringUTFChars(value_s);
-        jenv->DeleteLocalRef(value);
-        jenv->DeleteLocalRef(tag);
+    	helper = jenv->NewObject(helper_class, ctor, platform->getJActivity(),
+    			(long) this, pkg_name);
+    	jenv->DeleteLocalRef(pkg_name);
+    	pkg_name = 0;
+    }
+    if (helper)
+    	jenv->DeleteLocalRef(helper);
+    if (ctor)
+    	jenv->DeleteLocalRef(ctor);
+    if (helper_class)
+    	jenv->DeleteLocalRef(helper_class);
+    if (!helper)
+    {
+    	THROW(Throwable, "JNI error initialising Translate object");
     }
 }
 
@@ -83,4 +89,24 @@ Translate::~Translate()
     }
 }
 
+void Translate::addKeyValue(const char *key, const char *value)
+{
+	mHash[strdup(key)] = strdup(value);
 }
+
+} // namespace
+
+extern "C" {
+
+JNIEXPORT void JNICALL Java_uk_co_realh_hgame_handroid_TranslateHelper_addKeyValue
+		(JNIEnv *jenv, jobject self, jlong nobj_addr, jstring jkey, jstring jvalue)
+{
+	handroid::Translate *trans = (handroid::Translate *) nobj_addr;
+	const char *key = jenv->GetStringUTFChars(jkey, 0);
+	const char *value = jenv->GetStringUTFChars(jvalue, 0);
+	trans->addKeyValue(key, value);
+	jenv->ReleaseStringUTFChars(value);
+	jenv->ReleaseStringUTFChars(key);
+}
+
+}	// extern "C"

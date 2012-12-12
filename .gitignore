@@ -4,3 +4,5 @@ build/
 share/bombz/pngs
 gen/
 local.properties
+jni/uk_co_realh_hgame_handroid_TranslateHelper.h
+libs

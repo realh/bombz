@@ -27,33 +27,40 @@
 
 // HGame - a simple cross-platform game framework
 
-// Translate.h: Interface for looking up strings by a tag
-//              (Android implementation)
+// TranslateHelper - loads strings from app's R class into
+//					 native Translate object
 
-#ifndef HANDROID_TRANSLATE_H
-#define HANDROID_TRANSLATE_H
 
-#include "config.h"
+package uk.co.realh.hgame.handroid;
 
-#include <map>
+import java.lang.reflect.Field;
 
-#include "hgame/Translate.h"
-#include "hgame/Types.h"
+import android.app.Activity;
 
-namespace handroid {
-
-class Platform;
-
-class Translate : public hgame::Translate {
-private:
-    std::map<char *, char *, CompStrKey> mHash;
-public:
-    Translate(Platform *platform);
-    ~Translate();
-    const char *operator()(const char *tag) const;
-    void addKeyValue(const char *key, const char *value);
-};
-
+public class TranslateHelper {
+	/**
+	 * @param act		Activity
+	 * @param nobj_addr Address of native Translate object. int would do
+	 * 					for now, but Android may go 64-bit one day
+	 * @param pkg_name  Name of package containing R
+	 * @throws ClassNotFoundException 
+	 * @throws IllegalAccessException 
+	 * @throws IllegalArgumentException 
+	 */
+	public TranslateHelper(Activity act, long nobj_addr, String pkg_name)
+			throws ClassNotFoundException,
+			IllegalArgumentException, IllegalAccessException
+	{
+		Class<?> r = Class.forName(pkg_name + ".R.strings");
+		Field[] fields = r.getDeclaredFields();
+		for (Field f : fields)
+		{
+			addKeyValue(nobj_addr, f.getName().replace('_', ' '),
+					act.getString(f.getInt(null)));
+		}
+	}
+	
+	public native void addKeyValue(long nobj_addr,
+			String key, String value);
+	
 }
-
-#endif // HANDROID_TRANSLATE_H
