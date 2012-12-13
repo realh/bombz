@@ -98,8 +98,10 @@ void Translate::addKeyValue(const char *key, const char *value)
 
 extern "C" {
 
-JNIEXPORT void JNICALL Java_uk_co_realh_hgame_handroid_TranslateHelper_addKeyValue
-		(JNIEnv *jenv, jobject self, jlong nobj_addr, jstring jkey, jstring jvalue)
+JNIEXPORT void JNICALL
+Java_uk_co_realh_hgame_handroid_TranslateHelper_addKeyValue
+		(JNIEnv *jenv, jobject self, jlong nobj_addr,
+		jstring jkey, jstring jvalue)
 {
 	handroid::Translate *trans = (handroid::Translate *) nobj_addr;
 	const char *key = jenv->GetStringUTFChars(jkey, 0);
