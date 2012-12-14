@@ -33,6 +33,7 @@
 #include <stdexcept>
 
 #include "handroid/Platform.h"
+#include "handroid/Types.h"
 
 #include "uk_co_realh_hgame_handroid_TranslateHelper.h"
 
@@ -76,7 +77,7 @@ Translate::Translate(Platform *platform)
     	jenv->DeleteLocalRef(helper_class);
     if (!helper)
     {
-    	THROW(Throwable, "JNI error initialising Translate object");
+    	THROW(JavaException, "JNI error initialising Translate object");
     }
 }
 

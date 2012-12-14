@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2012, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,7 +37,8 @@
 #include "SDL.h"
 
 #include "hgame/Image.h"
-#include "hgame/Types.h"
+
+#include "hsdl/Types.h"
 
 namespace hsdl {
 
@@ -47,37 +48,37 @@ private:
 public:
     Image(SDL_Surface *surf) : mSurface(surf) {}
     ~Image();
-    
+
     int getWidth() const;
     int getHeight() const;
-    
+
     // Use with care!
     inline SDL_Surface *getSurface()
     {
         return mSurface;
     }
-    
-    hgame::Colour getColourAt(int x, int y);
-    void setColourAt(int x, int y, hgame::Colour colour);
-    
-    hgame::HUInt8 getAlphaAt(int x, int y);
-    void setAlphaAt(int x, int y, hgame::HUInt8 alpha);
-    
-    hgame::Image *createImage(int w, int h);
-    
+
+    Colour getColourAt(int x, int y);
+    void setColourAt(int x, int y, Colour colour);
+
+    HUInt8 getAlphaAt(int x, int y);
+    void setAlphaAt(int x, int y, HUInt8 alpha);
+
+    Image *createImage(int w, int h);
+
     // SDL_BlitSurface is broken
     /*
     void blit(hgame::Image *src, int dest_x, int dest_y,
             int src_x, int src_y, int w, int h);
     */
-    
+
     void lock();
     void unlock();
 private:
     void *getPixelAddr(int x, int y);
-    Uint32 getPixelRawValue(int x, int y, void **pAddr = 0);
-    void setPixelRawValue(int x, int y, hgame::HUInt32 pix);
-    void setPixelRawValue(void *addr, hgame::HUInt32 pix);
+    HUint32 getPixelRawValue(int x, int y, void **pAddr = 0);
+    void setPixelRawValue(int x, int y, HUInt32 pix);
+    void setPixelRawValue(void *addr, HUInt32 pix);
 };
 
 }

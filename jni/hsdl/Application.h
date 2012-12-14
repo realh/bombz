@@ -36,6 +36,8 @@
 
 #include "hgame/Application.h"
 
+#include "hsdl/Types.h"
+
 namespace hsdl {
 
 class Application;
@@ -76,7 +78,7 @@ public:
 
 class Application : public hgame::Application {
 private:
-    hgame::HUInt32 mLastTick;
+    HUInt32 mLastTick;
     hgame::Event *mSavedEvent;
     ScreenRunnable mScreenRunnable;
     hgame::Thread *mScreenThread;

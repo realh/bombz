@@ -38,6 +38,15 @@
 
 namespace hsdl {
 
+typedef hgame::HHInt64 Int64;
+typedef hgame::HInt32 HInt32;
+typedef hgame::HUInt32 HUInt32;
+typedef hgame::HInt16 HInt16;
+typedef hgame::HUInt16 HUInt16;
+typedef hgame::HInt8 HInt8;
+typedef hgame::HUInt8 HUInt8;
+typedef hgame::Colour Colour;
+
 class Exception : public hgame::Throwable {
 public:
     const char *getClassName() const throw();

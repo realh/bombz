@@ -81,17 +81,17 @@ hgame::Image *Image::createImage(int w, int h)
     return new Image(surf);
 }
 
-hgame::Colour Image::getColourAt(int x, int y)
+Colour Image::getColourAt(int x, int y)
 {
     SDL_PixelFormat *fmt = mSurface->format;
     Uint32 raw = getPixelRawValue(x, y);
-    return hgame::Colour(((raw & fmt->Rmask) >> fmt->Rshift) << fmt->Rloss,
+    return Colour(((raw & fmt->Rmask) >> fmt->Rshift) << fmt->Rloss,
             ((raw & fmt->Gmask) >> fmt->Gshift) << fmt->Gloss,
             ((raw & fmt->Bmask) >> fmt->Bshift) << fmt->Bloss,
             ((raw & fmt->Amask) >> fmt->Ashift) << fmt->Aloss);
 }
 
-void Image::setColourAt(int x, int y, hgame::Colour colour)
+void Image::setColourAt(int x, int y, Colour colour)
 {
     SDL_PixelFormat *fmt = mSurface->format;
     Uint32 pix = ((((Uint32) colour.getRed() >> fmt->Rloss) << fmt->Rshift) &
@@ -105,13 +105,13 @@ void Image::setColourAt(int x, int y, hgame::Colour colour)
     setPixelRawValue(x, y, pix);
 }
 
-hgame::HUInt8 Image::getAlphaAt(int x, int y)
+HUInt8 Image::getAlphaAt(int x, int y)
 {
     SDL_PixelFormat *fmt = mSurface->format;
     return ((getPixelRawValue(x, y) & fmt->Amask) >> fmt->Ashift) << fmt->Aloss;
 }
 
-void Image::setAlphaAt(int x, int y, hgame::HUInt8 alpha)
+void Image::setAlphaAt(int x, int y, HUInt8 alpha)
 {
     SDL_PixelFormat *fmt = mSurface->format;
     void *addr;
@@ -120,12 +120,12 @@ void Image::setAlphaAt(int x, int y, hgame::HUInt8 alpha)
     setPixelRawValue(addr, pix);
 }
 
-void Image::setPixelRawValue(int x, int y, hgame::HUInt32 pix)
+void Image::setPixelRawValue(int x, int y, HUInt32 pix)
 {
     setPixelRawValue(getPixelAddr(x, y), pix);
 }
 
-void Image::setPixelRawValue(void *addr, hgame::HUInt32 pix)
+void Image::setPixelRawValue(void *addr, HUInt32 pix)
 {
     if (!addr)
         return;

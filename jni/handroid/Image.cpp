@@ -31,137 +31,190 @@
 
 #include "hgame/Log.h"
 
-namespace handroid {
+#include "handroid/Platform.h"
+
+namespace hsdl {
+
+Image::Image(Platform *platform, jobject bitmap) :
+        mPlatform(platform), mBitmap(bitmap)
+{
+    mJEnv = mPlatform->getJNIEnv();
+    mJEnv->NewGlobalRef(mBitmap);
+    AndroidBitmap_getInfo(mJEnv, mBitmap, &mInfo);
+}
 
 Image::~Image()
 {
-    SDL_FreeSurface(mSurface);
+    mJEnv = mPlatform->getJNIEnv();
+    mJEnv->DeleteGlobalRef(mBitmap);
 }
 
 int Image::getWidth() const
 {
-    return mSurface->w;
+    return mInfo.width;
 }
 
 int Image::getHeight() const
 {
-    return mSurface->h;
+    return mInfo.height;
 }
 
 hgame::Image *Image::createImage(int w, int h)
 {
-    Uint32 rm, gm, bm, am;
-    SDL_PixelFormat *fmt = mSurface->format;
-    if (fmt->BitsPerPixel == 32)
-    {
-        rm = fmt->Rmask;
-        gm = fmt->Gmask;
-        bm = fmt->Bmask;
-        am = fmt->Amask;
-    }
-    else
-    {
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        rm = 0xff000000;
-        gm = 0x00ff0000;
-        bm = 0x0000ff00;
-        am = 0x000000ff;
-#else
-        rm = 0x000000ff;
-        gm = 0x0000ff00;
-        bm = 0x00ff0000;
-        am = 0xff000000;
-#endif
-    }
-    SDL_Surface *surf = SDL_CreateRGBSurface(SDL_SRCALPHA, w, h, 32,
-            rm, gm, bm, am);
-    return new Image(surf);
+    mJEnv = mPlatform->getJNIEnv();
+    jclass img_class = mJEnv->FindClass("android/graphics/Bitmap");
+    jmethodID ctor = 0;
+    if (img_class)
+        ctor = mJEnv->GetMethodID(img_class, "<init>", "(IIL)L");
+    jmethodID get_config = 0;
+    if (ctor)
+        get_config = mJEnv->GetMethodID(img_class, "getConfig", "(V)L");
+    jobject config = 0;
+    if (get_config)
+        config = mJEnv->CallObjectMethod(mBitmap, get_config);
+    jobject bitmap = 0;
+    if (config)
+        bitmap = mJEnv->NewObject(helper_class, ctor, w, h, config);
+    if (bitmap)
+        return new Image(mPlatform, bitmap);
+    else if (mJEnv->ExceptionOccurred())
+        THROW(JavaException, "Image::createImage failed");
+    return 0;
 }
 
 hgame::Colour Image::getColourAt(int x, int y)
 {
-    SDL_PixelFormat *fmt = mSurface->format;
-    Uint32 raw = getPixelRawValue(x, y);
-    return hgame::Colour(((raw & fmt->Rmask) >> fmt->Rshift) << fmt->Rloss,
-            ((raw & fmt->Gmask) >> fmt->Gshift) << fmt->Gloss,
-            ((raw & fmt->Bmask) >> fmt->Bshift) << fmt->Bloss,
-            ((raw & fmt->Amask) >> fmt->Ashift) << fmt->Aloss);
+    HUInt32 r = 0, g = 0, b = 0, a = 0;
+    HUInt32 v = getPixelRawValue(x, y);
+    switch (mInfo.format)
+    {
+        case ANDROID_BITMAP_FORMAT_RGBA_8888:
+            r = (v >> 24) & 0xff;
+            g = (v >> 16) & 0xff;
+            b = (v >> 8) & 0xff;
+            a = v & 0xff;
+            break;
+        case ANDROID_BITMAP_FORMAT_RGBA_565:
+            r = ((v >> 11) & 0x1f) << 3;
+            g = ((v >> 6) & 0x3f) << 2;
+            b = (v & 0x1f) << 3;
+            a = 0xff;
+            break;
+        case ANDROID_BITMAP_FORMAT_RGBA_4444:
+            r = ((v >> 12) & 0xf) << 4;
+            g = ((v >> 8) & 0xf) << 4;
+            b = ((v >> 4) & 0xf) << 4;
+            a = (v & 0xf) << 4;
+            break;
+        default:
+            THROW(hgame::Throwable,
+                    "Image::getColourAt: unsupported bitmap format %d",
+                    mInfo.format);
+            break;
+    }
+    return hgame::Colour(r, g, b, a);
 }
 
 void Image::setColourAt(int x, int y, hgame::Colour colour)
 {
-    SDL_PixelFormat *fmt = mSurface->format;
-    Uint32 pix = ((((Uint32) colour.getRed() >> fmt->Rloss) << fmt->Rshift) &
-                    fmt->Rmask) |
-            ((((Uint32) colour.getGreen() >> fmt->Gloss) << fmt->Gshift) &
-                    fmt->Gmask) |
-            ((((Uint32) colour.getBlue() >> fmt->Bloss) << fmt->Bshift) &
-                    fmt->Bmask) |
-            ((((Uint32) colour.getAlpha() >> fmt->Aloss) << fmt->Ashift) &
-                    fmt->Amask);
-    setPixelRawValue(x, y, pix);
+    HUInt32 v = 0;
+    HUInt32 r = colour.getRed();
+    HUInt32 g = colour.getGreen();
+    HUInt32 b = colour.getBlue();
+    HUInt32 a = colour.getAlpha();
+    switch (mInfo.format)
+    {
+        case ANDROID_BITMAP_FORMAT_RGBA_8888:
+            v = (r << 24) | (g << 16) | (b << 8) | a;
+            break;
+        case ANDROID_BITMAP_FORMAT_RGBA_565:
+            v = ((r >> 3) << 11) | ((g >> 2) << 5) | (g >> 3);
+            break;
+        case ANDROID_BITMAP_FORMAT_RGBA_4444:
+            v = ((r >> 4) << 12) | ((g >> 4) << 8) | (b & 0xf0) | (a >> 4);
+            break;
+        default:
+            THROW(hgame::Throwable,
+                    "Image::setColourAt: unsupported bitmap format %d",
+                    mInfo.format);
+            break;
+    }
+    setPixelRawValue(x, y, v);
 }
 
-hgame::HUInt8 Image::getAlphaAt(int x, int y)
+HUInt8 Image::getAlphaAt(int x, int y)
 {
-    SDL_PixelFormat *fmt = mSurface->format;
-    return ((getPixelRawValue(x, y) & fmt->Amask) >> fmt->Ashift) << fmt->Aloss;
+    HUInt32 v = getPixelRawValue(x, y);
+    switch (mInfo.format)
+    {
+        case ANDROID_BITMAP_FORMAT_RGBA_8888:
+            return v & 0xff;
+            break;
+        case ANDROID_BITMAP_FORMAT_RGBA_565:
+            return 0xff;
+            break;
+        case ANDROID_BITMAP_FORMAT_RGBA_4444:
+            return (v & 0xf) << 4;
+            break;
+        default:
+            THROW(hgame::Throwable,
+                    "Image::getAlphaAt: unsupported bitmap format %d",
+                    mInfo.format);
+            break;
+    }
+    return 0xff;
 }
 
-void Image::setAlphaAt(int x, int y, hgame::HUInt8 alpha)
+void Image::setAlphaAt(int x, int y, HUInt8 alpha)
 {
-    SDL_PixelFormat *fmt = mSurface->format;
     void *addr;
-    Uint32 pix = (getPixelRawValue(x, y, &addr) & ~fmt->Amask) |
-        ((((Uint32) alpha >> fmt->Aloss) << fmt->Ashift) & fmt->Amask);
-    setPixelRawValue(addr, pix);
+    HUInt32 v = getPixelRawValue(x, y, &addr);
+    switch (mInfo.format)
+    {
+        case ANDROID_BITMAP_FORMAT_RGBA_8888:
+            v = (v & 0xffffff00) | alpha;
+            break;
+        case ANDROID_BITMAP_FORMAT_RGBA_565:
+            THROW(hgame::Throwable,
+                    "Image::setAlphaAt: RGB_565 does not support alpha");
+            return;
+        case ANDROID_BITMAP_FORMAT_RGBA_4444:
+            v = (v & 0xfff0) | (alpha > 4);
+            break;
+        default:
+            THROW(hgame::Throwable,
+                    "Image::setAlphaAt: unsupported bitmap format %d",
+                    mInfo.format);
+            break;
+    }
+    setPixelRawValue(addr, v);
 }
 
-void Image::setPixelRawValue(int x, int y, hgame::HUInt32 pix)
+void Image::setPixelRawValue(int x, int y, HUInt32 pix)
 {
     setPixelRawValue(getPixelAddr(x, y), pix);
 }
 
-void Image::setPixelRawValue(void *addr, hgame::HUInt32 pix)
+void Image::setPixelRawValue(void *addr, HUInt32 pix)
 {
     if (!addr)
         return;
-    SDL_PixelFormat *fmt = mSurface->format;
-    if (fmt->BitsPerPixel >= 24)
+    switch (mInfo.format)
     {
-        *((Uint32 *) addr) = pix;
-    }
-    else if (fmt->BitsPerPixel >= 15)
-    {
-        *((Uint16 *) addr) = pix;
-    }
-    else
-    {
-        *((Uint8 *) addr) = pix;
-    }
-}
-
-/*
-void Image::blit(hgame::Image *src0, int dest_x, int dest_y,
-        int src_x, int src_y, int w, int h)
-{
-    Image *src = dynamic_cast<Image *> src0;
-    SDL_Rect src_rect;
-    SDL_Rect dest_rect;
-    src_rect.x = src_x;
-    src_rect.y = src_y;
-    src_rect.w = w;
-    src_rect.h = h;
-    dest_rect.x = dest_x;
-    dest_rect.y = dest_y;
-    dest_rect.w = w;
-    dest_rect.h = h;
-    if (SDL_BlitSurface(src->mSurface, &src_rect, mSurface, &dest_rect))
-    {
-        THROW(Exception, "Image blit failed");
+        case ANDROID_BITMAP_FORMAT_RGBA_8888:
+            *((UInt32 *) addr) = pix;
+            break;
+        case ANDROID_BITMAP_FORMAT_RGBA_565:
+        case ANDROID_BITMAP_FORMAT_RGBA_4444:
+            *((UInt16 *) addr) = pix;
+            break;
+        default:
+            THROW(hgame::Throwable,
+                    "Image::setPiexelRawValue: unsupported bitmap format %d",
+                    mInfo.format);
+            break;
     }
 }
-*/
 
 void *Image::getPixelAddr(int x, int y)
 {
