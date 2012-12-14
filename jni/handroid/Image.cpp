@@ -210,50 +210,67 @@ void Image::setPixelRawValue(void *addr, HUInt32 pix)
             break;
         default:
             THROW(hgame::Throwable,
-                    "Image::setPiexelRawValue: unsupported bitmap format %d",
+                    "Image::setPixelRawValue: unsupported bitmap format %d",
                     mInfo.format);
             break;
     }
 }
 
-void *Image::getPixelAddr(int x, int y)
+int Image::getBpp() const
 {
-    if (x < 0 || x >= mSurface->w || y < 0 || y >= mSurface->h)
-        return 0;
-    return (void *) (((char *) mSurface->pixels) + mSurface->pitch * y +
-            x * mSurface->format->BytesPerPixel);
+    switch (mInfo.format)
+    {
+        case ANDROID_BITMAP_FORMAT_RGBA_8888:
+            return 4;
+            break;
+        case ANDROID_BITMAP_FORMAT_RGBA_565:
+        case ANDROID_BITMAP_FORMAT_RGBA_4444:
+            return 2;
+            break;
+        default:
+            THROW(hgame::Throwable,
+                    "Image::getPixelAddr: unsupported bitmap format %d",
+                    mInfo.format);
+            break;
+    }
+    return 0;
 }
 
-Uint32 Image::getPixelRawValue(int x, int y, void **pAddr)
+void *Image::getPixelAddr(int x, int y)
 {
-    SDL_PixelFormat *fmt = mSurface->format;
+    if (x < 0 || x >= mInfo.width || y < 0 || y >= mInfo.height)
+        return 0;
+    return (void *) (((char *) mPixAddr) + mInfo.stride * y + x * getBpp());
+}
+
+HUInt32 Image::getPixelRawValue(int x, int y, void **pAddr)
+{
     void *ppix = getPixelAddr(x, y);
     if (pAddr)
         *pAddr = ppix;
     if (!ppix)
         return 0;
-    if (fmt->BitsPerPixel >= 24)
+    switch (getBpp())
     {
-        return *((Uint32 *) ppix);
+        case 4:
+            return *((Uint32 *) ppix);
+        case 2:
+            return (Uint32) *((Uint16 *) ppix);
+        default:
+            break;
     }
-    else if (fmt->BitsPerPixel >= 15)
-    {
-        return (Uint32) *((Uint16 *) ppix);
-    }
-    return (Uint32) *((Uint8 *) ppix);
+    return 0;
 }
 
 void Image::lock()
 {
-    if (SDL_LockSurface(mSurface))
-    {
-        THROW(Exception, "Unable to lock surface");
-    }
+    mJEnv = mPlatform->getJNIEnv();
+    AndroidBitmap_lockPixels(mJEnv, mBitmap, &mPixAddr);
 }
 
 void Image::unlock()
 {
-    SDL_UnlockSurface(mSurface);
+    AndroidBitmap_unlockPixels(mJEnv, mBitmap);
 }
 
 }

@@ -91,8 +91,9 @@ public:
     void lock();
     void unlock();
 private:
+    int getBpp() const;     // bytes per pixel
     void *getPixelAddr(int x, int y);
-    hgame::Uint32 getPixelRawValue(int x, int y, void **pAddr = 0);
+    HUInt32 getPixelRawValue(int x, int y, void **pAddr = 0);
     void setPixelRawValue(int x, int y, HUInt32 pix);
     void setPixelRawValue(void *addr, HUInt32 pix);
 };
