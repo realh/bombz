@@ -28,6 +28,7 @@
 // HGame - a simple cross-platform game framework
 
 // PlatformHelper - Convenient access to Java methods for native Platform
+// FIXME: loadBitmap is not used, and whole class is probably unnecessary
 
 
 package uk.co.realh.hgame.handroid;
@@ -41,16 +42,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 public class PlatformHelper {
-	
+
 	private Activity mActivity;
 	private AssetManager mAssets;
-	
+
 	public PlatformHelper(Activity act)
 	{
 		mActivity = act;
 		mAssets = act.getAssets();
 	}
-	
+
 	public Bitmap loadBitmap(String leafname, int size) throws IOException
 	{
 		InputStream istream = mAssets.open("pngs/" + size + "/" + leafname);

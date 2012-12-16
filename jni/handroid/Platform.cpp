@@ -78,8 +78,98 @@ char Platform::getDirectorySeparator()
     return '/';
 }
 
-hgame::Image *Platform::loadPNG(const char *leafname)
+jobject Platform::openAsset(const char *filename, JNIEnv *jenv)
 {
+    if (!jenv)
+        jenv = getJNIEnv();
+    jclass act_class = 0;
+    jclass asset_class = 0;
+    act_class = jenv->FindClass("android/app/Activity");
+    if (act_class)
+        asset_class = jenv->FindClass("android/content/res/AssetManager");
+    jmethodID get_assets_method = 0;
+    jmethodID open_method = 0;
+    if (asset_class)
+        get_assets_method = jenv->getMethodID(act_class, "getAssets", "(V)L");
+    if (get_assets_method)
+        open_method = jenv->getMethodID(asset_class, "open", "(L)L");
+    jobject assets = 0;
+    jobject istream = 0;
+    if (open_method)
+        assets = jenv->CallObjectMethod(getJActivity(), get_assets_method);
+    jstring jfilename = 0;
+    if (assets)
+        jfilename = jenv->NewStringUTF(filename);
+    if (jfilename)
+    {
+        istream = jenv->CallObjectMethod(assets, open_method, jfilename);
+        jenv->DeleteLocalRef(jfilename);
+    }
+    if (!istream)
+    {
+        THROW(JavaException, "Unable to open asset '%s'", filename);
+    }
+    return istream;
+}
+
+
+void Platform::closeStream(jobject istream, JNIEnv *jenv)
+{
+    if (!jenv)
+        jenv = getJNIEnv();
+    jclass istream_class = 0;
+    jmethodID close_method = 0;
+    istream_class = jenv->FindClass("java/io/InputStream");
+    if (istream_class)
+        close_method = jenv->getMethodID(istream_class, "close", "(V)V");
+    if (close_method)
+        jenv->CallObjectMethod(istream, close_method);
+}
+
+hgame::Image *Platform::loadPNG(const char *filename)
+{
+    JNIEnv *jenv = getJNIEnv();
+    jclass fct_class = 0;
+    jmethodID decodeStream = 0;
+    /*
+    jclass bmp_class = 0;
+    jclass opt_class = 0;
+    jclass cfg_class = 0;
+    jmethodID opt_ctor = 0;
+    jfieldID config_field = 0;
+    jfieldID argb888_field = 0;
+    */
+    jobject istream = 0;
+    jobject bmp = 0;
+
+    fct_class = jenv->FindClass("android/graphics/BitmapFactory");
+    if (fct_class)
+    {
+        decodeStream = jenv->GetStaticMethodID(fct_class, "decodeStream",
+                "(L)L");
+    }
+    /*
+    if (decodeStream)
+        bmp_class = jenv->FindClass("android/graphics/Bitmap");
+    if (bmp_class)
+        opt_class = jenv->FindClass("android/graphics/BitmapFactory/Options");
+    if (opt_class)
+        cfg_class = jenv->FindClass("android/graphics/Bitmap/Config");
+    if (cfg_class)
+        opt_ctor = jenv->GetMethodID(opt_class, "<init>", "(V)L");
+    */
+    if (decodeStream)
+        istream = openAsset(filename);
+    if (istream)
+    {
+        bmp = jenv->CallStaticObjectMethod(fct_class, decodeStream, istream);
+        closeStream(istream, jenv);
+    }
+    if (!bmp)
+    {
+        THROW(JavaException, "Unable to load PNG '%s'", filename);
+    }
+    return new Image(this, bmp);
 }
 
 hgame::Font *Platform::loadFont(unsigned int px)

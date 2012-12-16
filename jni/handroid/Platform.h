@@ -68,7 +68,7 @@ public:
 
     char getDirectorySeparator();
 
-    hgame::Image *loadPNG(const char *leafname);
+    hgame::Image *loadPNG(const char *filename);
 
     hgame::Font *loadFont(unsigned int px);
 
@@ -116,6 +116,11 @@ protected:
     hgame::Log &mLog;
 
     void mkdirWithParents(const char *dir);
+
+    // Returns an open java.io.Inputstream.
+    // If jenv is not given, uses getJNIEnv.
+    jobject openAsset(const char *filename, JNIEnv *jenv = 0);
+    void closeStream(jobject istream, JNIEnv *jenv = 0);
 };
 
 }
