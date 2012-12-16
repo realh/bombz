@@ -27,35 +27,59 @@
 
 // HGame - a simple cross-platform game framework
 
-// Font.h: Android font rendering
+#include "handroid/Font.h"
 
-#ifndef HANDROID_FONT_H
-#define HANDROID_FONT_H
-
-#include "config.h"
-
-#include <jni.h>
-
-#include "hgame/Font.h"
-
-#include "handroid/Types.h"
+#include "handroid/Image.h"
+#include "handroid/Platform.h"
 
 namespace handroid {
 
-class Platform;
-
-class Font : public hgame::Font {
-private:
-	Platform *mPlatform;
-	jclass mHelperClass;
-	jobject mHelper;
-public:
-    Font(Platform *platform, int size);
-    ~Font();
-
-    hgame::Image *render(Colour colour, const char *text);
-};
-
+Font::Font(Platform *platform, int size) :
+        mPlatform(platform), mHelperClass(0), mHelper(0)
+{
+    JNIEnv *jenv = platform->getJNIEnv();
+    mHelperClass = jenv->FindClass("src/uk/realh/hgame/handroid/FontHelper");
+    jmethodID ctor = 0;
+    if (mHelperClass)
+        mHelperClass = jenv->NewGlobalRef(mHelperClass);
+    if (mHelperClass)
+        ctor = jenv->GetMethodID(mHelperClass, "<init>", "(I)V");
+    if (ctor)
+        mHelper = jenv->NewObject(mHelperClass, ctor, size);
+    if (mHelper)
+        mHelper = jenv->NewGlobalRef(mHelper);
+    if (!mHelper)
+    {
+        THROW(JavaException, "Unable to create FontHelper");
+    }
 }
 
-#endif // HANDROID_FONT_H
+Font::~Font()
+{
+    JNIEnv *jenv = mPlatform->getJNIEnv();
+    jenv->DeleteGlobalRef(mHelper);
+    jenv->DeleteGlobalRef(mHelperClass);
+}
+
+hgame::Image *Font::render(Colour colour, const char *text)
+{
+    JNIEnv *jenv = mPlatform->getJNIEnv();
+    jmethodID render_meth = jenv->GetMethodID(helper_class, "render", "(IL)L");
+    jobject jtext = 0;
+    if (render_meth)
+        jtext = jenv->NewStringUTF(text);
+    jobject bmp = 0;
+    if (jtext)
+    {
+        bmp = jenv->CallObjectMethod(mHelper, render_meth,
+                colour.getRGBA(), jtext);
+        jenv->DeleteLocalRef(jtext);
+    }
+    if (!bmp)
+    {
+        THROW(JavaException, "Unable to render text '%s'", text);
+    }
+    return new Image(mPlatform, bmp, jenv);
+}
+
+}

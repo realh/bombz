@@ -29,11 +29,9 @@
 
 #include "handroid/Image.h"
 
-#include "hgame/Log.h"
-
 #include "handroid/Platform.h"
 
-namespace hsdl {
+namespace handroid {
 
 Image::Image(Platform *platform, jobject bitmap, JNIEnv *jenv) :
         mPlatform(platform), mBitmap(bitmap)
@@ -71,7 +69,7 @@ hgame::Image *Image::createImage(int w, int h)
     jclass img_class = mJEnv->FindClass("android/graphics/Bitmap");
     jmethodID ctor = 0;
     if (img_class)
-        ctor = mJEnv->GetMethodID(img_class, "<init>", "(IIL)L");
+        ctor = mJEnv->GetMethodID(img_class, "<init>", "(IIL)V");
     jmethodID get_config = 0;
     if (ctor)
         get_config = mJEnv->GetMethodID(img_class, "getConfig", "(V)L");
