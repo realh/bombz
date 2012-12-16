@@ -53,7 +53,8 @@ private:
     AndroidBitmapInfo mInfo;
     void *mPixAddr;
 public:
-    Image(Platform *platform, jobject bitmap);
+    // If jenv is not given it's obtained from platform
+    Image(Platform *platform, jobject bitmap, JNIEnv *jenv = 0);
     ~Image();
 
     int getWidth() const;

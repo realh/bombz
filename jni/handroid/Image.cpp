@@ -35,10 +35,10 @@
 
 namespace hsdl {
 
-Image::Image(Platform *platform, jobject bitmap) :
+Image::Image(Platform *platform, jobject bitmap, JNIEnv *jenv) :
         mPlatform(platform), mBitmap(bitmap)
 {
-    mJEnv = mPlatform->getJNIEnv();
+    mJEnv = jenv ? jenv : mPlatform->getJNIEnv();
     mJEnv->NewGlobalRef(mBitmap);
     AndroidBitmap_getInfo(mJEnv, mBitmap, &mInfo);
 }
@@ -46,6 +46,12 @@ Image::Image(Platform *platform, jobject bitmap) :
 Image::~Image()
 {
     mJEnv = mPlatform->getJNIEnv();
+    jclass img_class = mJEnv->FindClass("android/graphics/Bitmap");
+    jmethodID recycle = 0;
+    if (img_class)
+    	recycle = mJEnv->GetMethodID(img_class, "recycle", "(V)V";
+    if (recycle)
+        mJEnv->CallVoidMethod(mBitmap, recycle);
     mJEnv->DeleteGlobalRef(mBitmap);
 }
 
