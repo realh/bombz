@@ -89,11 +89,17 @@ char *Platform::joinPath(const char *first, std::va_list ap)
     while ((element = va_arg(ap, const char *)) != 0)
     {
         size_t l = strlen(path);
+        size_t l2 = strlen(element);
+        if (!l2)
+            continue;
         char *tmp = path;
-        path = new char[l + strlen(element) + 2];
-        strcpy(path, tmp);
-        path[l] = sep;
-        strcpy(path + l + 1, element);
+        path = new char[l + l2 + (l ? 2 : 1)];
+        if (l)
+        {
+            strcpy(path, tmp);
+            path[l++] = sep;
+        }
+        strcpy(path + l, element);
         if (tmp != first)
             delete[] tmp;
     }
@@ -137,6 +143,7 @@ char *Platform::loadText(const char *leafname, size_t *psize)
     return buf;
 }
 
+/*
 Platform::FileType Platform::getFileType(const char *filename)
 {
     char *path = joinPath(getAssetsDirectory(), filename, NULL);
@@ -166,6 +173,7 @@ Platform::FileType Platform::getFileType(const char *filename)
     delete[] path;
     return result;
 }
+*/
 
 DirectoryListing *Platform::listDirectory(const char *dirname)
 {
