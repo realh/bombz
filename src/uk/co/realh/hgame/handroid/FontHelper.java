@@ -56,7 +56,7 @@ public class FontHelper {
 		mPaint.setColor(colour);
 		Bitmap bmp = Bitmap.createBitmap(bounds.width(), bounds.height(),
 				Bitmap.Config.ARGB_8888);
-		// bmp.eraseColor(0);	Uncomment in case create doesn't do same
+		// bmp.eraseColor(0);	Enable in case create doesn't do same
 		Canvas canv = new Canvas(bmp);
 		canv.drawText(text, 0, 0, mPaint);
 		return bmp;

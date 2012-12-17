@@ -74,11 +74,13 @@ public:
     };
     virtual PlatformType getPlatformType() const = 0;
 
+    /*
     enum FileType {
         NOT_FOUND,
         PLAIN_FILE,
         DIRECTORY
     };
+    */
 
     // "BIG_ENDIAN" and "LITTLE_ENDIAN" seem to be defined elswehere
     enum Endianness {
@@ -117,7 +119,7 @@ public:
     virtual Font *loadFont(unsigned int px) = 0;
 
     // filename relative to app's assets folder
-    virtual FileType getFileType(const char *filename);
+    // virtual FileType getFileType(const char *filename);
 
     virtual const char *getAssetsDirectory() = 0;
 

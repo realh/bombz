@@ -72,6 +72,10 @@ public:
 
     hgame::Font *loadFont(unsigned int px);
 
+    char *loadText(const char *leafname, std::size_t *psize = 0);
+
+    hgame::DirectoryListing *listDirectory(const char *dirName);
+
     // app_pkg_name must be static
     Platform(android_app *app, const char *app_pkg_name);
     ~Platform();
@@ -99,12 +103,17 @@ public:
 
     inline ANativeActivity *getNativeActivity()
     {
-        return mApp->-activity;
+        return mApp->activity;
     }
 
     inline jobject getJActivity()
     {
-        return mApp->-activity>clazz;
+        return mApp->activity>clazz;
+    }
+
+    inline ANativeActivity *getNativeAseetManager()
+    {
+        return mApp->activity->assetManager;
     }
 
     inline const char *getAppPkgName() const
@@ -114,8 +123,6 @@ public:
 
 protected:
     hgame::Log &mLog;
-
-    void mkdirWithParents(const char *dir);
 
     // Returns an open java.io.Inputstream.
     // If jenv is not given, uses getJNIEnv.

@@ -234,7 +234,8 @@ const char *CommonDirectoryListing::getNext()
         return 0;
     }
     if (entry->d_name[0] == '.' &&
-            (!entry->d_name[1] || entry->d_name[1] == '.'))
+            (!entry->d_name[1] ||
+            (entry->d_name[1] == '.' && !entry->d_name[2])))
     {
         return getNext();
     }

@@ -29,48 +29,20 @@
 
 #include "handroid/Platform.h"
 
-#include <cerrno>
-#include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include "handroid/Font.h"
 
 namespace handroid {
-
-using namespace std;
 
 hgame::Platform::PlatformType Platform::getPlatformType() const
 {
     return hgame::Platform::ANDROID;
 }
 
-/*
 const char *Platform::getAssetsDirectory()
 {
-    return mAssetsDir;
-}
-*/
-
-char *Platform::getAsset(const char *leafname)
-{
-	/*
-    char *pathname;
-    char ds = getDirectorySeparator();
-    asprintf(&pathname, "%s%c%s", mAssetsDir, ds, leafname);
-    if (ds != '/')
-    {
-        for (int n = 0; pathname[n]; ++n)
-        {
-            if (pathname[n] == '/')
-                pathname[n] = ds;
-        }
-    }
-    return pathname;
-    */
-	return 0;
+    return "";
 }
 
 char Platform::getDirectorySeparator()
@@ -174,8 +146,75 @@ hgame::Image *Platform::loadPNG(const char *filename)
 
 hgame::Font *Platform::loadFont(unsigned int px)
 {
+    return new Font(this, px);
 }
 
+char *Platform::loadText(const char *leafname, std::size_t *psize)
+{
+    AAsset *asset = AAssetManager_open(getNativeAssetManager(),
+            leafname, AASSET_MODE_BUFFER);
+    if (!asset)
+    {
+        THROW(hgame::Throwable, "Unable to open asset '%s'", leafname);
+    }
+    off_t len = AAsset_getLength(asset);
+    const void *src = AAsset_getBuffer(asset);
+    char *buf = 0;
+    if (src)
+        buf = new char[len];
+    if (buf)
+        std::memcpy(buf, src, len);
+    AAsset_close(asset);
+    if (!buf)
+    {
+        THROW(hgame::Throwable, "Unable to load asset '%s'", leafname);
+    }
+    return buf;
+}
+
+class AndroidDirectoryListing : public hgame::DirectoryListing {
+private:
+    AAssetManager *mMgr;
+    AAssetDir *mADir;
+public:
+    AndroidDirectoryListing(const char *parent_dir);
+    ~AndroidDirectoryListing();
+    const char *getNext();
+};
+
+AndroidDirectoryListing::AndroidDirectoryListing(AAssetManager *mgr,
+        const char *parent_dir) : mMgr(mgr)
+{
+    mADir = AAssetManager_openDir(mgr, parent_dir);
+    if (!mADir)
+    {
+        THROW(hgame::Throwable, "Unable to open asset directory '%s'",
+                parent_dir);
+    }
+}
+
+AndroidDirectoryListing::~AndroidDirectoryListing()
+{
+    if (mADir)
+        AAssetDir_close(mADir);
+}
+
+const char *AndroidDirectoryListing::getNext()
+{
+    const char *filename = AAssetDir_getNextFileName(mADir);
+    if (filename && filename[0] == '.' &&
+            (!filename[1] ||
+            (filename[1] == '.' && !filename[2])))
+    {
+        return getNext();
+    }
+    return filename;
+}
+
+hgame::DirectoryListing *listDirectory(const char *dirName)
+{
+    return new AndroidDirectoryListing(getNativeAssetManager(), dirName);
+}
 
 Platform::Platform(android_app *app, const char *app_pkg_name) :
 		hgame::Platform(0, new Log("handroid::Platform")),
