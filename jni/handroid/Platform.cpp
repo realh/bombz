@@ -32,6 +32,8 @@
 #include <cstring>
 
 #include "handroid/Font.h"
+#include "handroid/Image.h"
+#include "handroid/Settings.h"
 
 namespace handroid {
 
@@ -238,8 +240,7 @@ hgame::Log *Platform::createLog(const char *name, hgame::Log::Level priority)
 hgame::Settings *Platform::createSettings(const char *owner, const char *domain,
         const char *appname)
 {
-    //return new Settings(this, owner, domain, appname);
-	return 0;
+    return new Settings(this);
 }
 
 JNIEnv *Platform::getJNIEnv()
