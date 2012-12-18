@@ -35,8 +35,10 @@
 
 #include "config.h"
 
+#include <cstring>
+
 #include <jni.h>
-#include <android/android_native_app_glue.h>
+#include <android_native_app_glue.h>
 
 #include "hgame/Log.h"
 #include "hgame/Platform.h"

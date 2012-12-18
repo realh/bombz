@@ -29,8 +29,8 @@
 
 // GLTextureRegion.h: OpenGL version of TextureRegion
 
-#ifndef ANDROID_GL_TEXTURE_REGION_H
-#define ANDROID_GL_TEXTURE_REGION_H
+#ifndef HGLES_TEXTURE_REGION_H
+#define HGLES_TEXTURE_REGION_H
 
 #include "config.h"
 
@@ -49,4 +49,4 @@ private:
 
 }
 
-#endif // ANDROID_GL_TEXTURE_REGION_H
+#endif // HGLES_TEXTURE_REGION_H
