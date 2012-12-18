@@ -1,6 +1,7 @@
 *.pyc
 bin/
 build/
+obj/
 share/bombz/pngs
 gen/
 local.properties
