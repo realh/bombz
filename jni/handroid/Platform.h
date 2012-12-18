@@ -28,7 +28,7 @@
 // HGame - a simple cross-platform game framework
 
 // Platform.h: Various functions giving info about and for manipulating
-//             the platform we're running on - SDL version
+//             the platform we're running on - Android version
 
 #ifndef HANDROID_PLATFORM_H
 #define HANDROID_PLATFORM_H
