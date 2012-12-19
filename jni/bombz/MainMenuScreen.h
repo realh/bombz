@@ -41,6 +41,7 @@ namespace bombz {
 class MainMenuScreen : public MenuScreen {
 private:
     typedef bool (MainMenuScreen::*TapListenerMethod)();
+
     class TapListener : public hgame::TapListener {
     private:
         MainMenuScreen *mMMS;
@@ -65,7 +66,7 @@ private:
 
     bool onSettingsTapped();
 
-#ifdef HAVE_QUIT_WIDGET
+#if HAVE_QUIT_WIDGET
     TapListener mQuitListener;
 
     bool onQuitTapped();

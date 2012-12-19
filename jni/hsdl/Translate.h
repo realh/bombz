@@ -44,7 +44,7 @@ namespace hsdl {
 
 class Translate : public hgame::Translate {
 private:
-    std::map<const char *, const char *, CompStrKey> mHash;
+    std::map<const char *, const char *, hgame::CompStrKey> mHash;
     char *mBuffer;
 public:
     Translate(class Platform *platform);

@@ -34,13 +34,15 @@
 
 #include "handroid/Font.h"
 #include "handroid/Image.h"
+#include "handroid/Log.h"
 #include "handroid/Settings.h"
+#include "handroid/Translate.h"
 
 namespace handroid {
 
 hgame::Platform::PlatformType Platform::getPlatformType() const
 {
-    return hgame::Platform::ANDROID;
+    return hgame::Platform::HGAME_ANDROID;
 }
 
 const char *Platform::getAssetsDirectory()
@@ -225,7 +227,7 @@ Platform::Platform(struct android_app *app, const char *app_pkg_name) :
 		mAppPkgName(app_pkg_name)
 {
     // Need to fully initialise stuff above before we can create a Translate
-    mTranslate = Translate(this);
+    mTranslate = new Translate(this);
 }
 
 Platform::~Platform()

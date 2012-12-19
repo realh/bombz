@@ -54,31 +54,31 @@ using namespace std;
 hgame::Platform::PlatformType Platform::getPlatformType() const
 {
     /*
-    if (platformType == hgame::Platform::UNKNOWN)
+    if (platformType == hgame::Platform::HGAME_UNKNOWN)
     {
         const char *pn = SDL_GetPlatform();
         if (strstr(plat_name, "Win") == pn)
         {
-            platformType = hgame::Platform::WINDOWS;
+            platformType = hgame::Platform::HGAME_WINDOWS;
         }
         else if (strstr(plat_name, "Mac") == pn)
         {
-            platformType = hgame::Platform::MAC;
+            platformType = hgame::Platform::HGAME_MAC;
         }
         else
         {
             // Assumption; we don't support anything else with SDL
-            platformType = hgame::Platform::POSIX;
+            platformType = hgame::Platform::HGAME_POSIX;
         }
     }
     */
 #ifdef __WIN32__
-    return hgame::Platform::WINDOWS;
+    return hgame::Platform::HGAME_WINDOWS;
 #elif defined __MACOSX__
-    return hgame::Platform::MAC;
+    return hgame::Platform::HGAME_MAC;
 #else
     // Assumption; we don't support anything else with SDL
-    return hgame::Platform::POSIX;
+    return hgame::Platform::HGAME_POSIX;
 #endif
 }
 
@@ -91,16 +91,16 @@ const char *Platform::getProfileFilename(const char *owner, const char *domain,
     hgame::Platform::PlatformType pt = getPlatformType();
     switch (pt)
     {
-        case hgame::Platform::WINDOWS:
+        case hgame::Platform::HGAME_WINDOWS:
             var = "APPDATA";
             asprintf(&body, "%s%c%s", owner, ds, appname);
             break;
-        case hgame::Platform::MAC:
+        case hgame::Platform::HGAME_MAC:
             var = "HOME";
             asprintf(&body, "Library%cApplication Support%c%s%c%s",
                     ds, ds, owner, ds, appname);
             break;
-        case hgame::Platform::POSIX:
+        case hgame::Platform::HGAME_POSIX:
             var = "XDG_CONFIG_HOME";
             if (!getenv(var))
             {
@@ -151,7 +151,7 @@ char *Platform::getAsset(const char *leafname)
 
 char Platform::getDirectorySeparator()
 {
-    if (getPlatformType() == hgame::Platform::WINDOWS)
+    if (getPlatformType() == hgame::Platform::HGAME_WINDOWS)
         return '\\';
     return '/';
 }

@@ -30,6 +30,7 @@
 #include "handroid/Image.h"
 
 #include "handroid/Platform.h"
+#include "handroid/Types.h"
 
 namespace handroid {
 
@@ -47,7 +48,7 @@ Image::~Image()
     jclass img_class = mJEnv->FindClass("android/graphics/Bitmap");
     jmethodID recycle = 0;
     if (img_class)
-    	recycle = mJEnv->GetMethodID(img_class, "recycle", "(V)V";
+    	recycle = mJEnv->GetMethodID(img_class, "recycle", "(V)V");
     if (recycle)
         mJEnv->CallVoidMethod(mBitmap, recycle);
     mJEnv->DeleteGlobalRef(mBitmap);
@@ -78,7 +79,7 @@ hgame::Image *Image::createImage(int w, int h)
         config = mJEnv->CallObjectMethod(mBitmap, get_config);
     jobject bitmap = 0;
     if (config)
-        bitmap = mJEnv->NewObject(helper_class, ctor, w, h, config);
+        bitmap = mJEnv->NewObject(img_class, ctor, w, h, config);
     if (bitmap)
         return new Image(mPlatform, bitmap);
     else if (mJEnv->ExceptionOccurred())
@@ -98,7 +99,7 @@ hgame::Colour Image::getColourAt(int x, int y)
             b = (v >> 8) & 0xff;
             a = v & 0xff;
             break;
-        case ANDROID_BITMAP_FORMAT_RGBA_565:
+        case ANDROID_BITMAP_FORMAT_RGB_565:
             r = ((v >> 11) & 0x1f) << 3;
             g = ((v >> 6) & 0x3f) << 2;
             b = (v & 0x1f) << 3;
@@ -131,7 +132,7 @@ void Image::setColourAt(int x, int y, hgame::Colour colour)
         case ANDROID_BITMAP_FORMAT_RGBA_8888:
             v = (r << 24) | (g << 16) | (b << 8) | a;
             break;
-        case ANDROID_BITMAP_FORMAT_RGBA_565:
+        case ANDROID_BITMAP_FORMAT_RGB_565:
             v = ((r >> 3) << 11) | ((g >> 2) << 5) | (g >> 3);
             break;
         case ANDROID_BITMAP_FORMAT_RGBA_4444:
@@ -154,7 +155,7 @@ HUInt8 Image::getAlphaAt(int x, int y)
         case ANDROID_BITMAP_FORMAT_RGBA_8888:
             return v & 0xff;
             break;
-        case ANDROID_BITMAP_FORMAT_RGBA_565:
+        case ANDROID_BITMAP_FORMAT_RGB_565:
             return 0xff;
             break;
         case ANDROID_BITMAP_FORMAT_RGBA_4444:
@@ -178,7 +179,7 @@ void Image::setAlphaAt(int x, int y, HUInt8 alpha)
         case ANDROID_BITMAP_FORMAT_RGBA_8888:
             v = (v & 0xffffff00) | alpha;
             break;
-        case ANDROID_BITMAP_FORMAT_RGBA_565:
+        case ANDROID_BITMAP_FORMAT_RGB_565:
             THROW(hgame::Throwable,
                     "Image::setAlphaAt: RGB_565 does not support alpha");
             return;
@@ -206,11 +207,11 @@ void Image::setPixelRawValue(void *addr, HUInt32 pix)
     switch (mInfo.format)
     {
         case ANDROID_BITMAP_FORMAT_RGBA_8888:
-            *((UInt32 *) addr) = pix;
+            *((HUInt32 *) addr) = pix;
             break;
-        case ANDROID_BITMAP_FORMAT_RGBA_565:
+        case ANDROID_BITMAP_FORMAT_RGB_565:
         case ANDROID_BITMAP_FORMAT_RGBA_4444:
-            *((UInt16 *) addr) = pix;
+            *((HUInt16 *) addr) = pix;
             break;
         default:
             THROW(hgame::Throwable,
@@ -227,7 +228,7 @@ int Image::getBpp() const
         case ANDROID_BITMAP_FORMAT_RGBA_8888:
             return 4;
             break;
-        case ANDROID_BITMAP_FORMAT_RGBA_565:
+        case ANDROID_BITMAP_FORMAT_RGB_565:
         case ANDROID_BITMAP_FORMAT_RGBA_4444:
             return 2;
             break;
@@ -257,9 +258,9 @@ HUInt32 Image::getPixelRawValue(int x, int y, void **pAddr)
     switch (getBpp())
     {
         case 4:
-            return *((Uint32 *) ppix);
+            return *((HUInt32 *) ppix);
         case 2:
-            return (Uint32) *((Uint16 *) ppix);
+            return (HUInt32) *((HUInt16 *) ppix);
         default:
             break;
     }

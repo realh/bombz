@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS += -fexceptions -D_GNU_SOURCE
+LOCAL_CFLAGS += -fexceptions -frtti -D_GNU_SOURCE
 
 LOCAL_MODULE := bombz
 LOCAL_SRC_FILES := \

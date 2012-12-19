@@ -37,7 +37,7 @@
 
 #include "uk_co_realh_hgame_handroid_TranslateHelper.h"
 
-namespace hsdl {
+namespace handroid {
 
 const char *Translate::operator()(const char *tag) const
 {
@@ -61,7 +61,7 @@ Translate::Translate(Platform *platform)
     if (helper_class)
 		ctor = jenv->GetMethodID(helper_class, "<init>", "(LJL)V");
     if (ctor)
-    	pkg_name = jenv->NewStringUTF(platform->getAppPkgName);
+    	pkg_name = jenv->NewStringUTF(platform->getAppPkgName());
     if (pkg_name)
     {
     	helper = jenv->NewObject(helper_class, ctor, platform->getJActivity(),
@@ -71,8 +71,6 @@ Translate::Translate(Platform *platform)
     }
     if (helper)
     	jenv->DeleteLocalRef(helper);
-    if (ctor)
-    	jenv->DeleteLocalRef(ctor);
     if (helper_class)
     	jenv->DeleteLocalRef(helper_class);
     if (!helper)
@@ -83,9 +81,10 @@ Translate::Translate(Platform *platform)
 
 Translate::~Translate()
 {
-    map<char *, char *, CompStrKey>::iterator it;
+    std::map<const char *, char *, hgame::CompStrKey>::iterator it;
     for (it = mHash.begin(); it != mHash.end(); ++it)
     {
+        std::free(const_cast<char *>(it->first));
         std::free(it->second);
     }
 }
@@ -108,8 +107,8 @@ Java_uk_co_realh_hgame_handroid_TranslateHelper_addKeyValue
 	const char *key = jenv->GetStringUTFChars(jkey, 0);
 	const char *value = jenv->GetStringUTFChars(jvalue, 0);
 	trans->addKeyValue(key, value);
-	jenv->ReleaseStringUTFChars(value);
-	jenv->ReleaseStringUTFChars(key);
+	jenv->ReleaseStringUTFChars(jvalue, value);
+	jenv->ReleaseStringUTFChars(jkey, key);
 }
 
 }	// extern "C"

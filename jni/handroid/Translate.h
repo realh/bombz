@@ -46,7 +46,7 @@ class Platform;
 
 class Translate : public hgame::Translate {
 private:
-    std::map<char *, char *, CompStrKey> mHash;
+    std::map<const char *, char *, hgame::CompStrKey> mHash;
 public:
     Translate(Platform *platform);
     ~Translate();

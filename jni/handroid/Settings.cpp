@@ -29,6 +29,7 @@
 
 #include "handroid/Settings.h"
 
+#include <cstdlib>
 #include <cstring>
 
 #include "handroid/Platform.h"
@@ -47,25 +48,28 @@ Settings::Settings(Platform *platform) :
         get_prefs = jenv->GetMethodID(act_class, "getPreferences", "(I)L");
     if (get_prefs)
     {
-        mPreferences = jenv->CallObjectMethod(mPlatform->getJActivity,
+        mPreferences = jenv->CallObjectMethod(mPlatform->getJActivity(),
                 get_prefs, 0 /* MODE_PRIVATE */);
     }
     if (mPreferences)
         mPreferences = jenv->NewGlobalRef(mPreferences);
     if (!mPreferences)
     {
-        THROW(JavaExcception, "Unable to open SharedPreferences");
+        THROW(JavaException, "Unable to open SharedPreferences");
     }
     mPrefsClass = jenv->FindClass("android/content/SharedPreferences");
     if (mPrefsClass)
-        mPrefsClass = jenv->NewGlobalRed(mPrefsClass);
+        mPrefsClass = reinterpret_cast<jclass>(jenv->NewGlobalRef(mPrefsClass));
     if (mPrefsClass)
     {
         mEditorClass = jenv->FindClass(
                 "android/content/SharedPreferences.Editor");
     }
     if (mEditorClass)
-        mEditorClass = jenv->NewGlobalRed(mEditorClass);
+    {
+        mEditorClass = reinterpret_cast<jclass>
+                (jenv->NewGlobalRef(mEditorClass));
+    }
     if (!mEditorClass || !mPrefsClass)
     {
         THROW(JavaException, "Unable to cache Preferences classes");
@@ -129,7 +133,7 @@ template<class T> T Settings::get(const char *method, const char *sig,
     }
     jmethodID jmeth = jenv->GetMethodID(mEditorClass, method, sig);
     T result = 0;
-    if (jmethodID)
+    if (jmeth)
     {
         result = (jenv->*caller)(mEditor, jmeth, k, d);
         jenv->DeleteLocalRef(jk);
@@ -167,8 +171,9 @@ const char *Settings::get(const char *k, const char *d)
                 "to get setting '%s'",
                 d, k);
     }
-    jobject jresult = get<jobject>("getString", "(LL)L",
-            &JNIEnv::CallObjectMethod, k, jd);
+    jstring jresult = reinterpret_cast<jstring>
+            (get<jobject>("getString", "(LL)L",
+            &JNIEnv::CallObjectMethod, k, jd));
     jenv->DeleteLocalRef(jd);
     const char *result = 0;
     if (jresult)
@@ -177,7 +182,8 @@ const char *Settings::get(const char *k, const char *d)
     {
         std::free(mResult);
         mResult = strdup(result);
-        jenv->ReleaseStringUTFChars(result);
+        jenv->ReleaseStringUTFChars(jresult, result);
+        jenv->DeleteLocalRef(jresult);
     }
     else
     {
@@ -214,7 +220,7 @@ void Settings::enableEditing()
     jmethodID edit = jenv->GetMethodID(mPrefsClass, "edit", "(V)L");
     if (edit)
     {
-        mEditor = jenv->CallObjectMethod(mPrefs, edit);
+        mEditor = jenv->CallObjectMethod(mPreferences, edit);
     }
     if (mEditor)
         mEditor = jenv->NewGlobalRef(mEditor);

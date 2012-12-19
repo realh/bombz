@@ -41,7 +41,10 @@ Font::Font(Platform *platform, int size) :
     mHelperClass = jenv->FindClass("src/uk/realh/hgame/handroid/FontHelper");
     jmethodID ctor = 0;
     if (mHelperClass)
-        mHelperClass = jenv->NewGlobalRef(mHelperClass);
+    {
+        mHelperClass = reinterpret_cast<jclass>
+                (jenv->NewGlobalRef(mHelperClass));
+    }
     if (mHelperClass)
         ctor = jenv->GetMethodID(mHelperClass, "<init>", "(I)V");
     if (ctor)
@@ -64,7 +67,7 @@ Font::~Font()
 hgame::Image *Font::render(hgame::Colour colour, const char *text)
 {
     JNIEnv *jenv = mPlatform->getJNIEnv();
-    jmethodID render_meth = jenv->GetMethodID(helper_class, "render", "(IL)L");
+    jmethodID render_meth = jenv->GetMethodID(mHelperClass, "render", "(IL)L");
     jobject jtext = 0;
     if (render_meth)
         jtext = jenv->NewStringUTF(text);

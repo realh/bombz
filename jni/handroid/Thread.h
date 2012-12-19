@@ -103,7 +103,6 @@ public:
     hgame::Thread *createThread(hgame::Runnable *r, const char *name);
 };
 
-
-
+}
 
 #endif /* HANDROID_THREAD_H */
