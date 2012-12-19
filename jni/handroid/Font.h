@@ -38,8 +38,6 @@
 
 #include "hgame/Font.h"
 
-#include "handroid/Types.h"
-
 namespace handroid {
 
 class Platform;
@@ -53,7 +51,7 @@ public:
     Font(Platform *platform, int size);
     ~Font();
 
-    hgame::Image *render(Colour colour, const char *text);
+    hgame::Image *render(hgame::Colour colour, const char *text);
 };
 
 }

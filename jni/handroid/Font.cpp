@@ -61,7 +61,7 @@ Font::~Font()
     jenv->DeleteGlobalRef(mHelperClass);
 }
 
-hgame::Image *Font::render(Colour colour, const char *text)
+hgame::Image *Font::render(hgame::Colour colour, const char *text)
 {
     JNIEnv *jenv = mPlatform->getJNIEnv();
     jmethodID render_meth = jenv->GetMethodID(helper_class, "render", "(IL)L");

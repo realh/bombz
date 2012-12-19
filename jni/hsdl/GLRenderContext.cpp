@@ -31,6 +31,9 @@
 
 #include <cstdlib>
 
+#include "SDL.h"
+#include "SDL_opengl.h"
+
 #include "hsdl/GLRenderContext.h"
 
 #include "hsdl/GLSprite.h"

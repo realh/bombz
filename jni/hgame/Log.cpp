@@ -121,6 +121,7 @@ void Log::i(const char * format, ...)
     IMPLEMENT_LOG_LEVEL(INFO);
 }
 
+#ifndef NDEBUG
 void Log::d(const char * format, ...)
 {
     IMPLEMENT_LOG_LEVEL(DEBUG);
@@ -130,5 +131,6 @@ void Log::v(const char * format, ...)
 {
     IMPLEMENT_LOG_LEVEL(VERBOSE);
 }
+#endif
 
 }

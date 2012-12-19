@@ -35,7 +35,7 @@
 
 #include "config.h"
 
-#include <cstring>
+#include <cstddef>
 
 #include <jni.h>
 #include <android_native_app_glue.h>
@@ -50,9 +50,9 @@ namespace handroid {
 class Platform : public hgame::Platform {
 private:
     //char *mAssetsDir;
-    android_app *mApp;
+    struct android_app *mApp;
     JavaVM *mJVM;
-    const char *mAppPackagName;
+    const char *mAppPkgName;
 public:
     hgame::Platform::PlatformType getPlatformType() const;
 
@@ -79,7 +79,7 @@ public:
     hgame::DirectoryListing *listDirectory(const char *dirName);
 
     // app_pkg_name must be static
-    Platform(android_app *app, const char *app_pkg_name);
+    Platform(struct android_app *app, const char *app_pkg_name);
     ~Platform();
 
     hgame::Log *createLog(const char *name,
@@ -98,7 +98,7 @@ public:
     	return Thread::getCurrentThread();
     }
 
-    inline android_app *getAndroidApp()
+    inline struct android_app *getAndroidApp()
     {
         return mApp;
     }
@@ -110,10 +110,10 @@ public:
 
     inline jobject getJActivity()
     {
-        return mApp->activity>clazz;
+        return mApp->activity->clazz;
     }
 
-    inline ANativeActivity *getNativeAseetManager()
+    inline AAssetManager *getNativeAssetManager()
     {
         return mApp->activity->assetManager;
     }
@@ -124,8 +124,6 @@ public:
     }
 
 protected:
-    hgame::Log &mLog;
-
     // Returns an open java.io.Inputstream.
     // If jenv is not given, uses getJNIEnv.
     jobject openAsset(const char *filename, JNIEnv *jenv = 0);

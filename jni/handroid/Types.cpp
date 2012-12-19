@@ -30,8 +30,7 @@
 #include "handroid/Types.h"
 
 #include <cstdarg>
-#include <cstdlib>
-#include <cstring>
+#include <cstdio>
 
 namespace handroid {
 

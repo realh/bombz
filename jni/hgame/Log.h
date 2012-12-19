@@ -71,8 +71,20 @@ public:
     void e(const char *format, ...) H_GNUC_PRINTF(2, 3);
     void w(const char *format, ...) H_GNUC_PRINTF(2, 3);
     void i(const char *format, ...) H_GNUC_PRINTF(2, 3);
+#ifdef NDEBUG
+    inline void d(const char *format, ...) const H_GNUC_PRINTF(2, 3)
+    {
+        (void) format;
+    }
+
+    void v(const char *format, ...) const H_GNUC_PRINTF(2, 3)
+    {
+        (void) format;
+    }
+#else
     void d(const char *format, ...) H_GNUC_PRINTF(2, 3);
     void v(const char *format, ...) H_GNUC_PRINTF(2, 3);
+#endif
 
 protected:
     // Derived constructors must initialise mutex lazily

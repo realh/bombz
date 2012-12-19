@@ -27,18 +27,18 @@
 
 // HGame - a simple cross-platform game framework
 
-#include "android/GLTextureRegion.h"
+#include "hgles/GLTextureRegion.h"
 
-namespace android {
+namespace hgles {
 
-GLTextureRegion::GLTextureRegion(TextureAtlas *atlas,
+GLTextureRegion::GLTextureRegion(hgl::GLTextureAtlas *atlas,
             float u0, float v0, float u1, float v1) :
         hgl::TextureRegion(atlas, x, y, w, h)
 {
     initCoords();
 }
 
-GLTextureRegion::GLTextureRegion(TextureAtlas *atlas,
+GLTextureRegion::GLTextureRegion(hgl::GLTextureAtlas *atlas,
         int x, int y, int w, int h) :
         hgl::TextureRegion(atlas, x, y, w, h)
 {

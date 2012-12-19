@@ -29,6 +29,7 @@
 
 #include "handroid/Platform.h"
 
+#include <cstdlib>
 #include <cstring>
 
 #include "handroid/Font.h"
@@ -64,9 +65,9 @@ jobject Platform::openAsset(const char *filename, JNIEnv *jenv)
     jmethodID get_assets_method = 0;
     jmethodID open_method = 0;
     if (asset_class)
-        get_assets_method = jenv->getMethodID(act_class, "getAssets", "(V)L");
+        get_assets_method = jenv->GetMethodID(act_class, "getAssets", "(V)L");
     if (get_assets_method)
-        open_method = jenv->getMethodID(asset_class, "open", "(L)L");
+        open_method = jenv->GetMethodID(asset_class, "open", "(L)L");
     jobject assets = 0;
     jobject istream = 0;
     if (open_method)
@@ -95,7 +96,7 @@ void Platform::closeStream(jobject istream, JNIEnv *jenv)
     jmethodID close_method = 0;
     istream_class = jenv->FindClass("java/io/InputStream");
     if (istream_class)
-        close_method = jenv->getMethodID(istream_class, "close", "(V)V");
+        close_method = jenv->GetMethodID(istream_class, "close", "(V)V");
     if (close_method)
         jenv->CallObjectMethod(istream, close_method);
 }
@@ -179,7 +180,7 @@ private:
     AAssetManager *mMgr;
     AAssetDir *mADir;
 public:
-    AndroidDirectoryListing(const char *parent_dir);
+    AndroidDirectoryListing(AAssetManager *mgr, const char *parent_dir);
     ~AndroidDirectoryListing();
     const char *getNext();
 };
@@ -187,7 +188,7 @@ public:
 AndroidDirectoryListing::AndroidDirectoryListing(AAssetManager *mgr,
         const char *parent_dir) : mMgr(mgr)
 {
-    mADir = AAssetManager_openDir(mgr, parent_dir);
+    mADir = AAssetManager_openDir(mMgr, parent_dir);
     if (!mADir)
     {
         THROW(hgame::Throwable, "Unable to open asset directory '%s'",
@@ -213,12 +214,12 @@ const char *AndroidDirectoryListing::getNext()
     return filename;
 }
 
-hgame::DirectoryListing *listDirectory(const char *dirName)
+hgame::DirectoryListing *Platform::listDirectory(const char *dirName)
 {
     return new AndroidDirectoryListing(getNativeAssetManager(), dirName);
 }
 
-Platform::Platform(android_app *app, const char *app_pkg_name) :
+Platform::Platform(struct android_app *app, const char *app_pkg_name) :
 		hgame::Platform(0, new Log("handroid::Platform")),
 		mApp(app), mJVM(app->activity->vm),
 		mAppPkgName(app_pkg_name)
@@ -252,7 +253,7 @@ JNIEnv *Platform::getJNIEnv()
 	aargs.group = 0;
 	JNIEnv *env;
 	if (mJVM->AttachCurrentThread(&env, &aargs) != JNI_OK)
-		abort();
+		std::abort();
 	return env;
 }
 

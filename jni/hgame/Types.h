@@ -204,7 +204,7 @@ class CompStrKey {
 public:
     bool operator()(const char *k1, const char *k2) const
     {
-        return std::strcmp(k1 ? k1 : "", k2 ? k2: "") < 0;
+        return ::std::strcmp(k1 ? k1 : "", k2 ? k2: "") < 0;
     }
 };
 

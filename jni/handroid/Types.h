@@ -38,7 +38,7 @@
 
 namespace handroid {
 
-typedef hgame::HHInt64 Int64;
+typedef hgame::HInt64 Int64;
 typedef hgame::HInt32 HInt32;
 typedef hgame::HUInt32 HUInt32;
 typedef hgame::HInt16 HInt16;
@@ -51,7 +51,7 @@ class JavaException : public hgame::Throwable {
 public:
     const char *getClassName() const throw();
 
-    Exception(const char *file, int line, const char *func,
+    JavaException(const char *file, int line, const char *func,
             const char *desc, ...)
             throw()
             H_GNUC_PRINTF(5, 6);

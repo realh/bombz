@@ -65,12 +65,12 @@ public:
 	{}
 
     enum PlatformType {
-        UNKNOWN,
-        POSIX,
-        WINDOWS,
-        MAC,
-        ANDROID,
-        IOS
+        HGAME_UNKNOWN,
+        HGAME_POSIX,
+        HGAME_WINDOWS,
+        HGAME_MAC,
+        HGAME_ANDROID,
+        HGAME_IOS
     };
     virtual PlatformType getPlatformType() const = 0;
 

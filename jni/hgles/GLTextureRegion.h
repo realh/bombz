@@ -34,15 +34,15 @@
 
 #include "config.h"
 
-#include "hgl/TextureRegion.h"
+#include "hgl/GLTextureRegion.h"
 
-namespace android {
+namespace hgles {
 
-class GLTextureRegion : public hgl::TextureRegion {
+class GLTextureRegion : public hgl::GLTextureRegion {
 public:
-    GLTextureRegion(TextureAtlas *atlas,
+    GLTextureRegion(hgl::GLTextureAtlas *atlas,
             float u0, float v0, float u1, float v1);
-    GLTextureRegion(TextureAtlas *atlas, int x, int y, int w, int h);
+    GLTextureRegion(hgl::GLTextureAtlas *atlas, int x, int y, int w, int h);
 private:
     void initCoords();
 };

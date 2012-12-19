@@ -36,11 +36,6 @@
 
 #include "hgame/RenderContext.h"
 
-#ifdef WITH_SDL
-#include "SDL.h"
-#include "SDL_opengl.h"
-#endif
-
 namespace hgl {
 
 class GLRenderContext : public hgame::RenderContext {
