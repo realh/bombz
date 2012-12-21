@@ -227,7 +227,8 @@ hgame::TextureAtlas *GLRenderContext::uploadTexture(hgame::Image *img)
     }
     else
     {
-        THROW(hgame::Throwable, "Unsupported bytes per pixel: %d", bpp);
+        THROW(hgame::Throwable,
+                "Unsupported bytes per pixel for texture: %d", bpp);
     }
     GLTextureAtlas *atlas = new GLTextureAtlas(this, w, h,
             getNeedScaling() ? GL_LINEAR : GL_NEAREST);

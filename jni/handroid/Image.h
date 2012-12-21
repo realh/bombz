@@ -60,13 +60,15 @@ public:
     int getWidth() const;
     int getHeight() const;
 
-    inline int getStride() const
+    inline HUInt32 getStride() const
     {
         return (int) mInfo.stride;
     }
 
-    // FIXME: We'll need some way to get the format for
-    // uploading textures to OpenGL
+    inline HUInt32 getFormat() const
+    {
+        return mInfo.format;
+    }
 
     // Use with care, only while locked!
     inline void *getRawPixelData()

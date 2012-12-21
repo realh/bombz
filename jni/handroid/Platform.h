@@ -105,6 +105,11 @@ public:
         return mApp->activity;
     }
 
+    inline ANativeWindow *getNativeWindow()
+    {
+        return mApp->window;
+    }
+
     inline jobject getJActivity()
     {
         return mApp->activity->clazz;

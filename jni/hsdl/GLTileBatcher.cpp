@@ -70,7 +70,8 @@ GLTileBatcher::~GLTileBatcher()
 void GLTileBatcher::setTextureAt(hgame::TextureRegion *tex, int x, int y)
 {
     std::memcpy(mTexCoords + (y * mNColumns + x) * 8,
-            ((hgl::GLTextureRegion *) tex)->getCoords(), 8 * sizeof(float));
+            (dynamic_cast<hgl::GLTextureRegion *>(tex))->getCoords(),
+            8 * sizeof(float));
 }
 
 void GLTileBatcher::render(hgame::RenderContext *rc)

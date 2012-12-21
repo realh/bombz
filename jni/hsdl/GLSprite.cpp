@@ -27,8 +27,6 @@
 
 // HGame - a simple cross-platform game framework
 
-// See http://en.wikipedia.org/wiki/Triangle_strip
-
 #include "hsdl/GLSprite.h"
 
 #include "hgl/GLRenderContext.h"

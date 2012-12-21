@@ -49,6 +49,7 @@ void GLTextureRegion::initCoords()
 {
     // These coords are for a GL_TRIANGLE_STRIP,
     // see http://en.wikipedia.org/wiki/Triangle_strip
+    // Bottom-left, top-left, bottom-right, top-right
     mCoords = new float[8];
     mCoords[0] = mU0;
     mCoords[1] = mV1;
