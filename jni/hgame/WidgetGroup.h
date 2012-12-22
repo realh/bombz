@@ -47,10 +47,10 @@ protected:
     TextureAtlas *mAtlas;
     std::list<Widget *> mWidgets;
 public:
-    inline WidgetGroup() : mAtlas(0)
+    WidgetGroup() : mAtlas(0)
     {}
 
-    inline TextureAtlas *getAtlas()
+    TextureAtlas *getAtlas()
     {
         return mAtlas;
     }

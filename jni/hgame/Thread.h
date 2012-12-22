@@ -42,11 +42,12 @@ class Mutex {
 public:
     virtual void lock() = 0;
     virtual void release() = 0;
-    inline void unlock()
+    void unlock()
     {
         release();
     }
-    virtual ~Mutex();
+    virtual ~Mutex()
+    {}
 };
 
 class Cond {
@@ -56,17 +57,19 @@ public:
     virtual bool waitTimeout(unsigned int ms) = 0;
     virtual void signal() = 0;
     virtual void broadcast() = 0;
-    virtual ~Cond();
+    virtual ~Cond()
+    {}
     virtual Mutex *getMutex() = 0;
-    inline void lock() { getMutex()->lock(); }
-    inline void release() { getMutex()->release(); }
-    inline void unlock() { getMutex()->release(); }
+    void lock() { getMutex()->lock(); }
+    void release() { getMutex()->release(); }
+    void unlock() { getMutex()->release(); }
 };
 
 class Runnable {
 public:
     virtual int run() = 0;
-    virtual ~Runnable();
+    virtual ~Runnable()
+    {}
 };
 
 class Thread {
@@ -77,7 +80,7 @@ public:
     virtual void start() = 0;
     virtual int wait() = 0;
     virtual ~Thread();
-    inline const char *getName()
+    const char *getName()
     {
         return mName;
     }
@@ -88,7 +91,8 @@ protected:
 
 class ThreadFactory {
 public:
-	virtual ~ThreadFactory();
+	virtual ~ThreadFactory()
+    {}
     virtual Mutex *createMutex() = 0;
     virtual Cond *createCond(Mutex *mutex = 0) = 0;
     virtual Thread *createThread(Runnable *r, const char *name) = 0;

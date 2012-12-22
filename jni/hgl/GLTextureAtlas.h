@@ -47,7 +47,7 @@ private:
 public:
     int getWidth() const;
     int getHeight() const;
-    inline GLuint getTextureId() const { return mTextureId; }
+    GLuint getTextureId() const { return mTextureId; }
 
     // scale_method is eg GL_LINEAR or GL_NEAREST
     GLTextureAtlas(GLRenderContext *rc, int width, int height,

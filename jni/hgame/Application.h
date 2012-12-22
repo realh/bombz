@@ -73,9 +73,9 @@ protected:
     EventQueue mEvQueue;
     Controls *mControls;
 public:
-    inline RenderContext *getRenderContext() { return mRenderContext; }
+    RenderContext *getRenderContext() { return mRenderContext; }
 
-    inline Platform *getPlatform() { return mPlatform; }
+    Platform *getPlatform() { return mPlatform; }
 
     // Most of these args should be passed in by subclasses.
     // Note mRenderContext is not set here, some platforms can't create
@@ -108,7 +108,7 @@ public:
     // Wake up rendering thread to service a render/init/shutdown request
     virtual void requestRender(bool block = false);
 
-    inline Screen *getScreen()
+    Screen *getScreen()
     {
         return mScreen;
     }
@@ -125,12 +125,12 @@ public:
     // if mRenderLooping is true
     virtual void stop();
 
-    inline void pushEvent(Event *ev)
+    void pushEvent(Event *ev)
     {
         mEvQueue.pushEvent(ev);
     }
 
-    inline Event *getNextEvent()
+    Event *getNextEvent()
     {
         return mEvQueue.getNextEvent();
     }
@@ -138,27 +138,27 @@ public:
     // Makes sure there's a TICK event at intervals specified
     virtual Event *getNextEvent(int tick_period_ms) = 0;
 
-    inline Log *createLog(const char *name, Log::Level priority = Log::VERBOSE)
+    Log *createLog(const char *name, Log::Level priority = Log::VERBOSE)
     {
         return mPlatform->createLog(name, priority);
     }
 
-    inline void setTapEventsEnabled(bool setting)
+    void setTapEventsEnabled(bool setting)
     {
         mTapEventsEnabled = setting;
     }
 
-    inline bool getTapEventsEnabled()
+    bool getTapEventsEnabled()
     {
         return mTapEventsEnabled;
     }
 
-    inline Controls *getControls()
+    Controls *getControls()
     {
         return mControls;
     }
 
-    inline Controls::Keys getControlsState()
+    Controls::Keys getControlsState()
     {
         return mControls->getControlsState();
     }

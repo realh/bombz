@@ -55,19 +55,19 @@ public:
 
     virtual ~Screen();
 
-    inline Application *getApplication()
+    Application *getApplication()
     {
         return mApplication;
 
     }
 
-    inline RenderContext *getRenderContext()
+    RenderContext *getRenderContext()
     {
         return mApplication->getRenderContext();
 
     }
 
-    inline Platform *getPlatform()
+    Platform *getPlatform()
     {
         return mApplication->getPlatform();
     }

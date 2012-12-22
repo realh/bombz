@@ -61,7 +61,7 @@ public:
 
 class ScreenRunnable : public SafeRunnable {
 public:
-    inline ScreenRunnable(Application *app) :
+    ScreenRunnable(Application *app) :
             SafeRunnable(app, "ScreenRunnable")
     {}
     int runSafely();
@@ -69,7 +69,7 @@ public:
 
 class EventRunnable : public SafeRunnable {
 public:
-    inline EventRunnable(Application *app) :
+    EventRunnable(Application *app) :
             SafeRunnable(app, "EventRunnable")
     {}
     int runSafely();

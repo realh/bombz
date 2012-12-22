@@ -80,12 +80,12 @@ public:
 
     void loadByNumber(int n);
 
-    inline int getStartX() const
+    int getStartX() const
     {
         return mStartX;
     }
 
-    inline int getStartY() const
+    int getStartY() const
     {
         return mStartY;
     }
@@ -96,26 +96,26 @@ public:
     bool canMoveTo(int x, int y, int dx, int dy,
             bool have_match, bool bomb = false);
 
-    inline void makeBlank(int x, int y)
+    void makeBlank(int x, int y)
     {
         setTileAt(x, y, Tiles::BLANK);
     }
 
-    inline void setTileAt(int x, int y, HUInt8 t, bool activate = false)
+    void setTileAt(int x, int y, HUInt8 t, bool activate = false)
     {
         mLevel[y * kWidth + x] = t;
         if (activate)
             mBombActivity = true;
     }
 
-    inline HUInt8 getTileAt(int x, int y)
+    HUInt8 getTileAt(int x, int y)
     {
         if (x < 0 || x >= kWidth || y < 0 || y >= kHeight)
             return Tiles::BLANK;
         return mLevel[y * kWidth + x];
     }
 
-    inline bool isChromeAt(int x, int y)
+    bool isChromeAt(int x, int y)
     {
         int t = getTileAt(x, y);
         return t >= Tiles::CHROME00 && t <= Tiles::CHROME15;
@@ -126,14 +126,14 @@ public:
 private:
     void resetVars();
 
-    inline static void skipNL(char const **s)
+    static void skipNL(char const **s)
     {
         char c;
         while ((c = **s) == '\n' || c == '\r')
             ++*s;
     }
 
-    inline static void skipLine(char const **s)
+    static void skipLine(char const **s)
     {
         char c;
         while ((c = **s) != '\n' && c != '\r')
@@ -151,7 +151,7 @@ private:
 
     void randomiseBombs();
 
-    inline void swapTmpLevel()
+    void swapTmpLevel()
     {
         HUInt8 *tmp = mTmpLevel;
         mTmpLevel = mLevel;

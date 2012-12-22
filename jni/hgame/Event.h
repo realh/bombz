@@ -47,23 +47,23 @@ class EventQuark {
 private:
     HUInt32 mValue;
 public:
-    inline EventQuark(const char *s)
+    EventQuark(const char *s)
     {
         mValue = (HUInt32) s[0] | (((HUInt32) s[1]) << 8) |
                 (((HUInt32) s[2]) << 16) | (((HUInt32) s[3]) << 24);
     }
 
-    inline EventQuark(const EventQuark &that)
+    EventQuark(const EventQuark &that)
     {
         mValue = that.mValue;
     }
 
-    inline HUInt32 getValue() const
+    HUInt32 getValue() const
     {
         return mValue;
     }
 
-    inline bool operator==(const EventQuark &that) const
+    bool operator==(const EventQuark &that) const
     {
         return mValue == that.mValue;
     }
@@ -97,7 +97,7 @@ private:
     bool mPriority;
 public:
     // Priority is whether event has higher priority than tick
-    inline Event(const EventQuark &t, bool priority = false) :
+    Event(const EventQuark &t, bool priority = false) :
             mType(t), mPriority(priority)
     {}
 
@@ -110,7 +110,7 @@ public:
 
     void operator delete(void *);
 
-    inline static void setPool(EventPool *pool)
+    static void setPool(EventPool *pool)
     {
         smPool = pool;
     }

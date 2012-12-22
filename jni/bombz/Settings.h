@@ -52,22 +52,22 @@ public:
         delete mSettings;
     }
 
-    inline void setBestLevel(int l)
+    void setBestLevel(int l)
     {
         mBestLevel = l;
     }
 
-    inline void setLastLevel(int l)
+    void setLastLevel(int l)
     {
         mLastLevel = l;
     }
 
-    inline int getBestLevel() const
+    int getBestLevel() const
     {
         return mBestLevel;
     }
 
-    inline int getLastLevel() const
+    int getLastLevel() const
     {
         return mLastLevel;
     }

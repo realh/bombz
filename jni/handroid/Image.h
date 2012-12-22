@@ -60,18 +60,18 @@ public:
     int getWidth() const;
     int getHeight() const;
 
-    inline HUInt32 getStride() const
+    HUInt32 getStride() const
     {
         return (int) mInfo.stride;
     }
 
-    inline HUInt32 getFormat() const
+    HUInt32 getFormat() const
     {
         return mInfo.format;
     }
 
     // Use with care, only while locked!
-    inline void *getRawPixelData()
+    void *getRawPixelData()
     {
         return mPixAddr;
     }

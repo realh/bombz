@@ -43,7 +43,8 @@ public:
     virtual int getWidth() const = 0;
     virtual int getHeight() const = 0;
 
-    virtual ~TextureAtlas();
+    virtual ~TextureAtlas()
+    {}
 
     virtual TextureRegion *createRegion(float u0, float v0, float u1, float v1)
             = 0;

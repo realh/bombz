@@ -90,37 +90,37 @@ public:
     // Attaches calling thread
     JNIEnv *getJNIEnv();
 
-    inline Thread *getCurrentThread()
+    Thread *getCurrentThread()
     {
     	return Thread::getCurrentThread();
     }
 
-    inline struct android_app *getAndroidApp()
+    struct android_app *getAndroidApp()
     {
         return mApp;
     }
 
-    inline ANativeActivity *getNativeActivity()
+    ANativeActivity *getNativeActivity()
     {
         return mApp->activity;
     }
 
-    inline ANativeWindow *getNativeWindow()
+    ANativeWindow *getNativeWindow()
     {
         return mApp->window;
     }
 
-    inline jobject getJActivity()
+    jobject getJActivity()
     {
         return mApp->activity->clazz;
     }
 
-    inline AAssetManager *getNativeAssetManager()
+    AAssetManager *getNativeAssetManager()
     {
         return mApp->activity->assetManager;
     }
 
-    inline const char *getAppPkgName() const
+    const char *getAppPkgName() const
     {
     	return mAppPkgName;
     }

@@ -242,7 +242,7 @@ public:
     ExceptionWithCode(const char *file, int line, const char *func,
             int code, const char *desc, std::va_list ap) throw();
 
-    inline int getCode() const throw()
+    int getCode() const throw()
     {
         return mCode;
     }
@@ -268,7 +268,7 @@ public:
     ErrnoException(const char *file, int line, const char *func,
             int errno_code, const char *desc, std::va_list ap) throw();
 
-    inline int getErrno() const throw()
+    int getErrno() const throw()
     {
         return mCode;
     }

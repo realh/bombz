@@ -94,27 +94,27 @@ public:
 
     void render(hgame::RenderContext *rc);
 
-    inline int getScreenTileSize() const
+    int getScreenTileSize() const
     {
         return mScreenTileSize;
     }
 
-    inline int getSrcTileSize() const
+    int getSrcTileSize() const
     {
         return mSrcTileSize;
     }
 
-    inline hgame::TextureAtlas *getTileAtlas() const
+    hgame::TextureAtlas *getTileAtlas() const
     {
         return mTileAtlas;
     }
 
-    inline hgame::TileBatcher *getTileBatcher() const
+    hgame::TileBatcher *getTileBatcher() const
     {
         return mTileBatcher;
     }
 
-    inline void setTileAt(int t, int x, int y)
+    void setTileAt(int t, int x, int y)
     {
         mTileBatcher->setTextureAt(mTileRegions[t], x, y);
     }

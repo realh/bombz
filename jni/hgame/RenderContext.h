@@ -85,12 +85,12 @@ public:
     virtual TextureAtlas *uploadTexture(Image *img) = 0;
 
     // Whether tiles need resizing to fit screen
-    inline bool getNeedScaling() const
+    bool getNeedScaling() const
     {
         return mNeedScaling;
     }
 
-    inline void setNeedScaling(bool f)
+    void setNeedScaling(bool f)
     {
         mNeedScaling = f;
     }
@@ -106,12 +106,12 @@ public:
     // and pixels.
     int calculateTileSize(int w, int h);
 
-    inline const TextureAtlas *getBoundTexture()
+    const TextureAtlas *getBoundTexture()
     {
         return mBoundTexture;
     }
 
-    inline void bindTexture(const TextureAtlas *tex)
+    void bindTexture(const TextureAtlas *tex)
     {
         if (mBoundTexture != tex)
         {
@@ -122,13 +122,13 @@ public:
 
     // This can be used to detect whether RenderContext has really changed
     // in an initRendering request. -1 may be used to mean "no previous rc".
-    inline int getIndex() const
+    int getIndex() const
     {
         return mIndex;
     }
 
     // Therefore this must be called whenever there is a RenderContext change
-    inline void setIndex(int i = 0)
+    void setIndex(int i = 0)
     {
         mIndex = i ? i : ++smIndex;
     }

@@ -72,7 +72,7 @@ public:
     void w(const char *format, ...) H_GNUC_PRINTF(2, 3);
     void i(const char *format, ...) H_GNUC_PRINTF(2, 3);
 #ifdef NDEBUG
-    inline void d(const char *format, ...) const H_GNUC_PRINTF(2, 3)
+    void d(const char *format, ...) const H_GNUC_PRINTF(2, 3)
     {
         (void) format;
     }

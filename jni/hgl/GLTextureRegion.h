@@ -54,7 +54,7 @@ public:
 
     virtual ~GLTextureRegion();
 
-    inline const float *getCoords() const { return mCoords; }
+    const float *getCoords() const { return mCoords; }
 };
 
 }

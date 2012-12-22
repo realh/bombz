@@ -54,15 +54,15 @@ public:
 
     virtual ~TextureRegion();
 
-    inline float getU0() const { return mU0; }
+    float getU0() const { return mU0; }
 
-    inline float getV0() const { return mV0; }
+    float getV0() const { return mV0; }
 
-    inline float getU1() const { return mU1; }
+    float getU1() const { return mU1; }
 
-    inline float getV1() const { return mV1; }
+    float getV1() const { return mV1; }
 
-    inline const TextureAtlas *getAtlas() const { return mAtlas; }
+    const TextureAtlas *getAtlas() const { return mAtlas; }
 };
 
 }

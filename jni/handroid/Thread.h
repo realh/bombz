@@ -48,7 +48,7 @@ public:
     ~Mutex();
     void lock();
     void release();
-    inline pthread_mutex_t *getPthreadMutex() { return &mMutex; }
+    pthread_mutex_t *getPthreadMutex() { return &mMutex; }
 };
 
 class Cond : public hgame::Cond {

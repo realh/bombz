@@ -40,7 +40,8 @@ namespace hgame {
 
 class Renderer {
 public:
-    virtual ~Renderer();
+    virtual ~Renderer()
+    {}
 
     // For RENDER_STATE_RENDERING
     virtual void render(RenderContext *rc) = 0;

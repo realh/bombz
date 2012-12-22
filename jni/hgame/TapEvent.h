@@ -45,7 +45,7 @@ private:
     int mX, mY;
 public:
     // Priority is whether event has higher priority than tick
-    inline TapEvent(int x, int y) : Event(EVENT_TAP, false), mX(x), mY(y)
+    TapEvent(int x, int y) : Event(EVENT_TAP, false), mX(x), mY(y)
     {}
 
     int getX() const

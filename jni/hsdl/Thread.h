@@ -48,7 +48,7 @@ public:
     ~Mutex();
     void lock();
     void release();
-    inline SDL_mutex *getSDLMutex() { return mMutex; }
+    SDL_mutex *getSDLMutex() { return mMutex; }
 };
 
 class Cond : public hgame::Cond {

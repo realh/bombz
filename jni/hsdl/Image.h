@@ -53,7 +53,7 @@ public:
     int getHeight() const;
 
     // Use with care!
-    inline SDL_Surface *getSurface()
+    SDL_Surface *getSurface()
     {
         return mSurface;
     }

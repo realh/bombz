@@ -39,7 +39,8 @@ namespace hgame {
 class Settings {
     // d parameter of set() is default value
 public:
-    virtual ~Settings();
+    virtual ~Settings()
+    {}
 
     virtual void set(const char *k, const char *v) = 0;
 
@@ -50,12 +51,12 @@ public:
 
     virtual int get(const char *k, int d) = 0;
 
-    inline void set(const char *k, bool v)
+    void set(const char *k, bool v)
     {
         set(k, int(v));
     }
 
-    inline bool get(const char *k, bool d)
+    bool get(const char *k, bool d)
     {
         return bool(get(k, int(d)));
     }

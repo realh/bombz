@@ -61,7 +61,7 @@ public:
 
     virtual ~RendererWithState();
 
-    inline RenderState getRenderState() const
+    RenderState getRenderState() const
     {
         return mCurrentRenderState;
     }

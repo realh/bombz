@@ -87,64 +87,64 @@ public:
 
     int *getBestModes();
 
-    inline hgame::Application *getApplication()
+    hgame::Application *getApplication()
     {
         return mApplication;
     }
 
-    inline hgame::Platform *getPlatform()
+    hgame::Platform *getPlatform()
     {
         return mApplication->getPlatform();
     }
 
-    inline hgame::TextureAtlas *getAlphaAtlas()
+    hgame::TextureAtlas *getAlphaAtlas()
     {
         return mAlphaAtlas;
     }
 
-    inline hgame::TextureAtlas *getTileAtlas()
+    hgame::TextureAtlas *getTileAtlas()
     {
         return mTiles->getTileAtlas();
     }
 
-    inline hgame::TextureAtlas *getLogoAtlas()
+    hgame::TextureAtlas *getLogoAtlas()
     {
         return mLogoAtlas;
     }
 
-    inline hgame::Sprite *getLogoSprite()
+    hgame::Sprite *getLogoSprite()
     {
         return mLogoSprite;
     }
 
-    inline int getScreenTileSize() const
+    int getScreenTileSize() const
     {
         return mTiles->getScreenTileSize();
     }
 
-    inline int getSrcTileSize() const
+    int getSrcTileSize() const
     {
         return mTiles->getSrcTileSize();
     }
 
-    inline Level *getLevel() const
+    Level *getLevel() const
     {
         return mLevel;
     }
 
-    inline Background *getBackground() const
+    Background *getBackground() const
     {
         return mBackground;
     }
 
-    inline MenuScreen *getMainMenuScreen()
+    MenuScreen *getMainMenuScreen()
     {
         if (!mMainMenuScrn)
             createMainMenuScreen();
         return mMainMenuScrn;
     }
 
-    inline GameScreen *getGameScreen()
+    GameScreen *getGameScreen()
     {
         if (!mGameScrn)
             createGameScreen();
@@ -156,17 +156,17 @@ public:
     void deleteGameScreen();
 
     // Call immediately before initRendering or replaceClientRendering
-    inline void setWantLogo(bool want = true)
+    void setWantLogo(bool want = true)
     {
         mWantLogo = want;
     }
 
-    inline Settings *getSettings()
+    Settings *getSettings()
     {
         return mSettings;
     }
 private:
-    inline void setRcViewport(hgame::RenderContext *rc)
+    void setRcViewport(hgame::RenderContext *rc)
     {
         rc->setViewport2D(mLeftMargin, mTopMargin, mVpWidth, mVpHeight);
     }

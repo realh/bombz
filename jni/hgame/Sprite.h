@@ -48,7 +48,8 @@ public:
     Sprite(TextureRegion *texture, int width, int height) :
             mTexture(texture), mW(width), mH(height)
             {}
-    virtual ~Sprite();
+    virtual ~Sprite()
+    {}
 
     virtual void setPosition(int x, int y) = 0;
 
@@ -56,12 +57,12 @@ public:
     // binding the texture if necessary
     virtual void render(RenderContext *rc) = 0;
 
-    inline void bind(RenderContext *rc)
+    void bind(RenderContext *rc)
     {
         rc->bindTexture(mTexture->getAtlas());
     }
 
-    inline void setTexture(TextureRegion *tex)
+    void setTexture(TextureRegion *tex)
     {
         mTexture = tex;
     }

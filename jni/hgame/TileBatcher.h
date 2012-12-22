@@ -47,7 +47,8 @@ public:
     TileBatcher(int nColumns, int nRows, int tile_size) :
             mNColumns(nColumns), mNRows(nRows), mTileSize(tile_size)
             {}
-    virtual ~TileBatcher();
+    virtual ~TileBatcher()
+    {}
 
     virtual void setTextureAt(TextureRegion *tex, int x, int y) = 0;
 
