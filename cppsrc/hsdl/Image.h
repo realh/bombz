@@ -64,7 +64,7 @@ public:
     HUInt8 getAlphaAt(int x, int y);
     void setAlphaAt(int x, int y, HUInt8 alpha);
 
-    Image *createImage(int w, int h);
+    hgame::Image *createImage(int w, int h);
 
     // SDL_BlitSurface is broken
     /*
@@ -76,7 +76,7 @@ public:
     void unlock();
 private:
     void *getPixelAddr(int x, int y);
-    HUint32 getPixelRawValue(int x, int y, void **pAddr = 0);
+    HUInt32 getPixelRawValue(int x, int y, void **pAddr = 0);
     void setPixelRawValue(int x, int y, HUInt32 pix);
     void setPixelRawValue(void *addr, HUInt32 pix);
 };

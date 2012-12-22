@@ -38,7 +38,7 @@
 
 namespace hsdl {
 
-typedef hgame::HHInt64 Int64;
+typedef hgame::HInt64 HInt64;
 typedef hgame::HInt32 HInt32;
 typedef hgame::HUInt32 HUInt32;
 typedef hgame::HInt16 HInt16;

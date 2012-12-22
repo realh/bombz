@@ -34,6 +34,12 @@
 
 #include "config.h"
 
+#if WITH_SDL
+#include "SDL_opengl.h"
+#else /* Android */
+#include "GLES/gl.h"
+#endif
+
 #include "hgame/RenderContext.h"
 
 namespace hgl {
