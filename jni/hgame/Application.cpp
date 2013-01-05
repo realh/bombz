@@ -39,6 +39,48 @@ const EventQuark EVENT_PAUSE("PAUS");
 const EventQuark EVENT_RESUME("RESM");
 const EventQuark EVENT_STOP("STOP");
 
+SafeRunnable::SafeRunnable(Application *app, const char *name) :
+        mStopped(false), mApplication(app), mName(name),
+        mLog(*(app->createLog(name)))
+{
+}
+
+int SafeRunnable::run()
+{
+    int result = 1;
+    try {
+        result = runSafely();
+    }
+    catch (std::exception &e)
+    {
+        mLog.e("Exception: %s", e.what());
+        result = 1;
+        throw;
+    }
+    if (result)
+    {
+        mStopped = true;
+        mApplication->stop();
+    }
+    return result;
+}
+
+void SafeRunnable::stop()
+{
+    mStopped = true;
+}
+
+int ScreenRunnable::runSafely()
+{
+    int result = 1;
+    hgame::Screen *scrn;
+    while (!mStopped && (scrn = mApplication->getScreen()) != 0)
+    {
+        result = scrn->run();
+    }
+    return result;
+}
+
 Application::Application(Platform *platform, const char *log_name,
         ThreadFactory *thread_fact) :
         mLog(*(platform->createLog(log_name))),
@@ -47,8 +89,14 @@ Application::Application(Platform *platform, const char *log_name,
         mRenderingCond(createCond()),
         mRenderBlocking(false), mRenderLooping(false), mRenderWaiting(false),
         mEvQueue(thread_fact),
-        mControls(0)
+        mControls(0),
+        mScreenRunnable(this),
+        mScreenThread(0),
+        mLastTick(platform->getTicks()),
+        mSavedEvent(0)
 {
+    mScreenThread = mThreadFactory->createThread(&mScreenRunnable,
+            "Screen thread");
 }
 
 Application::~Application()
@@ -57,6 +105,7 @@ Application::~Application()
     delete mRenderContext;
     delete mPlatform;
     delete &mLog;
+    delete mScreenThread;
 }
 
 void Application::renderLoop()
@@ -151,6 +200,30 @@ void Application::stop()
         requestRenderWhileLocked(true);
     }
     mRenderingCond->unlock();
+}
+
+Event *Application::getNextEvent(int tick_period_ms)
+{
+    Event *result;
+    if (mSavedEvent)
+    {
+        result = mSavedEvent;
+        mSavedEvent = 0;
+        return result;
+    }
+    int timeout = tick_period_ms - (mPlatform->getTicks() - mLastTick);
+    if (timeout < 0 || timeout > tick_period_ms)
+        timeout = 0;
+    result = mEvQueue.getNextEvent(timeout);
+    HUInt32 now = mPlatform->getTicks();
+    if (!result || (!result->getPriority() &&
+            now - mLastTick >= (HUInt32) tick_period_ms))
+    {
+        mLastTick = now;
+        mSavedEvent = result;
+        return new TickEvent();
+    }
+    return result;
 }
 
 }

@@ -54,48 +54,6 @@
 
 namespace hsdl {
 
-SafeRunnable::SafeRunnable(Application *app, const char *name) :
-        mStopped(false), mApplication(app), mName(name),
-        mLog(*(app->createLog(name)))
-{
-}
-
-int SafeRunnable::run()
-{
-    int result = 1;
-    try {
-        result = runSafely();
-    }
-    catch (std::exception &e)
-    {
-        mLog.e("Exception: %s", e.what());
-        result = 1;
-        throw;
-    }
-    if (result)
-    {
-        mStopped = true;
-        mApplication->stop();
-    }
-    return result;
-}
-
-void SafeRunnable::stop()
-{
-    mStopped = true;
-}
-
-int ScreenRunnable::runSafely()
-{
-    int result = 1;
-    hgame::Screen *scrn;
-    while (!mStopped && (scrn = mApplication->getScreen()) != 0)
-    {
-        result = scrn->run();
-    }
-    return result;
-}
-
 int EventRunnable::runSafely()
 {
     while (!mStopped)
@@ -145,10 +103,6 @@ void EventRunnable::stop()
 Application::Application(int argc, char **argv) :
         hgame::Application(new Platform(argc, argv), "SDLApp",
                 new ThreadFactory()),
-        mLastTick(SDL_GetTicks()),
-        mSavedEvent(0),
-        mScreenRunnable(this),
-        mScreenThread(0),
         mEventRunnable(this),
         mEventThread(0)
 {
@@ -156,8 +110,6 @@ Application::Application(int argc, char **argv) :
     hgame::Event::setPool(new hgame::EventPool(mThreadFactory));
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
         THROW(Exception, "Init failed");
-    mScreenThread = mThreadFactory->createThread(&mScreenRunnable,
-            "Screen thread");
     mEventThread = mThreadFactory->createThread(&mEventRunnable,
             "Event thread");
 }
@@ -165,7 +117,6 @@ Application::Application(int argc, char **argv) :
 Application::~Application()
 {
     SDL_Quit();
-    delete mScreenThread;
     delete mEventThread;
     if (mSavedEvent)
         mSavedEvent->dispose();
@@ -195,30 +146,6 @@ void Application::start()
 void Application::createRenderContext()
 {
     mRenderContext = new GLRenderContext(mScreen->getBestModes());
-}
-
-hgame::Event *Application::getNextEvent(int tick_period_ms)
-{
-    hgame::Event *result;
-    if (mSavedEvent)
-    {
-        result = mSavedEvent;
-        mSavedEvent = 0;
-        return result;
-    }
-    int timeout = tick_period_ms - (SDL_GetTicks() - mLastTick);
-    if (timeout < 0 || timeout > tick_period_ms)
-        timeout = 0;
-    result = mEvQueue.getNextEvent(timeout);
-    Uint32 now = SDL_GetTicks();
-    if (!result || (!result->getPriority() &&
-            now - mLastTick >= (Uint32) tick_period_ms))
-    {
-        mLastTick = now;
-        mSavedEvent = result;
-        return new hgame::TickEvent();
-    }
-    return result;
 }
 
 void Application::stop()

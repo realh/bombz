@@ -139,6 +139,8 @@ public:
 
     virtual Settings *createSettings(const char *owner, const char *domain,
             const char *appname) = 0;
+
+    virtual HUInt32 getTicks() = 0;
 };
 
 }

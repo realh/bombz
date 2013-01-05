@@ -250,4 +250,9 @@ hgame::Settings *Platform::createSettings(const char *owner, const char *domain,
     return new Settings(this, owner, domain, appname);
 }
 
+hgame::HUInt32 Platform::getTicks()
+{
+    return SDL_GetTicks();
+}
+
 }

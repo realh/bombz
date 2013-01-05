@@ -56,7 +56,34 @@ public:
     TickEvent() : Event(EVENT_TICK) {}
 };
 
+class Application;
 class Screen;
+
+class SafeRunnable : public Runnable {
+protected:
+    bool mStopped;
+    Application *mApplication;
+    const char *mName;
+    hgame::Log &mLog;
+public:
+    SafeRunnable(Application *app, const char *name);
+
+    // Acts as wrapper to runSafely() with exception handling
+    int run();
+
+    virtual int runSafely() = 0;
+
+    virtual void stop();
+};
+
+class ScreenRunnable : public SafeRunnable {
+public:
+    ScreenRunnable(Application *app) :
+            SafeRunnable(app, "ScreenRunnable")
+    {}
+    int runSafely();
+};
+
 
 class Application {
 protected:
@@ -72,6 +99,10 @@ protected:
     volatile bool mTapEventsEnabled;
     EventQueue mEvQueue;
     Controls *mControls;
+    ScreenRunnable mScreenRunnable;
+    Thread *mScreenThread;
+    HUInt32 mLastTick;
+    Event *mSavedEvent;
 public:
     RenderContext *getRenderContext() { return mRenderContext; }
 
@@ -136,7 +167,7 @@ public:
     }
 
     // Makes sure there's a TICK event at intervals specified
-    virtual Event *getNextEvent(int tick_period_ms) = 0;
+    virtual Event *getNextEvent(int tick_period_ms);
 
     Log *createLog(const char *name, Log::Level priority = Log::VERBOSE)
     {

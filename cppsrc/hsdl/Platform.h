@@ -75,6 +75,8 @@ public:
     hgame::Settings *createSettings(const char *owner, const char *domain,
             const char *appname);
 
+    hgame::HUInt32 getTicks();
+
 protected:
     void mkdirWithParents(const char *dir);
 };
