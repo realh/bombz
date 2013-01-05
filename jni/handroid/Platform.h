@@ -125,6 +125,8 @@ public:
     	return mAppPkgName;
     }
 
+    hgame::HUInt32 getTicks();
+
 protected:
     // Returns an open java.io.Inputstream.
     // If jenv is not given, uses getJNIEnv.

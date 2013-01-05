@@ -140,6 +140,7 @@ public:
     virtual Settings *createSettings(const char *owner, const char *domain,
             const char *appname) = 0;
 
+    // Gets monotonic time with ms precision
     virtual HUInt32 getTicks() = 0;
 };
 

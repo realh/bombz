@@ -31,6 +31,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 
 #include "handroid/Font.h"
 #include "handroid/Image.h"
@@ -257,6 +258,13 @@ JNIEnv *Platform::getJNIEnv()
 	if (mJVM->AttachCurrentThread(&env, &aargs) != JNI_OK)
 		std::abort();
 	return env;
+}
+
+hgame::HUInt32 Platform::getTicks()
+{
+    struct timespec now;
+    clock_getttime(CLOCK_MONOTONIC_RAW, &now);
+    return (hgame::HUInt32) (now.tv_nsec / 1000000 + now.tv_sec * 1000);
 }
 
 }
