@@ -27,100 +27,35 @@
 
 // HGame - a simple cross-platform game framework
 
-// Application.h: Core SDL Application
+#include "handroid/Application.h"
+#include "handroid/GLRenderContext.h"
+#include "handroid/Platform.h"
+#include "handroid/Thread.h"
 
-#include <cassert>
-#include <cstdlib>
+namespace handroid {
 
-#include "SDL.h"
-
-#include "hgame/Screen.h"
-#include "hgame/TapEvent.h"
-
-#include "hsdl/Application.h"
-#include "hsdl/KeyControls.h"
-#include "hsdl/Log.h"
-#include "hsdl/Platform.h"
-#include "hsdl/Thread.h"
-#include "hsdl/Types.h"
-
-#if ENABLE_OPENGL == 1
-#include "hsdl/GLRenderContext.h"
-#else
-#error "OpenGL is currently compulsory"
-#endif
-
-#include "bombz/MenuScreen.h"
-
-namespace hsdl {
-
-int EventRunnable::runSafely()
+int RenderRunnable::runSafely()
 {
-    while (!mStopped)
-    {
-        SDL_Event sdl_ev;
-        if (SDL_WaitEvent(&sdl_ev))
-        {
-            switch (sdl_ev.type)
-            {
-                case SDL_QUIT:
-                    mStopped = true;
-                    mApplication->stop();
-                    break;
-                case SDL_MOUSEBUTTONDOWN:
-                    if (mApplication->getTapEventsEnabled() &&
-                            sdl_ev.button.button == SDL_BUTTON_LEFT)
-                    {
-                        mApplication->pushEvent(
-                                new hgame::TapEvent(sdl_ev.button.x,
-                                        sdl_ev.button.y));
-                    }
-                    break;
-            }
-        }
-        else
-        {
-            mLog.d("SDL_WaitEvent error");
-            mStopped = true;
-            //THROW(Exception, "SDL_WaitEvent error");
-        }
-    }
+    mApplication->renderLoop();
     return 0;
 }
 
-void EventRunnable::stop()
+Application::Application(struct android_app *aapp) :
+        hgame::Application(new Platform(aapp, "Bombz"),
+                "AndroidApp", new ThreadFactory()),
+        mRenderRunnable(this),
+        mRenderThread(0)
 {
-    mStopped = true;
-    SDL_Event ev;
-    ev.type = SDL_QUIT;
-    if (SDL_PushEvent(&ev))
-    {
-        mLog.e("Unable to push SDL_QuitEvent");
-        std::exit(1);
-    }
-}
-
-Application::Application(int argc, char **argv) :
-        hgame::Application(new Platform(argc, argv), "SDLApp",
-                new ThreadFactory()),
-        mEventRunnable(this),
-        mEventThread(0)
-{
-    mControls = new KeyControls();
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-        THROW(Exception, "Init failed");
-    mEventThread = mThreadFactory->createThread(&mEventRunnable,
-            "Event thread");
 }
 
 Application::~Application()
 {
-    SDL_Quit();
-    delete mEventThread;
+    delete mRenderThread;
 }
 
 void Application::start()
 {
+    /*
     assert(mScreen != 0);
     try {
         createRenderContext();
@@ -138,6 +73,7 @@ void Application::start()
     mRenderContext = 0;
     mScreenThread->wait();
     mEventThread->wait();
+    */
 }
 
 void Application::createRenderContext()
@@ -149,8 +85,9 @@ void Application::stop()
 {
     pushEvent(new hgame::Event(hgame::EVENT_STOP, true));
     mScreenRunnable.stop();
-    mEventRunnable.stop();
+    mRenderRunnable.stop();
     hgame::Application::stop();
 }
 
 }
+

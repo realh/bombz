@@ -55,7 +55,6 @@ int SafeRunnable::run()
     {
         mLog.e("Exception: %s", e.what());
         result = 1;
-        throw;
     }
     if (result)
     {
@@ -95,6 +94,7 @@ Application::Application(Platform *platform, const char *log_name,
         mLastTick(platform->getTicks()),
         mSavedEvent(0)
 {
+    Event::setPool(new EventPool(mThreadFactory));
     mScreenThread = mThreadFactory->createThread(&mScreenRunnable,
             "Screen thread");
 }
@@ -106,6 +106,8 @@ Application::~Application()
     delete mPlatform;
     delete &mLog;
     delete mScreenThread;
+    if (mSavedEvent)
+        mSavedEvent->dispose();
 }
 
 void Application::renderLoop()
