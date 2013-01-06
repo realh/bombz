@@ -92,7 +92,7 @@ protected:
     RenderContext *mRenderContext;
     ThreadFactory *mThreadFactory;
     Screen *mScreen;
-    hgame::Cond *mRenderingCond;
+    Cond *mRenderingCond;
     volatile bool mRenderBlocking;
     volatile bool mRenderLooping;
     volatile bool mRenderWaiting;
@@ -103,6 +103,9 @@ protected:
     Thread *mScreenThread;
     HUInt32 mLastTick;
     Event *mSavedEvent;
+    volatile bool mPausing;
+    Cond *mPausingCond;
+    bool mPaused;
 public:
     RenderContext *getRenderContext() { return mRenderContext; }
 
@@ -193,6 +196,9 @@ public:
     {
         return mControls->getControlsState();
     }
+
+    // Asks rendering thread to pause and waits until it calls getNextEvent()
+    void pause();
 protected:
     // Allows stop() to do the same as requestRender() without an unsafe
     // extra unlock/lock. Mutex is still locked on exit from this method.

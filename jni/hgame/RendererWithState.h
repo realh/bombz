@@ -66,6 +66,11 @@ public:
         return mCurrentRenderState;
     }
 
+    RenderState getRequestedRenderState() const
+    {
+        return mRequestedRenderState;
+    }
+
     virtual void requestRenderState(RenderState new_state);
 
     // Called in rendering thread to call one of Renderer's pure virtual

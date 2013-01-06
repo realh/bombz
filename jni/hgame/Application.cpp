@@ -92,11 +92,14 @@ Application::Application(Platform *platform, const char *log_name,
         mScreenRunnable(this),
         mScreenThread(0),
         mLastTick(platform->getTicks()),
-        mSavedEvent(0)
+        mSavedEvent(0),
+        mPausing(false),
+        mPaused(false)
 {
     Event::setPool(new EventPool(mThreadFactory));
     mScreenThread = mThreadFactory->createThread(&mScreenRunnable,
             "Screen thread");
+    mPausingCond = mThreadFactory->createCond();
 }
 
 Application::~Application()
@@ -206,6 +209,10 @@ void Application::stop()
 
 Event *Application::getNextEvent(int tick_period_ms)
 {
+    mPausingCond->lock();
+    if (mPausing)
+        mPausingCond->signal();
+    mPausingCond->release();
     Event *result;
     if (mSavedEvent)
     {
@@ -213,9 +220,13 @@ Event *Application::getNextEvent(int tick_period_ms)
         mSavedEvent = 0;
         return result;
     }
-    int timeout = tick_period_ms - (mPlatform->getTicks() - mLastTick);
-    if (timeout < 0 || timeout > tick_period_ms)
-        timeout = 0;
+    int timeout = -1;
+    if (tick_period_ms > 0 && !mPaused)
+    {
+        timeout = tick_period_ms - (mPlatform->getTicks() - mLastTick);
+        if (timeout < 0 || timeout > tick_period_ms)
+            timeout = 0;
+    }
     result = mEvQueue.getNextEvent(timeout);
     HUInt32 now = mPlatform->getTicks();
     if (!result || (!result->getPriority() &&
@@ -226,6 +237,15 @@ Event *Application::getNextEvent(int tick_period_ms)
         return new TickEvent();
     }
     return result;
+}
+
+void Application::pause()
+{
+    mPausingCond->lock();
+    mPaused = mPausing = true;
+    pushEvent(new Event(EVENT_PAUSE, true));
+    mPausingCond->wait();
+    mPausingCond->release();
 }
 
 }
