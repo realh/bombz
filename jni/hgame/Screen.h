@@ -47,7 +47,6 @@ class Screen : public RendererWithState, public Runnable {
     // catch any unhandled exceptions at the top-level.
 protected:
     Application *mApplication;
-    Log &mLog;
     volatile bool mRunning;
     char *mName;
 public:

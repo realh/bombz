@@ -31,7 +31,8 @@
 
 namespace hgame {
 
-RendererWithState::RendererWithState(ThreadFactory *tf) :
+RendererWithState::RendererWithState(ThreadFactory *tf, Log *log) :
+        mLog(*log),
         mCurrentRenderState(RENDER_STATE_UNINITIALISED),
         mRequestedRenderState(RENDER_STATE_UNINITIALISED),
         mRenderStateMutex(tf->createMutex())
@@ -54,7 +55,9 @@ void RendererWithState::serviceRenderRequest(RenderContext *rc)
 {
     mRenderStateMutex->lock();
     if (mRequestedRenderState == RENDER_STATE_REPLACE_SCREEN)
+    {
         replaceRenderingScreen(rc);
+    }
     if ((mRequestedRenderState == RENDER_STATE_INITIALISED ||
             mRequestedRenderState == RENDER_STATE_RENDERING) &&
             mCurrentRenderState == RENDER_STATE_UNINITIALISED)

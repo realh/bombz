@@ -99,6 +99,10 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
         setRcViewport(rc);
         mRcIndex = rc->getIndex();
     }
+    else if (mWantLogo)
+    {
+        loadLogo(rc);
+    }
 }
 
 void ScreenHub::deleteRendering(hgame::RenderContext *rc)

@@ -34,6 +34,7 @@
 
 #include "config.h"
 
+#include "hgame/Log.h"
 #include "hgame/Renderer.h"
 #include "hgame/Thread.h"
 
@@ -53,11 +54,12 @@ public:
         // rendered - or it can just call render() itself.
     };
 protected:
+    Log &mLog;
     volatile RenderState mCurrentRenderState;
     volatile RenderState mRequestedRenderState;
     Mutex *mRenderStateMutex;
 public:
-    RendererWithState(ThreadFactory *tf);
+    RendererWithState(ThreadFactory *tf, Log *log);
 
     virtual ~RendererWithState();
 

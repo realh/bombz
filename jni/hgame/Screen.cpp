@@ -35,8 +35,8 @@
 namespace hgame {
 
 Screen::Screen(Application *app, const char *name) :
-        RendererWithState(app->getThreadFactory()),
-        mApplication(app), mLog(*(app->createLog(name))), mRunning(false),
+        RendererWithState(app->getThreadFactory(), app->createLog(name)),
+        mApplication(app), mRunning(false),
         mName(strdup(name))
 {
 }
