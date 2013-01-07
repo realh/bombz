@@ -178,16 +178,18 @@ void Application::requestRenderWhileLocked(bool block)
 void Application::setScreen(Screen *new_scrn)
 {
     mRenderingCond->lock();
-    bool old_scrn = (mScreen != 0) && !mSuspending;
+    bool old_scrn = (mScreen != 0);
     Screen::RenderState rs = Screen::RENDER_STATE_UNINITIALISED;
     if (old_scrn)
     {
         rs = mScreen->getRenderState();
-        mScreen->requestRenderState(Screen::RENDER_STATE_REPLACE_SCREEN);
+        mScreen->requestRenderState(mSuspending ?
+                Screen::RENDER_STATE_UNINITIALISED :
+                Screen::RENDER_STATE_REPLACE_SCREEN);
         requestRenderWhileLocked(true);
     }
     mScreen = new_scrn;
-    if (old_scrn)
+    if (old_scrn && !mSuspending)
     {
         mScreen->requestRenderState(rs);
         requestRenderWhileLocked(true);
