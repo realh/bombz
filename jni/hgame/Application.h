@@ -47,7 +47,7 @@ namespace hgame {
 extern const EventQuark EVENT_TICK;
 extern const EventQuark EVENT_RENDER_CONTEXT_CREATED;
 extern const EventQuark EVENT_RENDER_CONTEXT_DESTROYED;
-extern const EventQuark EVENT_PAUSE;
+extern const EventQuark EVENT_SUSPEND;
 extern const EventQuark EVENT_RESUME;
 extern const EventQuark EVENT_STOP;
 
@@ -103,9 +103,9 @@ protected:
     Thread *mScreenThread;
     HUInt32 mLastTick;
     Event *mSavedEvent;
-    volatile bool mPausing;
-    Cond *mPausingCond;
-    bool mPaused;
+    volatile bool mSuspending;
+    Cond *mSuspendingCond;
+    bool mSuspended;
 public:
     RenderContext *getRenderContext() { return mRenderContext; }
 
@@ -197,8 +197,8 @@ public:
         return mControls->getControlsState();
     }
 
-    // Asks rendering thread to pause and waits until it calls getNextEvent()
-    void pause();
+    // Asks rendering thread to suspend and waits until it calls getNextEvent()
+    void suspend();
 protected:
     // Allows stop() to do the same as requestRender() without an unsafe
     // extra unlock/lock. Mutex is still locked on exit from this method.

@@ -35,7 +35,7 @@ namespace hgame {
 const EventQuark EVENT_TICK("TICK");
 const EventQuark EVENT_RENDER_CONTEXT_CREATED("RCUP");
 const EventQuark EVENT_RENDER_CONTEXT_DESTROYED("RCDN");
-const EventQuark EVENT_PAUSE("PAUS");
+const EventQuark EVENT_SUSPEND("SUSP");
 const EventQuark EVENT_RESUME("RESM");
 const EventQuark EVENT_STOP("STOP");
 
@@ -93,13 +93,13 @@ Application::Application(Platform *platform, const char *log_name,
         mScreenThread(0),
         mLastTick(platform->getTicks()),
         mSavedEvent(0),
-        mPausing(false),
-        mPaused(false)
+        mSuspending(false),
+        mSuspended(false)
 {
     Event::setPool(new EventPool(mThreadFactory));
     mScreenThread = mThreadFactory->createThread(&mScreenRunnable,
             "Screen thread");
-    mPausingCond = mThreadFactory->createCond();
+    mSuspendingCond = mThreadFactory->createCond();
 }
 
 Application::~Application()
@@ -209,10 +209,10 @@ void Application::stop()
 
 Event *Application::getNextEvent(int tick_period_ms)
 {
-    mPausingCond->lock();
-    if (mPausing)
-        mPausingCond->signal();
-    mPausingCond->release();
+    mSuspendingCond->lock();
+    if (mSuspending)
+        mSuspendingCond->signal();
+    mSuspendingCond->release();
     Event *result;
     if (mSavedEvent)
     {
@@ -221,7 +221,7 @@ Event *Application::getNextEvent(int tick_period_ms)
         return result;
     }
     int timeout = -1;
-    if (tick_period_ms > 0 && !mPaused)
+    if (tick_period_ms > 0 && !mSuspended)
     {
         timeout = tick_period_ms - (mPlatform->getTicks() - mLastTick);
         if (timeout < 0 || timeout > tick_period_ms)
@@ -239,13 +239,13 @@ Event *Application::getNextEvent(int tick_period_ms)
     return result;
 }
 
-void Application::pause()
+void Application::suspend()
 {
-    mPausingCond->lock();
-    mPaused = mPausing = true;
-    pushEvent(new Event(EVENT_PAUSE, true));
-    mPausingCond->wait();
-    mPausingCond->release();
+    mSuspendingCond->lock();
+    mSuspended = mSuspending = true;
+    pushEvent(new Event(EVENT_SUSPEND, true));
+    mSuspendingCond->wait();
+    mSuspendingCond->release();
 }
 
 }
