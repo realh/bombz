@@ -67,6 +67,8 @@ public:
     virtual void initRendering(RenderContext *rc);
 
     virtual void deleteRendering(RenderContext *rc);
+
+    virtual void resizeRendering(RenderContext *rc);
 };
 
 }

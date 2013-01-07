@@ -75,8 +75,15 @@ void RendererWithState::serviceRenderRequest(RenderContext *rc)
     {
         deleteRendering(rc);
     }
-    if (mRequestedRenderState != RENDER_STATE_REPLACE_SCREEN)
+    if (mRequestedRenderState == RENDER_STATE_RESIZE)
+    {
+        resizeRendering(rc);
+        mRequestedRenderState = mCurrentRenderState;
+    }
+    else if (mRequestedRenderState != RENDER_STATE_REPLACE_SCREEN)
+    {
         mCurrentRenderState = mRequestedRenderState;
+    }
     mRenderStateMutex->unlock();
 }
 

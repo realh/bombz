@@ -60,6 +60,9 @@ public:
     void initRendering(hgame::RenderContext *rc);
 
     // Should just forward to ScreenHub
+    void resizeRendering(hgame::RenderContext *rc);
+
+    // Should just forward to ScreenHub
     void deleteRendering(hgame::RenderContext *rc);
 
     // Should do the actual deleting

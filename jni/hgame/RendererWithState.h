@@ -45,6 +45,7 @@ public:
     enum RenderState {
         RENDER_STATE_UNINITIALISED,
         RENDER_STATE_INITIALISED,
+        RENDER_STATE_RESIZE,
         RENDER_STATE_RENDERING,
         RENDER_STATE_REPLACE_SCREEN
         // REPLACE_SCREEN is eg for switching between screens, some resources

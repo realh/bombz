@@ -46,7 +46,6 @@ Pusher::Pusher(ScreenHub *hub, hgame::Log *log) :
 
 void Pusher::initRendering(hgame::RenderContext *rc)
 {
-    mLog.v("Creating pusher textures");
     hgame::TextureAtlas *atlas = mHub->getAlphaAtlas();
     mScreenTileSize = mHub->getScreenTileSize();
     mSrcTileSize = mHub->getSrcTileSize();
@@ -64,6 +63,16 @@ void Pusher::initRendering(hgame::RenderContext *rc)
             mSrcTileSize, mSrcTileSize);
     mSprite = rc->createSprite(mTextures[1],
             mScreenTileSize, mScreenTileSize);
+}
+
+void Pusher::resizeRendering(hgame::RenderContext *rc)
+{
+    // This is called after hub's equivalent so hub's ScreenTS now has new value
+    if (mHub->getScreenTileSize() != mScreenTileSize)
+    {
+        deleteRendering(rc);
+        initRendering(rc);
+    }
 }
 
 void Pusher::deleteRendering(hgame::RenderContext *rc)

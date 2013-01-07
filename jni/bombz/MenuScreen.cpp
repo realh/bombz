@@ -86,6 +86,17 @@ void MenuScreen::initRendering(hgame::RenderContext *rc)
     delete font;
 }
 
+void MenuScreen::resizeRendering(hgame::RenderContext *rc)
+{
+    int old_size = mHub->getScreenTileSize();
+    mHub->resizeRendering(rc);
+    if (mHub->getScreenTileSize() != old_size)
+    {
+        freeRendering(rc);
+        initRendering(rc);
+    }
+}
+
 void MenuScreen::deleteRendering(hgame::RenderContext *rc)
 {
     mHub->deleteRendering(rc);

@@ -71,6 +71,12 @@ void GameScreen::initRendering(hgame::RenderContext *rc)
     mPusher->initRendering(rc);
 }
 
+void GameScreen::resizeRendering(hgame::RenderContext *rc)
+{
+    mHub->resizeRendering(rc);
+    mPusher->resizeRendering(rc);
+}
+
 void GameScreen::deleteRendering(hgame::RenderContext *rc)
 {
     mHub->deleteRendering(rc);

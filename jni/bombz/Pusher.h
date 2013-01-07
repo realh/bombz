@@ -76,6 +76,8 @@ public:
 
     void initRendering(hgame::RenderContext *rc);
 
+    void resizeRendering(hgame::RenderContext *rc);
+
     void deleteRendering(hgame::RenderContext *rc);
 
     void render(hgame::RenderContext *rc);

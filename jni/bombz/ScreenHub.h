@@ -87,6 +87,8 @@ public:
 
     void replaceRenderingScreen(hgame::RenderContext *rc);
 
+    void resizeRendering(hgame::RenderContext *rc);
+
     int *getBestModes();
 
     hgame::Application *getApplication()

@@ -185,4 +185,9 @@ void WidgetGroup::deleteRendering(RenderContext *rc)
     delete mAtlas;
 }
 
+void WidgetGroup::resizeRendering(RenderContext *rc)
+{
+    // Do nothing because this is handled by parent MenuScreen
+}
+
 }

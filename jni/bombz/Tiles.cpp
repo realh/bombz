@@ -50,16 +50,21 @@ Tiles::~Tiles()
     delete[] mTileRegions;
 }
 
-void Tiles::initRendering(hgame::RenderContext *rc)
+void Tiles::resizeRendering(hgame::RenderContext *rc)
 {
-    mScreenTileSize = rc->calculateTileSize(Level::kWidth, Level::kHeight);
+    int scrn_tile_size = rc->calculateTileSize(Level::kWidth, Level::kHeight);
+    if (scrn_tile_size == mScreenTileSize)
+    {
+        return;
+    }
+    mScreenTileSize = scrn_tile_size;
+    deleteRendering(rc);
     mSrcTileSize = mHub->getPlatform()->getBestPNGMatch(mScreenTileSize);
     rc->setNeedScaling(mSrcTileSize != mScreenTileSize);
     hgame::Image *img = mHub->getPlatform()->loadPNG(
             "tile_atlas.png", mSrcTileSize);
     mTileAtlas = rc->uploadTexture(img);
     delete img;
-    delete mTileBatcher;
     mTileBatcher = rc->createTileBatcher(Level::kWidth, Level::kHeight,
             mScreenTileSize);
     int n;
@@ -83,6 +88,12 @@ void Tiles::initRendering(hgame::RenderContext *rc)
     {
         mTileRegions[n] = createRegion(((m & 4) == 0) ? BOMB2 : BLANK);
     }
+}
+
+void Tiles::initRendering(hgame::RenderContext *rc)
+{
+    mScreenTileSize = 0;
+    resizeRendering(rc);
 }
 
 void Tiles::deleteRendering(hgame::RenderContext *rc)

@@ -99,9 +99,20 @@ void ScreenHub::initRendering(hgame::RenderContext *rc)
         setRcViewport(rc);
         mRcIndex = rc->getIndex();
     }
-    else if (mWantLogo)
+    else if (mWantLogo && !mLogoAtlas)
     {
         loadLogo(rc);
+    }
+}
+
+void ScreenHub::resizeRendering(hgame::RenderContext *rc)
+{
+    int old_size = mTiles->getScreenTileSize();
+    mTiles->resizeRendering(rc);
+    if (mTiles->getScreenTileSize() != old_size)
+    {
+        mRcIndex = -1;
+        initRendering(rc);
     }
 }
 

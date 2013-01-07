@@ -58,6 +58,12 @@ void Level::initRendering(hgame::RenderContext *rc)
             mTiles->getScreenTileSize() * 3, mTiles->getScreenTileSize() * 3);
 }
 
+void Level::resizeRendering(hgame::RenderContext *rc)
+{
+    // Do nothing here because it's handled by hub
+    (void) rc;
+}
+
 void Level::deleteRendering(hgame::RenderContext *rc)
 {
     delete mExplo00Sprite;

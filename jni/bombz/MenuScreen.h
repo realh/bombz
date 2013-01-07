@@ -72,6 +72,8 @@ public:
 
     virtual void initRendering(hgame::RenderContext *rc);
 
+    virtual void resizeRendering(hgame::RenderContext *rc);
+
     // Should just forward to ScreenHub
     virtual void deleteRendering(hgame::RenderContext *rc);
 
