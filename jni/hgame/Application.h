@@ -45,11 +45,12 @@
 namespace hgame {
 
 extern const EventQuark EVENT_TICK;
-extern const EventQuark EVENT_RENDER_CONTEXT_CREATED;
-extern const EventQuark EVENT_RENDER_CONTEXT_DESTROYED;
+//extern const EventQuark EVENT_RENDER_CONTEXT_CREATED;
+//extern const EventQuark EVENT_RENDER_CONTEXT_DESTROYED;
 extern const EventQuark EVENT_SUSPEND;
 extern const EventQuark EVENT_RESUME;
 extern const EventQuark EVENT_STOP;
+extern const EventQuark EVENT_PAUSE;
 
 class TickEvent : public Event {
 public:

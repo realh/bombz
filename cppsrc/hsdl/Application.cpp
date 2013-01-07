@@ -76,6 +76,19 @@ int EventRunnable::runSafely()
                                         sdl_ev.button.y));
                     }
                     break;
+                case SDL_KEYDOWN:
+                    switch (sdl_ev.key.keysym.sym)
+                    {
+                        case SDLK_BACKSPACE:
+                        case SDLK_PAUSE:
+                        case SDLK_ESCAPE:
+                            mApplication->pushEvent(
+                                    new hgame::Event(hgame::EVENT_PAUSE));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
             }
         }
         else

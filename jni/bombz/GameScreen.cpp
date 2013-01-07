@@ -30,6 +30,7 @@
 #include "bombz/GameScreen.h"
 
 #include "bombz/Level.h"
+#include "bombz/PauseScreen.h"
 #include "bombz/ScreenHub.h"
 #include "bombz/Settings.h"
 
@@ -102,6 +103,11 @@ int GameScreen::run()
         if (event->getType() == hgame::EVENT_STOP)
         {
             quit = true;
+        }
+        else if (event->getType() == hgame::EVENT_PAUSE)
+        {
+            quit = true;
+            mApplication->setScreen(mHub->getPauseScreen());
         }
         else if (event->getType() == hgame::EVENT_TICK)
         {

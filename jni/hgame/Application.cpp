@@ -33,11 +33,12 @@
 namespace hgame {
 
 const EventQuark EVENT_TICK("TICK");
-const EventQuark EVENT_RENDER_CONTEXT_CREATED("RCUP");
-const EventQuark EVENT_RENDER_CONTEXT_DESTROYED("RCDN");
+//const EventQuark EVENT_RENDER_CONTEXT_CREATED("RCUP");
+//const EventQuark EVENT_RENDER_CONTEXT_DESTROYED("RCDN");
 const EventQuark EVENT_SUSPEND("SUSP");
 const EventQuark EVENT_RESUME("RESM");
 const EventQuark EVENT_STOP("STOP");
+const EventQuark EVENT_PAUSE("PAUS");
 
 SafeRunnable::SafeRunnable(Application *app, const char *name) :
         mStopped(false), mApplication(app), mName(name),
@@ -177,7 +178,7 @@ void Application::requestRenderWhileLocked(bool block)
 void Application::setScreen(Screen *new_scrn)
 {
     mRenderingCond->lock();
-    bool old_scrn = mScreen != 0;
+    bool old_scrn = (mScreen != 0) && !mSuspending;
     Screen::RenderState rs = Screen::RENDER_STATE_UNINITIALISED;
     if (old_scrn)
     {

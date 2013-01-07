@@ -32,9 +32,11 @@
 #include <algorithm>
 #include <vector>
 
-#include "bombz/GameScreen.h"
 #include "bombz/ScreenHub.h"
+
+#include "bombz/GameScreen.h"
 #include "bombz/MainMenuScreen.h"
+#include "bombz/PauseScreen.h"
 
 namespace bombz {
 
@@ -57,8 +59,9 @@ ScreenHub::ScreenHub(hgame::Application *app) :
         mBackground(new Background(mTiles)),
         mLevel(new Level(this, mTiles, app->createLog("Bombz level"))),
         mRcIndex(-1),
-        mMainMenuScrn(0),
         mGameScrn(0),
+        mMainMenuScrn(0),
+        mPauseScrn(0),
         mWantLogo(false)
 {
 }
@@ -181,14 +184,25 @@ int *ScreenHub::getBestModes()
     return modes;
 }
 
+void ScreenHub::createGameScreen()
+{
+    mGameScrn = new GameScreen(this);
+}
+
 void ScreenHub::createMainMenuScreen()
 {
     mMainMenuScrn = new MainMenuScreen(this);
 }
 
-void ScreenHub::createGameScreen()
+void ScreenHub::createPauseScreen()
 {
-    mGameScrn = new GameScreen(this);
+    mPauseScrn = new PauseScreen(this);
+}
+
+void ScreenHub::deleteGameScreen()
+{
+    delete mGameScrn;
+    mGameScrn = 0;
 }
 
 void ScreenHub::deleteMainMenuScreen()
@@ -197,10 +211,10 @@ void ScreenHub::deleteMainMenuScreen()
     mMainMenuScrn = 0;
 }
 
-void ScreenHub::deleteGameScreen()
+void ScreenHub::deletePauseScreen()
 {
-    delete mGameScrn;
-    mGameScrn = 0;
+    delete mPauseScrn;
+    mPauseScrn = 0;
 }
 
 }

@@ -27,7 +27,7 @@
 
 // Bombz - 2D puzzle game
 
-#include "config.h"
+#include "bombz/PauseScreen.h"
 
 #include "bombz/GameScreen.h"
 #include "bombz/MainMenuScreen.h"
@@ -35,62 +35,40 @@
 
 namespace bombz {
 
-bool MainMenuScreen::TapListener::onTapEvent(hgame::TapEvent *e)
+bool PauseScreen::TapListener::onTapEvent(hgame::TapEvent *e)
 {
     (void) e;
-    return (mMMS->*mMethod)();
+    return (mScrn->*mMethod)();
 }
 
-bool MainMenuScreen::onPlayTapped()
+bool PauseScreen::onResumeTapped()
 {
     mQuit = true;
     mApplication->setScreen(mHub->getGameScreen());
-    mHub->deleteMainMenuScreen();
+    mHub->deletePauseScreen();
     return true;
 }
 
-bool MainMenuScreen::onChooseLevelTapped()
+bool PauseScreen::onExitTapped()
 {
+    mQuit = true;
+    mApplication->setScreen(mHub->getMainMenuScreen());
+    mHub->deleteGameScreen();
+    mHub->deletePauseScreen();
     return true;
 }
 
-bool MainMenuScreen::onSettingsTapped()
-{
-    return true;
-}
-
-#if HAVE_QUIT_WIDGET
-bool MainMenuScreen::onQuitTapped()
-{
-    mApplication->stop();
-    return true;
-}
-
-#endif
-
-MainMenuScreen::MainMenuScreen(ScreenHub *hub) :
-        MenuScreen(hub, "BombzMainMenu"),
-        mPlayListener(this, &MainMenuScreen::onPlayTapped),
-        mChooseLevelListener(this, &MainMenuScreen::onChooseLevelTapped),
-        mSettingsListener(this, &MainMenuScreen::onSettingsTapped)
-#if HAVE_QUIT_WIDGET
-        , mQuitListener(this, &MainMenuScreen::onQuitTapped)
-#endif
+PauseScreen::PauseScreen(ScreenHub *hub) :
+        MenuScreen(hub, "BombzPauseMenu"),
+        mResumeListener(this, &PauseScreen::onResumeTapped),
+        mExitListener(this, &PauseScreen::onExitTapped)
 {
     float y = kMenuItemTop;
-    addTextWidget(mApplication->getPlatform()->translate("Play"),
-            0.5, y, &mPlayListener);
+    addTextWidget(mApplication->getPlatform()->translate("Resume"),
+            0.5, y, &mResumeListener);
     y += kMenuItemStride;
-    addTextWidget(mApplication->getPlatform()->translate("Choose Level"),
-            0.5, y, &mChooseLevelListener);
-    y += kMenuItemStride;
-    addTextWidget(mApplication->getPlatform()->translate("Settings"),
-            0.5, y, &mSettingsListener);
-    y += kMenuItemStride;
-#if HAVE_QUIT_WIDGET
-    addTextWidget(mApplication->getPlatform()->translate("Quit"),
-            0.5, y, &mQuitListener);
-#endif
+    addTextWidget(mApplication->getPlatform()->translate("Exit"),
+            0.5, y, &mExitListener);
 }
 
 }

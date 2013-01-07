@@ -50,6 +50,7 @@ namespace bombz {
 
 class GameScreen;
 class MenuScreen;
+class PauseScreen;
 
 class ScreenHub {
 public:
@@ -69,8 +70,9 @@ private:
     Background *mBackground;
     Level *mLevel;
     int mRcIndex;
-    MenuScreen *mMainMenuScrn;
     GameScreen *mGameScrn;
+    MenuScreen *mMainMenuScrn;
+    PauseScreen *mPauseScrn;
     int mLeftMargin, mTopMargin;
     int mVpWidth, mVpHeight;
     bool mWantLogo;
@@ -137,23 +139,35 @@ public:
         return mBackground;
     }
 
-    MenuScreen *getMainMenuScreen()
-    {
-        if (!mMainMenuScrn)
-            createMainMenuScreen();
-        return mMainMenuScrn;
-    }
-
     GameScreen *getGameScreen()
     {
+        setWantLogo(false);
         if (!mGameScrn)
             createGameScreen();
         return mGameScrn;
     }
 
-    void deleteMainMenuScreen();
+    MenuScreen *getMainMenuScreen()
+    {
+        setWantLogo(true);
+        if (!mMainMenuScrn)
+            createMainMenuScreen();
+        return mMainMenuScrn;
+    }
+
+    PauseScreen *getPauseScreen()
+    {
+        setWantLogo(true);
+        if (!mPauseScrn)
+            createPauseScreen();
+        return mPauseScrn;
+    }
 
     void deleteGameScreen();
+
+    void deleteMainMenuScreen();
+
+    void deletePauseScreen();
 
     // Call immediately before initRendering or replaceClientRendering
     void setWantLogo(bool want = true)
@@ -179,9 +193,11 @@ private:
 
     void deleteLogo();
 
+    void createGameScreen();
+
     void createMainMenuScreen();
 
-    void createGameScreen();
+    void createPauseScreen();
 };
 
 }
