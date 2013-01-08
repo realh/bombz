@@ -43,6 +43,7 @@ int RenderRunnable::runSafely()
 Application::Application(struct android_app *aapp) :
         hgame::Application(new Platform(aapp, "Bombz"),
                 "AndroidApp", new ThreadFactory()),
+        mAndroidApp(aapp),
         mRenderRunnable(this),
         mRenderThread(0)
 {
@@ -55,6 +56,9 @@ Application::~Application()
 
 void Application::start()
 {
+    mState->userData = reinterpret_cast<void *>(this);
+    mState->onAppCmd = handleCmd;
+    mState->onInputEvent = handleInput;
     /*
     assert(mScreen != 0);
     try {
@@ -74,6 +78,16 @@ void Application::start()
     mScreenThread->wait();
     mEventThread->wait();
     */
+}
+
+void Application::handleCmd(struct android_app *app, int32_t cmd)
+{
+    Application *that = reinterpret_cast<Application *>(app);
+}
+
+int32_t Application::handleInput(struct android_app *app, AInputEvent* event)
+{
+    return 0;
 }
 
 void Application::createRenderContext()
