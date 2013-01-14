@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 
 import uk.co.realh.hgame.Font;
 import uk.co.realh.hgame.Image;
@@ -27,8 +26,8 @@ public class AndroidSys implements Sys {
 	private Context mContext;
 	private AssetManager mAssets;
 	//private String mOwner;
-	private String mDomain;
-	private String mAppName;
+	//private String mDomain;
+	//private String mAppName;
 	private Class<?> mRStrings;
 	
 	/**
@@ -46,8 +45,8 @@ public class AndroidSys implements Sys {
 		mContext = aContext;
 		mAssets = aContext.getAssets();
 		//mOwner = owner;
-		mDomain = domain;
-		mAppName = appName;
+		//mDomain = domain;
+		//mAppName = appName;
 		mRStrings = Class.forName(pkg + ".R.strings");
 	}
 	
