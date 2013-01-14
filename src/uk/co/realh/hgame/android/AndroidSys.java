@@ -19,6 +19,9 @@ import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.Sys;
 import uk.co.realh.hgame.Settings;
 
+/**
+ * @author Tony Houghton
+ */
 public class AndroidSys implements Sys {
 	
 	private static String TAG = "Sys";

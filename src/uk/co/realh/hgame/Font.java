@@ -37,7 +37,7 @@
 package uk.co.realh.hgame;
 
 /**
- * @author tony
+ * @author Tony Houghton
  *
  */
 public interface Font {

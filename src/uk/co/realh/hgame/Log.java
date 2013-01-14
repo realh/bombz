@@ -39,6 +39,8 @@ package uk.co.realh.hgame;
 /**
  * Provides a logging service modelled on Android's, but portable due to
  * abstraction.
+ * 
+ * @author Tony Houghton
  */
 public class Log {
 	

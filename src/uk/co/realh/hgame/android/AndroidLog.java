@@ -40,6 +40,8 @@ import android.util.Log;
 
 /**
  * Android implementation of logging.
+ * 
+ * @author Tony Houghton
  * @see uk.co.realh.hgame.Log
  */
 public class AndroidLog implements uk.co.realh.hgame.Log.LogImplementation {

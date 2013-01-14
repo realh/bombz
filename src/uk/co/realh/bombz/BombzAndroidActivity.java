@@ -7,6 +7,9 @@ import android.app.Activity;
 import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.android.AndroidLog;
 
+/**
+ * @author Tony Houghton
+ */
 public class BombzAndroidActivity extends Activity {
 
 	@Override

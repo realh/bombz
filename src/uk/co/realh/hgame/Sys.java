@@ -43,6 +43,7 @@ import java.io.InputStream;
 /**
  * Absracts common OS services.
  *
+ * @author Tony Houghton
  */
 public interface Sys {
 	
