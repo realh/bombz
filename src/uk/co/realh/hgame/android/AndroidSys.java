@@ -31,7 +31,7 @@ public class AndroidSys implements Sys {
 	//private String mOwner;
 	//private String mDomain;
 	//private String mAppName;
-	private Class<?> mRStrings;
+	private Class<?> mRString;
 	
 	/**
 	 * @param aContext	Android Context eg the Activity
@@ -50,7 +50,7 @@ public class AndroidSys implements Sys {
 		//mOwner = owner;
 		//mDomain = domain;
 		//mAppName = appName;
-		mRStrings = Class.forName(pkg + ".R.strings");
+		mRString = Class.forName(pkg + ".R$string");
 	}
 	
 	/**
@@ -62,7 +62,8 @@ public class AndroidSys implements Sys {
 	private String getSDCardFilename(String leafname)
 	{
 		File f = mContext.getExternalFilesDir(null);
-		return f.getPath() + leafname;
+		Log.d(TAG, "sdcard path: " + f.getPath());
+		return f.getPath() + "/" + leafname;
 	}
 
 	@Override
@@ -129,6 +130,10 @@ public class AndroidSys implements Sys {
 					set.add(item);
 				}
 			}
+			else
+			{
+				Log.d(TAG, folder + " on sdcard is empty");
+			}
 		}
 		return set.toArray(files);
 	}
@@ -137,7 +142,7 @@ public class AndroidSys implements Sys {
 	public String translate(String tag) {
 		Field f;
 		try {
-			f = mRStrings.getDeclaredField(tag);
+			f = mRString.getDeclaredField(tag);
 			return mContext.getString(f.getInt(null));
 		} catch (Throwable e) {
 			Log.w(TAG, "Can't translate tag '" + tag + "'", e);
