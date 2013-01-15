@@ -37,9 +37,70 @@
 package uk.co.realh.hgame;
 
 /**
+ * Abstraction of an image that can be loaded from PNG and used as a texture.
+ * NB pixel coords have origin at top-left. 
+ * 
  * @author Tony Houghton
- *
  */
 public interface Image {
-
+	
+	/**
+	 * Creates a new Image with same properties as this but with different
+	 * width and height.
+	 * 
+	 * @param w	width
+	 * @param h	height
+	 * @return	New Image.
+	 */
+	public Image createImage(int w, int h);
+	
+	/**
+	 * @return	Width of Image.
+	 */
+	public int getWidth();
+	
+	/**
+	 * @return	Height of Image.
+	 */
+	public int getHeight();
+	
+	/*
+	 * @return	Array of one ARGB int per pixel, stride == width.
+	 */
+	//public int[] getPixels();
+	
+	/*
+	 * Replaces Image's contents.
+	 * 
+	 * @param pixels	Array of one ARGB int per pixel, stride == width,
+	 * 					total size must match Image's size.
+	 */
+	//public void setPixels(int[] pixels);
+	
+	/**
+	 * Copies part of another Image into this Image using alpha as appropriate
+	 * to merge/composite. Generally both Images must be same implementation
+	 * class.
+	 * 
+	 * @param src		Source Image.
+	 * @param dst_x		Destination X offset.
+	 * @param dst_y		Destination Y offset.
+	 * @param src_x		Source X offset.
+	 * @param src_y		Source Y offset.
+	 * @param w			Width of area to copy.
+	 * @param h			Height of area to copy.
+	 */
+    public void blit(Image src, int dst_x, int dst_y,
+            int src_x, int src_y, int w, int h);
+    
+    /**
+     * @return	A blurred version of this image.
+     */
+    public Image blur();
+    
+    /**
+     * Force resources to be recycled. Do not use this image afterwards.
+     */
+    public void dispose();
+	
 }
