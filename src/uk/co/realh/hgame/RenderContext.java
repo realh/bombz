@@ -62,7 +62,11 @@ public abstract class RenderContext {
 	protected volatile boolean mRenderBlocking;
 	
 	private static int smIdIndex = 0;
-	public final int mId;
+	public int mId;
+	
+	protected boolean mNativeSize;
+
+	private TextureAtlas mBoundTexture;
 	
 	protected RenderContext()
 	{
@@ -206,5 +210,107 @@ public abstract class RenderContext {
 	{
 		return mHeight;
 	}
+	
+	/**
+	 * If NativeSize is true we can use NEAREST texture scaling method,
+	 * otherwise LINEAR.
+	 * 
+	 * @param native_size	Whether textures can be rendered without scaling.
+	 */
+	public void setNativeSize(boolean native_size)
+	{
+		mNativeSize = native_size;
+	}
+
+	/**
+	 * @return		Whether textures can be rendered without scaling.
+	 * @see 		setNativeSize(boolean)
+	 */
+	public boolean getNativeSize()
+	{
+		return mNativeSize;
+	}
+
+	/**
+	 * Create a TextureAtlas from an Image.
+	 * 
+	 * @param img
+	 * @param alpha		Whether texture should have an alpha channel.
+	 * @return
+	 */
+	public abstract TextureAtlas uploadTexture(Image img, boolean alpha);
+	
+	/**
+	 * Create a sprite for easy rendering of a TextureRegion.
+	 * 
+	 * @param texture
+	 * @param w		Width
+	 * @param h		Height
+	 * @return
+	 */
+    public abstract Sprite createSprite(TextureRegion texture, int w, int h);
+
+    /**
+     * Create a TileBatcher.
+     * 
+     * @param w			Number of visible columns
+     * @param h			Number of visible rows
+     * @param tile_size	Size of each tile in viewport space pixels
+     * @return
+     */
+    public abstract TileBatcher createTileBatcher(int w, int h, int tile_size);
+    
+    /**
+     * Wrapper to bind texture, checking it isn't already bound.
+     * 
+     * @param tex	Texture to bind, may be null
+     */
+    public void bindTexture(TextureAtlas tex)
+    {
+    	if (mBoundTexture != tex)
+    	{
+    		doBindTexture(tex);
+    		mBoundTexture = tex;
+    	}
+    }
+    
+    /**
+     * Makes sure given texture isn't bound. Does nothing if some other
+     * texture is bound.
+     * 
+     * @param tex
+     */
+    public void unbindTexture(TextureAtlas tex)
+    {
+    	if (mBoundTexture == tex)
+    	{
+    		doBindTexture(null);
+    		mBoundTexture = null;
+    	}
+    }
+
+	/**
+	 * Implementation of texture binding.
+	 * 
+     * @param tex	Texture to bind, may be null
+	 */
+	protected abstract void doBindTexture(TextureAtlas tex);
+
+	/**
+	 * Sets the viewport for 2D rendering.
+	 * 
+	 * @param x		Left
+	 * @param y		Top
+	 * @param w		Width
+	 * @param h		Height
+	 */
+    public abstract void setViewport2D(int x, int y, int w, int h);
+
+    /**
+     * Enable/disable alpha blending.
+     * 
+     * @param enable	Whether blending should be enabled
+     */
+    public abstract void enableBlend(boolean enable);
 
 }
