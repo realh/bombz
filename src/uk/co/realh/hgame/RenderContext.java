@@ -58,8 +58,8 @@ public abstract class RenderContext {
 	protected Renderer mRenderer;
 	private Renderer mNewRenderer;
 	private boolean mRendering;
-	protected int mRenderReason;
-	protected boolean mRenderBlocking;
+	protected volatile int mRenderReason;
+	protected volatile boolean mRenderBlocking;
 
 	/**
 	 * Old renderer, if any, will have its replacingRenderer method called.
