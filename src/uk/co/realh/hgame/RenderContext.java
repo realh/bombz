@@ -56,7 +56,7 @@ public abstract class RenderContext {
 	protected int mHeight;
 	
 	protected Renderer mRenderer;
-	private Renderer mNewRenderer;
+	private volatile Renderer mNewRenderer;
 	private boolean mRendering;
 	protected volatile int mRenderReason;
 	protected volatile boolean mRenderBlocking;
