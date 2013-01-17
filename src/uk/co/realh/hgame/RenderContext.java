@@ -60,6 +60,14 @@ public abstract class RenderContext {
 	private boolean mRendering;
 	protected volatile int mRenderReason;
 	protected volatile boolean mRenderBlocking;
+	
+	private static int smIdIndex = 0;
+	public final int mId;
+	
+	protected RenderContext()
+	{
+		mId = ++smIdIndex;
+	}
 
 	/**
 	 * Old renderer, if any, will have its replacingRenderer method called.
