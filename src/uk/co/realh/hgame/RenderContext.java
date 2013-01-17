@@ -129,10 +129,11 @@ public abstract class RenderContext {
 	
 	/**
 	 * Called by subclass to service a rendering request. If REASON_RENDER
-	 * (and when REASON_REPLACE triggers a render) this doesn't actually do
-	 * rendering but returns true. This prevents potentially lengthy rendering
-	 * from blocking the requester.
-	 * @return
+	 * (and when REASON_REPLACE/RESIZE triggers a render) this doesn't actually
+	 * do rendering but returns true. This prevents potentially lengthy
+	 * rendering from blocking the requester.
+	 * 
+	 * @return	Whether calling subclass should perform a render.
 	 */
 	synchronized
 	protected boolean serviceRenderRequest()
@@ -158,7 +159,10 @@ public abstract class RenderContext {
 				mWidth = w;
 				mHeight = w;
 				if (null != mRenderer)
+				{
 					mRenderer.resizeRendering(this, w, h);
+					rendering = mRendering;
+				}
 			}
 			break;
 		case REASON_RENDER:
@@ -172,10 +176,7 @@ public abstract class RenderContext {
 			if (null != mNewRenderer)
 			{
 				mRenderer.initRendering(this);
-				if (mRendering)
-				{
-					rendering = true;
-				}
+				rendering = mRendering;
 			}
 			break;
 		}
