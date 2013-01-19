@@ -38,7 +38,6 @@ package uk.co.realh.hgame.gles1;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import uk.co.realh.hgame.Image;
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.Sprite;
 import uk.co.realh.hgame.TextureAtlas;
@@ -49,53 +48,46 @@ import uk.co.realh.hgame.TileBatcher;
  * @author Tony Houghton
  *
  */
-public class Gles1RenderContext extends RenderContext {
+public abstract class Gles1RenderContext extends RenderContext {
 	
 	public final GL10 mGL;
+	protected int mWidth, mHeight;
 	
-	protected Gles1RenderContext(GL10 gl)
+	/**
+	 * @param gl
+	 * @param w		Initial width of surface
+	 * @param h		Initial height of surface
+	 */
+	protected Gles1RenderContext(GL10 gl, int w, int h)
 	{
 		mGL = gl;
+		mWidth = w;
+		mHeight = h;
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+		gl.glClearColor(0,  0, 0, 1);
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.co.realh.hgame.RenderContext#implementRenderRequest()
-	 */
-	@Override
-	protected void implementRenderRequest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
+	/**
 	 * @see uk.co.realh.hgame.RenderContext#getCurrentScreenWidth()
 	 */
 	@Override
 	protected int getCurrentScreenWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+		return mWidth;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see uk.co.realh.hgame.RenderContext#getCurrentScreenHeight()
 	 */
 	@Override
 	protected int getCurrentScreenHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+		return mHeight;
 	}
 
 	/* (non-Javadoc)
-	 * @see uk.co.realh.hgame.RenderContext#uploadTexture(uk.co.realh.hgame.Image, boolean)
-	 */
-	@Override
-	public TextureAtlas uploadTexture(Image img, boolean alpha) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see uk.co.realh.hgame.RenderContext#createSprite(uk.co.realh.hgame.TextureRegion, int, int)
+	 * @see uk.co.realh.hgame.RenderContext#createSprite(
+	 * 		uk.co.realh.hgame.TextureRegion, int, int)
 	 */
 	@Override
 	public Sprite createSprite(TextureRegion texture, int w, int h) {
@@ -112,31 +104,44 @@ public class Gles1RenderContext extends RenderContext {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.co.realh.hgame.RenderContext#doBindTexture(uk.co.realh.hgame.TextureAtlas)
+	/**
+	 * @see uk.co.realh.hgame.RenderContext#doBindTexture(
+	 * 		uk.co.realh.hgame.TextureAtlas)
 	 */
 	@Override
 	protected void doBindTexture(TextureAtlas tex) {
-		// TODO Auto-generated method stub
-
+		mGL.glBindTexture(GL10.GL_TEXTURE_2D,
+				((Gles1TextureAtlas) tex).mTextureId);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see uk.co.realh.hgame.RenderContext#setViewport2D(int, int, int, int)
 	 */
 	@Override
 	public void setViewport2D(int x, int y, int w, int h) {
-		// TODO Auto-generated method stub
-
+		mGL.glViewport(x, y, w, h);
+	    mGL.glMatrixMode(GL10.GL_PROJECTION);
+	    mGL.glLoadIdentity();
+	    // Params are left, right, bottom, top, near, far.
+	    // By flipping top and bottom we get origin at top instead of bottom.
+	    mGL.glOrthox(0, w, h, 0, 1, -1);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see uk.co.realh.hgame.RenderContext#enableBlend(boolean)
 	 */
 	@Override
 	public void enableBlend(boolean enable) {
 		// TODO Auto-generated method stub
-
+		if (enable)
+		{
+			mGL.glEnable(GL10.GL_BLEND);
+			mGL.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		}
+		else
+		{
+			mGL.glDisable(GL10.GL_BLEND);
+		}
 	}
 
 }

@@ -58,6 +58,11 @@ public class AndroidImage implements Image {
 	{
 		mBitmap = bitmap;
 	}
+	
+	public Bitmap getAndroidBitmap()
+	{
+		return mBitmap;
+	}
 
 	/**
 	 * @see uk.co.realh.hgame.Image#getWidth()

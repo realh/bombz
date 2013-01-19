@@ -34,60 +34,72 @@
  * See the source code for details.
  */
 
-package uk.co.realh.hgame.gles1;
+package uk.co.realh.hgame.android.gles1;
 
+import javax.microedition.khronos.opengles.GL10;
+
+import android.opengl.GLSurfaceView;
+import android.opengl.GLUtils;
+
+import uk.co.realh.hgame.Image;
 import uk.co.realh.hgame.TextureAtlas;
-import uk.co.realh.hgame.TextureRegion;
+import uk.co.realh.hgame.android.AndroidImage;
+import uk.co.realh.hgame.gles1.Gles1RenderContext;
+import uk.co.realh.hgame.gles1.Gles1TextureAtlas;
 
 /**
  * @author Tony Houghton
  *
  */
-public class Gles1TextureAtlas implements TextureAtlas {
+public class AndroidGles1RenderContext extends Gles1RenderContext {
 	
-	protected final int mWidth, mHeight;
-	public final int mTextureId;
-	
-	private static int[] smIdBucket = new int[1];
-	
+	private GLSurfaceView mView;
+
 	/**
-	 * Texture is uploaded by RenderContext.
-	 * 
+	 * @param view
 	 * @param gl
-	 * @param w
-	 * @param h
-	 * @see uk.co.realh.hgame.RenderContext#uploadTexture(Image, boolean)
 	 */
-	public Gles1TextureAtlas(Gles1RenderContext rctx, int w, int h)
+	public AndroidGles1RenderContext(GLSurfaceView view, GL10 gl) {
+		super(gl, view.getWidth(), view.getHeight());
+		mView = view;
+		view.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+	}
+
+	/**
+	 * @see uk.co.realh.hgame.RenderContext#implementRenderRequest()
+	 */
+	@Override
+	protected void implementRenderRequest() {
+		mView.requestRender();
+	}
+
+	/**
+	 * @see uk.co.realh.hgame.RenderContext#uploadTexture(
+	 * 		uk.co.realh.hgame.Image, boolean)
+	 */
+	@Override
+	public TextureAtlas uploadTexture(Image img, boolean alpha) {
+		float scaling = mNativeSize ? GL10.GL_NEAREST : GL10.GL_LINEAR;
+		Gles1TextureAtlas atlas = new Gles1TextureAtlas(this,
+				img.getWidth(), img.getHeight());
+		mGL.glBindTexture(GL10.GL_TEXTURE_2D, atlas.mTextureId);
+		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0,
+				((AndroidImage) img).getAndroidBitmap(), 0);
+		mGL.glTexParameterf(GL10.GL_TEXTURE_2D,
+				GL10.GL_TEXTURE_MIN_FILTER, scaling);
+		mGL.glTexParameterf(GL10.GL_TEXTURE_2D,
+				GL10.GL_TEXTURE_MAG_FILTER, scaling);
+		mGL.glBindTexture(GL10.GL_TEXTURE_2D, 0);
+		return atlas;
+	}
+	
+	/**
+	 * Called from Activity owning view.
+	 */
+	public void onDrawFrame()
 	{
-		mWidth = w;
-		mHeight = h;
-		rctx.mGL.glGenTextures(1, smIdBucket, 0);
-		mTextureId = smIdBucket[0];
-	}
-
-	/**
-	 * @see uk.co.realh.hgame.TextureAtlas#getWidth()
-	 */
-	@Override
-	public int getWidth() {
-		return mWidth;
-	}
-
-	/**
-	 * @see uk.co.realh.hgame.TextureAtlas#getHeight()
-	 */
-	@Override
-	public int getHeight() {
-		return mHeight;
-	}
-
-	/**
-	 * @see uk.co.realh.hgame.TextureAtlas#createRegion(int, int, int, int)
-	 */
-	@Override
-	public TextureRegion createRegion(int x, int y, int w, int h) {
-		return new Gles1TextureRegion(this, x, y, w, h);
+		if (serviceRenderRequest())
+			mRenderer.render(this);
 	}
 
 }
