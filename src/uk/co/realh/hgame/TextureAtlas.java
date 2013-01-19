@@ -37,9 +37,15 @@
 package uk.co.realh.hgame;
 
 /**
+ * A group of textures pasted together into one image.
+ * 
  * @author Tony Houghton
- *
+ * @see TextureRegion
  */
 public interface TextureAtlas {
 
+    public int getWidth();
+    public int getHeight();
+
+    public TextureRegion createRegion(int x, int y, int w, int h);
 }

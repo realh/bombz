@@ -34,74 +34,68 @@
  * See the source code for details.
  */
 
-package uk.co.realh.hgame;
+package uk.co.realh.hgame.gles1;
+
+import uk.co.realh.hgame.TextureAtlas;
+import uk.co.realh.hgame.TextureRegion;
 
 /**
- * A rectangular region in a TextureAtlas containing an individual texture.
+ * Provides mCoords in order:
+ * Bottom-left, top-left, bottom-right, top-right
+ * Suitable for a GL_TRIANGLE_STRIP,
+ * @link http://en.wikipedia.org/wiki/Triangle_strip
  * 
  * @author Tony Houghton
- * @see TextureAtlas
+ *
  */
-public class TextureRegion {
+public class Gles1TextureRegion extends TextureRegion {
 
-	// public fields not very good Java, but we sacrifice style for speed.
-    public final TextureAtlas mAtlas;
-    // Coordinates are normalised to 0.0-1.0 with origin at top-left.
-    public final float mU0, mV0, mU1, mV1;
-    
-    /**
-     * Coordinates are normalised to 0.0-1.0 with origin at top-left.
-     * 
-     * @param atlas
-     * @param u0
-     * @param v0
-     * @param u1
-     * @param v1
-     */
-    protected TextureRegion(TextureAtlas atlas,
-    		float u0, float v0, float u1, float v1)
-    {
-        mAtlas = atlas;
-        mU0 = u0;
-		mV0 = v0;
-		mU1 = u1;
-		mV1 = v1;
-    }
+	/**
+	 * More bad but faster Java.
+	 */
+	public final float[] mCoords;
 
-    /**
-     * Coordinates are in pixel units in atlas source's space
-     * with origin at top-left.
-     * 
-     * @param atlas
-     * @param x
-     * @param y
-     * @param w
-     * @param h
-     */
-    public TextureRegion(TextureAtlas atlas,
-    		int x, int y, int w, int h)
-	{
-	    mAtlas = atlas;
+	/**
+	 * @param atlas
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 */
+	protected Gles1TextureRegion(Gles1TextureAtlas atlas,
+			int x, int y, int w, int h) {
+		super(atlas, calcUV(atlas, x, y, w, h));
+	    mCoords = new float[8];
+	    mCoords[0] = mU0;
+	    mCoords[1] = mV1;
+	    mCoords[2] = mU0;
+	    mCoords[3] = mV0;
+	    mCoords[4] = mU1;
+	    mCoords[5] = mV1;
+	    mCoords[6] = mU1;
+	    mCoords[7] = mV0;
+	}
+	
+	private static float[] smUV = new float[4];
+	
+	/**
+     * Edges are brought inwards by half a pixel to prevent artifacts.
+	 * 
+	 * @param atlas
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 * @return
+	 */
+	private static float[] calcUV(TextureAtlas atlas,
+			int x, int y, int w, int h) {
 	    float aw = (float) atlas.getWidth();
 	    float ah = (float) atlas.getHeight();
-	    mU0 = (float) x / aw;
-	    mV0 = (float) y / ah;
-	    mU1 = mU0 + (float) w / aw;
-	    mV1 = mV0 + (float) h / ah;
+	    smUV[0] = ((float) x + 0.5f) / aw;
+	    smUV[1] = ((float) y + 0.5f) / ah;
+	    smUV[2] = smUV[0] + (float) (w - 1) / aw;
+	    smUV[3] = smUV[1] + (float) (h - 1) / ah;
+	    return smUV;
 	}
-    
-    /**
-     * Makes it easier for subclasses to calculate coords with helper funcs.
-     * 
-     * @param atlas
-     * @param coords
-     */
-    protected TextureRegion(TextureAtlas atlas, float[] coords)
-    {
-        mAtlas = atlas;
-        mU0 = coords[0];
-		mV0 = coords[1];
-		mU1 = coords[2];
-		mV1 = coords[3];
-    }
 }

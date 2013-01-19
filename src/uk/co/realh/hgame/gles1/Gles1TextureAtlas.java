@@ -34,74 +34,60 @@
  * See the source code for details.
  */
 
-package uk.co.realh.hgame;
+package uk.co.realh.hgame.gles1;
+
+import uk.co.realh.hgame.TextureAtlas;
+import uk.co.realh.hgame.TextureRegion;
 
 /**
- * A rectangular region in a TextureAtlas containing an individual texture.
- * 
  * @author Tony Houghton
- * @see TextureAtlas
+ *
  */
-public class TextureRegion {
-
-	// public fields not very good Java, but we sacrifice style for speed.
-    public final TextureAtlas mAtlas;
-    // Coordinates are normalised to 0.0-1.0 with origin at top-left.
-    public final float mU0, mV0, mU1, mV1;
-    
-    /**
-     * Coordinates are normalised to 0.0-1.0 with origin at top-left.
-     * 
-     * @param atlas
-     * @param u0
-     * @param v0
-     * @param u1
-     * @param v1
-     */
-    protected TextureRegion(TextureAtlas atlas,
-    		float u0, float v0, float u1, float v1)
-    {
-        mAtlas = atlas;
-        mU0 = u0;
-		mV0 = v0;
-		mU1 = u1;
-		mV1 = v1;
-    }
-
-    /**
-     * Coordinates are in pixel units in atlas source's space
-     * with origin at top-left.
-     * 
-     * @param atlas
-     * @param x
-     * @param y
-     * @param w
-     * @param h
-     */
-    public TextureRegion(TextureAtlas atlas,
-    		int x, int y, int w, int h)
+public class Gles1TextureAtlas implements TextureAtlas {
+	
+	protected final int mWidth, mHeight;
+	public final int mTextureId;
+	
+	private static int[] smIdBucket = new int[1];
+	
+	/**
+	 * Texture is uploaded by RenderContext.
+	 * 
+	 * @param gl
+	 * @param w
+	 * @param h
+	 * @see uk.co.realh.hgame.RenderContext#uploadTexture(Image, boolean)
+	 */
+	protected Gles1TextureAtlas(Gles1RenderContext rctx, int w, int h)
 	{
-	    mAtlas = atlas;
-	    float aw = (float) atlas.getWidth();
-	    float ah = (float) atlas.getHeight();
-	    mU0 = (float) x / aw;
-	    mV0 = (float) y / ah;
-	    mU1 = mU0 + (float) w / aw;
-	    mV1 = mV0 + (float) h / ah;
+		mWidth = w;
+		mHeight = h;
+		rctx.mGL.glGenTextures(1, smIdBucket, 0);
+		mTextureId = smIdBucket[0];
 	}
-    
-    /**
-     * Makes it easier for subclasses to calculate coords with helper funcs.
-     * 
-     * @param atlas
-     * @param coords
-     */
-    protected TextureRegion(TextureAtlas atlas, float[] coords)
-    {
-        mAtlas = atlas;
-        mU0 = coords[0];
-		mV0 = coords[1];
-		mU1 = coords[2];
-		mV1 = coords[3];
-    }
+
+	/**
+	 * @see uk.co.realh.hgame.TextureAtlas#getWidth()
+	 */
+	@Override
+	public int getWidth() {
+		return mWidth;
+	}
+
+	/**
+	 * @see uk.co.realh.hgame.TextureAtlas#getHeight()
+	 */
+	@Override
+	public int getHeight() {
+		return mHeight;
+	}
+
+	/**
+	 * @see uk.co.realh.hgame.TextureAtlas#createRegion(int, int, int, int)
+	 */
+	@Override
+	public TextureRegion createRegion(int x, int y, int w, int h) {
+		return new Gles1TextureRegion(this, x, y, w, h);
+	}
+
 }
