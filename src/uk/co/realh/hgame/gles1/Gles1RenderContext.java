@@ -115,16 +115,22 @@ public abstract class Gles1RenderContext extends RenderContext {
 	}
 
 	/**
-	 * @see uk.co.realh.hgame.RenderContext#setViewport2D(int, int, int, int)
+	 * @see uk.co.realh.hgame.RenderContext#setViewport(int, int, int, int)
 	 */
 	@Override
-	public void setViewport2D(int x, int y, int w, int h) {
+	public void setViewport(int x, int y, int w, int h) {
 		mGL.glViewport(x, y, w, h);
 	    mGL.glMatrixMode(GL10.GL_PROJECTION);
 	    mGL.glLoadIdentity();
-	    // Params are left, right, bottom, top, near, far.
-	    // By flipping top and bottom we get origin at top instead of bottom.
-	    mGL.glOrthox(0, w, h, 0, 1, -1);
+	}
+	
+	/**
+	 * @see uk.co.realh.hgame.RenderContext#set2DFrustum(int, int, int, int)
+	 */
+	@Override
+    public void set2DFrustum(int l, int r, int b, int t)
+	{
+	    mGL.glOrthox(l, r, t, b, 1, -1);
 	}
 
 	/**

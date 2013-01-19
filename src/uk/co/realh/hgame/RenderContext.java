@@ -298,14 +298,27 @@ public abstract class RenderContext {
 	protected abstract void doBindTexture(TextureAtlas tex);
 
 	/**
-	 * Sets the viewport for 2D rendering.
+	 * Sets the viewport.
 	 * 
 	 * @param x		Left
 	 * @param y		Top
 	 * @param w		Width
 	 * @param h		Height
 	 */
-    public abstract void setViewport2D(int x, int y, int w, int h);
+    public abstract void setViewport(int x, int y, int w, int h);
+
+    /**
+	 * Sets frustum for 2D rendering, allowing game to use different
+	 * coordinate space from viewport. This follows hgame's convention
+	 * of the top being the origin and downwards being positive, but you
+	 * can flip top and bottom if you want OpenGL convention.
+     * 
+     * @param l	Left
+     * @param r	Right
+     * @param b	Bottom
+     * @param t	Top
+     */
+    public abstract void set2DFrustum(int l, int r, int b, int t);
 
     /**
      * Enable/disable alpha blending.

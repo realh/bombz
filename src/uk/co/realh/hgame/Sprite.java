@@ -37,9 +37,90 @@
 package uk.co.realh.hgame;
 
 /**
+ * A single textured square/rectangle.
+ *  
  * @author Tony Houghton
  *
  */
-public interface Sprite {
+public abstract class Sprite {
+	
+    protected TextureRegion mTexture;
+    protected int mX, mY;             // position
+    protected int mW, mH;             // size
+    
+    /**
+     * Size and position are in frustum's space.
+     * 
+     * @param texture
+     * @param w		Width
+     * @param h		Height
+     */
+    protected Sprite(TextureRegion texture, int x, int y, int w, int h)
+    {
+        mTexture = texture;
+        mX = x;
+        mY = y;
+        mW = w;
+        mH = h;
+    }
+
+    /**
+     * Sets where in view sprite will be rendered.
+     * x and y are in frustum's space.
+     * 
+     * @param x
+     * @param y
+     */
+    public void setPosition(int x, int y)
+    {
+    	setPositionAndSize(x, y, mW, mH);
+    }
+
+    /**
+     * Sets a new size for the sprite.
+     * w and h are in frustum's space.
+     * 
+     * @param x
+     * @param y
+     */
+    public void setSize(int w, int h)
+    {
+    	setPositionAndSize(mX, mY, w, h);
+    }
+
+    /**
+     * Calling function must set everything up first, including
+     * binding the texture if necessary.
+     * 
+     * @param rc
+     */
+    public abstract void render(RenderContext rc);
+
+    /**
+     * Change the sprite's texture eg for animation.
+     * 
+     * @param tex		New texture
+     */
+    public void setTexture(TextureRegion tex)
+    {
+        mTexture = tex;
+    }
+    
+    /**
+     * Change the sprite's position and size at once
+     * 
+     * @param tex		New texture
+     * @param x			New left
+     * @param y			New top
+     * @param w			New width
+     * @param h			New height
+     */
+    public void setPositionAndSize(int x, int y, int w, int h)
+    {
+        mX = x;
+        mY = y;
+        mW = w;
+        mH = h;
+    }
 
 }
