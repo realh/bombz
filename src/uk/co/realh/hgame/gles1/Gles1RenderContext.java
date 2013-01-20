@@ -85,23 +85,22 @@ public abstract class Gles1RenderContext extends RenderContext {
 		return mHeight;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see uk.co.realh.hgame.RenderContext#createSprite(
 	 * 		uk.co.realh.hgame.TextureRegion, int, int)
 	 */
 	@Override
 	public Sprite createSprite(TextureRegion texture, int w, int h) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Gles1Sprite(texture, 0, 0, w, h);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see uk.co.realh.hgame.RenderContext#createTileBatcher(int, int, int)
 	 */
 	@Override
-	public TileBatcher createTileBatcher(int w, int h, int tile_size) {
-		// TODO Auto-generated method stub
-		return null;
+	public TileBatcher createTileBatcher(int w, int h,
+			int tile_w, int tile_h) {
+		return new Gles1TileBatcher(w, h, tile_w, tile_h);
 	}
 
 	/**
@@ -138,7 +137,6 @@ public abstract class Gles1RenderContext extends RenderContext {
 	 */
 	@Override
 	public void enableBlend(boolean enable) {
-		// TODO Auto-generated method stub
 		if (enable)
 		{
 			mGL.glEnable(GL10.GL_BLEND);

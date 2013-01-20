@@ -256,10 +256,12 @@ public abstract class RenderContext {
      * 
      * @param w			Number of visible columns
      * @param h			Number of visible rows
-     * @param tile_size	Size of each tile in viewport space pixels
+     * @param tile_w	Width of each tile in frustum space
+     * @param tile_h	Height of each tile in frustum space
      * @return
      */
-    public abstract TileBatcher createTileBatcher(int w, int h, int tile_size);
+    public abstract TileBatcher createTileBatcher(int w, int h,
+    		int tile_w, int tile_h);
     
     /**
      * Wrapper to bind texture, checking it isn't already bound.

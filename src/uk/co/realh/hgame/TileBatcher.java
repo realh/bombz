@@ -37,9 +37,21 @@
 package uk.co.realh.hgame;
 
 /**
+ * A TileBatcher handles a grid of uniform rectangular textures.
+ * 
  * @author Tony Houghton
- *
  */
 public interface TileBatcher {
 
+	/**
+	 * Sets the texture at a given grid position.
+	 * Every texture must come from the same atlas.
+	 * 
+	 * @param tex
+	 * @param x
+	 * @param y
+	 */
+    public void setTextureAt(TextureRegion tex, int x, int y);
+
+    public void render(RenderContext rc);
 }
