@@ -104,7 +104,6 @@ public class Gles1Sprite extends Sprite {
 	 * @see uk.co.realh.hgame.Sprite#render(uk.co.realh.hgame.RenderContext)
 	 */
 	@Override
-	synchronized
 	public void render(RenderContext rc) {
 		GL10 gl = ((Gles1RenderContext) rc).mGL;
 		gl.glVertexPointer(2, GL10.GL_FLOAT, 0, mVertBuffer);
@@ -117,7 +116,6 @@ public class Gles1Sprite extends Sprite {
 	 * Sets up OpenGL position and size coord buffers.
 	 * Bottom-left, top-left, bottom-right, top-right.
 	 */
-	synchronized
 	private final void setupVertCoords() {
 		smVerts[0] = (float) mX;
 		smVerts[1] = (float) (mY + mH);
@@ -136,7 +134,6 @@ public class Gles1Sprite extends Sprite {
 	 * Sets up OpenGL texture coord buffers.
 	 * Bottom-left, top-left, bottom-right, top-right.
 	 */
-	synchronized
 	private final void setupTexCoords() {
 		mTexBuffer.position(0);
 		mTexBuffer.put(((Gles1TextureRegion) mTexture).mCoords);

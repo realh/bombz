@@ -38,6 +38,7 @@ package uk.co.realh.hgame;
 
 /**
  * A single textured square/rectangle.
+ * Only manipulate Sprites in the rendering thread.
  *  
  * @author Tony Houghton
  *
