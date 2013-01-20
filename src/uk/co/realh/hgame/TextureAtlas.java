@@ -43,6 +43,8 @@ package uk.co.realh.hgame;
  * @see TextureRegion
  */
 public interface TextureAtlas {
+	
+	public void dispose();
 
     public int getWidth();
     public int getHeight();

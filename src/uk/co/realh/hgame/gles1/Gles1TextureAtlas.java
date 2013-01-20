@@ -47,6 +47,7 @@ public class Gles1TextureAtlas implements TextureAtlas {
 	
 	protected final int mWidth, mHeight;
 	public final int mTextureId;
+	private Gles1RenderContext mRCtx;
 	
 	private static int[] smIdBucket = new int[1];
 	
@@ -60,34 +61,33 @@ public class Gles1TextureAtlas implements TextureAtlas {
 	 */
 	public Gles1TextureAtlas(Gles1RenderContext rctx, int w, int h)
 	{
+		mRCtx = rctx;
 		mWidth = w;
 		mHeight = h;
 		rctx.mGL.glGenTextures(1, smIdBucket, 0);
 		mTextureId = smIdBucket[0];
 	}
 
-	/**
-	 * @see uk.co.realh.hgame.TextureAtlas#getWidth()
-	 */
 	@Override
 	public int getWidth() {
 		return mWidth;
 	}
 
-	/**
-	 * @see uk.co.realh.hgame.TextureAtlas#getHeight()
-	 */
 	@Override
 	public int getHeight() {
 		return mHeight;
 	}
 
-	/**
-	 * @see uk.co.realh.hgame.TextureAtlas#createRegion(int, int, int, int)
-	 */
 	@Override
 	public TextureRegion createRegion(int x, int y, int w, int h) {
 		return new Gles1TextureRegion(this, x, y, w, h);
+	}
+
+	@Override
+	public void dispose() {
+		mRCtx.unbindTexture(this);
+		int[] ids = {mTextureId};
+		mRCtx.mGL.glDeleteTextures(1, ids, 0);
 	}
 
 }
