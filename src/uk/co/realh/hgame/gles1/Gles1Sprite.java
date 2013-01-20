@@ -56,9 +56,7 @@ public class Gles1Sprite extends Sprite {
 
 	private FloatBuffer mVertBuffer;
 	private FloatBuffer mTexBuffer;
-	private ByteBuffer mIndexBuffer;
 	private static float[] smVerts = new float[8];				// Avoid gc
-	private static byte[] smIndices = new byte[] {0, 1, 2, 3};	// Avoid gc
 	
     /**
      * Width and height are in frustum's space.
@@ -78,13 +76,6 @@ public class Gles1Sprite extends Sprite {
 		bb = ByteBuffer.allocateDirect(32);
 		bb.order(ByteOrder.nativeOrder());
 		mTexBuffer = bb.asFloatBuffer();
-		
-		// Only need 4 indexing bytes for TRIANGLE_STRIP
-		mIndexBuffer = ByteBuffer.allocateDirect(4);
-		mIndexBuffer.order(ByteOrder.nativeOrder());
-		mIndexBuffer.position(0);
-		mIndexBuffer.put(smIndices);
-		mIndexBuffer.flip();
 		
 		setupVertCoords();
 		setupTexCoords();
@@ -118,8 +109,8 @@ public class Gles1Sprite extends Sprite {
 		GL10 gl = ((Gles1RenderContext) rc).mGL;
 		gl.glVertexPointer(2, GL10.GL_FLOAT, 0, mVertBuffer);
 		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
-		gl.glDrawElements(GL10.GL_TRIANGLE_STRIP, 4,
-				GL10.GL_UNSIGNED_BYTE, mIndexBuffer);
+		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 4,
+				GL10.GL_UNSIGNED_BYTE);
 	}
 	
 	/**
