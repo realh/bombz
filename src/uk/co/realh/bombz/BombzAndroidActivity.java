@@ -1,21 +1,26 @@
 package uk.co.realh.bombz;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.util.Random;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
-import android.view.WindowManager;
 import android.app.Activity;
 //import android.view.Menu;
 
+import uk.co.realh.hgame.Image;
+import uk.co.realh.hgame.Log;
+import uk.co.realh.hgame.Sprite;
+import uk.co.realh.hgame.Sys;
+import uk.co.realh.hgame.TextureRegion;
+import uk.co.realh.hgame.android.AndroidLog;
+import uk.co.realh.hgame.android.AndroidSys;
+import uk.co.realh.hgame.android.gles1.AndroidGles1RenderContext;
+import uk.co.realh.hgame.gles1.Gles1TextureAtlas;
 
 /**
  * @author Tony Houghton
@@ -24,18 +29,36 @@ public class BombzAndroidActivity extends Activity {
 	
 	private static final String TAG = "Activity";
 	private GLSurfaceView mGlView;
+	private Sys mSys;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.setLogger(new AndroidLog());
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		
+		String[] subdirs;
+		try {
+			mSys = new AndroidSys(this,
+					"realh", "bombz.sf.net", "Bombz", "uk.co.realh.bombz");
+			subdirs = mSys.listFolder("pngs");
+		} catch (Throwable e) {
+			Log.e(TAG, "Can't list pngs folder(s)", e);
+			return;
+		}
+		String subs = null;
+		for (String sub: subdirs)
+		{
+			if (subs == null)
+				subs = sub;
+			else
+				subs += ", " + sub;
+		}
+		Log.i(TAG, "subs contains: " + subs);
 		
 		mGlView = new GLSurfaceView(this);
 		mGlView.setRenderer(new TestRenderer());
-		//mGlView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		setContentView(mGlView);
 	}
 
@@ -63,19 +86,10 @@ public class BombzAndroidActivity extends Activity {
 	private class TestRenderer implements GLSurfaceView.Renderer
 	{
 
+		private AndroidGles1RenderContext mRCtx;
+		private Gles1TextureAtlas mLogoAtlas;
+		private Sprite mLogoSprite;
 		private int mW, mH;
-		private int mAspectW;
-		private FloatBuffer mVertBuffer;
-		private Random mRand = new Random();
-		
-		TestRenderer() {
-			ByteBuffer bb = ByteBuffer.allocateDirect(24);
-			bb.order(ByteOrder.nativeOrder());
-			mVertBuffer = bb.asFloatBuffer();
-			float coords[] = {20, 20, 620, 20, 320, 460}; 
-			mVertBuffer.put(coords);
-			mVertBuffer.flip();
-		}
 		
 		/* (non-Javadoc)
 		 * @see android.opengl.GLSurfaceView.Renderer#onDrawFrame(
@@ -83,26 +97,9 @@ public class BombzAndroidActivity extends Activity {
 		 */
 		@Override
 		public void onDrawFrame(GL10 gl) {
-			//Log.d(TAG, "onDrawFrame");
-			Log.d(TAG, "Setting viewport " +
-					(mW - mAspectW) / 2 + ", " + 0 +
-					", " + mAspectW + ", " + mH);
-			//gl.glViewport((mW - mAspectW) / 2, 0, mAspectW, mH);
-			gl.glClearColor(mRand.nextFloat(), mRand.nextFloat(),
-					mRand.nextFloat(), 1);
+			Log.d(TAG, "onDrawFrame");
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		    gl.glMatrixMode(GL10.GL_PROJECTION);
-		    gl.glLoadIdentity();
-			gl.glOrthof(0, 640, 0, 480, 1, -1);
-			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-			gl.glColor4f(1, 0, 0, 1);
-			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, mVertBuffer);
-			gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3);
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				Log.w(TAG, "Sleep interrupted", e);
-			}
+			mLogoSprite.render(mRCtx);
 		}
 
 		/* (non-Javadoc)
@@ -114,7 +111,7 @@ public class BombzAndroidActivity extends Activity {
 			if (w != mW || h != mH)
 			{
 				Log.d(TAG, "Surface resized to " + w + "x" + h);
-				initSize(gl, w, h);
+				initSize(w, h);
 			}
 		}
 
@@ -127,17 +124,37 @@ public class BombzAndroidActivity extends Activity {
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 			Log.d(TAG, "Surface created " +
 					mGlView.getWidth() + "x" + mGlView.getHeight());
-			//mRCtx = new AndroidGles1RenderContext(mGlView, gl);
-			//Log.d(TAG, "Created RenderContext");
-			gl.glClearColor(0, 0, 0, 1);
-			initSize(gl, mGlView.getWidth(), mGlView.getHeight());
+			mRCtx = new AndroidGles1RenderContext(mGlView, gl);
+			Log.d(TAG, "Created RenderContext");
+			try {
+				InputStream fd = mSys.openAsset("pngs/32/title_logo.png");
+				Image img = mSys.loadPNG(fd, "title logo");
+				fd.close();
+				Log.d(TAG, "Loaded title logo PNG " +
+						img.getWidth() + "x" + img.getHeight());
+				mLogoAtlas = new Gles1TextureAtlas(mRCtx,
+						img.getWidth(), img.getHeight());
+				TextureRegion region = mLogoAtlas.createRegion(0, 0, 
+						img.getWidth(), img.getHeight());
+				float aspect = (float) img.getWidth() / (float) img.getHeight();
+				mLogoSprite = mRCtx.createSprite(region, 20, 20,
+						600, (int) ((float) 600 / aspect));
+				img.dispose();
+			} catch (IOException e) {
+				Log.e(TAG, "Failed to load title logo", e);
+			}
+			initSize(mGlView.getWidth(), mGlView.getHeight());
 		}
 		
-		private void initSize(GL10 gl, int w, int h)
+		private void initSize(int w, int h)
 		{
 			mW = w;
 			mH = h;
-			mAspectW = h * 4 / 3;
+			int aspect_w = h * 4 / 3;
+			Log.d(TAG, "Setting viewport " +
+					(w - aspect_w) / 2 + ", " + h + ", " + aspect_w + ", " + 0);
+			mRCtx.setViewport((w - aspect_w) / 2, h, aspect_w, 0);
+			mRCtx.set2DFrustum(0, 640, 0, 480);
 			mGlView.requestRender();
 		}
 		
