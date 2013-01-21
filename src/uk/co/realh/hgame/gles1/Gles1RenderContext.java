@@ -66,7 +66,7 @@ public abstract class Gles1RenderContext extends RenderContext {
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glEnable(GL10.GL_TEXTURE_2D);
-		gl.glClearColor(0, 0, 0, 1);
+		gl.glClearColor(1, 1, 1, 1);
 	}
 
 	/**
@@ -133,13 +133,14 @@ public abstract class Gles1RenderContext extends RenderContext {
 	
 	/**
 	 * @see uk.co.realh.hgame.RenderContext#set2DFrustum(int, int, int, int)
+	 * This flips top and bottom so that origin is at top.
 	 */
 	@Override
     public void set2DFrustum(int l, int r, int b, int t)
 	{
 	    mGL.glMatrixMode(GL10.GL_PROJECTION);
 	    mGL.glLoadIdentity();
-	    mGL.glOrthox(l, r, b, t, 1, -1);
+	    mGL.glOrthox(l, r, t, b, 1, -1);
 	}
 
 	/**

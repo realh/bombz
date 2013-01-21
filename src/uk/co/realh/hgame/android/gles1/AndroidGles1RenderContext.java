@@ -89,7 +89,6 @@ public class AndroidGles1RenderContext extends Gles1RenderContext {
 				GL10.GL_TEXTURE_MIN_FILTER, scaling);
 		mGL.glTexParameterf(GL10.GL_TEXTURE_2D,
 				GL10.GL_TEXTURE_MAG_FILTER, scaling);
-		mGL.glBindTexture(GL10.GL_TEXTURE_2D, 0);
 		return atlas;
 	}
 	
@@ -103,6 +102,18 @@ public class AndroidGles1RenderContext extends Gles1RenderContext {
 			mGL.glClear(GL10.GL_COLOR_BUFFER_BIT);
 			mRenderer.render(this);
 		}
+	}
+	
+	/**
+	 * Must be called to update size prior to requestRender(REASON_RESIZE).
+	 * 
+	 * @param w
+	 * @param h
+	 */
+	public final void updateSize(int w, int h)
+	{
+		mWidth = w;
+		mHeight = h;
 	}
 
 }
