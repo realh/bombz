@@ -123,5 +123,15 @@ public abstract class Sprite {
         mW = w;
         mH = h;
     }
+    
+    public final int getWidth()
+    {
+    	return mW;
+    }
 
+    public final int getHeight()
+    {
+    	return mH;
+    }
+    
 }

@@ -99,7 +99,10 @@ public class AndroidGles1RenderContext extends Gles1RenderContext {
 	public void onDrawFrame()
 	{
 		if (serviceRenderRequest())
+		{
+			mGL.glClear(GL10.GL_COLOR_BUFFER_BIT);
 			mRenderer.render(this);
+		}
 	}
 
 }

@@ -92,9 +92,7 @@ public class AndroidSys implements Sys {
 		{
 			throw new RuntimeException("Unable to create bitmap from " + desc);
 		}
-		// TODO Return new Image
-		//return new AndroidImage(bitmap);
-		return null;
+		return new AndroidImage(bitmap);
 	}
 
 	@Override

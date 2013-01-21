@@ -66,7 +66,7 @@ public abstract class Gles1RenderContext extends RenderContext {
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glEnable(GL10.GL_TEXTURE_2D);
-		gl.glClearColor(0,  0, 0, 1);
+		gl.glClearColor(0, 0, 0, 1);
 	}
 
 	/**
@@ -95,6 +95,16 @@ public abstract class Gles1RenderContext extends RenderContext {
 	}
 
 	/**
+	 * @see uk.co.realh.hgame.RenderContext#createSprite(
+	 * 		uk.co.realh.hgame.TextureRegion, int, int, int, int)
+	 */
+	@Override
+	public Sprite createSprite(TextureRegion texture, int x, int y,
+			int w, int h) {
+		return new Gles1Sprite(texture, x, y,  w, h);
+	}
+
+	/**
 	 * @see uk.co.realh.hgame.RenderContext#createTileBatcher(int, int, int)
 	 */
 	@Override
@@ -119,8 +129,6 @@ public abstract class Gles1RenderContext extends RenderContext {
 	@Override
 	public void setViewport(int x, int y, int w, int h) {
 		mGL.glViewport(x, y, w, h);
-	    mGL.glMatrixMode(GL10.GL_PROJECTION);
-	    mGL.glLoadIdentity();
 	}
 	
 	/**
@@ -129,7 +137,9 @@ public abstract class Gles1RenderContext extends RenderContext {
 	@Override
     public void set2DFrustum(int l, int r, int b, int t)
 	{
-	    mGL.glOrthox(l, r, t, b, 1, -1);
+	    mGL.glMatrixMode(GL10.GL_PROJECTION);
+	    mGL.glLoadIdentity();
+	    mGL.glOrthox(l, r, b, t, 1, -1);
 	}
 
 	/**
