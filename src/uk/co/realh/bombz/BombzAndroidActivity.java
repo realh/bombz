@@ -9,6 +9,7 @@ import javax.microedition.khronos.opengles.GL10;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.Window;
+import android.view.WindowManager;
 import android.app.Activity;
 //import android.view.Menu;
 
@@ -37,6 +38,9 @@ public class BombzAndroidActivity extends Activity {
 		Log.setLogger(new AndroidLog());
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 		
 		String[] subdirs;
 		try {
