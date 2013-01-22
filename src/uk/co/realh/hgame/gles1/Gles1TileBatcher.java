@@ -37,6 +37,7 @@
 package uk.co.realh.hgame.gles1;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -54,6 +55,7 @@ public class Gles1TileBatcher implements TileBatcher {
 	private int mNColumns, mNRows;
 	@SuppressWarnings("unused")
 	private int mTileW;
+	@SuppressWarnings("unused")
 	private int mTileH;
 	
 	private Gles1TextureRegion[] mRegions;
@@ -87,8 +89,10 @@ public class Gles1TileBatcher implements TileBatcher {
 		 * worth of vertices.
 		 */
 		ByteBuffer bb = ByteBuffer.allocateDirect(nColumns * 32);
+		bb.order(ByteOrder.nativeOrder());
 		mVertBuffer = bb.asFloatBuffer();
 		bb = ByteBuffer.allocateDirect(nColumns * 32);
+		bb.order(ByteOrder.nativeOrder());
 		mTexBuffer = bb.asFloatBuffer();
 		mIndexBuffer = ByteBuffer.allocateDirect(nColumns * 6);
 		
