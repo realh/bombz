@@ -108,9 +108,8 @@ public class Gles1Sprite extends Sprite {
 	public void render(RenderContext rc) {
 		GL10 gl = ((Gles1RenderContext) rc).mGL;
 		gl.glVertexPointer(2, GL10.GL_FLOAT, 0, mVertBuffer);
-		//gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
-		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3);
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
+		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
 	}
 	
 	/**

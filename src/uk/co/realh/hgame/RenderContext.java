@@ -66,8 +66,6 @@ public abstract class RenderContext {
 	
 	protected boolean mNativeSize;
 
-	private TextureAtlas mBoundTexture;
-	
 	protected RenderContext()
 	{
 		mId = ++smIdIndex;
@@ -277,18 +275,11 @@ public abstract class RenderContext {
     		int tile_w, int tile_h);
     
     /**
-     * Wrapper to bind texture, checking it isn't already bound.
+     * Binds texture, checking it isn't already bound.
      * 
      * @param tex	Texture to bind, may be null
      */
-    public void bindTexture(TextureAtlas tex)
-    {
-    	if (mBoundTexture != tex)
-    	{
-    		doBindTexture(tex);
-    		mBoundTexture = tex;
-    	}
-    }
+    public abstract void bindTexture(TextureAtlas tex);
     
     /**
      * Makes sure given texture isn't bound. Does nothing if some other
@@ -296,26 +287,10 @@ public abstract class RenderContext {
      * 
      * @param tex
      */
-    public void unbindTexture(TextureAtlas tex)
-    {
-    	if (mBoundTexture == tex)
-    	{
-    		doBindTexture(null);
-    		mBoundTexture = null;
-    	}
-    }
+    public abstract void unbindTexture(TextureAtlas tex);
 
 	/**
-	 * Implementation of texture binding.
-	 * 
-     * @param tex	Texture to bind, may be null
-	 */
-	protected abstract void doBindTexture(TextureAtlas tex);
-
-	/**
-	 * Sets the viewport. This follows hgame's convention
-	 * of the top being the origin and downwards being positive, but you
-	 * can flip top and bottom if you want OpenGL convention.
+	 * Sets the viewport.
 	 * 
 	 * @param x		Left
 	 * @param y		Top
@@ -336,10 +311,17 @@ public abstract class RenderContext {
     public abstract void set2DFrustum(int l, int r, int b, int t);
 
     /**
-     * Enable/disable alpha blending.
+     * Enables/disables alpha blending.
      * 
      * @param enable	Whether blending should be enabled
      */
     public abstract void enableBlend(boolean enable);
+    
 
+    /**
+     * Enables/disables 2D textures.
+     * 
+     * @param enable
+     */
+    public abstract void enable2DTextures(boolean enable);
 }

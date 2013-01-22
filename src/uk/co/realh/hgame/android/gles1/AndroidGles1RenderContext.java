@@ -83,6 +83,7 @@ public class AndroidGles1RenderContext extends Gles1RenderContext {
 		Gles1TextureAtlas atlas = new Gles1TextureAtlas(this,
 				img.getWidth(), img.getHeight());
 		mGL.glBindTexture(GL10.GL_TEXTURE_2D, atlas.mTextureId);
+		mBoundTexture = atlas.mTextureId;
 		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0,
 				((AndroidImage) img).getAndroidBitmap(), 0);
 		mGL.glTexParameterf(GL10.GL_TEXTURE_2D,

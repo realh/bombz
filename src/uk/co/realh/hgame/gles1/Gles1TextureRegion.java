@@ -66,6 +66,7 @@ public class Gles1TextureRegion extends TextureRegion {
 			int x, int y, int w, int h) {
 		super(atlas, calcUV(atlas, x, y, w, h));
 	    mCoords = new float[8];
+		// Bottom-left, top-left, bottom-right, top-right
 	    mCoords[0] = mU0;
 	    mCoords[1] = mV1;
 	    mCoords[2] = mU0;

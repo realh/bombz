@@ -52,6 +52,7 @@ public abstract class Gles1RenderContext extends RenderContext {
 	
 	public final GL10 mGL;
 	protected int mWidth, mHeight;
+	protected int mBoundTexture;
 	
 	/**
 	 * @param gl
@@ -64,8 +65,6 @@ public abstract class Gles1RenderContext extends RenderContext {
 		mWidth = w;
 		mHeight = h;
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glClearColor(0, 0, 0, 1);
 	}
 
@@ -118,11 +117,25 @@ public abstract class Gles1RenderContext extends RenderContext {
 	 * 		uk.co.realh.hgame.TextureAtlas)
 	 */
 	@Override
-	protected void doBindTexture(TextureAtlas tex) {
-		mGL.glBindTexture(GL10.GL_TEXTURE_2D,
-				((Gles1TextureAtlas) tex).mTextureId);
+	public void bindTexture(TextureAtlas tex) {
+		int id = ((Gles1TextureAtlas) tex).mTextureId;
+    	if (mBoundTexture != id)
+    	{
+			mGL.glBindTexture(GL10.GL_TEXTURE_2D, id);
+    		mBoundTexture = id;
+    	}
 	}
 
+	@Override
+    public void unbindTexture(TextureAtlas tex)
+    {
+    	if (mBoundTexture == ((Gles1TextureAtlas) tex).mTextureId)
+    	{
+			mGL.glBindTexture(GL10.GL_TEXTURE_2D, 0);
+    		mBoundTexture = 0;
+    	}
+    }
+	
 	/**
 	 * @see uk.co.realh.hgame.RenderContext#setViewport(int, int, int, int)
 	 */
@@ -159,4 +172,18 @@ public abstract class Gles1RenderContext extends RenderContext {
 		}
 	}
 
+	@Override
+    public void enable2DTextures(boolean enable)
+    {
+		if (enable)
+		{
+			mGL.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+			mGL.glEnable(GL10.GL_TEXTURE_2D);
+		}
+		else
+		{
+			mGL.glDisable(GL10.GL_TEXTURE_2D);
+			mGL.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		}
+    }
 }

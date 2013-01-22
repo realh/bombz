@@ -17,11 +17,11 @@ import uk.co.realh.hgame.Image;
 import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.Sprite;
 import uk.co.realh.hgame.Sys;
+import uk.co.realh.hgame.TextureAtlas;
 import uk.co.realh.hgame.TextureRegion;
 import uk.co.realh.hgame.android.AndroidLog;
 import uk.co.realh.hgame.android.AndroidSys;
 import uk.co.realh.hgame.android.gles1.AndroidGles1RenderContext;
-import uk.co.realh.hgame.gles1.Gles1TextureAtlas;
 
 /**
  * @author Tony Houghton
@@ -91,7 +91,7 @@ public class BombzAndroidActivity extends Activity {
 	{
 
 		private AndroidGles1RenderContext mRCtx;
-		private Gles1TextureAtlas mLogoAtlas;
+		private TextureAtlas mLogoAtlas;
 		private Sprite mLogoSprite;
 		private int mW, mH;
 		
@@ -129,15 +129,14 @@ public class BombzAndroidActivity extends Activity {
 			Log.d(TAG, "Surface created " +
 					mGlView.getWidth() + "x" + mGlView.getHeight());
 			mRCtx = new AndroidGles1RenderContext(mGlView, gl);
-			Log.d(TAG, "Created RenderContext");
+			mRCtx.enable2DTextures(true);
 			try {
 				InputStream fd = mSys.openAsset("pngs/32/title_logo.png");
 				Image img = mSys.loadPNG(fd, "title logo");
 				fd.close();
 				Log.d(TAG, "Loaded title logo PNG " +
 						img.getWidth() + "x" + img.getHeight());
-				mLogoAtlas = new Gles1TextureAtlas(mRCtx,
-						img.getWidth(), img.getHeight());
+				mLogoAtlas = mRCtx.uploadTexture(img, true);
 				TextureRegion region = mLogoAtlas.createRegion(0, 0, 
 						img.getWidth(), img.getHeight());
 				float aspect = (float) img.getWidth() / (float) img.getHeight();
@@ -157,7 +156,7 @@ public class BombzAndroidActivity extends Activity {
 			int aspect_w = h * 4 / 3;
 			Log.d(TAG, "Setting viewport " +
 					(w - aspect_w) / 2 + ", " + h + ", " + aspect_w + ", " + 0);
-			mRCtx.setViewport((w - aspect_w) / 2, h, aspect_w, 0);
+			mRCtx.setViewport((w - aspect_w) / 2, 0, aspect_w, h);
 			mRCtx.set2DFrustum(0, 640, 0, 480);
 			mGlView.requestRender();
 		}
