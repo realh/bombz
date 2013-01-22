@@ -155,24 +155,24 @@ public class Gles1TileBatcher implements TileBatcher {
 		GL10 gl = ((Gles1RenderContext) rctx).mGL;
 		mVertBuffer.position(0);
 		gl.glVertexPointer(2, GL10.GL_FLOAT, 0, mVertBuffer);
-		gl.glMatrixMode(GL10.GL_MODELVIEW);
-		gl.glLoadIdentity();
+		//gl.glMatrixMode(GL10.GL_MODELVIEW);
+		//gl.glLoadIdentity();
 		mIndexBuffer.position(0);
 		for (int y = 0; y < mNRows; ++y)
 		{
+			mTexBuffer.position(0);
 			for (int x = 0; x < mNColumns; ++x)
 			{
-				// 4 coords per vertex * 2 (x, y) = 8
-				mTexBuffer.position(x * 8);
-				mTexBuffer.put(mRegions[x + y * mNColumns].mCoords, 0, 8);
-				mTexBuffer.flip();
+				mTexBuffer.put(mRegions[x + y * mNColumns].mCoords);
 			}
-			mTexBuffer.position(0);
+			mTexBuffer.flip();
 			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
 			gl.glDrawElements(GL10.GL_TRIANGLES, mNColumns * 6,
-					GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
-			gl.glTranslatex(0, mTileH, 0);
+					GL10.GL_UNSIGNED_BYTE, mIndexBuffer);
+			//gl.glTranslatef(0, mTileH, 0);
+			break;
 		}
+		//gl.glLoadIdentity();
 	}
 
 }

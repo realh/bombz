@@ -19,6 +19,7 @@ import uk.co.realh.hgame.Sprite;
 import uk.co.realh.hgame.Sys;
 import uk.co.realh.hgame.TextureAtlas;
 import uk.co.realh.hgame.TextureRegion;
+import uk.co.realh.hgame.TileBatcher;
 import uk.co.realh.hgame.android.AndroidLog;
 import uk.co.realh.hgame.android.AndroidSys;
 import uk.co.realh.hgame.android.gles1.AndroidGles1RenderContext;
@@ -91,8 +92,9 @@ public class BombzAndroidActivity extends Activity {
 	{
 
 		private AndroidGles1RenderContext mRCtx;
-		private TextureAtlas mLogoAtlas;
+		private TextureAtlas mLogoAtlas, mTileAtlas;
 		private Sprite mLogoSprite;
+		private TileBatcher mBatcher;
 		private int mW, mH;
 		
 		/* (non-Javadoc)
@@ -101,9 +103,20 @@ public class BombzAndroidActivity extends Activity {
 		 */
 		@Override
 		public void onDrawFrame(GL10 gl) {
-			Log.d(TAG, "onDrawFrame");
-			gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-			mLogoSprite.render(mRCtx);
+			try {
+				Log.d(TAG, "onDrawFrame");
+				mRCtx.cls();
+				mRCtx.enableBlend(false);
+				mRCtx.bindTexture(mTileAtlas);
+				mBatcher.render(mRCtx);
+				Log.d(TAG, "Rendered tiles");
+				mRCtx.enableBlend(true);
+				mRCtx.bindTexture(mLogoAtlas);
+				mLogoSprite.render(mRCtx);
+				Log.d(TAG, "Rendered logo");
+			} catch (Throwable e) {
+				Log.e(TAG, "Rendering exception", e);
+			}
 		}
 
 		/* (non-Javadoc)
@@ -143,6 +156,23 @@ public class BombzAndroidActivity extends Activity {
 				mLogoSprite = mRCtx.createSprite(region, 20, 20,
 						600, (int) ((float) 600 / aspect));
 				img.dispose();
+				
+				fd = mSys.openAsset("pngs/32/tile_atlas.png");
+				img = mSys.loadPNG(fd, "title logo");
+				fd.close();
+				Log.d(TAG, "Loaded tile atlas PNG " +
+						img.getWidth() + "x" + img.getHeight());
+				mTileAtlas = mRCtx.uploadTexture(img, false);
+				img.dispose();
+				region = mTileAtlas.createRegion(0, 0, 32, 32);
+				mBatcher = mRCtx.createTileBatcher(20, 15, 32, 32);
+				for (int y = 0; y < 15; ++y)
+				{
+					for (int x = 0; x < 20; ++x)
+					{
+						mBatcher.setTextureAt(region, x, y);
+					}
+				}
 			} catch (IOException e) {
 				Log.e(TAG, "Failed to load title logo", e);
 			}

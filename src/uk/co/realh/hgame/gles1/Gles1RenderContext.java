@@ -186,4 +186,10 @@ public abstract class Gles1RenderContext extends RenderContext {
 			mGL.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		}
     }
+	
+	@Override
+    public void cls()
+	{
+		mGL.glClear(GL10.GL_COLOR_BUFFER_BIT);
+	}
 }

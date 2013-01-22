@@ -324,4 +324,9 @@ public abstract class RenderContext {
      * @param enable
      */
     public abstract void enable2DTextures(boolean enable);
+    
+    /**
+     * Clears the screen to black.
+     */
+    public abstract void cls();
 }
