@@ -85,6 +85,14 @@ public interface Renderer {
 	public void replacingRenderer(RenderContext rctx);
 	
 	/**
+	 * Called when this renderer has replaced one in an existing RenderContext.
+	 * Implementations should load any specific textures etc but not reload
+	 * any that were shared with other renderers.
+	 * @param rctx
+	 */
+	public void replacedRenderer(RenderContext rctx);
+	
+	/**
 	 * Gets a description of the renderer. Used for debugging and errors
 	 * so translation is unnecessary.
 	 * 
