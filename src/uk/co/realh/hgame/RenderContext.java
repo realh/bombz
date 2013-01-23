@@ -110,6 +110,21 @@ public abstract class RenderContext {
 	}
 	
 	/**
+	 * Like requestRender but doesn't actually request the render.
+	 * This is so that it can be used in situations such as in conjunction
+	 * with Android's GLSurfaceView.onPause(). It is anticipated that
+	 * the system will handle blocking in that situation.
+	 * 
+	 * @param reason
+	 * @see requestRender(int, boolean)
+	 */
+	synchronized
+	public void preRequestRender(int reason) {
+		mRenderBlocking = false;
+		mRenderReason = reason;
+	}
+	
+	/**
 	 * Convenience function to request a screen refresh.
 	 */
 	synchronized
