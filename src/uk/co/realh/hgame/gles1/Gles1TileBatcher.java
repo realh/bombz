@@ -55,12 +55,13 @@ public class Gles1TileBatcher implements TileBatcher {
 	private int mNColumns, mNRows;
 	@SuppressWarnings("unused")
 	private int mTileW;
-	@SuppressWarnings("unused")
 	private int mTileH;
 	
 	private Gles1TextureRegion[] mRegions;
 	private FloatBuffer mVertBuffer, mTexBuffer;
 	private ByteBuffer mIndexBuffer;
+	
+	private float[] smDummyCoords = {0, 0, 0, 0, 0, 0, 0, 0};
 
 	/**
 	 * This uses byte indices, so it's limited to 256 verts per row
@@ -98,9 +99,6 @@ public class Gles1TileBatcher implements TileBatcher {
 		
 		/* Fill in fixed buffers */
 		int x;
-		/* TODO: Should maybe profile this and check whether putting one
-		 * element at a time into buffer isn't slower than using an array.
-		 */
 		mVertBuffer.position(0);
 		for (x = 0; x < nColumns; ++x)
 		{
@@ -167,7 +165,8 @@ public class Gles1TileBatcher implements TileBatcher {
 			mTexBuffer.position(0);
 			for (int x = 0; x < mNColumns; ++x)
 			{
-				mTexBuffer.put(mRegions[x + y * mNColumns].mCoords);
+				Gles1TextureRegion reg = mRegions[x + y * mNColumns];
+				mTexBuffer.put(reg == null ? smDummyCoords : reg.mCoords);
 			}
 			mTexBuffer.flip();
 			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);

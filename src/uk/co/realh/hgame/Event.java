@@ -52,6 +52,7 @@ public class Event {
 	public static final int TICK = getQuark("TICK");
 	public static final int PAUSE = getQuark("PAUS");
 	public static final int RESUME = getQuark("RESM");
+	public static final int STOP = getQuark("STOP");
 	public static final int TAP = getQuark("TAP_");
 	public static final int INTERRUPT = getQuark("INTR");
 	
@@ -80,7 +81,7 @@ public class Event {
 	 * @param code
 	 * @return
 	 */
-	public static Event createEvent(int code)
+	public static Event newEvent(int code)
 	{
 		Event ev = smPool.getObject();
 		ev.mCode = code;
@@ -95,7 +96,7 @@ public class Event {
 	 * @param d2	Extra data for event
 	 * @return
 	 */
-	public static Event createEvent(int code, int d1, int d2)
+	public static Event newEvent(int code, int d1, int d2)
 	{
 		Event ev = smPool.getObject();
 		ev.mCode = code;
@@ -146,7 +147,7 @@ public class Event {
 			return smQueue.take();
 		} catch (InterruptedException e) {
 			Log.e(TAG, "Event pop interrupted", e);
-			return createEvent(INTERRUPT);
+			return newEvent(INTERRUPT);
 		}
 	}
 	

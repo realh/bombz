@@ -78,7 +78,7 @@ public class Pool<T> {
 	/**
 	 * @return	A reusable T, recycled from pool if possible.
 	 */
-	public T getObject()
+	public synchronized T getObject()
 	{
 		int s = mFreePool.size();
 		if (s == 0)
@@ -92,7 +92,7 @@ public class Pool<T> {
 	 * 
 	 * @param Object
 	 */
-	public void free(T obj)
+	public synchronized void free(T obj)
 	{
 		if (mFreePool.size() < mCapacity)
 			mFreePool.add(obj);

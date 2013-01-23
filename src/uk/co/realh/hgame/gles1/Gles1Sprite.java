@@ -117,16 +117,15 @@ public class Gles1Sprite extends Sprite {
 	 * Bottom-left, top-left, bottom-right, top-right.
 	 */
 	private final void setupVertCoords() {
-		smVerts[0] = (float) mX;
-		smVerts[1] = (float) (mY + mH);
-		smVerts[2] = smVerts[0];
-		smVerts[3] = (float) mY;
-		smVerts[4] = (float) (mX + mW);
-		smVerts[5] = smVerts[1];
-		smVerts[6] = smVerts[4];
-		smVerts[7] = smVerts[3];
 		mVertBuffer.position(0);
-		mVertBuffer.put(smVerts);
+		mVertBuffer.put((float) mX);
+		mVertBuffer.put((float) (mY + mH));
+		mVertBuffer.put((float) mX);
+		mVertBuffer.put((float) mY);
+		mVertBuffer.put((float) (mX + mW));
+		mVertBuffer.put((float) (mY + mH));
+		mVertBuffer.put((float) (mX + mW));
+		mVertBuffer.put((float) mY);
 		mVertBuffer.flip();
 	}
 	

@@ -188,7 +188,7 @@ public abstract class RenderContext {
 			mNewRenderer = null;
 			if (null != mNewRenderer)
 			{
-				mRenderer.initRendering(this);
+				mRenderer.replacedRenderer(this);
 				rendering = mRendering;
 			}
 			break;
