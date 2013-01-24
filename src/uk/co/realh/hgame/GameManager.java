@@ -51,9 +51,8 @@ public class GameManager {
 	
 	private volatile boolean mRunning;
 	private volatile boolean mTicking;
-	private volatile int mTickPeriod;
-	private Thread mGameThread;
-	private Thread mTickThread;
+	private GameThread mGameThread;
+	private TickThread mTickThread;
 	
 	/**
 	 * @param sys	The System object for this platform.
@@ -70,10 +69,24 @@ public class GameManager {
 	 */
 	public void setScreen(Screen scrn)
 	{
+		disableTicks();
 		mScreen = scrn;
-		mRCtx.setRenderer(scrn);
+		if (mRCtx != null)
+			mRCtx.setRenderer(scrn);
 		if (mRunning && scrn != null)
 			Event.pushEvent(Event.newEvent(Event.RESUME));
+	}
+	
+	/**
+	 * Sets the RenderContext.
+	 * 
+	 * @param rctx
+	 */
+	public void setRenderContext(RenderContext rctx)
+	{
+		mRCtx = rctx;
+		if (mScreen != null)
+			mRCtx.setRenderer(mScreen);
 	}
 	
 	/**
@@ -83,7 +96,14 @@ public class GameManager {
 	public void resume()
 	{
 		mRunning = true;
-		Event.pushEvent(Event.newEvent(Event.RESUME));
+		Event ev = Event.newEvent(Event.RESUME);
+		Event.pushEvent(ev);
+		try {
+			ev.wait();
+		} catch (InterruptedException e) {
+			Log.w(TAG, "Interrupted waiting for " +
+					"resume event to be handled", e);
+		}
 	}
 	
 	/**
@@ -137,11 +157,10 @@ public class GameManager {
 	 */
 	public synchronized void enableTicks(int interval)
 	{
-		mTickPeriod = interval;
 		if (!mTicking)
 		{
 			mTicking = true;
-			mTickThread = new TickThread();
+			mTickThread = new TickThread(interval);
 			mTickThread.start();
 		}
 	}
@@ -151,14 +170,9 @@ public class GameManager {
 		mTicking = false;
 		if (mTickThread != null)
 		{
-			try {
-				mTickThread.join();
-			} catch (InterruptedException e) {
-				Log.w(TAG, "interrupted waiting for tick thread to stop", e);
-			}
+			mTickThread.stopTicking();
 			mTickThread = null;
 		}
-		
 	}
 	
 	private class GameThread extends Thread {
@@ -170,8 +184,16 @@ public class GameManager {
 			while (running)
 			{
 				Event ev = Event.popEvent();
-				mScreen.handleEvent(ev);
-				if (ev.mCode == Event.PAUSE)
+				if (ev.mCode == Event.TICK)
+				{
+					if (mTicking)
+						mScreen.step();
+				}
+				else
+				{
+					mScreen.handleEvent(ev);
+				}
+				if (ev.mCode == Event.PAUSE || ev.mCode == Event.RESUME)
 				{
 					synchronized(ev) {
 						ev.notifyAll();
@@ -185,19 +207,37 @@ public class GameManager {
 	
 	private class TickThread extends Thread {
 		
+		private volatile boolean mEnabled;
+		private int mInterval;
+		
+		TickThread(int interval)
+		{
+			mInterval = interval;
+		}
+		
 		@Override
 		public void run()
 		{
-			while (mTicking)
+			mEnabled = true;
+			while (true)
 			{
-				Event.pushEvent(Event.newEvent(Event.TICK));
+				synchronized(this) {
+					if (!mEnabled)
+						break;
+					Event.pushEvent(Event.newEvent(Event.TICK));
+				}
 				try {
-					sleep(mTickPeriod);
+					sleep(mInterval);
 				} catch (InterruptedException e) {
 					Log.w(TAG, "Tick thread interrupted", e);
-					mTicking = false;
+					mEnabled = false;
 				}
 			}
+		}
+		
+		public synchronized void stopTicking()
+		{
+			mEnabled = false;
 		}
 	}
 	

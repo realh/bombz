@@ -51,5 +51,10 @@ public interface Screen extends Renderer {
 	 * @param ev
 	 */
 	public void handleEvent(Event ev);
+	
+	/**
+	 * Called on tick events.
+	 */
+	public void step();
 
 }
