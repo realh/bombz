@@ -12,10 +12,10 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import uk.co.realh.hgame.Font;
 import uk.co.realh.hgame.Image;
-import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.Sys;
 import uk.co.realh.hgame.Settings;
 

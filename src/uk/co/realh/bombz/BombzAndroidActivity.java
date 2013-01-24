@@ -22,7 +22,7 @@ import uk.co.realh.hgame.TextureRegion;
 import uk.co.realh.hgame.TileBatcher;
 import uk.co.realh.hgame.android.AndroidLog;
 import uk.co.realh.hgame.android.AndroidSys;
-import uk.co.realh.hgame.android.gles1.AndroidGles1RenderContext;
+import uk.co.realh.hgame.gles1.android.AndroidGles1RenderContext;
 
 /**
  * @author Tony Houghton

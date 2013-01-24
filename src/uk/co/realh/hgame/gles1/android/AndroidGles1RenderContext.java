@@ -34,7 +34,7 @@
  * See the source code for details.
  */
 
-package uk.co.realh.hgame.android.gles1;
+package uk.co.realh.hgame.gles1.android;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -42,6 +42,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 
 import uk.co.realh.hgame.Image;
+import uk.co.realh.hgame.Renderer;
 import uk.co.realh.hgame.TextureAtlas;
 import uk.co.realh.hgame.android.AndroidImage;
 import uk.co.realh.hgame.gles1.Gles1RenderContext;
@@ -59,8 +60,9 @@ public class AndroidGles1RenderContext extends Gles1RenderContext {
 	 * @param view
 	 * @param gl
 	 */
-	public AndroidGles1RenderContext(GLSurfaceView view, GL10 gl) {
-		super(gl, view.getWidth(), view.getHeight());
+	public AndroidGles1RenderContext(GLSurfaceView view, GL10 gl,
+			Renderer renderer) {
+		super(gl, view.getWidth(), view.getHeight(), renderer);
 		mView = view;
 		view.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 	}

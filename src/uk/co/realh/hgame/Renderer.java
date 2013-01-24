@@ -54,7 +54,9 @@ public interface Renderer {
 	
 	/**
 	 * Called when render context is being torn down to dispose of
-	 * textures etc.
+	 * textures etc. This might never be called, you'll just get an
+	 * initRendering call with a new RenderContext instead after surface
+	 * has been recreated.
 	 */
 	public void disposeRendering(RenderContext rctx);
 	

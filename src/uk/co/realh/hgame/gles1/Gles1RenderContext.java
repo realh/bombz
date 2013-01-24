@@ -38,7 +38,9 @@ package uk.co.realh.hgame.gles1;
 
 import javax.microedition.khronos.opengles.GL10;
 
+
 import uk.co.realh.hgame.RenderContext;
+import uk.co.realh.hgame.Renderer;
 import uk.co.realh.hgame.Sprite;
 import uk.co.realh.hgame.TextureAtlas;
 import uk.co.realh.hgame.TextureRegion;
@@ -59,8 +61,9 @@ public abstract class Gles1RenderContext extends RenderContext {
 	 * @param w		Initial width of surface
 	 * @param h		Initial height of surface
 	 */
-	protected Gles1RenderContext(GL10 gl, int w, int h)
+	protected Gles1RenderContext(GL10 gl, int w, int h, Renderer renderer)
 	{
+		super(renderer);
 		mGL = gl;
 		mWidth = w;
 		mHeight = h;

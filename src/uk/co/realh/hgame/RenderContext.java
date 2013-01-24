@@ -66,9 +66,17 @@ public abstract class RenderContext {
 	
 	protected boolean mNativeSize;
 
-	protected RenderContext()
+	/**
+	 * Subclasses are responsible for making sure the Renderer gets called
+	 * with REASON_INIT.
+	 * 
+	 * @param renderer	Initial renderer
+	 */
+	protected RenderContext(Renderer renderer)
 	{
 		mId = ++smIdIndex;
+		mRenderer = renderer;
+		mRenderReason = REASON_INIT;
 	}
 
 	/**
@@ -81,8 +89,11 @@ public abstract class RenderContext {
 	synchronized
 	public void setRenderer(Renderer renderer)
 	{
-		mNewRenderer = renderer;
-		requestRender(REASON_REPLACE, true);
+		if (renderer != mRenderer)
+		{
+			mNewRenderer = renderer;
+			requestRender(REASON_REPLACE, true);
+		}
 	}
 
 	/**
