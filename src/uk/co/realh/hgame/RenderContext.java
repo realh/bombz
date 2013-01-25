@@ -173,7 +173,7 @@ public abstract class RenderContext {
 			break;
 		case REASON_DISPOSE:
 			if (null != mRenderer)
-				mRenderer.disposeRendering(this);
+				mRenderer.deleteRendering(this);
 			break;
 		case REASON_RESIZE:
 			int w = getCurrentScreenWidth();

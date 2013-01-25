@@ -47,6 +47,8 @@ public interface Renderer {
 	
 	/**
 	 * Called when render context is initialised to load textures etc.
+	 * Must be able to cope if called when already initialised because
+	 * deleteRendering is not guaranteed.
 	 * 
 	 * @param rc
 	 */
@@ -58,7 +60,7 @@ public interface Renderer {
 	 * initRendering call with a new RenderContext instead after surface
 	 * has been recreated.
 	 */
-	public void disposeRendering(RenderContext rctx);
+	public void deleteRendering(RenderContext rctx);
 	
 	/**
 	 * Called when render context has been resized.
@@ -79,7 +81,7 @@ public interface Renderer {
 	/**
 	 * Called when this renderer is about to be replaced by another. It
 	 * should dispose of any resources which are not going to be used again
-	 * by this renderer whereas disposeRendering should dispose of all of
+	 * by this renderer whereas deleteRendering should dispose of all of
 	 * app's rendering resources.
 	 * 
 	 * @param rctx

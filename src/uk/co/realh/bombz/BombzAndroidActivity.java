@@ -141,7 +141,7 @@ public class BombzAndroidActivity extends Activity {
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 			Log.d(TAG, "Surface created " +
 					mGlView.getWidth() + "x" + mGlView.getHeight());
-			mRCtx = new AndroidGles1RenderContext(mGlView, gl);
+			mRCtx = new AndroidGles1RenderContext(mGlView, gl, null);
 			mRCtx.enable2DTextures(true);
 			try {
 				InputStream fd = mSys.openAsset("pngs/32/title_logo.png");
