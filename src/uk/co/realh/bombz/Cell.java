@@ -41,7 +41,7 @@ package uk.co.realh.bombz;
  * There are few enough of these to fit in a byte but
  * sufficient enough to wrap between positive and negative.
  */
-public class BombzCell
+public class Cell
 {
 	static final byte OUTSIDE = -128;
 	static final byte BLANK = OUTSIDE + 1;

@@ -41,9 +41,11 @@ import java.io.InputStream;
 import uk.co.realh.hgame.Image;
 import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
+import uk.co.realh.hgame.Sprite;
 import uk.co.realh.hgame.Sys;
 import uk.co.realh.hgame.TextureAtlas;
 import uk.co.realh.hgame.TextureRegion;
+import uk.co.realh.hgame.TileBatcher;
 
 /**
  * @author Tony Houghton
@@ -54,9 +56,13 @@ public class BombzTextures {
 	private static String TAG = "Textures";
 	
 	TextureAtlas mTileAtlas, mAlphaAtlas, mLogoAtlas;
-	TextureRegion[] mRegions = new TextureRegion[BombzCell.N_CELLS];
+	TextureRegion[] mTileRegions = new TextureRegion[Cell.N_CELLS];
+	TextureRegion[] mHeroRegions = new TextureRegion[4];
+	TextureRegion mBomb1Region, mBomb2Region;
+	Sprite mHeroSprite, mBombSprite, mLogoSprite, mExplo00Sprite;
+	TileBatcher mTileBatcher;
 	private Sys mSys;
-	private int mTileSize;		// Source size
+	private int mSrcTileSize;		// Source size
 	
 	// Used to work out how well a source tile size matches screen size.
 	// The higher the better the match.
@@ -111,15 +117,16 @@ public class BombzTextures {
 				best_goodness = goodness;
 			}
 		}
-		mTileSize = best_size;
-		Log.d(TAG, "Using source tile size " + mTileSize);
+		mSrcTileSize = best_size;
+		Log.d(TAG, "Using source tile size " + mSrcTileSize);
 	}
 	
 	private TextureAtlas loadAtlas(RenderContext rctx,
 			String name, boolean alpha) throws IOException
 	{
+		rctx.enableBlend(false);
 		InputStream fd = mSys.openAsset(
-				"pngs/" + mTileSize + "/" + name + ".png");
+				"pngs/" + mSrcTileSize + "/" + name + ".png");
 		Image img = mSys.loadPNG(fd, "name");
 		fd.close();
 		TextureAtlas atlas = rctx.uploadTexture(img, true);
@@ -130,46 +137,123 @@ public class BombzTextures {
 	void loadTiles(RenderContext rctx) throws IOException
 	{
 		if (null == mTileAtlas)
+		{
 			mTileAtlas = loadAtlas(rctx, "tile_atlas", false);
+			for (int n = 0; n <= Cell.CHROME15; ++n)
+			{
+				if (n < Cell.EXPLO00)
+					mTileRegions[n] = createTileRegion(n);
+				else if (n == Cell.EXPLO00)
+					mTileRegions[n] = mTileRegions[Cell.BLANK];
+				else
+					mTileRegions[n] = createTileRegion(n - 1);
+			}
+			createFusedRegions(Cell.BOMB1);
+			createFusedRegions(Cell.BOMB2);
+			mTileBatcher = rctx.createTileBatcher(K.N_COLUMNS, K.N_ROWS,
+					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
+		}
+	}
+	
+	private void createFusedRegions(int bomb1or2)
+	{
+		int start = (bomb1or2 == Cell.BOMB2) ?
+				Cell.BOMB2_FUSED_FIRST : Cell.BOMB1_FUSED_FIRST;
+		for (int n = start;
+				n <= Cell.BOMB1_FUSED_LAST - Cell.BOMB1_FUSED_FIRST;
+				++n)
+		{
+			mTileRegions[n] =
+					mTileRegions[((n & 4) == 0) ? Cell.BLANK : bomb1or2];
+		}
+	}
+	
+	private TextureRegion createTileRegion(int n)
+	{
+		int x = (n % K.TILE_ATLAS_COLUMNS) * mSrcTileSize;
+		int y = (n / K.TILE_ATLAS_COLUMNS) * mSrcTileSize;
+		return mTileAtlas.createRegion(x, y,
+				x + mSrcTileSize, y + mSrcTileSize);
 	}
 	
 	void deleteTiles(RenderContext rctx)
 	{
+		mTileBatcher = null;
+		for (int n = 0; n < Cell.N_CELLS; ++n)
+			mTileRegions[n] = null;
 		if (null != mTileAtlas)
-		{
-			mTileAtlas.dispose();
-			mTileAtlas = null;
-		}
+			mTileAtlas.dispose(rctx);
+		mTileAtlas = null;
 	}
 	
 	void loadAlphaTextures(RenderContext rctx) throws IOException
 	{
+		rctx.enableBlend(true);
 		if (null == mAlphaAtlas)
+		{
 			mAlphaAtlas = loadAtlas(rctx, "alpha_atlas", true);
+			mExplo00Sprite = rctx.createSprite(mAlphaAtlas.createRegion(0, 0,
+					3 * mSrcTileSize, 3 * mSrcTileSize),
+					3 * K.FRUSTUM_TILE_SIZE, 3 * K.FRUSTUM_TILE_SIZE);
+			mHeroRegions[K.FACING_LEFT] =
+					mAlphaAtlas.createRegion(3 * mSrcTileSize, 0,
+							mSrcTileSize, mSrcTileSize);
+			mHeroRegions[K.FACING_RIGHT] =
+					mAlphaAtlas.createRegion(4 * mSrcTileSize, 0,
+							mSrcTileSize, mSrcTileSize);
+			mHeroRegions[K.FACING_UP] =
+					mAlphaAtlas.createRegion(3 * mSrcTileSize,
+							mSrcTileSize, 
+							mSrcTileSize, mSrcTileSize);
+			mHeroRegions[K.FACING_DOWN] =
+					mAlphaAtlas.createRegion(4 * mSrcTileSize,
+							mSrcTileSize, 
+							mSrcTileSize, mSrcTileSize);
+			mBomb1Region = mAlphaAtlas.createRegion(3 * mSrcTileSize,
+							2 * mSrcTileSize, 
+							mSrcTileSize, mSrcTileSize);
+			mBomb2Region = mAlphaAtlas.createRegion(4 * mSrcTileSize,
+							2 * mSrcTileSize, 
+							mSrcTileSize, mSrcTileSize);
+			mHeroSprite = rctx.createSprite(mHeroRegions[K.FACING_UP],
+						K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
+			mBombSprite = rctx.createSprite(mBomb1Region,
+						K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
+		}
 	}
 	
 	void deleteAlphaTextures(RenderContext rctx)
 	{
-		if (null != mTileAtlas)
-		{
-			mAlphaAtlas.dispose();
-			mAlphaAtlas = null;
-		}
+		mHeroSprite = null;
+		for (int n = 0; n < 4; ++n)
+			mHeroRegions[n] = null;
+		mBombSprite = null;
+		mBomb1Region = null;
+		mBomb2Region = null;
+		mExplo00Sprite = null;
+		if (null != mAlphaAtlas)
+			mAlphaAtlas.dispose(rctx);
+		mAlphaAtlas = null;
 	}
 	
 	void loadTitleLogo(RenderContext rctx) throws IOException
 	{
+		rctx.enableBlend(true);
 		if (null == mLogoAtlas)
+		{
 			mLogoAtlas = loadAtlas(rctx, "title_logo", true);
+			mLogoSprite = rctx.createSprite(mLogoAtlas.createRegion(
+					0, 0, 16 * mSrcTileSize, 4 * mSrcTileSize),
+					16 * K.FRUSTUM_TILE_SIZE, 4 * K.FRUSTUM_TILE_SIZE);
+		}
 	}
 	
 	void deleteLogoAtlas(RenderContext rctx)
 	{
-		if (null != mTileAtlas)
-		{
-			mLogoAtlas.dispose();
-			mLogoAtlas = null;
-		}
+		mLogoSprite = null;
+		if (null != mLogoAtlas)
+			mLogoAtlas.dispose(rctx);
+		mLogoAtlas = null;
 	}
 	
 	/**
@@ -186,27 +270,27 @@ public class BombzTextures {
 	
 	/**
 	 * Call in a deleteRendering handler and at the start of initRendering.
-	 * @throws IOException 
 	 * 
+	 * @throws IOException 
 	 * @see uk.co.realh.hgame.Renderer
 	 */
 	void onResize(RenderContext rctx) throws IOException
 	{
 		if (null != mTileAtlas)
 		{
-			mTileAtlas.dispose();
+			mTileAtlas.dispose(rctx);
 			mTileAtlas = null;
 			loadTiles(rctx);
 		}
 		if (null != mAlphaAtlas)
 		{
-			mAlphaAtlas.dispose();
+			mAlphaAtlas.dispose(rctx);
 			mAlphaAtlas = null;
 			loadAlphaTextures(rctx);
 		}
 		if (null != mLogoAtlas)
 		{
-			mLogoAtlas.dispose();
+			mLogoAtlas.dispose(rctx);
 			mLogoAtlas = null;
 			loadTitleLogo(rctx);
 		}

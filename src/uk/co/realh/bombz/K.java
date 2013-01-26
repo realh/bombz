@@ -47,4 +47,9 @@ public class K
 	static final int N_ROWS = 15;
 	static final int DELTA_PIX = 2;		// How many frustum units
 										// hero moves each step
+	static final int TILE_ATLAS_COLUMNS = 6;
+	static final int FACING_LEFT = 0;
+	static final int FACING_RIGHT = 1;
+	static final int FACING_UP = 2;
+	static final int FACING_DOWN = 3;
 }

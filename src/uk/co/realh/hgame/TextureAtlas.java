@@ -44,7 +44,13 @@ package uk.co.realh.hgame;
  */
 public interface TextureAtlas {
 	
-	public void dispose();
+	/**
+	 * Implementation should do nothing if rctx isn't the same 
+	 * as the one this was created with.
+	 * 
+	 * @param rctx
+	 */
+	public void dispose(RenderContext rctx);
 
     public int getWidth();
     public int getHeight();

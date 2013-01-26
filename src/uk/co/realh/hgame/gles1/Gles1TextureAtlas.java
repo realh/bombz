@@ -47,7 +47,7 @@ public class Gles1TextureAtlas implements TextureAtlas {
 	
 	protected final int mWidth, mHeight;
 	public final int mTextureId;
-	private Gles1RenderContext mRCtx;
+	private final Gles1RenderContext mRCtx;
 	
 	private static int[] smIdBucket = new int[1];
 	
@@ -84,10 +84,13 @@ public class Gles1TextureAtlas implements TextureAtlas {
 	}
 
 	@Override
-	public void dispose() {
-		mRCtx.unbindTexture(this);
-		int[] ids = {mTextureId};
-		mRCtx.mGL.glDeleteTextures(1, ids, 0);
+	public void dispose(RenderContext rctx) {
+		if (rctx == mRCtx)
+		{
+			mRCtx.unbindTexture(this);
+			int[] ids = {mTextureId};
+			mRCtx.mGL.glDeleteTextures(1, ids, 0);
+		}
 	}
 
 }
