@@ -63,7 +63,7 @@ public abstract class HGameActivity extends Activity {
 	private GLSurfaceView mGlView;
 	private Sys mSys;
 	protected GameManager mMgr;
-	private Screen mStartScreen;
+	private Screen mScreen;
 	
 	protected String mOwner, mDomain, mAppName, mPkgName;
 	
@@ -77,7 +77,7 @@ public abstract class HGameActivity extends Activity {
 	protected HGameActivity(Screen scrn, String owner,
 			String domain, String appName, String pkg)
 	{
-		mStartScreen = scrn;
+		mScreen = scrn;
 		mOwner = owner;
 		mDomain = domain;
 		mAppName = appName;
@@ -101,7 +101,7 @@ public abstract class HGameActivity extends Activity {
 		}
 		
 		mMgr = new GameManager(mSys);
-		mMgr.setScreen(mStartScreen);
+		mMgr.setScreen(mScreen);
 		
 		mGlView = new GLSurfaceView(this);
 		mGlView.setRenderer(new HGameRenderer());
@@ -175,7 +175,7 @@ public abstract class HGameActivity extends Activity {
 			mW = mGlView.getWidth();
 			mH = mGlView.getHeight();
 			Log.d(TAG, "Surface created " + mW + "x" + mH);
-			mRCtx = new AndroidGles1RenderContext(mGlView, gl, mStartScreen);
+			mRCtx = new AndroidGles1RenderContext(mGlView, gl, mScreen);
 			mMgr.setRenderContext(mRCtx);
 			mRCtx.preRequestRender(RenderContext.REASON_INIT);
 		}

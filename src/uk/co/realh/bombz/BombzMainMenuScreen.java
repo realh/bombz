@@ -34,28 +34,27 @@
  * See the source code for details.
  */
 
-package uk.co.realh.hgame;
+package uk.co.realh.bombz;
 
 /**
- * Extends Renderer with an additional method to handle game events
- * on a separate thread from rendering.
- * 
  * @author Tony Houghton
- * @see Renderer
+ *
  */
-public interface Screen extends Renderer {
-	
+public class BombzMainMenuScreen extends BombzMenuScreen {
+
 	/**
-	 * Handles game events.
-	 * 
-	 * @param ev
-	 * @return Whether this handler considers it has handled the event.
+	 * @param mgr
 	 */
-	public boolean handleEvent(Event ev);
-	
+	public BombzMainMenuScreen(BombzGameManager mgr) {
+		super(mgr);
+	}
+
 	/**
-	 * Called on tick events.
+	 * @see uk.co.realh.hgame.Renderer#getDescription()
 	 */
-	public void step();
+	@Override
+	public String getDescription() {
+		return "MainMenuScreen";
+	}
 
 }

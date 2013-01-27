@@ -36,6 +36,7 @@
 
 package uk.co.realh.hgame.gles1;
 
+import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.TextureAtlas;
 import uk.co.realh.hgame.TextureRegion;
 

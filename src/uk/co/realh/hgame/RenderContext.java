@@ -36,6 +36,8 @@
 
 package uk.co.realh.hgame;
 
+import java.io.IOException;
+
 /**
  * Manages rendering.
  * 
@@ -158,18 +160,19 @@ public abstract class RenderContext {
 	 * rendering from blocking the requester.
 	 * 
 	 * @return	Whether calling subclass should perform a render.
+	 * @throws IOException 
 	 */
 	synchronized
-	protected boolean serviceRenderRequest()
+	protected boolean serviceRenderRequest() throws IOException
 	{
 		boolean rendering = false;
 		switch (mRenderReason)
 		{
 		case REASON_INIT:
-			if (null != mRenderer)
-				mRenderer.initRendering(this);
 			mWidth = getCurrentScreenWidth();
 			mHeight = getCurrentScreenHeight();
+			if (null != mRenderer)
+				mRenderer.initRendering(this, mWidth, mHeight);
 			break;
 		case REASON_DISPOSE:
 			if (null != mRenderer)

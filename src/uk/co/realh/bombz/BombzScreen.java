@@ -34,28 +34,69 @@
  * See the source code for details.
  */
 
-package uk.co.realh.hgame;
+package uk.co.realh.bombz;
+
+import java.io.IOException;
+
+import uk.co.realh.hgame.Event;
+import uk.co.realh.hgame.RenderContext;
+import uk.co.realh.hgame.Screen;
 
 /**
- * Extends Renderer with an additional method to handle game events
- * on a separate thread from rendering.
- * 
  * @author Tony Houghton
- * @see Renderer
+ *
  */
-public interface Screen extends Renderer {
+public abstract class BombzScreen implements Screen {
 	
-	/**
-	 * Handles game events.
-	 * 
-	 * @param ev
-	 * @return Whether this handler considers it has handled the event.
-	 */
-	public boolean handleEvent(Event ev);
+	protected BombzGameManager mMgr;
+
+	public BombzScreen(BombzGameManager mgr) {
+		mMgr = mgr;
+	}
+
+	@Override
+	public void initRendering(RenderContext rctx, int w, int h)
+			throws IOException {
+		rctx.enable2DTextures(true);
+		mMgr.mTextures.calculateTileSize(rctx, w, h);
+		// All Bombz screens need the tiles
+		mMgr.mTextures.deleteTiles(rctx);
+		mMgr.mTextures.loadTiles(rctx);
+	}
 	
+	@Override
+	public void deleteRendering(RenderContext rctx) {
+		mMgr.mTextures.deleteAllTextures(rctx);
+	}
+
+	@Override
+	public void resizeRendering(RenderContext rctx, int w, int h)
+			throws IOException {
+		mMgr.mTextures.onResize(rctx, w, h);
+	}
+
 	/**
-	 * Called on tick events.
+	 * Superclasses must ensure batcher's textures are all set up before
+	 * calling this, and may do more rendering afterwards. GL state,
+	 * viewport etc must all be set appropriately.
 	 */
-	public void step();
+	@Override
+	public void render(RenderContext rctx) {
+		mMgr.mTextures.mTileBatcher.render(rctx);
+	}
+
+	/**
+	 * No-op because we don't know which textures to delete without
+	 * knowing what next Screen will be.
+	 */
+	@Override
+	public void replacingRenderer(RenderContext rctx) {
+	}
+
+	@Override
+	public void replacedRenderer(RenderContext rctx) throws IOException {
+		if (null == mMgr.mTextures.mTileAtlas)
+			mMgr.mTextures.loadTiles(rctx);
+	}
 
 }

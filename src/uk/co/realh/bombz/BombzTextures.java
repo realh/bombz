@@ -62,7 +62,7 @@ public class BombzTextures {
 	Sprite mHeroSprite, mBombSprite, mLogoSprite, mExplo00Sprite;
 	TileBatcher mTileBatcher;
 	private Sys mSys;
-	private int mSrcTileSize;		// Source size
+	int mSrcTileSize;		// Source size
 	
 	// Used to work out how well a source tile size matches screen size.
 	// The higher the better the match.
@@ -76,13 +76,12 @@ public class BombzTextures {
 	 * @param screen_h	Height of screen
 	 * @throws IOException 
 	 */
-	BombzTextures(Sys sys, int screen_w, int screen_h) throws IOException
+	BombzTextures(Sys sys)
 	{
 		mSys = sys;
-		calculateTileSize(screen_w, screen_h);
 	}
 	
-	private void calculateTileSize(int screen_w, int screen_h)
+	void calculateTileSize(RenderContext rctx, int screen_w, int screen_h)
 			throws IOException
 	{
 		screen_h -= screen_h % (K.N_ROWS * K.DELTA_PIX);
@@ -119,6 +118,7 @@ public class BombzTextures {
 		}
 		mSrcTileSize = best_size;
 		Log.d(TAG, "Using source tile size " + mSrcTileSize);
+		rctx.setNativeSize(best_goodness == EXACT);
 	}
 	
 	private TextureAtlas loadAtlas(RenderContext rctx,
@@ -136,23 +136,20 @@ public class BombzTextures {
 	
 	void loadTiles(RenderContext rctx) throws IOException
 	{
-		if (null == mTileAtlas)
+		mTileAtlas = loadAtlas(rctx, "tile_atlas", false);
+		for (int n = 0; n <= Cell.CHROME15; ++n)
 		{
-			mTileAtlas = loadAtlas(rctx, "tile_atlas", false);
-			for (int n = 0; n <= Cell.CHROME15; ++n)
-			{
-				if (n < Cell.EXPLO00)
-					mTileRegions[n] = createTileRegion(n);
-				else if (n == Cell.EXPLO00)
-					mTileRegions[n] = mTileRegions[Cell.BLANK];
-				else
-					mTileRegions[n] = createTileRegion(n - 1);
-			}
-			createFusedRegions(Cell.BOMB1);
-			createFusedRegions(Cell.BOMB2);
-			mTileBatcher = rctx.createTileBatcher(K.N_COLUMNS, K.N_ROWS,
-					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
+			if (n < Cell.EXPLO00)
+				mTileRegions[n] = createTileRegion(n);
+			else if (n == Cell.EXPLO00)
+				mTileRegions[n] = mTileRegions[Cell.BLANK];
+			else
+				mTileRegions[n] = createTileRegion(n - 1);
 		}
+		createFusedRegions(Cell.BOMB1);
+		createFusedRegions(Cell.BOMB2);
+		mTileBatcher = rctx.createTileBatcher(K.N_COLUMNS, K.N_ROWS,
+				K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 	}
 	
 	private void createFusedRegions(int bomb1or2)
@@ -189,37 +186,34 @@ public class BombzTextures {
 	void loadAlphaTextures(RenderContext rctx) throws IOException
 	{
 		rctx.enableBlend(true);
-		if (null == mAlphaAtlas)
-		{
-			mAlphaAtlas = loadAtlas(rctx, "alpha_atlas", true);
-			mExplo00Sprite = rctx.createSprite(mAlphaAtlas.createRegion(0, 0,
-					3 * mSrcTileSize, 3 * mSrcTileSize),
-					3 * K.FRUSTUM_TILE_SIZE, 3 * K.FRUSTUM_TILE_SIZE);
-			mHeroRegions[K.FACING_LEFT] =
-					mAlphaAtlas.createRegion(3 * mSrcTileSize, 0,
-							mSrcTileSize, mSrcTileSize);
-			mHeroRegions[K.FACING_RIGHT] =
-					mAlphaAtlas.createRegion(4 * mSrcTileSize, 0,
-							mSrcTileSize, mSrcTileSize);
-			mHeroRegions[K.FACING_UP] =
-					mAlphaAtlas.createRegion(3 * mSrcTileSize,
-							mSrcTileSize, 
-							mSrcTileSize, mSrcTileSize);
-			mHeroRegions[K.FACING_DOWN] =
-					mAlphaAtlas.createRegion(4 * mSrcTileSize,
-							mSrcTileSize, 
-							mSrcTileSize, mSrcTileSize);
-			mBomb1Region = mAlphaAtlas.createRegion(3 * mSrcTileSize,
-							2 * mSrcTileSize, 
-							mSrcTileSize, mSrcTileSize);
-			mBomb2Region = mAlphaAtlas.createRegion(4 * mSrcTileSize,
-							2 * mSrcTileSize, 
-							mSrcTileSize, mSrcTileSize);
-			mHeroSprite = rctx.createSprite(mHeroRegions[K.FACING_UP],
-						K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
-			mBombSprite = rctx.createSprite(mBomb1Region,
-						K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
-		}
+		mAlphaAtlas = loadAtlas(rctx, "alpha_atlas", true);
+		mExplo00Sprite = rctx.createSprite(mAlphaAtlas.createRegion(0, 0,
+				3 * mSrcTileSize, 3 * mSrcTileSize),
+				3 * K.FRUSTUM_TILE_SIZE, 3 * K.FRUSTUM_TILE_SIZE);
+		mHeroRegions[K.FACING_LEFT] =
+				mAlphaAtlas.createRegion(3 * mSrcTileSize, 0,
+						mSrcTileSize, mSrcTileSize);
+		mHeroRegions[K.FACING_RIGHT] =
+				mAlphaAtlas.createRegion(4 * mSrcTileSize, 0,
+						mSrcTileSize, mSrcTileSize);
+		mHeroRegions[K.FACING_UP] =
+				mAlphaAtlas.createRegion(3 * mSrcTileSize,
+						mSrcTileSize, 
+						mSrcTileSize, mSrcTileSize);
+		mHeroRegions[K.FACING_DOWN] =
+				mAlphaAtlas.createRegion(4 * mSrcTileSize,
+						mSrcTileSize, 
+						mSrcTileSize, mSrcTileSize);
+		mBomb1Region = mAlphaAtlas.createRegion(3 * mSrcTileSize,
+						2 * mSrcTileSize, 
+						mSrcTileSize, mSrcTileSize);
+		mBomb2Region = mAlphaAtlas.createRegion(4 * mSrcTileSize,
+						2 * mSrcTileSize, 
+						mSrcTileSize, mSrcTileSize);
+		mHeroSprite = rctx.createSprite(mHeroRegions[K.FACING_UP],
+					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
+		mBombSprite = rctx.createSprite(mBomb1Region,
+					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 	}
 	
 	void deleteAlphaTextures(RenderContext rctx)
@@ -239,13 +233,10 @@ public class BombzTextures {
 	void loadTitleLogo(RenderContext rctx) throws IOException
 	{
 		rctx.enableBlend(true);
-		if (null == mLogoAtlas)
-		{
-			mLogoAtlas = loadAtlas(rctx, "title_logo", true);
-			mLogoSprite = rctx.createSprite(mLogoAtlas.createRegion(
-					0, 0, 16 * mSrcTileSize, 4 * mSrcTileSize),
-					16 * K.FRUSTUM_TILE_SIZE, 4 * K.FRUSTUM_TILE_SIZE);
-		}
+		mLogoAtlas = loadAtlas(rctx, "title_logo", true);
+		mLogoSprite = rctx.createSprite(mLogoAtlas.createRegion(
+				0, 0, 16 * mSrcTileSize, 4 * mSrcTileSize),
+				16 * K.FRUSTUM_TILE_SIZE, 4 * K.FRUSTUM_TILE_SIZE);
 	}
 	
 	void deleteLogoAtlas(RenderContext rctx)
@@ -261,37 +252,33 @@ public class BombzTextures {
 	 * 
 	 * @see uk.co.realh.hgame.Renderer
 	 */
-	void deleteAllTextures()
+	void deleteAllTextures(RenderContext rctx)
 	{
-		mTileAtlas = null;
-		mAlphaAtlas = null;
-		mLogoAtlas = null;
+		deleteTiles(rctx);
+		deleteAlphaTextures(rctx);
+		deleteLogoAtlas(rctx);
 	}
 	
 	/**
-	 * Call in a deleteRendering handler and at the start of initRendering.
-	 * 
 	 * @throws IOException 
 	 * @see uk.co.realh.hgame.Renderer
 	 */
-	void onResize(RenderContext rctx) throws IOException
+	void onResize(RenderContext rctx, int w, int h) throws IOException
 	{
+		calculateTileSize(rctx, w, h);
 		if (null != mTileAtlas)
 		{
-			mTileAtlas.dispose(rctx);
-			mTileAtlas = null;
+			deleteTiles(rctx);
 			loadTiles(rctx);
 		}
 		if (null != mAlphaAtlas)
 		{
-			mAlphaAtlas.dispose(rctx);
-			mAlphaAtlas = null;
+			deleteAlphaTextures(rctx);
 			loadAlphaTextures(rctx);
 		}
 		if (null != mLogoAtlas)
 		{
-			mLogoAtlas.dispose(rctx);
-			mLogoAtlas = null;
+			deleteLogoAtlas(rctx);
 			loadTitleLogo(rctx);
 		}
 	}

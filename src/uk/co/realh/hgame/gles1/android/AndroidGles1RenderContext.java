@@ -36,6 +36,8 @@
 
 package uk.co.realh.hgame.gles1.android;
 
+import java.io.IOException;
+
 import javax.microedition.khronos.opengles.GL10;
 
 import android.opengl.GLSurfaceView;
@@ -97,8 +99,9 @@ public class AndroidGles1RenderContext extends Gles1RenderContext {
 	
 	/**
 	 * Called from Activity owning view.
+	 * @throws IOException 
 	 */
-	public void onDrawFrame()
+	public void onDrawFrame() throws IOException
 	{
 		if (serviceRenderRequest())
 		{
