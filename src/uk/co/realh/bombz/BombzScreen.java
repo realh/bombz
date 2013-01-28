@@ -38,7 +38,6 @@ package uk.co.realh.bombz;
 
 import java.io.IOException;
 
-import uk.co.realh.hgame.Event;
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.Screen;
 

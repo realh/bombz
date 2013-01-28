@@ -48,7 +48,6 @@ import android.view.WindowManager;
 
 import uk.co.realh.hgame.GameManager;
 import uk.co.realh.hgame.RenderContext;
-import uk.co.realh.hgame.Screen;
 import uk.co.realh.hgame.Sys;
 import uk.co.realh.hgame.gles1.android.AndroidGles1RenderContext;
 
@@ -57,31 +56,34 @@ import uk.co.realh.hgame.gles1.android.AndroidGles1RenderContext;
  *
  */
 public abstract class HGameActivity extends Activity {
-
 	
-	private static final String TAG = "Activity";
+	protected static final String TAG = "Activity";
 	private GLSurfaceView mGlView;
-	private Sys mSys;
+	protected Sys mSys;
 	protected GameManager mMgr;
-	private Screen mScreen;
-	
-	protected String mOwner, mDomain, mAppName, mPkgName;
 	
 	/**
-	 * @param scrn		Screen to be displayed at start-up
+	 * Superclass should call this and set game manager in constructor
+	 * or at least before calling onCreate() below.
+	 * 
 	 * @param owner		Name associated with developer
 	 * @param domain	Domain of URL associated with app/developer
 	 * @param appName	App name
 	 * @param pkg		Package name (containing R class)
 	 */
-	protected HGameActivity(Screen scrn, String owner,
+	protected final void createSys(String owner,
 			String domain, String appName, String pkg)
 	{
-		mScreen = scrn;
-		mOwner = owner;
-		mDomain = domain;
-		mAppName = appName;
-		mPkgName = pkg;
+		if (null == mSys)
+		{
+			try {
+				mSys = new AndroidSys(this, owner, domain,
+						appName, pkg);
+			} catch (Throwable e) {
+				Log.e(TAG, "Can't create AndroidSys object", e);
+				throw new RuntimeException("Can't create AndroidSys object");
+			}
+		}
 	}
 
 	@Override
@@ -92,16 +94,6 @@ public abstract class HGameActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-		try {
-			mSys = new AndroidSys(this, mOwner, mDomain, mAppName, mPkgName);
-		} catch (Throwable e) {
-			Log.e(TAG, "Can't create AndroidSys object", e);
-			throw new RuntimeException("Can't create AndroidSys object");
-		}
-		
-		mMgr = new GameManager(mSys);
-		mMgr.setScreen(mScreen);
 		
 		mGlView = new GLSurfaceView(this);
 		mGlView.setRenderer(new HGameRenderer());
@@ -175,7 +167,7 @@ public abstract class HGameActivity extends Activity {
 			mW = mGlView.getWidth();
 			mH = mGlView.getHeight();
 			Log.d(TAG, "Surface created " + mW + "x" + mH);
-			mRCtx = new AndroidGles1RenderContext(mGlView, gl, mScreen);
+			mRCtx = new AndroidGles1RenderContext(mGlView, gl, mMgr.mScreen);
 			mMgr.setRenderContext(mRCtx);
 			mRCtx.preRequestRender(RenderContext.REASON_INIT);
 		}
