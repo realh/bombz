@@ -37,70 +37,30 @@
 package uk.co.realh.hgame;
 
 /**
- * Abstraction of an image that can be loaded from PNG and used as a texture.
- * NB pixel coords have origin at top-left. 
- * 
  * @author Tony Houghton
+ *
  */
-public interface Image {
+public class ShadowMaker {
 	
-	/**
-	 * Creates a new Image with same properties as this but with different
-	 * width and height.
-	 * 
-	 * @param w	width
-	 * @param h	height
-	 * @return	New Image.
-	 */
-	public Image createImage(int w, int h);
-	
-	/**
-	 * @return	Width of Image.
-	 */
-	public int getWidth();
-	
-	/**
-	 * @return	Height of Image.
-	 */
-	public int getHeight();
-	
-	/*
-	 * @return	Array of one ARGB int per pixel, stride == width.
-	 */
-	public int[] getPixels();
-	
-	/*
-	 * Replaces Image's contents.
-	 * 
-	 * @param pixels	Array of one ARGB int per pixel, stride == width,
-	 * 					total size must match Image's size.
-	 */
-	public void setPixels(int[] pixels);
-	
-	/**
-	 * Copies part of another Image into this Image using alpha as appropriate
-	 * to merge/composite. Generally both Images must be same implementation
-	 * class.
-	 * 
-	 * @param src		Source Image.
-	 * @param dst_x		Destination X offset.
-	 * @param dst_y		Destination Y offset.
-	 * @param src_x		Source X offset.
-	 * @param src_y		Source Y offset.
-	 * @param w			Width of area to copy.
-	 * @param h			Height of area to copy.
-	 */
-    public void blit(Image src, int dst_x, int dst_y,
-            int src_x, int src_y, int w, int h);
-    
-    /**
-     * @return	A blurred version of this image. Might be bigger.
-     */
-    public Image blur();
-    
-    /**
-     * Force resources to be recycled. Do not use this image afterwards.
-     */
-    public void dispose();
-	
+	public static final float OPACITY = 0.6f;
+
+	public static Image makeShadow(Image src, int offset)
+	{
+		int src_w = src.getWidth();
+		int src_h = src.getHeight();
+		Image shadow = src.createImage(src_w, src_h);
+		int[] pix = src.getPixels();
+		for (int n = 0; n < pix.length; ++n)
+		{
+			pix[n] = ((int) ((float) (pix[n] >>> 24) * OPACITY)) << 24;
+		}
+		shadow.setPixels(pix);
+		shadow = shadow.blur();
+		int shad_w = shadow.getWidth();
+		int shad_h = shadow.getHeight();
+		Image montage = src.createImage(shad_w + offset, shad_h + offset);
+		montage.blit(shadow, offset, offset, 0, 0, shad_w, shad_h);
+		montage.blit(src, 0, 0, 0, 0, src_w, src_h);
+		return montage;
+	}
 }

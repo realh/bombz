@@ -92,7 +92,6 @@ public class AndroidImage implements Image {
 	/*
 	 * @see uk.co.realh.hgame.Image#getPixels()
 	 */
-	/*
 	@Override
 	public int[] getPixels() {
 		int w = mBitmap.getWidth();
@@ -101,19 +100,16 @@ public class AndroidImage implements Image {
 		mBitmap.getPixels(pix, 0, 0, 0, 0, w, h);
 		return pix;
 	}
-	*/
 
 	/*
 	 * @see uk.co.realh.hgame.Image#setPixels(int[])
 	 */
-	/*
 	@Override
 	public void setPixels(int[] pixels) {
 		mBitmap.setPixels(pixels, 0, 0, 0, 0,
 				mBitmap.getWidth(), mBitmap.getHeight());
 		
 	}
-	*/
 	
 	/**
 	 * @see uk.co.realh.hgame.Image#blit(uk.co.realh.hgame.Image,
@@ -128,6 +124,7 @@ public class AndroidImage implements Image {
 		canv.drawBitmap(((AndroidImage) src).mBitmap, src_r, dst_r, null);
 	}
 
+	private static final float BLUR_SCALE_FACTOR = 0.05f;
 
 	/**
 	 * @see uk.co.realh.hgame.Image#blur()
@@ -135,7 +132,9 @@ public class AndroidImage implements Image {
 	@Override
 	public Image blur() {
 		return new AndroidImage(Bitmap.createScaledBitmap(mBitmap,
-				mBitmap.getWidth(), mBitmap.getHeight(), true));
+				(int) ((float) mBitmap.getWidth() * BLUR_SCALE_FACTOR),
+				(int) ((float) mBitmap.getHeight() * BLUR_SCALE_FACTOR),
+				true));
 	}
 	/**
 	 * @see uk.co.realh.hgame.Image#dispose()
