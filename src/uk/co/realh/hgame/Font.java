@@ -41,5 +41,14 @@ package uk.co.realh.hgame;
  *
  */
 public interface Font {
+	
+	/**
+	 * @param r		Red  0-255
+	 * @param g		Red  0-255
+	 * @param b		Blue 0-255
+	 */
+	public void setColour(int r, int g, int b);
+	
+	public Image render(String text);
 
 }
