@@ -95,51 +95,28 @@ public class GameManager {
 	 */
 	public void resume()
 	{
+		mGameThread = new GameThread();
 		mRunning = true;
+		mGameThread.start();
 		Event ev = Event.newEvent(Event.RESUME);
-		Event.pushEvent(ev);
-		try {
-			ev.wait();
-		} catch (InterruptedException e) {
-			Log.w(TAG, "Interrupted waiting for " +
-					"resume event to be handled", e);
-		}
-	}
-	
-	/**
-	 * Lets the Screen know that it should suspend its operation.
-	 */
-	public void suspend()
-	{
-		mRunning = false;
-		Event ev = Event.newEvent(Event.PAUSE);
 		synchronized(ev) {
 			Event.pushEvent(ev);
 			try {
 				ev.wait();
 			} catch (InterruptedException e) {
 				Log.w(TAG, "Interrupted waiting for " +
-						"suspend event to be handled", e);
+						"resume event to be handled", e);
 			}
 		}
 	}
 	
 	/**
-	 * Starts execution of Screen, starting with a RESUME event.
-	 */
-	public void start()
-	{
-		resume();
-		mGameThread = new GameThread();
-		mGameThread.start();
-	}
-	
-	/**
 	 * Asks the Screen thread to stop.
 	 */
-	public void stop()
+	public void suspend()
 	{
-		Event.pushEvent(Event.newEvent(Event.STOP));
+		mRunning = false;
+		Event.pushEvent(Event.newEvent(Event.PAUSE));
 		try {
 			mGameThread.join();
 		} catch (InterruptedException e) {
@@ -193,13 +170,13 @@ public class GameManager {
 				{
 					mScreen.handleEvent(ev);
 				}
-				if (ev.mCode == Event.PAUSE || ev.mCode == Event.RESUME)
+				if (ev.mCode == Event.RESUME)
 				{
 					synchronized(ev) {
 						ev.notifyAll();
 					}
 				}
-				else if (ev.mCode == Event.STOP)
+				else if (ev.mCode == Event.PAUSE)
 					running = false;
 			}
 		}

@@ -39,13 +39,17 @@ package uk.co.realh.bombz;
 import java.io.IOException;
 
 import uk.co.realh.hgame.Event;
+import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
+import uk.co.realh.hgame.TextureRegion;
 
 /**
  * @author Tony Houghton
  *
  */
 public abstract class BombzMenuScreen extends BombzScreen {
+	
+	private static final String TAG = "MenuScreen";
 
 	/**
 	 * @param mgr
@@ -60,6 +64,45 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		super.initRendering(rctx, w, h);
 		mMgr.mTextures.loadTitleLogo(rctx);
 		setupViewport(rctx, w, h);
+		setupTileBatcher();
+		rctx.requestRender();
+	}
+	
+	private void setupTileBatcher()
+	{
+		for (int y = 0; y < K.N_ROWS; ++y) {
+			for (int x = 0; x < K.N_COLUMNS; ++x) {
+				int c;
+				if (y == 0)
+				{
+					if (x == 0)
+						c = Cell.CHROME00;
+					else if (x == K.N_COLUMNS - 1)
+						c = Cell.CHROME00 + 2;
+					else
+						c = Cell.CHROME00 + 1;
+				}
+				else if (y == K.N_ROWS - 1)
+				{
+					if (x == 0)
+						c = Cell.CHROME00 + 4;
+					else if (x == K.N_COLUMNS - 1)
+						c = Cell.CHROME00 + 5;
+					else
+						c = Cell.CHROME00 + 1;
+				}
+				else if (x == 0 || x == K.N_COLUMNS - 1)
+				{
+					c = Cell.CHROME00 + 3;
+				}
+				else
+				{
+					c = Cell.BLANK;
+				}
+				mMgr.mTextures.mTileBatcher.setTextureAt(
+						mMgr.mTextures.mTileRegions[c - Cell.OFFSET], x, y);
+			}
+		}
 	}
 	
 	@Override
@@ -67,6 +110,8 @@ public abstract class BombzMenuScreen extends BombzScreen {
 			throws IOException {
 		super.resizeRendering(rctx, w, h);
 		setupViewport(rctx, w, h);
+		setupTileBatcher();
+		rctx.requestRender();
 	}
 	
 	protected void setupViewport(RenderContext rctx, int w, int h)
@@ -80,9 +125,12 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	
 	@Override
 	public void render(RenderContext rctx) {
+		Log.d(TAG, "Rendering MenuScreen");
 		rctx.enableBlend(false);
+		rctx.bindTexture(mMgr.mTextures.mTileAtlas);
 		mMgr.mTextures.mTileBatcher.render(rctx);
 		rctx.enableBlend(true);
+		rctx.bindTexture(mMgr.mTextures.mLogoAtlas);
 		mMgr.mTextures.mLogoSprite.render(rctx);
 	}
 	

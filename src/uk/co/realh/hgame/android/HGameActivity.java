@@ -62,6 +62,11 @@ public abstract class HGameActivity extends Activity {
 	protected Sys mSys;
 	protected GameManager mMgr;
 	
+	public static final void initLog()
+	{
+		uk.co.realh.hgame.Log.setLogger(new AndroidLog());
+	}
+	
 	/**
 	 * Superclass should call this and set game manager in constructor
 	 * or at least before calling onCreate() below.
@@ -89,7 +94,6 @@ public abstract class HGameActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		uk.co.realh.hgame.Log.setLogger(new AndroidLog());
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -111,16 +115,29 @@ public abstract class HGameActivity extends Activity {
 	
 	@Override
 	public void onResume() {
-		super.onResume();
-		mMgr.resume();
-		mGlView.onResume();
+		try {
+			Log.d(TAG, "onResume calling super");
+			super.onResume();
+			Log.d(TAG, "onResume calling mMgr");
+			mMgr.resume();
+			Log.d(TAG, "onResume calling mGlView");
+			mGlView.onResume();
+			Log.d(TAG, "onResume done");
+		} catch (Throwable e) {
+			Log.e(TAG, "Exception in onResume", e);
+		}
 	}
 	
 	@Override
 	public void onPause() {
-		super.onPause();
-		mMgr.suspend();
-		mGlView.onPause();
+		Log.d(TAG, "onPause");
+		try {
+			super.onPause();
+			mMgr.suspend();
+			mGlView.onPause();
+		} catch (Throwable e) {
+			Log.e(TAG, "Exception in onPause", e);
+		}
 	}
 	
 	private class HGameRenderer implements GLSurfaceView.Renderer
@@ -149,11 +166,16 @@ public abstract class HGameActivity extends Activity {
 		 */
 		@Override
 		public void onSurfaceChanged(GL10 gl, int w, int h) {
-			if (w != mW || h != mH)
-			{
-				Log.d(TAG, "Surface resized to " + w + "x" + h);
-				mRCtx.updateSize(w, h);
-				mRCtx.preRequestRender(RenderContext.REASON_RESIZE);
+			try {
+				Log.d(TAG, "Surface changed to " + w + "x" + h);
+				if (w != mW || h != mH)
+				{
+					Log.d(TAG, "Surface resized to " + w + "x" + h);
+					mRCtx.updateSize(w, h);
+					mRCtx.preRequestRender(RenderContext.REASON_RESIZE);
+				}
+			} catch (Throwable e) {
+				Log.e(TAG, "Exception in onSurfaceChanged", e);
 			}
 		}
 		
@@ -164,12 +186,16 @@ public abstract class HGameActivity extends Activity {
 		 */
 		@Override
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-			mW = mGlView.getWidth();
-			mH = mGlView.getHeight();
-			Log.d(TAG, "Surface created " + mW + "x" + mH);
-			mRCtx = new AndroidGles1RenderContext(mGlView, gl, mMgr.mScreen);
-			mMgr.setRenderContext(mRCtx);
-			mRCtx.preRequestRender(RenderContext.REASON_INIT);
+			try {
+				mW = mGlView.getWidth();
+				mH = mGlView.getHeight();
+				Log.d(TAG, "Surface created " + mW + "x" + mH);
+				mRCtx = new AndroidGles1RenderContext(mGlView, gl, mMgr.mScreen);
+				mMgr.setRenderContext(mRCtx);
+				mRCtx.preRequestRender(RenderContext.REASON_INIT);
+			} catch (Throwable e) {
+				Log.e(TAG, "Exception in onSurfaceCreated", e);
+			}
 		}
 	}
 }

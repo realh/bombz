@@ -61,5 +61,7 @@ public class Cell
 	static final byte BOMB2_FUSED_LAST =
 			(BOMB2_FUSED_FIRST + K.FUSE_TICKS - 1);
 	
-	static final int N_CELLS = BOMB2_FUSED_LAST + 1 - OUTSIDE;
+	// OUTSIDE has no texture and doesn't count where we use the following
+	static final int N_CELLS = BOMB2_FUSED_LAST + 1 - BLANK;
+	static final int OFFSET = -127;
 }

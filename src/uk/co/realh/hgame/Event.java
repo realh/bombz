@@ -52,7 +52,6 @@ public class Event {
 	public static final int TICK = getQuark("TICK");
 	public static final int PAUSE = getQuark("PAUS");
 	public static final int RESUME = getQuark("RESM");
-	public static final int STOP = getQuark("STOP");
 	public static final int TAP = getQuark("TAP_");
 	public static final int INTERRUPT = getQuark("INTR");
 	

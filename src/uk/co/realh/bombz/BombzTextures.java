@@ -137,14 +137,15 @@ public class BombzTextures {
 	void loadTiles(RenderContext rctx) throws IOException
 	{
 		mTileAtlas = loadAtlas(rctx, "tile_atlas", false);
-		for (int n = 0; n <= Cell.CHROME15; ++n)
+		for (int c = Cell.BLANK; c <= Cell.CHROME15; ++c)
 		{
-			if (n < Cell.EXPLO00)
+			int n = c - Cell.OFFSET;
+			if (c < Cell.EXPLO00)
 				mTileRegions[n] = createTileRegion(n);
-			else if (n == Cell.EXPLO00)
-				mTileRegions[n] = mTileRegions[Cell.BLANK];
+			else if (c == Cell.EXPLO00)
+				mTileRegions[n] = mTileRegions[Cell.BLANK - Cell.OFFSET];
 			else
-				mTileRegions[n] = createTileRegion(n - 1);
+				mTileRegions[n] = createTileRegion(n);
 		}
 		createFusedRegions(Cell.BOMB1);
 		createFusedRegions(Cell.BOMB2);
@@ -156,12 +157,14 @@ public class BombzTextures {
 	{
 		int start = (bomb1or2 == Cell.BOMB2) ?
 				Cell.BOMB2_FUSED_FIRST : Cell.BOMB1_FUSED_FIRST;
-		for (int n = start;
-				n <= Cell.BOMB1_FUSED_LAST - Cell.BOMB1_FUSED_FIRST;
-				++n)
+		for (int c = start;
+				c <= start + Cell.BOMB1_FUSED_LAST - Cell.BOMB1_FUSED_FIRST;
+				++c)
 		{
+			int n = c - Cell.OFFSET;
 			mTileRegions[n] =
-					mTileRegions[((n & 4) == 0) ? Cell.BLANK : bomb1or2];
+					mTileRegions[(((n & 4) == 0) ? Cell.BLANK : bomb1or2) -
+					             Cell.OFFSET];
 		}
 	}
 	
@@ -236,6 +239,7 @@ public class BombzTextures {
 		mLogoAtlas = loadAtlas(rctx, "title_logo", true);
 		mLogoSprite = rctx.createSprite(mLogoAtlas.createRegion(
 				0, 0, 16 * mSrcTileSize, 4 * mSrcTileSize),
+				2 * K.FRUSTUM_TILE_SIZE, 2 * K.FRUSTUM_TILE_SIZE,
 				16 * K.FRUSTUM_TILE_SIZE, 4 * K.FRUSTUM_TILE_SIZE);
 	}
 	
