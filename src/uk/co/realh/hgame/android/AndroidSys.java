@@ -83,8 +83,7 @@ public class AndroidSys implements Sys {
 	@Override
 	public Image loadPNG(InputStream fd, String desc) {
 		// TODO: We should support 16-bit for old phones
-		Bitmap.Config config;
-		config = Bitmap.Config.ARGB_8888;
+		Bitmap.Config config = Bitmap.Config.ARGB_8888;
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inPreferredConfig = config;
 		Bitmap bitmap = BitmapFactory.decodeStream(fd);

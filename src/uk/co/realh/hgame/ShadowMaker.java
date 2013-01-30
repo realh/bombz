@@ -48,19 +48,21 @@ public class ShadowMaker {
 	{
 		int src_w = src.getWidth();
 		int src_h = src.getHeight();
-		Image shadow = src.createImage(src_w, src_h);
+		Image grey = src.createImage(src_w, src_h);
 		int[] pix = src.getPixels();
 		for (int n = 0; n < pix.length; ++n)
 		{
 			pix[n] = ((int) ((float) (pix[n] >>> 24) * OPACITY)) << 24;
 		}
-		shadow.setPixels(pix);
-		shadow = shadow.blur();
+		grey.setPixels(pix);
+		Image shadow = grey.blur();
+		grey.dispose();
 		int shad_w = shadow.getWidth();
 		int shad_h = shadow.getHeight();
 		Image montage = src.createImage(shad_w + offset, shad_h + offset);
 		montage.blit(shadow, offset, offset, 0, 0, shad_w, shad_h);
 		montage.blit(src, 0, 0, 0, 0, src_w, src_h);
+		shadow.dispose();
 		return montage;
 	}
 }
