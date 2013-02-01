@@ -43,6 +43,8 @@ package uk.co.realh.hgame;
 public class ShadowMaker {
 	
 	public static final float OPACITY = 0.6f;
+	
+	private static final int FACTOR = (int) (OPACITY * ((float) (1 << 24)));
 
 	public static Image makeShadow(Image src, int offset)
 	{
@@ -52,7 +54,7 @@ public class ShadowMaker {
 		int[] pix = src.getPixels();
 		for (int n = 0; n < pix.length; ++n)
 		{
-			pix[n] = ((int) ((float) (pix[n] >>> 24) * OPACITY)) << 24;
+			pix[n] = (pix[n] >>> 24) * FACTOR;
 		}
 		grey.setPixels(pix);
 		Image shadow = grey.blur();
