@@ -98,7 +98,7 @@ public abstract class BombzMenuScreen extends BombzScreen {
 				}
 				else if (n < Cell.N_CELLS)
 				{
-					c = Cell.BLANK + n;
+					c = Cell.BLANK + (n++);
 				}
 				else
 				{
@@ -106,7 +106,6 @@ public abstract class BombzMenuScreen extends BombzScreen {
 				}
 				mMgr.mTextures.mTileBatcher.setTextureAt(
 						mMgr.mTextures.mTileRegions[c - Cell.OFFSET], x, y);
-				++n;
 			}
 		}
 	}
@@ -126,7 +125,7 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		int vph = mMgr.mTextures.mViewportHeight;
 		rctx.setViewport((w - vpw) / 2, (h - vph) / 2, vpw, vph);
 		rctx.set2DFrustum(0, K.N_COLUMNS * K.FRUSTUM_TILE_SIZE,
-				K.N_ROWS * K.FRUSTUM_TILE_SIZE, 0);
+				0, K.N_ROWS * K.FRUSTUM_TILE_SIZE);
 	}
 	
 	@Override
