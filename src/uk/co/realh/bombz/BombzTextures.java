@@ -140,29 +140,17 @@ public class BombzTextures {
 	void loadTiles(RenderContext rctx) throws IOException
 	{
 		mTileAtlas = loadAtlas(rctx, "tile_atlas", false);
-		Log.v(TAG, "Creating simple regions");
 		for (int c = Cell.BLANK; c <= Cell.CHROME15; ++c)
 		{
 			int n = c - Cell.OFFSET;
 			if (c < Cell.EXPLO00)
-			{
 				mTileRegions[n] = createTileRegion(n);
-			}
 			else if (c == Cell.EXPLO00)
-			{
-				Log.v(TAG, "Copying region " + (Cell.BLANK - Cell.OFFSET) +
-						" for EXPLO00");
 				mTileRegions[n] = mTileRegions[Cell.BLANK - Cell.OFFSET];
-				Log.v(TAG, "Creating post-EXPLO00 regions");
-			}
 			else
-			{
 				mTileRegions[n] = createTileRegion(n - 1);
-			}
 		}
-		Log.v(TAG, "Creating bombz1 fused regions");
 		createFusedRegions(Cell.BOMB1);
-		Log.v(TAG, "Creating bombz2 fused regions");
 		createFusedRegions(Cell.BOMB2);
 		mTileBatcher = rctx.createTileBatcher(K.N_COLUMNS, K.N_ROWS,
 				K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
@@ -177,9 +165,6 @@ public class BombzTextures {
 				++c)
 		{
 			int n = c - Cell.OFFSET;
-			Log.v(TAG, "Fused " + n + " copied from " +
-					(((((c - start) & 4) == 0) ?
-							Cell.BLANK : bomb1or2) - Cell.OFFSET));
 			mTileRegions[n] =
 					mTileRegions[((((c - start) & 4) == 0) ?
 							Cell.BLANK : bomb1or2) - Cell.OFFSET];
@@ -190,7 +175,6 @@ public class BombzTextures {
 	{
 		int x = (n % K.TILE_ATLAS_COLUMNS) * mSrcTileSize;
 		int y = (n / K.TILE_ATLAS_COLUMNS) * mSrcTileSize;
-		Log.v(TAG, "Creating tile region " + n + " (" + x + "," + y + ")");
 		return mTileAtlas.createRegion(x, y, mSrcTileSize, mSrcTileSize);
 	}
 	

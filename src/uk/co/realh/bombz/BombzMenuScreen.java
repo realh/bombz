@@ -70,7 +70,7 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	
 	private void setupTileBatcher()
 	{
-		int n = 0;
+		//int n = 0;
 		for (int y = 0; y < K.N_ROWS; ++y) {
 			for (int x = 0; x < K.N_COLUMNS; ++x) {
 				int c;
@@ -96,10 +96,12 @@ public abstract class BombzMenuScreen extends BombzScreen {
 				{
 					c = Cell.CHROME00 + 3;
 				}
+				/**
 				else if (n < Cell.N_CELLS)
 				{
 					c = Cell.BLANK + (n++);
 				}
+				*/
 				else
 				{
 					c = Cell.BLANK;
