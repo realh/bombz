@@ -37,6 +37,7 @@
 package uk.co.realh.hgame.android;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -72,9 +73,12 @@ public class AndroidFont implements Font {
 	@Override
 	public Image render(String text, int shadow_offset) {
 		Rect bounds = new Rect();
+		mPaint.getTextBounds(text, 0, text.length(), bounds);
 		Bitmap.Config config = Bitmap.Config.ARGB_8888;
 		Bitmap bmp = Bitmap.createBitmap(bounds.width(), bounds.height(),
 				config);
+		Canvas canvas = new Canvas(bmp);
+		canvas.drawText(text, 0, 0, mPaint);
 		Image img = new AndroidImage(bmp);
 		if (shadow_offset != 0)
 		{
