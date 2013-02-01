@@ -108,13 +108,13 @@ public class Gles1TileBatcher implements TileBatcher {
 			float x1 = x0 + (float) tile_w;
 			float y1 = 0f;
 			mVertBuffer.put(x0);
-			mVertBuffer.put(y1);
+			mVertBuffer.put(y0);
 			mVertBuffer.put(x0);
-			mVertBuffer.put(y0);
-			mVertBuffer.put(x1);
 			mVertBuffer.put(y1);
 			mVertBuffer.put(x1);
 			mVertBuffer.put(y0);
+			mVertBuffer.put(x1);
+			mVertBuffer.put(y1);
 		}
 		mVertBuffer.flip();
 		
