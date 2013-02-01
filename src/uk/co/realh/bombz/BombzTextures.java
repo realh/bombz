@@ -63,6 +63,7 @@ public class BombzTextures {
 	TileBatcher mTileBatcher;
 	private Sys mSys;
 	int mSrcTileSize;		// Source size
+	int mViewportWidth, mViewportHeight;
 	
 	// Used to work out how well a source tile size matches screen size.
 	// The higher the better the match.
@@ -84,7 +85,8 @@ public class BombzTextures {
 	void calculateTileSize(RenderContext rctx, int screen_w, int screen_h)
 			throws IOException
 	{
-		screen_h -= screen_h % (K.N_ROWS * K.DELTA_PIX);
+		mViewportHeight = screen_h - (screen_h % (K.N_ROWS * K.DELTA_PIX));
+		mViewportWidth = (mViewportHeight * 4) / 3;
 		int best_size = 0;
 		int best_goodness = NO_MATCH;
 		for (String s: mSys.listFolder("pngs"))
@@ -92,13 +94,13 @@ public class BombzTextures {
 			int size = Integer.parseInt(s);
 			int total = size * K.N_ROWS;
 			int goodness;
-			if (total == screen_h)
+			if (total == mViewportHeight)
 			{
 				goodness = EXACT;
 			}
 			else
 			{
-				double ratio = (double) screen_h / (double) total;
+				double ratio = (double) mViewportHeight / (double) total;
 				if (ratio == (double) ((int) ratio) ||
 						(1.0 / ratio) == (double) ((int) (1.0 / ratio)))
 				{

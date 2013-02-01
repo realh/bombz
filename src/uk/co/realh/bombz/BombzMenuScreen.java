@@ -116,9 +116,9 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	
 	protected void setupViewport(RenderContext rctx, int w, int h)
 	{
-		int batch_w = K.N_COLUMNS * mMgr.mTextures.mSrcTileSize;
-		int batch_h = K.N_ROWS * mMgr.mTextures.mSrcTileSize;
-		rctx.setViewport((w - batch_w) / 2, 0, batch_w, batch_h);
+		int vpw = mMgr.mTextures.mViewportWidth;
+		int vph = mMgr.mTextures.mViewportHeight;
+		rctx.setViewport((w - vpw) / 2, (h - vph) / 2, vpw, vph);
 		rctx.set2DFrustum(0, K.N_COLUMNS * K.FRUSTUM_TILE_SIZE,
 				K.N_ROWS * K.FRUSTUM_TILE_SIZE, 0);
 	}
