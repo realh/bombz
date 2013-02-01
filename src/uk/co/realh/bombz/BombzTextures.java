@@ -241,7 +241,7 @@ public class BombzTextures {
 		mLogoAtlas = loadAtlas(rctx, "title_logo", true);
 		mLogoSprite = rctx.createSprite(mLogoAtlas.createRegion(
 				0, 0, 16 * mSrcTileSize, 4 * mSrcTileSize),
-				2 * K.FRUSTUM_TILE_SIZE, 2 * K.FRUSTUM_TILE_SIZE,
+				2 * K.FRUSTUM_TILE_SIZE, (K.FRUSTUM_TILE_SIZE * 3) / 2,
 				16 * K.FRUSTUM_TILE_SIZE, 4 * K.FRUSTUM_TILE_SIZE);
 	}
 	
