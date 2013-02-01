@@ -119,7 +119,8 @@ public class BombzTextures {
 			}
 		}
 		mSrcTileSize = best_size;
-		Log.d(TAG, "Using source tile size " + mSrcTileSize);
+		Log.d(TAG, "Using source tile size " + mSrcTileSize +
+				", viewport " + mViewportWidth + "x" + mViewportHeight);
 		rctx.setNativeSize(best_goodness == EXACT);
 	}
 	
