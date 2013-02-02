@@ -57,7 +57,7 @@ public class Event {
 	
 	/**
 	 * Generates an integer from a 4-character string. As long as the strings
-	 * are ASCII and unique the codes will be qunique.
+	 * are ASCII and unique the codes will be unique.
 	 * 
 	 * @param s		4 character string
 	 * @return		Integer code for the string

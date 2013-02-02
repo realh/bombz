@@ -134,4 +134,11 @@ public abstract class Sprite {
     	return mH;
     }
     
+    public final int getX() {
+    	return mX;
+    }
+    
+    public final int getY() {
+    	return mY;
+    }
 }
