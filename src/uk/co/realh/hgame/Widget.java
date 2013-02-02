@@ -47,19 +47,15 @@ public abstract class Widget implements TapEventHandler {
 	private TapEventHandler mHandler;
 	private Sprite mSprite;
 	private int mX0, mY0, mX1, mY1;
+	private final int mRefX, mRefY, mXAlign, mYAlign;
 	
 	/**
-	 * These fields are used for positioning by WidgetGroup
-	 */
-	public final int mRefX, mRefY, mXAlign, mYAlign;
-	
-	/**
-	 * Params are used by WidgetGroup as reference for dynamic positioning.
+	 * Params are used for dynamic positioning.
 	 * 
-	 * @param x
-	 * @param y
-	 * @param xalign
-	 * @param yalign
+	 * @param x			Position in frustum
+	 * @param y			Position in frustum
+	 * @param xalign	<0 = left, 0 = centre, >0 = right
+	 * @param yalign	<0 = top, 0 = centre, >0 = bottom
 	 */
 	public Widget(int x, int y, int xalign, int yalign)
 	{
@@ -98,23 +94,37 @@ public abstract class Widget implements TapEventHandler {
 	}
 
 	/**
-	 * Sprite has to be replaced whenever render context changes. Its size,
-	 * together with other arguments, determine sensitive area.
-	 * 
-	 * @param sprite
+	 * @param rctx
+	 * @param region
+	 * @param w			Width of sprite in frustum coords
+	 * @param h			Height of sprite in frustum coords
 	 * @param scale_x	Physical screen width / frustum width
 	 * @param scale_y	Physical screen height / frustum height
-	 * @param x			Viewport left offset from physical screen
-	 * @param y			Viewport top offset from physical screen
+	 * @param vx		Viewport left offset from physical screen
+	 * @param vy		Viewport top offset from physical screen
 	 */
-	public void setSprite(Sprite sprite, float scale_x, float scale_y,
-			int x, int y)
+	public void setupPosition(RenderContext rctx, TextureRegion region,
+			int w, int h, float scale_x, float scale_y, int vx, int vy)
 	{
-		mSprite = sprite;
-		setSensitiveArea((int) ((float) sprite.getX() * scale_x) + x,
-				(int) ((float) sprite.getY() * scale_y) + y,
-				(int) ((float) sprite.getWidth() * scale_x),
-				(int) ((float) sprite.getHeight() * scale_y));
+		Image img = getImage();
+		int x = mRefX;
+		if (mXAlign == 0)
+			x -= w / 2;
+		else
+		if (mXAlign > 0)
+			x += w;
+		int y = mRefY;
+		if (mYAlign == 0)
+			y -= h / 2;
+		else
+		if (mYAlign > 0)
+			y += h;
+		mSprite = rctx.createSprite(region, x, y, w, h);
+		setSensitiveArea(
+				(int) ((float) x * scale_x) + vx,
+				(int) ((float) y * scale_y) + vy,
+				(int) ((float) w * scale_x),
+				(int) ((float) h * scale_y));
 	}
 
 	/**

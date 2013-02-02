@@ -48,7 +48,12 @@ public class TextWidget extends Widget {
 
 	/**
 	 * @param text
+	 * @param x
+	 * @param y
+	 * @param xalign
+	 * @param yalign
 	 * @param shadow	Shadow offset
+	 * @see Widget#Widget(int, int, int, int)
 	 * @see Font#render(String, int)
 	 */
 	public TextWidget(String text,
@@ -62,8 +67,13 @@ public class TextWidget extends Widget {
 	
 	/**
 	 * @param text
+	 * @param x
+	 * @param y
+	 * @param xalign
+	 * @param yalign
 	 * @param shadow	Shadow offset
 	 * @param handler
+	 * @see Widget#Widget(int, int, int, int)
 	 * @see Font#render(String, int)
 	 */
 	public TextWidget(String text,
