@@ -48,15 +48,34 @@ public abstract class Widget implements TapEventHandler {
 	private Sprite mSprite;
 	private int mX0, mY0, mX1, mY1;
 	
-	public Widget(TapEventHandler handler)
+	/**
+	 * These fields are used for positioning by WidgetGroup
+	 */
+	public final int mRefX, mRefY, mXAlign, mYAlign;
+	
+	/**
+	 * Params are used by WidgetGroup as reference for dynamic positioning.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param xalign
+	 * @param yalign
+	 */
+	public Widget(int x, int y, int xalign, int yalign)
 	{
+		mRefX = x;
+		mRefY = x;
+		mXAlign = xalign;
+		mYAlign = yalign;
+	}
+
+	public Widget(int x, int y, int xalign, int yalign,
+			TapEventHandler handler)
+	{
+		this(x, y, xalign, yalign);
 		mHandler = handler;
 	}
 	
-
-	public Widget() {
-	}
-
 	/**
 	 * Coordinates are in space of physical screen/touchable area.
 	 * 

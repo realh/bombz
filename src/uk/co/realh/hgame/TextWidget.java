@@ -51,9 +51,11 @@ public class TextWidget extends Widget {
 	 * @param shadow	Shadow offset
 	 * @see Font#render(String, int)
 	 */
-	public TextWidget(String text, int shadow)
+	public TextWidget(String text,
+			int x, int y, int xalign, int yalign,
+			int shadow)
 	{
-		super();
+		super(x, y, xalign, yalign);
 		mText = text;
 		mShadow = shadow;
 	}
@@ -64,9 +66,11 @@ public class TextWidget extends Widget {
 	 * @param handler
 	 * @see Font#render(String, int)
 	 */
-	public TextWidget(String text, int shadow, TapEventHandler handler)
+	public TextWidget(String text,
+			int x, int y, int xalign, int yalign,
+			int shadow, TapEventHandler handler)
 	{
-		super(handler);
+		super(x, y, xalign, yalign, handler);
 		mText = text;
 		mShadow = shadow;
 	}
