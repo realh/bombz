@@ -356,7 +356,6 @@ public abstract class RenderContext {
      */
     public abstract void enableBlend(boolean enable);
     
-
     /**
      * Enables/disables 2D textures.
      * 

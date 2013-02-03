@@ -37,11 +37,15 @@
 package uk.co.realh.bombz;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import uk.co.realh.hgame.Event;
-import uk.co.realh.hgame.Log;
+import uk.co.realh.hgame.Font;
 import uk.co.realh.hgame.RenderContext;
-import uk.co.realh.hgame.TextureRegion;
+import uk.co.realh.hgame.TapEventHandler;
+import uk.co.realh.hgame.TextWidget;
+import uk.co.realh.hgame.WidgetGroup;
 
 /**
  * @author Tony Houghton
@@ -49,7 +53,10 @@ import uk.co.realh.hgame.TextureRegion;
  */
 public abstract class BombzMenuScreen extends BombzScreen {
 	
-	private static final String TAG = "MenuScreen";
+	protected static final String TAG = "MenuScreen";
+	protected WidgetGroup mWidgetGroup = new WidgetGroup();
+	protected int mWidgetY = 6 * K.FRUSTUM_TILE_SIZE;
+	protected List<TextWidget> mTextWidgets = new ArrayList<TextWidget>();
 
 	/**
 	 * @param mgr
@@ -57,15 +64,47 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	public BombzMenuScreen(BombzGameManager mgr) {
 		super(mgr);
 	}
+	
+	public void addTextWidget(String text, TapEventHandler handler)
+	{
+		TextWidget w = new TextWidget(text,
+				K.FRUSTUM_TILE_SIZE * K.N_COLUMNS / 2, mWidgetY, 0, -1, 0,
+				handler);
+		mWidgetGroup.addWidget(w);
+		mTextWidgets.add(w);
+		mWidgetY += (K.FRUSTUM_TILE_SIZE * 3) / 2;
+	}
 
 	@Override
 	public void initRendering(RenderContext rctx, int w, int h)
 			throws IOException {
 		super.initRendering(rctx, w, h);
 		mMgr.mTextures.loadTitleLogo(rctx);
+		setupRendering(rctx, w, h);
+		mWidgetGroup.initRendering(rctx, w, h);
+		rctx.requestRender();
+	}
+	
+	private void setupRendering(RenderContext rctx, int w, int h)
+			throws IOException
+	{
 		setupViewport(rctx, w, h);
 		setupTileBatcher();
-		rctx.requestRender();
+		setupWidgets(rctx, w, h);
+	}
+	
+	private void setupWidgets(RenderContext rctx, int w, int h)
+	{
+		Font font = mMgr.mSys.openFont(K.FRUSTUM_TILE_SIZE);
+		font.setColour(K.MENU_TEXT_COLOUR >> 16,
+				(K.MENU_TEXT_COLOUR >> 8) & 0xff,
+				K.MENU_TEXT_COLOUR & 0xff);
+		for (int n = 0; n < mTextWidgets.size(); ++n)
+		{
+			TextWidget tw = mTextWidgets.get(n);
+			tw.setFont(font);
+			tw.setShadowOffset(K.FRUSTUM_TILE_SIZE / 4);
+		}
 	}
 	
 	private void setupTileBatcher()
@@ -116,8 +155,8 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	public void resizeRendering(RenderContext rctx, int w, int h)
 			throws IOException {
 		super.resizeRendering(rctx, w, h);
-		setupViewport(rctx, w, h);
-		setupTileBatcher();
+		setupRendering(rctx, w, h);
+		mWidgetGroup.resizeRendering(rctx, w, h);
 		rctx.requestRender();
 	}
 	
@@ -132,13 +171,15 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	
 	@Override
 	public void render(RenderContext rctx) {
-		Log.d(TAG, "Rendering MenuScreen");
 		rctx.enableBlend(false);
 		rctx.bindTexture(mMgr.mTextures.mTileAtlas);
 		mMgr.mTextures.mTileBatcher.render(rctx);
 		rctx.enableBlend(true);
 		rctx.bindTexture(mMgr.mTextures.mLogoAtlas);
 		mMgr.mTextures.mLogoSprite.render(rctx);
+		rctx.bindTexture(mWidgetGroup.getTextureAtlas());
+		mWidgetGroup.render(rctx);
+		rctx.unbindTexture(mWidgetGroup.getTextureAtlas());
 	}
 	
 	@Override

@@ -99,5 +99,10 @@ public class TextWidget extends Widget {
 	public Image getImage() {
 		return mFont.render(mText, mShadow);
 	}
+	
+	public void setShadowOffset(int shadow)
+	{
+		mShadow = shadow;
+	}
 
 }

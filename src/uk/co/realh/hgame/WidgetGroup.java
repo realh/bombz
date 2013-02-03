@@ -49,6 +49,11 @@ public class WidgetGroup implements Renderer, TapEventHandler {
 	private List<Widget> mWidgets = new ArrayList<Widget>();
 	private AtlasMaker mAtlasMaker;
 	
+	public TextureAtlas getTextureAtlas()
+	{
+		return mAtlasMaker.mAtlas;
+	}
+	
 	public void addWidget(Widget w)
 	{
 		mWidgets.add(w);

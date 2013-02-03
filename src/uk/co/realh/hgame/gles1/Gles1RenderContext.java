@@ -41,7 +41,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.Renderer;
-import uk.co.realh.hgame.SimpleRect;
 import uk.co.realh.hgame.Sprite;
 import uk.co.realh.hgame.TextureAtlas;
 import uk.co.realh.hgame.TextureRegion;
@@ -56,7 +55,6 @@ public abstract class Gles1RenderContext extends RenderContext {
 	public final GL10 mGL;
 	protected int mWidth, mHeight;
 	protected int mBoundTexture;
-	private SimpleRect mViewport, m2DFrustum;
 	
 	/**
 	 * @param gl
@@ -123,7 +121,11 @@ public abstract class Gles1RenderContext extends RenderContext {
 	 */
 	@Override
 	public void bindTexture(TextureAtlas tex) {
-		int id = ((Gles1TextureAtlas) tex).mTextureId;
+		int id;
+		if (null == tex)
+			id = 0;
+		else
+			id = ((Gles1TextureAtlas) tex).mTextureId;
     	if (mBoundTexture != id)
     	{
 			mGL.glBindTexture(GL10.GL_TEXTURE_2D, id);
@@ -147,7 +149,6 @@ public abstract class Gles1RenderContext extends RenderContext {
 	@Override
 	public void setViewport(int x, int y, int w, int h) {
 		mGL.glViewport(x, y, w, h);
-		mViewport = new SimpleRect(x, y, w, h);
 	}
 	
 	/**
@@ -160,24 +161,6 @@ public abstract class Gles1RenderContext extends RenderContext {
 	    mGL.glMatrixMode(GL10.GL_PROJECTION);
 	    mGL.glLoadIdentity();
 	    mGL.glOrthof(l, r, t, b, 1, -1);
-		m2DFrustum = new SimpleRect(l, t, r - l, b - t);
-	}
-	/**
-	 * @see uk.co.realh.hgame.RenderContext#getViewport()
-	 */
-	@Override
-	public SimpleRect getViewport() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see uk.co.realh.hgame.RenderContext#get2DFrustum()
-	 */
-	@Override
-	public SimpleRect get2DFrustum() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/**
