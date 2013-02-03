@@ -98,15 +98,16 @@ public abstract class Widget implements TapEventHandler {
 	 * @param region
 	 * @param w			Width of sprite in frustum coords
 	 * @param h			Height of sprite in frustum coords
-	 * @param scale_x	Physical screen width / frustum width
-	 * @param scale_y	Physical screen height / frustum height
-	 * @param vx		Viewport left offset from physical screen
-	 * @param vy		Viewport top offset from physical screen
 	 */
-	public void setupPosition(RenderContext rctx, TextureRegion region,
-			int w, int h, float scale_x, float scale_y, int vx, int vy)
+	public void initRendering(RenderContext rctx, TextureRegion region,
+			int w, int h)
 	{
-		Image img = getImage();
+		SimpleRect vp = rctx.getViewport();
+		SimpleRect fr = rctx.get2DFrustum();
+		float scale_x = (float) vp.w / (float) fr.w;
+		float scale_y = (float) vp.h / (float) fr.h;
+		int vx = vp.x;
+		int vy = vp.y;
 		int x = mRefX;
 		if (mXAlign == 0)
 			x -= w / 2;

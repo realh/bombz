@@ -34,58 +34,22 @@
  * See the source code for details.
  */
 
-package uk.co.realh.hgame.android;
-
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import uk.co.realh.hgame.Font;
-import uk.co.realh.hgame.Image;
-import uk.co.realh.hgame.ShadowMaker;
+package uk.co.realh.hgame;
 
 /**
  * @author Tony Houghton
  *
  */
-public class AndroidFont implements Font {
+public class SimpleRect {
 	
-	Paint mPaint = new Paint();
+	public final int x, y, w, h;
 
-	/**
-	 * @param size	in pixels
-	 */
-	public AndroidFont(int size) {
-		mPaint.setTypeface(Typeface.DEFAULT_BOLD);
-		mPaint.setTextSize(size);
-	}
-
-	@Override
-	public void setColour(int r, int g, int b) {
-		mPaint.setARGB(255, r, g, b);
-	}
-
-	/**
-	 * @see uk.co.realh.hgame.Font#render(java.lang.String)
-	 */
-	@Override
-	public Image render(String text, int shadow_offset) {
-		Rect bounds = new Rect();
-		mPaint.getTextBounds(text, 0, text.length(), bounds);
-		Bitmap.Config config = Bitmap.Config.ARGB_8888;
-		Bitmap bmp = Bitmap.createBitmap(bounds.width(), bounds.height(),
-				config);
-		Canvas canvas = new Canvas(bmp);
-		canvas.drawText(text, 0, 0, mPaint);
-		Image img = new AndroidImage(bmp);
-		if (shadow_offset != 0)
-		{
-			Image tmp = img;
-			img = ShadowMaker.makeShadow(tmp, shadow_offset);
-			tmp.dispose();
-		}
-		return img;
+	public SimpleRect(int x, int y, int w, int h)
+	{
+		this.x = x;
+		this.y = y;
+		this.w = w;
+		this.h = h;
 	}
 
 }

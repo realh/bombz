@@ -56,7 +56,6 @@ public class Gles1Sprite extends Sprite {
 
 	private FloatBuffer mVertBuffer;
 	private FloatBuffer mTexBuffer;
-	private static float[] smVerts = new float[8];				// Avoid gc
 	
     /**
      * Width and height are in frustum's space.

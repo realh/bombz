@@ -327,6 +327,11 @@ public abstract class RenderContext {
 	 * @param h		Height
 	 */
     public abstract void setViewport(int x, int y, int w, int h);
+    
+    /**
+     * @return	Viewport set by setViewport.
+     */
+    public abstract SimpleRect getViewport();
 
     /**
 	 * Sets frustum for 2D rendering, allowing game to use different
@@ -338,6 +343,11 @@ public abstract class RenderContext {
      * @param t	Top
      */
     public abstract void set2DFrustum(int l, int r, int b, int t);
+    
+    /**
+     * @return	SimpleRect representation of frustum set by set2DFrustum
+     */
+    public abstract SimpleRect get2DFrustum();
 
     /**
      * Enables/disables alpha blending.

@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2013, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -39,37 +39,38 @@ package uk.co.realh.hgame;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Pastes a number of images together to make an atlas.
  * Optimised for "landscape" images.
- * 
+ *
  * The resultant atlas is available as field mAtlas, and each element in
  * mRegions corresponds to the image with the same index in the input.
- * 
+ *
  * @author Tony Houghton
  */
 public class AtlasMaker {
 
 	public final TextureAtlas mAtlas;
-	public final TextureRegion[] mRegions;
-	
+	public final List<TextureRegion> mRegions;
+
 	/**
 	 * @param rctx		Needed to generate atlas
-	 * @param images	Array of images to paste together
+	 * @param images	List of images to paste together
 	 */
-	public AtlasMaker(RenderContext rctx, Image[] images) {
+	public AtlasMaker(RenderContext rctx, List<Image> images) {
 		// First get a list sorted in order of image width. This holds
 		// indexed into original array whose order is preserved.
-		ArrayList<Integer> sorted = new ArrayList<Integer>(images.length);
-		for (int n = 0; n < images.length; ++n)
+		ArrayList<Integer> sorted = new ArrayList<Integer>(images.size());
+		for (int n = 0; n < images.size(); ++n)
 		{
 			sorted.add(n);
 		}
 		Collections.sort(sorted, new Cmp(images));
-		
+
 		// Work out position of each region
-		Rect[] dims = new Rect[images.length];
+		SimpleRect[] dims = new SimpleRect[images.size()];
 		int widest_row = 0;
 		int y = 0;	// Offset from top for next region
 		/* Each row is a pair of widest+narrowest in attempt to
@@ -81,15 +82,15 @@ public class AtlasMaker {
 		while (sorted.size() > 0)
 		{
 			int index = sorted.remove(sorted.size() - 1);
-			int w = images[index].getWidth();
-			int h = images[index].getHeight();
-			dims[index] = new Rect(0, y, w, h);
+			int w = images.get(index).getWidth();
+			int h = images.get(index).getHeight();
+			dims[index] = new SimpleRect(0, y, w, h);
 			if (sorted.size() > 0 && (!first || sorted.size() % 2 == 0))
 			{
 				int index2 = sorted.remove(0);
-				int w2 = images[index2].getWidth();
-				int h2 = images[index2].getHeight();
-				dims[index2] = new Rect(w, y, w2, h2);
+				int w2 = images.get(index2).getWidth();
+				int h2 = images.get(index2).getHeight();
+				dims[index2] = new SimpleRect(w, y, w2, h2);
 				w += w2;
 				if (h2 > h)
 					h = h2;
@@ -99,30 +100,31 @@ public class AtlasMaker {
 			y += h;
 			first = false;
 		}
-		
+
 		// Paste all images together and create atlas
-		Image montage = images[0].createImage(roundPow2(widest_row),
+		Image montage = images.get(0).createImage(roundPow2(widest_row),
 				roundPow2(y));
 		for (int n = 0; n < dims.length; ++n)
 		{
-			montage.blit(images[n], dims[n].x, dims[n].y,
+			montage.blit(images.get(n), dims[n].x, dims[n].y,
 					0, 0, dims[n].w, dims[n].h);
 		}
 		mAtlas = rctx.uploadTexture(montage, true);
 		montage.dispose();
-		
+
 		// Create regions
-		mRegions = new TextureRegion[images.length];
+		mRegions = new ArrayList<TextureRegion>(images.size());
 		for (int n = 0; n < dims.length; ++n)
 		{
-			mRegions[n] = mAtlas.createRegion(dims[n].x, dims[n].y,
-					dims[n].w, dims[n].h);
+			mRegions.set(n,
+					mAtlas.createRegion(dims[n].x, dims[n].y,
+							dims[n].w, dims[n].h));
 		}
 	}
-	
+
 	/**
 	 * Rounds a number to next highest power of 2.
-	 * 
+	 *
 	 * @param a
 	 * @return
 	 */
@@ -133,31 +135,18 @@ public class AtlasMaker {
 	        b <<= 1;
 	    return b;
 	}
-	
-	private static class Rect {
-		// Left, top, width, height
-		public int x, y, w, h;
-		
-		public Rect(int x, int y, int w, int h)
-		{
-			this.x = x;
-			this.y = y;
-			this.w = w;
-			this.h = h;
-		}
-	}
-	
+
 	private static class Cmp implements Comparator<Integer> {
 
-		private final Image[] mImages;
-		
-		public Cmp(Image[] images) {
+		private final List<Image> mImages;
+
+		public Cmp(List<Image> images) {
 			mImages = images;
 		}
 
 		@Override
 		public int compare(Integer arg0, Integer arg1) {
-			return mImages[arg0].getWidth()- mImages[arg1].getWidth();
+			return mImages.get(arg0).getWidth() - mImages.get(arg1).getWidth();
 		}
 	}
 }

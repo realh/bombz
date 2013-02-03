@@ -122,4 +122,5 @@ public class AndroidGles1RenderContext extends Gles1RenderContext {
 		mHeight = h;
 	}
 
+
 }
