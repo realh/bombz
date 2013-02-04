@@ -116,8 +116,7 @@ public class AtlasMaker {
 		mRegions = new ArrayList<TextureRegion>(images.size());
 		for (int n = 0; n < dims.length; ++n)
 		{
-			mRegions.set(n,
-					mAtlas.createRegion(dims[n].x, dims[n].y,
+			mRegions.add(mAtlas.createRegion(dims[n].x, dims[n].y,
 							dims[n].w, dims[n].h));
 		}
 	}

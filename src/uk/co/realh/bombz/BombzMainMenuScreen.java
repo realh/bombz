@@ -36,17 +36,31 @@
 
 package uk.co.realh.bombz;
 
+import uk.co.realh.hgame.Event;
+import uk.co.realh.hgame.Log;
+import uk.co.realh.hgame.TapEventHandler;
+
 /**
  * @author Tony Houghton
  *
  */
 public class BombzMainMenuScreen extends BombzMenuScreen {
 
+	private static final String TAG = "MainMenu";
+	
 	/**
 	 * @param mgr
 	 */
 	public BombzMainMenuScreen(BombzGameManager mgr) {
 		super(mgr);
+		addTextWidget(mMgr.mSys.translate("Play"),
+				new PlayTappedListener());
+		addTextWidget(mMgr.mSys.translate("Choose_Level"),
+				new ChooseLevelTappedListener());
+		addTextWidget(mMgr.mSys.translate("Configure_Controls"),
+				new ConfigureControlsTappedListener());
+		addTextWidget(mMgr.mSys.translate("Other_Settings"),
+				new OtherSettingsTappedListener());
 	}
 
 	/**
@@ -57,4 +71,54 @@ public class BombzMainMenuScreen extends BombzMenuScreen {
 		return "MainMenuScreen";
 	}
 
+	private boolean onPlayTapped(Event e) {
+		Log.d(TAG, "Play tapped");
+		return true;
+	}
+	
+	private class PlayTappedListener implements TapEventHandler {
+		@Override
+		public boolean handleTapEvent(Event e) {
+			return onPlayTapped(e);
+		}
+	}
+	
+	private boolean onChooseLevelTapped(Event e) {
+		Log.d(TAG, "Choose Level tapped");
+		return true;
+	}
+	
+	private class ChooseLevelTappedListener implements TapEventHandler {
+		@Override
+		public boolean handleTapEvent(Event e) {
+			return onChooseLevelTapped(e);
+		}
+	}
+	
+	private boolean onConfigureControlsTapped(Event e) {
+		Log.d(TAG, "Configure Controls tapped");
+		return true;
+	}
+	
+	private class ConfigureControlsTappedListener implements TapEventHandler
+	{
+		@Override
+		public boolean handleTapEvent(Event e) {
+			return onConfigureControlsTapped(e);
+		}
+	}
+	
+	private boolean onOtherSettingsTapped(Event e) {
+		Log.d(TAG, "Other Settings tapped");
+		return true;
+	}
+	
+	private class OtherSettingsTappedListener implements TapEventHandler
+	{
+		@Override
+		public boolean handleTapEvent(Event e) {
+			return onOtherSettingsTapped(e);
+		}
+	}
+	
 }

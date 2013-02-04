@@ -53,7 +53,6 @@ import uk.co.realh.hgame.WidgetGroup;
  */
 public abstract class BombzMenuScreen extends BombzScreen {
 	
-	protected static final String TAG = "MenuScreen";
 	protected WidgetGroup mWidgetGroup = new WidgetGroup();
 	protected int mWidgetY = 6 * K.FRUSTUM_TILE_SIZE;
 	protected List<TextWidget> mTextWidgets = new ArrayList<TextWidget>();

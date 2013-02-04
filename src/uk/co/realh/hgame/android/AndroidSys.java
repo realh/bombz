@@ -96,8 +96,7 @@ public class AndroidSys implements Sys {
 
 	@Override
 	public Font openFont(int px) {
-		// TODO Auto-generated method stub
-		return null;
+		return new AndroidFont(px);
 	}
 
 	@Override

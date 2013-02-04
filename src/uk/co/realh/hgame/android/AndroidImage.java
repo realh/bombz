@@ -97,7 +97,7 @@ public class AndroidImage implements Image {
 		int w = mBitmap.getWidth();
 		int h = mBitmap.getHeight();
 		int[] pix = new int[w * h];
-		mBitmap.getPixels(pix, 0, 0, 0, 0, w, h);
+		mBitmap.getPixels(pix, 0, w, 0, 0, w, h);
 		return pix;
 	}
 
@@ -106,8 +106,9 @@ public class AndroidImage implements Image {
 	 */
 	@Override
 	public void setPixels(int[] pixels) {
-		mBitmap.setPixels(pixels, 0, 0, 0, 0,
-				mBitmap.getWidth(), mBitmap.getHeight());
+		int w = mBitmap.getWidth();
+		mBitmap.setPixels(pixels, 0, w, 0, 0,
+				w, mBitmap.getHeight());
 		
 	}
 	
