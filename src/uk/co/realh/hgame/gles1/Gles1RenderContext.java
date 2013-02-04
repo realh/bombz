@@ -41,6 +41,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.Renderer;
+import uk.co.realh.hgame.SimpleRect;
 import uk.co.realh.hgame.Sprite;
 import uk.co.realh.hgame.TextureAtlas;
 import uk.co.realh.hgame.TextureRegion;
@@ -55,6 +56,8 @@ public abstract class Gles1RenderContext extends RenderContext {
 	public final GL10 mGL;
 	protected int mWidth, mHeight;
 	protected int mBoundTexture;
+	private SimpleRect mViewport = new SimpleRect();
+	private SimpleRect m2DFrustum = new SimpleRect();
 	
 	/**
 	 * @param gl
@@ -149,11 +152,12 @@ public abstract class Gles1RenderContext extends RenderContext {
 	@Override
 	public void setViewport(int x, int y, int w, int h) {
 		mGL.glViewport(x, y, w, h);
+		mViewport.setRect(x, y, w, h);
 	}
 	
 	/**
 	 * @see uk.co.realh.hgame.RenderContext#set2DFrustum(int, int, int, int)
-	 * This flips top and bottom so that origin is at top.
+	 * This flips top and bottom for OpenGL so that origin is at top.
 	 */
 	@Override
     public void set2DFrustum(int l, int r, int b, int t)
@@ -161,6 +165,23 @@ public abstract class Gles1RenderContext extends RenderContext {
 	    mGL.glMatrixMode(GL10.GL_PROJECTION);
 	    mGL.glLoadIdentity();
 	    mGL.glOrthof(l, r, t, b, 1, -1);
+		m2DFrustum.setRect(l, t, r - l, b - t);
+	}
+
+	/**
+	 * @see uk.co.realh.hgame.RenderContext#getViewport()
+	 */
+	@Override
+	public SimpleRect getViewport() {
+		return mViewport;
+	}
+
+	/**
+	 * @see uk.co.realh.hgame.RenderContext#get2DFrustum()
+	 */
+	@Override
+	public SimpleRect get2DFrustum() {
+		return m2DFrustum;
 	}
 
 	/**

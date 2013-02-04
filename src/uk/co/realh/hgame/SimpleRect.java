@@ -42,9 +42,18 @@ package uk.co.realh.hgame;
  */
 public class SimpleRect {
 	
-	public final int x, y, w, h;
+	public int x, y, w, h;
 
+	public SimpleRect()
+	{
+	}
+	
 	public SimpleRect(int x, int y, int w, int h)
+	{
+		setRect(x, y, w, h);
+	}
+	
+	public final void setRect(int x, int y, int w, int h)
 	{
 		this.x = x;
 		this.y = y;
