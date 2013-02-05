@@ -194,6 +194,14 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	
 	@Override
 	public boolean handleEvent(Event ev) {
+		if (Event.TAP == ev.mCode)
+		{
+			for (int n = 0; n < mTextWidgets.size(); ++n)
+			{
+				if (mTextWidgets.get(n).handleTapEvent(ev))
+					return true;
+			}
+		}
 		return false;
 	}
 

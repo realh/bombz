@@ -43,9 +43,13 @@ import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
 
+import uk.co.realh.hgame.Event;
 import uk.co.realh.hgame.GameManager;
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.Sys;
@@ -55,7 +59,8 @@ import uk.co.realh.hgame.gles1.android.AndroidGles1RenderContext;
  * @author Tony Houghton
  *
  */
-public abstract class HGameActivity extends Activity {
+public abstract class HGameActivity extends Activity
+		implements OnTouchListener {
 	
 	protected static final String TAG = "Activity";
 	private GLSurfaceView mGlView;
@@ -101,6 +106,7 @@ public abstract class HGameActivity extends Activity {
 		
 		mGlView = new GLSurfaceView(this);
 		mGlView.setRenderer(new HGameRenderer());
+		mGlView.setOnTouchListener(this);
 		setContentView(mGlView);
 	}
 
@@ -138,6 +144,18 @@ public abstract class HGameActivity extends Activity {
 		} catch (Throwable e) {
 			Log.e(TAG, "Exception in onPause", e);
 		}
+	}
+	
+	@Override
+	public boolean onTouch(View v, MotionEvent e)
+	{
+		if (e.getAction() == MotionEvent.ACTION_DOWN)
+		{
+			Event.pushEvent(Event.newEvent(Event.TAP,
+					(int) e.getX(), (int) e.getY()));
+			return true;
+		}
+		return false;
 	}
 	
 	private class HGameRenderer implements GLSurfaceView.Renderer
