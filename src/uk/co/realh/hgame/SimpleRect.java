@@ -61,4 +61,8 @@ public class SimpleRect {
 		this.h = h;
 	}
 
+	public final String toString()
+	{
+		return String.format("(%d, %d)+(%d x %d)", x, y, w, h);
+	}
 }

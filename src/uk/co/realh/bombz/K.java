@@ -53,5 +53,5 @@ public class K
 	static final int FACING_UP = 2;
 	static final int FACING_DOWN = 3;
 	
-	static final int MENU_TEXT_COLOUR = 0x0000AA;
+	static final int MENU_TEXT_COLOUR = 0x000088;
 }

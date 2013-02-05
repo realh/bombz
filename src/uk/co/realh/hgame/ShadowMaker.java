@@ -42,9 +42,12 @@ package uk.co.realh.hgame;
  */
 public class ShadowMaker {
 	
-	public static final float OPACITY = 0.6f;
+	public static final float OPACITY = 0.25f;
 	
 	private static final int FACTOR = (int) (OPACITY * ((float) (1 << 24)));
+
+	@SuppressWarnings("unused")
+	private static final String TAG = "Shadow";
 
 	public static Image makeShadow(Image src, int offset)
 	{
@@ -58,12 +61,12 @@ public class ShadowMaker {
 		}
 		grey.setPixels(pix);
 		Image shadow = grey.blur();
-		grey.dispose();
 		int shad_w = shadow.getWidth();
 		int shad_h = shadow.getHeight();
 		Image montage = src.createImage(shad_w + offset, shad_h + offset);
 		montage.blit(shadow, offset, offset, 0, 0, shad_w, shad_h);
 		montage.blit(src, 0, 0, 0, 0, src_w, src_h);
+		grey.dispose();
 		shadow.dispose();
 		return montage;
 	}

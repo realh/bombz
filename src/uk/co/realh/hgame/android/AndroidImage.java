@@ -125,17 +125,18 @@ public class AndroidImage implements Image {
 		canv.drawBitmap(((AndroidImage) src).mBitmap, src_r, dst_r, null);
 	}
 
-	private static final float BLUR_SCALE_FACTOR = 0.05f;
-
 	/**
 	 * @see uk.co.realh.hgame.Image#blur()
 	 */
 	@Override
 	public Image blur() {
-		return new AndroidImage(Bitmap.createScaledBitmap(mBitmap,
-				(int) ((float) mBitmap.getWidth() * BLUR_SCALE_FACTOR),
-				(int) ((float) mBitmap.getHeight() * BLUR_SCALE_FACTOR),
-				true));
+		int w = mBitmap.getWidth();
+		int h = mBitmap.getHeight();
+		Bitmap smaller = Bitmap.createScaledBitmap(mBitmap, w / 2, h / 2, true);
+		AndroidImage result = new AndroidImage(
+				Bitmap.createScaledBitmap(smaller, w, h, true));
+		smaller.recycle();
+		return result;
 	}
 	/**
 	 * @see uk.co.realh.hgame.Image#dispose()

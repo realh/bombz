@@ -270,6 +270,7 @@ public abstract class RenderContext {
 	
 	/**
 	 * Create a sprite for easy rendering of a TextureRegion.
+     * Size is in frustum's space.
 	 * 
 	 * @param texture
 	 * @param w		Width
@@ -280,6 +281,7 @@ public abstract class RenderContext {
 
 	/**
 	 * Create a sprite for easy rendering of a TextureRegion.
+     * Size and position are in frustum's space.
 	 * 
 	 * @param texture
 	 * @param x		Initial position
@@ -367,4 +369,20 @@ public abstract class RenderContext {
      * Clears the screen to black.
      */
     public abstract void cls();
+    
+    /**
+     * @return	Ratio of viewport / frustum width
+     */
+    public float getScaleFactorX()
+    {
+    	return (float) getViewport().w / (float) get2DFrustum().w;
+    }
+    
+    /**
+     * @return	Ratio of viewport / frustum height
+     */
+    public float getScaleFactorY()
+    {
+    	return (float) getViewport().h / (float) get2DFrustum().h;
+    }
 }

@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2013, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,20 +38,23 @@ package uk.co.realh.hgame;
 
 /**
  * An on-screen object which responds to tap events.
- * 
+ *
  * @author Tony Houghton
  *
  */
 public abstract class Widget implements TapEventHandler {
+
+	@SuppressWarnings("unused")
+	private static final String TAG = "Widget";
 	
 	private TapEventHandler mHandler;
 	private Sprite mSprite;
 	private int mX0, mY0, mX1, mY1;
 	private final int mRefX, mRefY, mXAlign, mYAlign;
-	
+
 	/**
 	 * Params are used for dynamic positioning.
-	 * 
+	 *
 	 * @param x			Position in frustum
 	 * @param y			Position in frustum
 	 * @param xalign	<0 = left, 0 = centre, >0 = right
@@ -60,7 +63,7 @@ public abstract class Widget implements TapEventHandler {
 	public Widget(int x, int y, int xalign, int yalign)
 	{
 		mRefX = x;
-		mRefY = x;
+		mRefY = y;
 		mXAlign = xalign;
 		mYAlign = yalign;
 	}
@@ -71,10 +74,10 @@ public abstract class Widget implements TapEventHandler {
 		this(x, y, xalign, yalign);
 		mHandler = handler;
 	}
-	
+
 	/**
 	 * Coordinates are in space of physical screen/touchable area.
-	 * 
+	 *
 	 * @param x
 	 * @param y
 	 * @param w
@@ -87,7 +90,7 @@ public abstract class Widget implements TapEventHandler {
 		mX1 = x + w;
 		mY1 = y + h;
 	}
-	
+
 	public void setHandler(TapEventHandler handler)
 	{
 		mHandler = handler;
@@ -102,10 +105,9 @@ public abstract class Widget implements TapEventHandler {
 	public void initRendering(RenderContext rctx, TextureRegion region,
 			int w, int h)
 	{
+		float scale_x = rctx.getScaleFactorX();
+		float scale_y = rctx.getScaleFactorY();
 		SimpleRect vp = rctx.getViewport();
-		SimpleRect fr = rctx.get2DFrustum();
-		float scale_x = (float) vp.w / (float) fr.w;
-		float scale_y = (float) vp.h / (float) fr.h;
 		int vx = vp.x;
 		int vy = vp.y;
 		int x = mRefX;
@@ -141,7 +143,7 @@ public abstract class Widget implements TapEventHandler {
 		}
 		return mHandler.handleTapEvent(e);
 	}
-	
+
 	public void render(RenderContext rctx)
 	{
 		mSprite.render(rctx);

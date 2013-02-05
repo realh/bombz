@@ -164,7 +164,7 @@ public abstract class Gles1RenderContext extends RenderContext {
 	{
 	    mGL.glMatrixMode(GL10.GL_PROJECTION);
 	    mGL.glLoadIdentity();
-	    mGL.glOrthof(l, r, t, b, 1, -1);
+	    mGL.glOrthof(l, r, b, t, 1, -1);
 		m2DFrustum.setRect(l, t, r - l, b - t);
 	}
 

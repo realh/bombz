@@ -42,7 +42,9 @@ import java.util.List;
 
 import uk.co.realh.hgame.Event;
 import uk.co.realh.hgame.Font;
+import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
+import uk.co.realh.hgame.SimpleRect;
 import uk.co.realh.hgame.TapEventHandler;
 import uk.co.realh.hgame.TextWidget;
 import uk.co.realh.hgame.WidgetGroup;
@@ -52,6 +54,8 @@ import uk.co.realh.hgame.WidgetGroup;
  *
  */
 public abstract class BombzMenuScreen extends BombzScreen {
+	
+	private static final String TAG = "MenuScreen";
 	
 	protected WidgetGroup mWidgetGroup = new WidgetGroup();
 	protected int mWidgetY = 6 * K.FRUSTUM_TILE_SIZE;
@@ -94,7 +98,12 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	
 	private void setupWidgets(RenderContext rctx, int w, int h)
 	{
-		Font font = mMgr.mSys.openFont(K.FRUSTUM_TILE_SIZE);
+		SimpleRect vp = rctx.getViewport();
+		SimpleRect fr = rctx.get2DFrustum();
+		int view_ts = (int) ((float) K.FRUSTUM_TILE_SIZE *
+				(float) vp.h / (float) fr.h);
+		Log.d(TAG, "View tile size " + view_ts);
+		Font font = mMgr.mSys.openFont(view_ts);
 		font.setColour(K.MENU_TEXT_COLOUR >> 16,
 				(K.MENU_TEXT_COLOUR >> 8) & 0xff,
 				K.MENU_TEXT_COLOUR & 0xff);
@@ -102,7 +111,7 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		{
 			TextWidget tw = mTextWidgets.get(n);
 			tw.setFont(font);
-			tw.setShadowOffset(K.FRUSTUM_TILE_SIZE / 4);
+			tw.setShadowOffset(view_ts / 10);
 		}
 	}
 	
@@ -165,7 +174,9 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		int vph = mMgr.mTextures.mViewportHeight;
 		rctx.setViewport((w - vpw) / 2, (h - vph) / 2, vpw, vph);
 		rctx.set2DFrustum(0, K.N_COLUMNS * K.FRUSTUM_TILE_SIZE,
-				0, K.N_ROWS * K.FRUSTUM_TILE_SIZE);
+				K.N_ROWS * K.FRUSTUM_TILE_SIZE, 0);
+		Log.d(TAG, "Setting viewport " + rctx.getViewport().toString() +
+				", frustum " + rctx.get2DFrustum().toString());
 	}
 	
 	@Override
