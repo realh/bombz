@@ -34,12 +34,55 @@
  * See the source code for details.
  */
 
-package uk.co.realh.hgame;
+package uk.co.realh.hgame.android;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import uk.co.realh.hgame.Log;
+import uk.co.realh.hgame.SavedSettings;
 
 /**
  * @author Tony Houghton
  *
  */
-public interface Settings {
+public class AndroidSavedSettings extends SavedSettings {
+	
+	private static final String TAG = "Settings";
+	
+	private String mFilename;
+
+	/**
+	 * @param filename	Filename for loading and saving
+	 * @throws IOException
+	 */
+	public AndroidSavedSettings(String filename) throws IOException {
+		mFilename = filename;
+		try {
+			BufferedReader reader = new BufferedReader(
+					new FileReader(filename));
+			load(reader);
+			reader.close();
+		} catch (FileNotFoundException e) {
+			Log.d(TAG, "Settings file '" + filename +
+					"' not available for reading");
+		}
+	}
+
+	/**
+	 * @throws IOException 
+	 * @see uk.co.realh.hgame.SavedSettings#save()
+	 */
+	@Override
+	public void save() throws IOException {
+		BufferedWriter writer = new BufferedWriter(
+				new FileWriter(mFilename));
+		save(writer);
+		writer.close();
+	}
 
 }

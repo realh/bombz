@@ -56,6 +56,15 @@ public interface Sys {
 	public String getProfileFilename(String leafname);
 	
 	/**
+	 * Builds an absolute pathname for storing settings etc.
+	 * 
+	 * @param leafname	File's leafname
+	 * @param ensure	Create target's parent directory if it doesn't exist
+	 * @return			File's pathname
+	 */
+	public String getProfileFilename(String leafname, boolean ensure);
+	
+	/**
 	 * Opens a file in app's assets.
 	 * 
 	 * @param leafname
@@ -100,8 +109,10 @@ public interface Sys {
 	/**
 	 * Create a settings object.
 	 * 
+	 * @param leafname	Leafname for loading/saving settings
 	 * @return
+	 * @throws IOException 
 	 */
-	public Settings createSettings();
+	public SavedSettings getSavedSettings(String leafname) throws IOException;
 
 }

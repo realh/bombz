@@ -16,8 +16,8 @@ import android.util.Log;
 
 import uk.co.realh.hgame.Font;
 import uk.co.realh.hgame.Image;
+import uk.co.realh.hgame.SavedSettings;
 import uk.co.realh.hgame.Sys;
-import uk.co.realh.hgame.Settings;
 
 /**
  * @author Tony Houghton
@@ -59,16 +59,23 @@ public class AndroidSys implements Sys {
 	 * @param leafname
 	 * @return
 	 */
-	private String getSDCardFilename(String leafname)
+	private String getSDCardFilename(String leafname, boolean ensure)
 	{
 		File f = mContext.getExternalFilesDir(null);
+		if (!f.isDirectory())
+			f.mkdirs();
 		Log.d(TAG, "sdcard path: " + f.getPath());
 		return f.getPath() + "/" + leafname;
 	}
 
 	@Override
 	public String getProfileFilename(String leafname) {
-		return getSDCardFilename(leafname);
+		return getSDCardFilename(leafname, false);
+	}
+
+	@Override
+	public String getProfileFilename(String leafname, boolean ensure) {
+		return getSDCardFilename(leafname, ensure);
 	}
 
 	@Override
@@ -76,7 +83,7 @@ public class AndroidSys implements Sys {
 		try {
 			return mAssets.open(leafname);
 		} catch (FileNotFoundException e) {
-			return new FileInputStream(getSDCardFilename(leafname));
+			return new FileInputStream(getSDCardFilename(leafname, false));
 		}
 	}
 
@@ -115,7 +122,7 @@ public class AndroidSys implements Sys {
 				set.add(item);
 			}
 		}
-		File f = new File(getSDCardFilename(folder));
+		File f = new File(getSDCardFilename(folder, false));
 		if (f.isDirectory())
 		{
 			files = f.list();
@@ -147,9 +154,8 @@ public class AndroidSys implements Sys {
 	}
 
 	@Override
-	public Settings createSettings() {
-		// TODO Auto-generated method stub
-		return null;
+	public SavedSettings getSavedSettings(String leafname) throws IOException {
+		return new AndroidSavedSettings(getProfileFilename(leafname, true));
 	}
 
 }
