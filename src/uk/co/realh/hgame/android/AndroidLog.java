@@ -88,22 +88,22 @@ public class AndroidLog implements uk.co.realh.hgame.Log.LogImplementation {
 	
 	public void d(String tag, String message)
 	{
-		Log.i(tag, message);
+		Log.d(tag, message);
 	}
 	
 	public void d(String tag, String message, Throwable ex)
 	{
-		Log.i(tag, message, ex);
+		Log.d(tag, message, ex);
 	}
 	
 	public void v(String tag, String message)
 	{
-		Log.i(tag, message);
+		Log.v(tag, message);
 	}
 	
 	public void v(String tag, String message, Throwable ex)
 	{
-		Log.i(tag, message, ex);
+		Log.v(tag, message, ex);
 	}
 	
 }
