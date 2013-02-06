@@ -111,7 +111,7 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		{
 			TextWidget tw = mTextWidgets.get(n);
 			tw.setFont(font);
-			tw.setShadowOffset(view_ts / 10);
+			tw.setShadowOffset(view_ts / 12);
 		}
 	}
 	

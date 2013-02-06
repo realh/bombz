@@ -42,12 +42,12 @@ package uk.co.realh.hgame;
  */
 public class ShadowMaker {
 	
-	public static final float OPACITY = 0.25f;
-	
-	private static final int FACTOR = (int) (OPACITY * ((float) (1 << 24)));
-
 	@SuppressWarnings("unused")
 	private static final String TAG = "Shadow";
+
+	public static final double OPACITY = 0.4;
+	
+	private static final int FACTOR = (int) (OPACITY * ((float) (1 << 24)));
 
 	public static Image makeShadow(Image src, int offset)
 	{
@@ -57,7 +57,7 @@ public class ShadowMaker {
 		int[] pix = src.getPixels();
 		for (int n = 0; n < pix.length; ++n)
 		{
-			pix[n] = (pix[n] >>> 24) * FACTOR;
+			pix[n] = ((pix[n] >>> 24) * FACTOR) & 0xff000000;
 		}
 		grey.setPixels(pix);
 		Image shadow = grey.blur();
@@ -70,4 +70,34 @@ public class ShadowMaker {
 		shadow.dispose();
 		return montage;
 	}
+	
+	/*
+	private static GaussianBlur smBlurrer = null;
+	
+	public static Image makeShadow(Image src, int offset)
+	{
+		int src_w = src.getWidth();
+		int src_h = src.getHeight();
+		if (null == smBlurrer)
+			smBlurrer = new GaussianBlur(OPACITY);
+		Image shadow = smBlurrer.blurAlpha(src); 
+		int shad_w = shadow.getWidth();
+		int shad_h = shadow.getHeight();
+		int padding = offset - GaussianBlur.SUBSPAN;
+		if (padding < 0)
+		{
+			offset = -padding;
+			padding = 0;
+		}
+		else
+		{
+			offset = 0;
+		}
+		Image montage = src.createImage(shad_w + padding, shad_h + padding);
+		montage.blit(shadow, padding, padding, 0, 0, shad_w, shad_h);
+		montage.blit(src, offset, offset, 0, 0, src_w, src_h);
+		shadow.dispose();
+		return montage;
+	}
+	*/
 }

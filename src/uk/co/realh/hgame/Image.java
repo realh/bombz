@@ -94,7 +94,9 @@ public interface Image {
             int src_x, int src_y, int w, int h);
     
     /**
-     * @return	A blurred version of this image. Might be bigger.
+     * This is used for shadows so only needs to blur the alpha channel.
+     * 
+     * @return	A blurred version of this image. Might be bigger than original
      */
     public Image blur();
     
