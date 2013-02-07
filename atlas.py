@@ -1,4 +1,5 @@
-#import math
+#!/usr/bin/env python
+
 import os
 import sys
 
@@ -360,6 +361,10 @@ def get_best_packing(size, ntiles, limit = 2048):
     return best_cols
 
 
+def omd(d):
+    if not os.path.isdir(d):
+        os.makedirs(d)
+
 def builder(m, dest, size):
     if m == 'tiles':
         make_game_tile_atlas(dest,
@@ -370,24 +375,24 @@ def builder(m, dest, size):
                         ["chrome_%s" % c \
                             for c in "tl tr bl br horiz vert".split()]],
                 size)
-    else if m == 'alpha':
+    elif m == 'alpha':
         make_game_alpha_atlas(dest,
                 ["svgs/%s.svg" % s for s in ["explo00"] + \
                     ["droid%s" % d for d in "left right up down".split()] \
                             + ["bomb1", "bomb2"]],
                 size)
-    else if m == 'logo':
+    elif m == 'logo':
         make_title_logo(dest, "svgs/title_logo.svg", size * 16, size * 4)
-    else if m == 'assets':
-        os.makedirs(dest)
+    elif m == 'assets':
+        omd(dest)
         builder('tiles', dest + "/tile_atlas.png", size)
         builder('alpha', dest + "/alpha_atlas.png", size)
         builder('logo', dest + "/title_logo.png", size)
 
 
 if __name__ == "__main__":
-    m = sys.argv[0]
-    dest = sys.argv[1]
-    size = int(sys.argv[2])
-    os.makedirs(os.path.dirname(dest))
+    m = sys.argv[1]
+    dest = sys.argv[2]
+    size = int(sys.argv[3])
+    omd(os.path.dirname(dest))
     builder(m, dest, size)
