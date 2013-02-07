@@ -365,8 +365,14 @@ def omd(d):
     if not os.path.isdir(d):
         os.makedirs(d)
 
+
+def omdp(d):
+    omd(os.path.dirname(d))
+
+
 def builder(m, dest, size):
     if m == 'tiles':
+        omdp(dest)
         make_game_tile_atlas(dest,
                 ["svgs/floor.svg", "texture/dirt.png"] + \
                 ["svgs/%s.svg" % s \
@@ -376,23 +382,32 @@ def builder(m, dest, size):
                             for c in "tl tr bl br horiz vert".split()]],
                 size)
     elif m == 'alpha':
+        omdp(dest)
         make_game_alpha_atlas(dest,
                 ["svgs/%s.svg" % s for s in ["explo00"] + \
                     ["droid%s" % d for d in "left right up down".split()] \
                             + ["bomb1", "bomb2"]],
                 size)
     elif m == 'logo':
+        omdp(dest)
         make_title_logo(dest, "svgs/title_logo.svg", size * 16, size * 4)
     elif m == 'assets':
-        omd(dest)
         builder('tiles', dest + "/tile_atlas.png", size)
         builder('alpha', dest + "/alpha_atlas.png", size)
         builder('logo', dest + "/title_logo.png", size)
+    elif m == 'vpad':
+        omdp(dest)
+        svg_to_cairo("svgs/vpad.svg", size, size).write_to_png(dest)
+    elif m == 'vpads':
+        for ds in (('ldpi', 96), ('mdpi', 128), ('hdpi', 192), ('xhdpi', 256)):
+            builder('vpad', dest + "/drawable-" + ds[0] + "/vpad.png", ds[1])
+    elif m == 'all':
+        builder('assets', dest + "/assets/pngs/%d" % size, size)
+        builder('vpads', dest + "/res", size)
 
 
 if __name__ == "__main__":
     m = sys.argv[1]
     dest = sys.argv[2]
     size = int(sys.argv[3])
-    omd(os.path.dirname(dest))
     builder(m, dest, size)
