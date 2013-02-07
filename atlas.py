@@ -1,4 +1,6 @@
 #import math
+import os
+import sys
 
 import cairo
 import rsvg
@@ -356,3 +358,36 @@ def get_best_packing(size, ntiles, limit = 2048):
             best_cols = cols
             best_pix = pix
     return best_cols
+
+
+def builder(m, dest, size):
+    if m == 'tiles':
+        make_game_tile_atlas(dest,
+                ["svgs/floor.svg", "texture/dirt.png"] + \
+                ["svgs/%s.svg" % s \
+                    for s in "match picket bomb1 bomb2".split() + \
+                        ["explo%02d" % e for e in range(1, 12)] + \
+                        ["chrome_%s" % c \
+                            for c in "tl tr bl br horiz vert".split()]],
+                size)
+    else if m == 'alpha':
+        make_game_alpha_atlas(dest,
+                ["svgs/%s.svg" % s for s in ["explo00"] + \
+                    ["droid%s" % d for d in "left right up down".split()] \
+                            + ["bomb1", "bomb2"]],
+                size)
+    else if m == 'logo':
+        make_title_logo(dest, "svgs/title_logo.svg", size * 16, size * 4)
+    else if m == 'assets':
+        os.makedirs(dest)
+        builder('tiles', dest + "/tile_atlas.png", size)
+        builder('alpha', dest + "/alpha_atlas.png", size)
+        builder('logo', dest + "/title_logo.png", size)
+
+
+if __name__ == "__main__":
+    m = sys.argv[0]
+    dest = sys.argv[1]
+    size = int(sys.argv[2])
+    os.makedirs(os.path.dirname(dest))
+    builder(m, dest, size)
