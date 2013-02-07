@@ -200,7 +200,7 @@ public abstract class RenderContext {
 				mRenderer.replacingRenderer(this);
 			mRenderer = mNewRenderer;
 			mNewRenderer = null;
-			if (null != mNewRenderer)
+			if (null != mRenderer)
 			{
 				mRenderer.replacedRenderer(this);
 				rendering = mRendering;

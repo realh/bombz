@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.util.Random;
 
 import uk.co.realh.hgame.RenderContext;
-import uk.co.realh.hgame.TileBatcher;
 
 /**
  * @author Tony Houghton
@@ -51,7 +50,6 @@ public class BombzLevel {
 	private byte[] mTiles = new byte[K.N_COLUMNS * K.N_ROWS];
 	private byte[] mTmpTiles = new byte[K.N_COLUMNS * K.N_ROWS];
 	private BombzTextures mTextures;
-	private TileBatcher mBatcher;
 	private Random mRandom = new Random();
 	
 	int mNBombs;
@@ -61,24 +59,29 @@ public class BombzLevel {
 	
 	private boolean mBombActivity;
 	
+	public BombzLevel(BombzTextures textures) {
+		mTextures = textures;
+	}
+	
 	public void render(RenderContext rctx) {
 		int n = 0;
 		for (int y = 0; y < K.N_ROWS; ++y) {
-			for (int x = 0; x < K.N_ROWS; ++x) {
-				mBatcher.setTextureAt(
-						mTextures.mTileRegions[((int) mTiles[n]) + Cell.OFFSET], x, y);
+			for (int x = 0; x < K.N_COLUMNS; ++x) {
+				mTextures.mTileBatcher.setTextureAt(
+						mTextures.mTileRegions[((int) mTiles[n]) - Cell.OFFSET],
+						x, y);
 				++n;
 			}
 			
 		}
-		mBatcher.render(rctx);
+		mTextures.mTileBatcher.render(rctx);
 	}
 
 	public void load(BufferedReader fd) throws IOException {
 	    int n = 0;
 		for (int y = 0; y < K.N_ROWS; ++y) {
 			String s = fd.readLine();
-			for (int x = 0; x < K.N_ROWS; ++x) {
+			for (int x = 0; x < K.N_COLUMNS; ++x) {
 	            switch (s.charAt(x))
 	            {
 	                case ' ':
@@ -114,6 +117,7 @@ public class BombzLevel {
 	                    mTiles[n] = Cell.BLANK;
 	                    break;
 	            }
+	            ++n;
 	        }
 	    }
 	    mTimeLimit = Integer.parseInt(fd.readLine());

@@ -36,6 +36,8 @@
 
 package uk.co.realh.bombz;
 
+import java.io.IOException;
+
 import uk.co.realh.hgame.Event;
 import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.TapEventHandler;
@@ -71,53 +73,42 @@ public class BombzMainMenuScreen extends BombzMenuScreen {
 		return "MainMenuScreen";
 	}
 
-	private boolean onPlayTapped(Event e) {
-		Log.d(TAG, "Play tapped");
-		return true;
-	}
-	
 	private class PlayTappedListener implements TapEventHandler {
 		@Override
 		public boolean handleTapEvent(Event e) {
-			return onPlayTapped(e);
+			Log.d(TAG, "Play tapped");
+			try {
+				mMgr.setScreen(mMgr.getGameScreen());
+			} catch (IOException x) {
+				Log.e(TAG, "Unable to start game", x);
+			}
+			return true;
 		}
 	}
-	
-	private boolean onChooseLevelTapped(Event e) {
-		Log.d(TAG, "Choose Level tapped");
-		return true;
-	}
-	
+
 	private class ChooseLevelTappedListener implements TapEventHandler {
 		@Override
 		public boolean handleTapEvent(Event e) {
-			return onChooseLevelTapped(e);
+			Log.d(TAG, "Choose Level tapped");
+			return true;
 		}
-	}
-	
-	private boolean onConfigureControlsTapped(Event e) {
-		Log.d(TAG, "Configure Controls tapped");
-		return true;
 	}
 	
 	private class ConfigureControlsTappedListener implements TapEventHandler
 	{
 		@Override
 		public boolean handleTapEvent(Event e) {
-			return onConfigureControlsTapped(e);
+			Log.d(TAG, "Configure Controls tapped");
+			return true;
 		}
-	}
-	
-	private boolean onOtherSettingsTapped(Event e) {
-		Log.d(TAG, "Other Settings tapped");
-		return true;
 	}
 	
 	private class OtherSettingsTappedListener implements TapEventHandler
 	{
 		@Override
 		public boolean handleTapEvent(Event e) {
-			return onOtherSettingsTapped(e);
+			Log.d(TAG, "Other Settings tapped");
+			return true;
 		}
 	}
 	

@@ -38,6 +38,7 @@ package uk.co.realh.bombz;
 
 import java.io.IOException;
 
+import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.Screen;
 
@@ -46,6 +47,8 @@ import uk.co.realh.hgame.Screen;
  *
  */
 public abstract class BombzScreen implements Screen {
+	
+	private static final String TAG = "BombzScreen";
 	
 	protected BombzGameManager mMgr;
 
@@ -75,25 +78,17 @@ public abstract class BombzScreen implements Screen {
 	}
 
 	/**
-	 * Superclasses must ensure batcher's textures are all set up before
-	 * calling this, and may do more rendering afterwards. GL state,
-	 * viewport etc must all be set appropriately.
-	 */
-	@Override
-	public void render(RenderContext rctx) {
-		mMgr.mTextures.mTileBatcher.render(rctx);
-	}
-
-	/**
 	 * No-op because we don't know which textures to delete without
 	 * knowing what next Screen will be.
 	 */
 	@Override
 	public void replacingRenderer(RenderContext rctx) {
+		Log.d(TAG, "Replacing renderer " + getDescription());
 	}
 
 	@Override
 	public void replacedRenderer(RenderContext rctx) throws IOException {
+		Log.d(TAG, "New renderer " + getDescription());
 		if (null == mMgr.mTextures.mTileAtlas)
 			mMgr.mTextures.loadTiles(rctx);
 	}

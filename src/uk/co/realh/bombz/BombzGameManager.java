@@ -36,7 +36,10 @@
 
 package uk.co.realh.bombz;
 
+import java.io.IOException;
+
 import uk.co.realh.hgame.GameManager;
+import uk.co.realh.hgame.SavedSettings;
 import uk.co.realh.hgame.Screen;
 import uk.co.realh.hgame.Sys;
 
@@ -47,22 +50,35 @@ import uk.co.realh.hgame.Sys;
 public class BombzGameManager extends GameManager {
 	
 	BombzTextures mTextures;
-	private BombzMainMenuScreen mMainMenuScrn;
+	SavedSettings mSavedGame;
+	SavedSettings mConfiguration;
+	
+	private BombzMainMenuScreen mMainMenuScreen;
+	private BombzGameScreen mGameScreen;
 
 	/**
 	 * @param sys
+	 * @throws IOException 
 	 */
-	public BombzGameManager(Sys sys) {
+	public BombzGameManager(Sys sys) throws IOException {
 		super(sys);
+		mSavedGame = sys.getSavedSettings("saves");
+		mConfiguration = sys.getSavedSettings("config");
 		mTextures = new BombzTextures(sys);
-		mMainMenuScrn = new BombzMainMenuScreen(this);
-		setScreen(mMainMenuScrn);
+		mMainMenuScreen = new BombzMainMenuScreen(this);
+		setScreen(mMainMenuScreen);
 	}
 	
 	public Screen getMainMenuScreen()
 	{
 		// Created in c'tor so always exists
-		return mMainMenuScrn;
+		return mMainMenuScreen;
 	}
-
+	
+	public Screen getGameScreen() throws IOException
+	{
+		if (null == mGameScreen)
+			mGameScreen = new BombzGameScreen(this);
+		return mGameScreen;
+	}
 }

@@ -68,6 +68,22 @@ public class Event {
 				(s.codePointAt(2) << 8) | s.codePointAt(3);
 	}
 	
+	private static int[] mQ = new int[4];	// Avoid GC
+	
+	/**
+	 * Converts a quark code back to a string.
+	 * 
+	 * @param q	Quark code
+	 * @return	String representation of q
+	 */
+	public static String quarkToString(int q) {
+		mQ[0] = (q >>> 24);
+		mQ[1] = ((q >>> 16) & 0xff);
+		mQ[2] = ((q >>> 8) & 0xff);
+		mQ[3] = (q & 0xff);
+		return new String(mQ, 0, 4);
+	}
+	
 	/**
 	 * The quark code for this event. Bad Java but fast.
 	 */
