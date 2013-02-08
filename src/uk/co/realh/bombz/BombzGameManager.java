@@ -39,6 +39,7 @@ package uk.co.realh.bombz;
 import java.io.IOException;
 
 import uk.co.realh.hgame.GameManager;
+import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.SavedSettings;
 import uk.co.realh.hgame.Screen;
 import uk.co.realh.hgame.Sys;
@@ -64,7 +65,8 @@ public class BombzGameManager extends GameManager {
 		super(sys);
 		mSavedGame = sys.getSavedSettings("saves");
 		mConfiguration = sys.getSavedSettings("config");
-		mTextures = new BombzTextures(sys);
+		mTextures = new BombzTextures(sys,
+				mConfiguration.get("touchpad", K.CONTROL_VPAD_LEFT));
 		mMainMenuScreen = new BombzMainMenuScreen(this);
 		setScreen(mMainMenuScreen);
 	}

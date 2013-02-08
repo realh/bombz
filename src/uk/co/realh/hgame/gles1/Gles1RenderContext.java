@@ -151,7 +151,7 @@ public abstract class Gles1RenderContext extends RenderContext {
 	 */
 	@Override
 	public void setViewport(int x, int y, int w, int h) {
-		mGL.glViewport(x, y, w, h);
+		mGL.glViewport(x, mHeight - y - h, w, h);
 		mViewport.setRect(x, y, w, h);
 	}
 	

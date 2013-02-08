@@ -61,6 +61,12 @@ public class BombzTextures {
 	TextureRegion mBomb1Region, mBomb2Region;
 	Sprite mHeroSprite, mBombSprite, mLogoSprite, mExplo00Sprite;
 	TileBatcher mTileBatcher;
+	int mControlsType;
+	TextureAtlas mControlsAtlas;
+	TextureRegion[] mControlsRegions = new TextureRegion[4];
+	Sprite[] mControlsSprites = new Sprite[4];
+	int mVpadWidth, mVpadHeight;
+	
 	private Sys mSys;
 	int mSrcTileSize;		// Source size
 	int mViewportWidth, mViewportHeight;
@@ -75,11 +81,22 @@ public class BombzTextures {
 	 * @param sys
 	 * @param screen_w	Width of screen
 	 * @param screen_h	Height of screen
+	 * @param controlsType	One of controls constants
+	 * @see uk.co.realh.hgame.K
 	 * @throws IOException 
 	 */
-	BombzTextures(Sys sys)
+	BombzTextures(Sys sys, int controlsType)
 	{
 		mSys = sys;
+		setControlsType(controlsType);
+	}
+	
+	final void setControlsType(int c)
+	{
+		if (mSys.usesTouchScreen())
+			mControlsType = c;
+		else
+			mControlsType = 0;
 	}
 	
 	void calculateTileSize(RenderContext rctx, int screen_w, int screen_h)
@@ -127,10 +144,10 @@ public class BombzTextures {
 	private TextureAtlas loadAtlas(RenderContext rctx,
 			String name, boolean alpha) throws IOException
 	{
-		rctx.enableBlend(false);
+		rctx.enableBlend(alpha);
 		InputStream fd = mSys.openAsset(
 				"pngs/" + mSrcTileSize + "/" + name + ".png");
-		Image img = mSys.loadPNG(fd, "name");
+		Image img = mSys.loadPNG(fd, name);
 		fd.close();
 		TextureAtlas atlas = rctx.uploadTexture(img, true);
 		img.dispose();
@@ -253,6 +270,53 @@ public class BombzTextures {
 		mLogoAtlas = null;
 	}
 	
+	void loadControls(RenderContext rctx) {
+		Image img = null;
+		if (0 != mControlsType)
+		{
+			rctx.enableBlend(true);
+			img = mSys.loadResPNG("vpad");
+			mControlsAtlas = rctx.uploadTexture(img, true);
+		}
+		else
+		{
+			Log.d(TAG, "Not loading controls atlas");
+		}
+		switch (mControlsType)
+		{
+		case K.CONTROL_VPAD_LEFT:
+		case K.CONTROL_VPAD_RIGHT:
+			mVpadWidth = img.getWidth();
+			mVpadHeight = img.getHeight();
+			Log.d(TAG, "Loaded controls atlas " +
+					mVpadWidth + " x " + mVpadHeight);
+			mControlsRegions[0] = mControlsAtlas.createRegion(0, 0,
+					img.getWidth(), img.getHeight());
+			mControlsSprites[0] = rctx.createSprite(mControlsRegions[0],
+					0, 0, img.getWidth(), img.getHeight());
+			for (int n = 1; n < 4; ++n)
+			{
+				mControlsSprites[n] = null;
+				mControlsRegions[n] = null;
+			}
+			break;
+		}
+		if (null != img)
+			img.dispose();
+	}
+	
+	void deleteControls(RenderContext rctx) {
+		for (int n = 0; n < 4; ++n)
+		{
+			mControlsSprites[n] = null;
+			mControlsRegions[n] = null;
+		}
+		if (null != mControlsAtlas)
+		{
+			mControlsAtlas.dispose(rctx);
+			mControlsAtlas = null;
+		}
+	}
 	/**
 	 * Call in a deleteRendering handler and at the start of initRendering.
 	 * 
@@ -263,6 +327,7 @@ public class BombzTextures {
 		deleteTiles(rctx);
 		deleteAlphaTextures(rctx);
 		deleteLogoAtlas(rctx);
+		deleteControls(rctx);
 	}
 	
 	/**
@@ -286,6 +351,11 @@ public class BombzTextures {
 		{
 			deleteLogoAtlas(rctx);
 			loadTitleLogo(rctx);
+		}
+		if (null != mControlsAtlas)
+		{
+			deleteControls(rctx);
+			loadControls(rctx);
 		}
 	}
 	

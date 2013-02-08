@@ -54,4 +54,13 @@ public class K
 	static final int FACING_DOWN = 3;
 	
 	static final int MENU_TEXT_COLOUR = 0x000088;
+	
+	static final int CONTROL_NONE = 0;			// No touchscreen controls
+	static final int CONTROL_VPAD_LEFT = 1;
+	static final int CONTROL_VPAD_RIGHT = 2;
+	static final int CONTROL_VBUTTONS_LEFT = 3;
+	static final int CONTROL_VBUTTONS_RIGHT = 4;
+	
+	static final int CONTROL_XPADDING = 96;
+	static final int CONTROL_YPADDING = 16;
 }

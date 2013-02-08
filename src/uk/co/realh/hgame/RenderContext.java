@@ -331,6 +331,15 @@ public abstract class RenderContext {
     public abstract void setViewport(int x, int y, int w, int h);
     
     /**
+	 * Sets the viewport.
+     * 
+     * @param r
+     */
+    public void setViewport(SimpleRect r) {
+    	setViewport(r.x, r.y, r.w, r.h);
+    }
+    
+    /**
      * @return	Viewport set by setViewport.
      */
     public abstract SimpleRect getViewport();
@@ -345,6 +354,16 @@ public abstract class RenderContext {
      * @param t	Top
      */
     public abstract void set2DFrustum(int l, int r, int b, int t);
+    
+    /**
+	 * Sets frustum for 2D rendering, allowing game to use different
+	 * coordinate space from viewport.
+	 * 
+     * @param r
+     */
+    public void set2DFrustum(SimpleRect r) {
+    	set2DFrustum(r.x, r.x + r.w, r.y + r.h, r.y);
+    }
     
     /**
      * @return	SimpleRect representation of frustum set by set2DFrustum

@@ -84,6 +84,14 @@ public interface Sys {
 	public Image loadPNG(InputStream fd, String desc);
 	
 	/**
+	 * This is for loading a PNG via Android's res/drawabale.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Image loadResPNG(String name);
+	
+	/**
 	 * Loads some font appropriate for the game & platform.
 	 * @param px	Font size in pixels
 	 * @return		A Font
@@ -114,5 +122,10 @@ public interface Sys {
 	 * @throws IOException 
 	 */
 	public SavedSettings getSavedSettings(String leafname) throws IOException;
+	
+	/**
+	 * @return	Whether touch screen is main controller
+	 */
+	public boolean usesTouchScreen();
 
 }

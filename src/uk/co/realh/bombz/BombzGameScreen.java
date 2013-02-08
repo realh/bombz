@@ -43,6 +43,7 @@ import java.io.InputStreamReader;
 import uk.co.realh.hgame.Event;
 import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
+import uk.co.realh.hgame.SimpleRect;
 
 /**
  * @author Tony Houghton
@@ -58,6 +59,15 @@ public class BombzGameScreen extends BombzScreen {
 	private int mScreenHeight;
 	
 	private int mCurrentLevel;
+	
+	private SimpleRect mTilesViewport = new SimpleRect();
+	private SimpleRect mControlsViewports[] = {
+			new SimpleRect(), new SimpleRect()
+	};
+	private SimpleRect mTilesFrustum = new SimpleRect();
+	private SimpleRect mControlsFrustums[] = {
+			new SimpleRect(), new SimpleRect()
+	};
 
 	/**
 	 * @param mgr
@@ -76,12 +86,55 @@ public class BombzGameScreen extends BombzScreen {
 		mLevel.load(fd);
 	}
 
+	private void setupViewports(int w, int h) {
+		int vpw = mMgr.mTextures.mViewportWidth;
+		int vph = mMgr.mTextures.mViewportHeight;
+		mTilesFrustum.setRect(0, 0,
+				K.N_COLUMNS * K.FRUSTUM_TILE_SIZE,
+				K.N_ROWS * K.FRUSTUM_TILE_SIZE);
+		switch (mMgr.mTextures.mControlsType) {
+		case K.CONTROL_NONE:
+			mTilesViewport.setRect((w - vpw) / 2, (h - vph) / 2, vpw, vph);
+			break;
+		case K.CONTROL_VPAD_LEFT:
+			mTilesViewport.setRect(w - vpw,
+					0, vpw, vph);
+			mControlsViewports[0].setRect(w / K.CONTROL_XPADDING,
+					h - mMgr.mTextures.mVpadHeight -
+						h / K.CONTROL_YPADDING,
+					mMgr.mTextures.mVpadWidth,
+					mMgr.mTextures.mVpadHeight);
+			mControlsFrustums[0].setRect(0, 0, mMgr.mTextures.mVpadWidth,
+					mMgr.mTextures.mVpadHeight);
+			break;
+		case K.CONTROL_VPAD_RIGHT:
+			mTilesViewport.setRect(0, 0, vpw, vph);
+			mControlsViewports[0].setRect(w - mMgr.mTextures.mVpadWidth -
+						w / K.CONTROL_XPADDING,
+					h - mMgr.mTextures.mVpadHeight -
+					h / K.CONTROL_YPADDING,
+					mMgr.mTextures.mVpadWidth,
+					mMgr.mTextures.mVpadHeight);
+			mControlsFrustums[0].setRect(0, 0, mMgr.mTextures.mVpadWidth,
+					mMgr.mTextures.mVpadHeight);
+			break;
+		case K.CONTROL_VBUTTONS_LEFT:
+			mTilesViewport.setRect((w - vpw) * 2 / 3, 0, vpw, vph);
+			break;
+		case K.CONTROL_VBUTTONS_RIGHT:
+			mTilesViewport.setRect((w - vpw) / 3, 0, vpw, vph);
+			break;
+		}
+	}
+	
 	@Override
 	public void initRendering(RenderContext rctx, int w, int h)
 			throws IOException {
 		super.initRendering(rctx, w, h);
 		mScreenWidth = w;
 		mScreenHeight = h;
+		mMgr.mTextures.loadControls(rctx);
+		setupViewports(w, h);
 	}
 	
 	@Override
@@ -90,19 +143,29 @@ public class BombzGameScreen extends BombzScreen {
 		super.resizeRendering(rctx, w, h);
 		mScreenWidth = w;
 		mScreenHeight = h;
+		setupViewports(w, h);
 	}
 
 	@Override
 	public void render(RenderContext rctx) {
 		Log.d(TAG, "Rendering");
-		int vpw = mMgr.mTextures.mViewportWidth;
-		int vph = mMgr.mTextures.mViewportHeight;
-		rctx.setViewport((mScreenWidth - vpw) / 2,
-				(mScreenHeight - vph) / 2, vpw, vph);
-		rctx.set2DFrustum(0, K.N_COLUMNS * K.FRUSTUM_TILE_SIZE,
-				K.N_ROWS * K.FRUSTUM_TILE_SIZE, 0);
+		rctx.setViewport(mTilesViewport);
+		rctx.set2DFrustum(mTilesFrustum);
+		rctx.enableBlend(false);
 		rctx.bindTexture(mMgr.mTextures.mTileAtlas);
 		mLevel.render(rctx);
+		if (0 != mMgr.mTextures.mControlsType)
+		{
+			Log.d(TAG, "Rendering controls");
+			rctx.enableBlend(true);
+			rctx.bindTexture(mMgr.mTextures.mControlsAtlas);
+			rctx.setViewport(mControlsViewports[0]);
+			rctx.set2DFrustum(mControlsFrustums[0]);
+			mMgr.mTextures.mControlsSprites[0].render(rctx);
+		}
+		else {
+			Log.d(TAG, "Not rendering controls");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -134,10 +197,17 @@ public class BombzGameScreen extends BombzScreen {
 	}
 
 	@Override
+	public void replacingRenderer(RenderContext rctx) {
+		mMgr.mTextures.deleteControls(rctx);
+	}
+
+	@Override
 	public void replacedRenderer(RenderContext rctx) throws IOException {
 		super.replacedRenderer(rctx);
 		mMgr.mTextures.deleteLogoAtlas(rctx);
 		mScreenWidth = rctx.getScreenWidth();
 		mScreenHeight = rctx.getScreenHeight();
+		mMgr.mTextures.loadControls(rctx);
+		setupViewports(mScreenWidth, mScreenHeight);
 	}
 }

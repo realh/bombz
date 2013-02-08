@@ -42,7 +42,7 @@ package uk.co.realh.hgame;
  */
 public class GameManager {
 	
-	private static String TAG = "GameManager";
+	protected static String TAG = "GameManager";
 	
 	// Bad Java: public fields for speed
 	public RenderContext mRCtx;

@@ -52,6 +52,7 @@ import java.util.List;
  */
 public class AtlasMaker {
 	
+	@SuppressWarnings("unused")
 	private final static String TAG = "AtlasMaker";
 
 	public final TextureAtlas mAtlas;
@@ -87,16 +88,12 @@ public class AtlasMaker {
 			int w = images.get(index).getWidth();
 			int h = images.get(index).getHeight();
 			dims[index] = new SimpleRect(0, y, w, h);
-			Log.d(TAG, "Left region[" + index + "] = " +
-					dims[index].toString());
 			if (sorted.size() > 0 && (!first || images.size() % 2 == 0))
 			{
 				int index2 = sorted.remove(0);
 				int w2 = images.get(index2).getWidth();
 				int h2 = images.get(index2).getHeight();
 				dims[index2] = new SimpleRect(w, y, w2, h2);
-				Log.d(TAG, "Right region[" + index2 + "] = " +
-						dims[index2].toString());
 				w += w2;
 				if (h2 > h)
 					h = h2;
@@ -110,8 +107,6 @@ public class AtlasMaker {
 		// Paste all images together and create atlas
 		Image montage = images.get(0).createImage(roundPow2(widest_row),
 				roundPow2(y));
-		Log.d(TAG, "Making atlas " + montage.getWidth() + "x" +
-				montage.getHeight());
 		for (int n = 0; n < dims.length; ++n)
 		{
 			montage.blit(images.get(n), dims[n].x, dims[n].y,

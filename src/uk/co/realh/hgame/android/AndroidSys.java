@@ -10,8 +10,11 @@ import java.util.TreeSet;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 
 import uk.co.realh.hgame.Font;
@@ -32,6 +35,7 @@ public class AndroidSys implements Sys {
 	//private String mDomain;
 	//private String mAppName;
 	private Class<?> mRString;
+	private Class<?> mRDrawable;
 	
 	/**
 	 * @param aContext	Android Context eg the Activity
@@ -51,6 +55,7 @@ public class AndroidSys implements Sys {
 		//mDomain = domain;
 		//mAppName = appName;
 		mRString = Class.forName(pkg + ".R$string");
+		mRDrawable = Class.forName(pkg + ".R$drawable");
 	}
 	
 	/**
@@ -102,6 +107,22 @@ public class AndroidSys implements Sys {
 	}
 
 	@Override
+	public Image loadResPNG(String name) {
+		int id;
+		try {
+			id = mRDrawable.getDeclaredField(name).getInt(null);
+		} catch (Throwable e) {
+			Log.e(TAG, "Unable to load res PNG " + name);
+			return null;
+		}
+		Resources res = mContext.getResources();
+		Bitmap bmp = ((BitmapDrawable) res.getDrawable(id)).getBitmap();
+		Config cfg = bmp.getConfig();
+		Log.d(TAG, "Res '" + name + "' bitmap format " + cfg.toString());
+		return new AndroidImage(bmp);
+	}
+	
+	@Override
 	public Font openFont(int px) {
 		return new AndroidFont(px);
 	}
@@ -146,9 +167,10 @@ public class AndroidSys implements Sys {
 		Field f;
 		try {
 			f = mRString.getDeclaredField(tag);
-			return mContext.getString(f.getInt(null));
+			tag = mContext.getString(f.getInt(null));
 		} catch (Throwable e) {
 			Log.w(TAG, "Can't translate tag '" + tag + "'", e);
+			tag = tag.replace('_', ' ');
 		}
 		return tag;
 	}
@@ -156,6 +178,11 @@ public class AndroidSys implements Sys {
 	@Override
 	public SavedSettings getSavedSettings(String leafname) throws IOException {
 		return new AndroidSavedSettings(getProfileFilename(leafname, true));
+	}
+
+	@Override
+	public boolean usesTouchScreen() {
+		return true;
 	}
 
 }
