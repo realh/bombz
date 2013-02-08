@@ -7,7 +7,7 @@ import cairo
 import rsvg
 
 def svg_to_cairo(source, width, height, alpha = True, SCALE = 4,
-        w2 = 0, h2 = 0):
+        w2 = 0, h2 = 0, opacity = 1):
     """ SVGs don't plot well at the small sizes we're using so
     use enlarged versions (default SCALE 4) and scale down the bitmaps
     afterwards """
@@ -34,7 +34,11 @@ def svg_to_cairo(source, width, height, alpha = True, SCALE = 4,
     cr.set_antialias(cairo.ANTIALIAS_GRAY)
     cr.scale(1.0 / SCALE, 1.0 / SCALE)
     cr.set_source_surface(surf, 0, 0)
-    cr.paint()
+    if opacity == 1:
+        cr.paint()
+    else:
+        pat = cairo.SolidPattern(0.0, 0.0, 0.0, opacity)
+        cr.mask(pat);
     return surf2
 
 
@@ -397,7 +401,8 @@ def builder(m, dest, size):
         builder('logo', dest + "/title_logo.png", size)
     elif m == 'vpad':
         omdp(dest)
-        svg_to_cairo("svgs/vpad.svg", size, size).write_to_png(dest)
+        svg_to_cairo("svgs/vpad.svg", size, size,
+                True, 4, 0, 0, 0.5).write_to_png(dest)
     elif m == 'vpads':
         for ds in (('ldpi', 96), ('mdpi', 128), ('hdpi', 192), ('xhdpi', 256)):
             builder('vpad', dest + "/drawable-" + ds[0] + "/vpad.png", ds[1])
