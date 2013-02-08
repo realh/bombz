@@ -541,4 +541,44 @@ public class BombzLevel {
 	    }
 	}
 
+	/**
+	 * @param x				Target pos
+	 * @param y				Target pos
+	 * @param dx			Direction
+	 * @param dy			Direction
+	 * @param have_match	Player has match
+	 * @param bomb			Test is whether bomb can move here
+	 * @return				Whether move is possible
+	 */
+	boolean canMoveTo(int x, int y, int dx, int dy,
+			boolean have_match, boolean bomb)
+	{
+	    byte c = getTileAt(x, y);
+	    switch (c)
+	    {
+        case Cell.OUTSIDE:
+        	return false;
+        case Cell.BLANK:
+            return true;
+        case Cell.EARTH:
+        case Cell.MATCH:
+            return !bomb;
+        case Cell.PICKET:
+            return false;
+        case Cell.BOMB1:
+        case Cell.BOMB2:
+            if (bomb)
+                return false;
+            else if (have_match)
+                return true;
+            else
+                return canMoveTo(x + dx, y + dy, dx, dy, false, true);
+		default:
+            if (c >= Cell.EXPLO00 && c <= Cell.EXPLO11)
+                return true;
+            break;
+	    }
+	    return false;
+	}
+	
 }

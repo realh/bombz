@@ -57,9 +57,9 @@ public class BombzTextures {
 	
 	TextureAtlas mTileAtlas, mAlphaAtlas, mLogoAtlas;
 	TextureRegion[] mTileRegions = new TextureRegion[Cell.N_CELLS];
-	TextureRegion[] mHeroRegions = new TextureRegion[4];
+	TextureRegion[] mPusherRegions = new TextureRegion[4];
 	TextureRegion mBomb1Region, mBomb2Region;
-	Sprite mHeroSprite, mBombSprite, mLogoSprite, mExplo00Sprite;
+	Sprite mPusherSprite, mBombSprite, mLogoSprite, mExplo00Sprite;
 	TileBatcher mTileBatcher;
 	int mControlsType;
 	TextureAtlas mControlsAtlas;
@@ -102,7 +102,7 @@ public class BombzTextures {
 	void calculateTileSize(RenderContext rctx, int screen_w, int screen_h)
 			throws IOException
 	{
-		mViewportHeight = screen_h - (screen_h % (K.N_ROWS * K.DELTA_PIX));
+		mViewportHeight = screen_h - (screen_h % K.N_ROWS);
 		mViewportWidth = (mViewportHeight * 4) / 3;
 		int best_size = 0;
 		int best_goodness = NO_MATCH;
@@ -212,17 +212,17 @@ public class BombzTextures {
 		mExplo00Sprite = rctx.createSprite(mAlphaAtlas.createRegion(0, 0,
 				3 * mSrcTileSize, 3 * mSrcTileSize),
 				3 * K.FRUSTUM_TILE_SIZE, 3 * K.FRUSTUM_TILE_SIZE);
-		mHeroRegions[K.FACING_LEFT] =
+		mPusherRegions[K.FACING_LEFT] =
 				mAlphaAtlas.createRegion(3 * mSrcTileSize, 0,
 						mSrcTileSize, mSrcTileSize);
-		mHeroRegions[K.FACING_RIGHT] =
+		mPusherRegions[K.FACING_RIGHT] =
 				mAlphaAtlas.createRegion(4 * mSrcTileSize, 0,
 						mSrcTileSize, mSrcTileSize);
-		mHeroRegions[K.FACING_UP] =
+		mPusherRegions[K.FACING_UP] =
 				mAlphaAtlas.createRegion(3 * mSrcTileSize,
 						mSrcTileSize, 
 						mSrcTileSize, mSrcTileSize);
-		mHeroRegions[K.FACING_DOWN] =
+		mPusherRegions[K.FACING_DOWN] =
 				mAlphaAtlas.createRegion(4 * mSrcTileSize,
 						mSrcTileSize, 
 						mSrcTileSize, mSrcTileSize);
@@ -232,7 +232,7 @@ public class BombzTextures {
 		mBomb2Region = mAlphaAtlas.createRegion(4 * mSrcTileSize,
 						2 * mSrcTileSize, 
 						mSrcTileSize, mSrcTileSize);
-		mHeroSprite = rctx.createSprite(mHeroRegions[K.FACING_UP],
+		mPusherSprite = rctx.createSprite(mPusherRegions[K.FACING_UP],
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 		mBombSprite = rctx.createSprite(mBomb1Region,
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
@@ -240,9 +240,9 @@ public class BombzTextures {
 	
 	void deleteAlphaTextures(RenderContext rctx)
 	{
-		mHeroSprite = null;
+		mPusherSprite = null;
 		for (int n = 0; n < 4; ++n)
-			mHeroRegions[n] = null;
+			mPusherRegions[n] = null;
 		mBombSprite = null;
 		mBomb1Region = null;
 		mBomb2Region = null;
