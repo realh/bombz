@@ -547,10 +547,24 @@ public class BombzLevel {
 	 * @param dx			Direction
 	 * @param dy			Direction
 	 * @param have_match	Player has match
-	 * @param bomb			Test is whether bomb can move here
 	 * @return				Whether move is possible
 	 */
 	boolean canMoveTo(int x, int y, int dx, int dy,
+			boolean have_match)
+	{
+		return canMoveTo(x, y, dx, dy, have_match, false);
+	}
+	
+	/**
+	 * @param x				Target pos
+	 * @param y				Target pos
+	 * @param dx			Direction
+	 * @param dy			Direction
+	 * @param have_match	Player has match
+	 * @param bomb			Test is whether bomb can move here
+	 * @return				Whether move is possible
+	 */
+	private boolean canMoveTo(int x, int y, int dx, int dy,
 			boolean have_match, boolean bomb)
 	{
 	    byte c = getTileAt(x, y);
