@@ -121,14 +121,11 @@ public abstract class HGameActivity extends Activity
 	
 	@Override
 	public void onResume() {
+		Log.d(TAG, "onResume");
 		try {
-			Log.d(TAG, "onResume calling super");
 			super.onResume();
-			Log.d(TAG, "onResume calling mMgr");
-			mMgr.resume();
-			Log.d(TAG, "onResume calling mGlView");
 			mGlView.onResume();
-			Log.d(TAG, "onResume done");
+			mMgr.resume();
 		} catch (Throwable e) {
 			Log.e(TAG, "Exception in onResume", e);
 		}
