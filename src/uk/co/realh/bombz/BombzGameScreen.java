@@ -40,6 +40,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import uk.co.realh.hgame.DInput;
 import uk.co.realh.hgame.Event;
 import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
@@ -49,7 +50,7 @@ import uk.co.realh.hgame.SimpleRect;
  * @author Tony Houghton
  *
  */
-public class BombzGameScreen extends BombzScreen {
+public class BombzGameScreen extends BombzScreen implements DInput {
 	
 	private static final String TAG = "GameScreen";
 	
@@ -209,5 +210,14 @@ public class BombzGameScreen extends BombzScreen {
 		mScreenHeight = rctx.getScreenHeight();
 		mMgr.mTextures.loadControls(rctx);
 		setupViewports(mScreenWidth, mScreenHeight);
+	}
+
+	/* (non-Javadoc)
+	 * @see uk.co.realh.hgame.DInput#pollDInput()
+	 */
+	@Override
+	public int pollDInput() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

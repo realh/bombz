@@ -39,7 +39,6 @@ package uk.co.realh.bombz;
 import uk.co.realh.hgame.DInput;
 import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
-import uk.co.realh.hgame.Sprite;
 
 /**
  * @author Tony Houghton
@@ -69,12 +68,14 @@ public class Pusher {
 
     private static class Lrud {
     	public boolean left, right, up, down;
+    	/*
     	Lrud(boolean l, boolean r, boolean u, boolean d) {
     		left = l;
     		right = r;
     		up = u;
     		down = d;
     	}
+    	*/
     	
     	Lrud() {}
     }
