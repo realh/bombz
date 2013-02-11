@@ -15,8 +15,10 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Vibrator;
 import android.util.Log;
 
+import uk.co.realh.hgame.ButtonFeedback;
 import uk.co.realh.hgame.Font;
 import uk.co.realh.hgame.Image;
 import uk.co.realh.hgame.SavedSettings;
@@ -183,6 +185,16 @@ public class AndroidSys implements Sys {
 	@Override
 	public boolean usesTouchScreen() {
 		return true;
+	}
+
+	/**
+	 * @see uk.co.realh.hgame.Sys#getHapticFeedback()
+	 */
+	@Override
+	public ButtonFeedback getHapticFeedback() {
+		Vibrator vib = (Vibrator)
+				mContext.getSystemService(Context.VIBRATOR_SERVICE);
+		return (null != vib) ? new AndroidHapticFeedback(vib) : null;
 	}
 
 }

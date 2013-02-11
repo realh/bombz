@@ -42,7 +42,6 @@ import javax.microedition.khronos.opengles.GL10;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -51,7 +50,10 @@ import android.view.WindowManager;
 
 import uk.co.realh.hgame.Event;
 import uk.co.realh.hgame.GameManager;
+import uk.co.realh.hgame.Log;
+import uk.co.realh.hgame.OnScreenButton;
 import uk.co.realh.hgame.RenderContext;
+import uk.co.realh.hgame.ScreenButtonSource;
 import uk.co.realh.hgame.Sys;
 import uk.co.realh.hgame.gles1.android.AndroidGles1RenderContext;
 
@@ -60,12 +62,17 @@ import uk.co.realh.hgame.gles1.android.AndroidGles1RenderContext;
  *
  */
 public abstract class HGameActivity extends Activity
-		implements OnTouchListener {
+		implements OnTouchListener, ScreenButtonSource {
 	
 	protected static final String TAG = "Activity";
+	
 	private GLSurfaceView mGlView;
 	protected Sys mSys;
 	protected GameManager mMgr;
+	
+	private OnScreenButton[] mButtons =
+			new OnScreenButton[ScreenButtonSource.MAX_BUTTONS];
+	int mNButtons = 0;
 	
 	public static final void initLog()
 	{
@@ -73,8 +80,8 @@ public abstract class HGameActivity extends Activity
 	}
 	
 	/**
-	 * Superclass should call this and set game manager in constructor
-	 * or at least before calling onCreate() below.
+	 * Superclass should call this and set game manager
+	 * _before_ calling onCreate below.
 	 * 
 	 * @param owner		Name associated with developer
 	 * @param domain	Domain of URL associated with app/developer
@@ -90,24 +97,27 @@ public abstract class HGameActivity extends Activity
 				mSys = new AndroidSys(this, owner, domain,
 						appName, pkg);
 			} catch (Throwable e) {
-				Log.e(TAG, "Can't create AndroidSys object", e);
-				throw new RuntimeException("Can't create AndroidSys object");
+				Log.f(TAG, "Can't create AndroidSys object", e);
 			}
 		}
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		
-		mGlView = new GLSurfaceView(this);
-		mGlView.setRenderer(new HGameRenderer());
-		mGlView.setOnTouchListener(this);
-		setContentView(mGlView);
+		try {
+			super.onCreate(savedInstanceState);
+			
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+					WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			
+			mGlView = new GLSurfaceView(this);
+			mGlView.setRenderer(new HGameRenderer());
+			mGlView.setOnTouchListener(this);
+			setContentView(mGlView);
+		} catch (Throwable e) {
+			Log.f(TAG, "Error creating app", e);
+		}
 	}
 
 	/*
@@ -127,7 +137,7 @@ public abstract class HGameActivity extends Activity
 			mGlView.onResume();
 			mMgr.resume();
 		} catch (Throwable e) {
-			Log.e(TAG, "Exception in onResume", e);
+			Log.f(TAG, "Exception in onResume", e);
 		}
 	}
 	
@@ -139,18 +149,56 @@ public abstract class HGameActivity extends Activity
 			mMgr.suspend();
 			mGlView.onPause();
 		} catch (Throwable e) {
-			Log.e(TAG, "Exception in onPause", e);
+			Log.f(TAG, "Exception in onPause", e);
 		}
 	}
 	
 	@Override
-	public boolean onTouch(View v, MotionEvent e)
-	{
-		if (e.getAction() == MotionEvent.ACTION_DOWN)
-		{
-			Event.pushEvent(Event.newEvent(Event.TAP,
-					(int) e.getX(), (int) e.getY()));
-			return true;
+	public boolean onTouch(View v, MotionEvent e) {
+		try {
+			int a = e.getAction();
+			int i = (a & MotionEvent.ACTION_POINTER_INDEX_MASK) >>
+					MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+			a &= MotionEvent.ACTION_MASK;
+			int x;
+			int y;
+			switch (a) {
+			case MotionEvent.ACTION_DOWN:
+				x = (int) e.getX(i);
+				y = (int) e.getY(i);
+				Event.pushEvent(Event.newEvent(Event.TAP, x, y));
+				for (OnScreenButton btn: mButtons) {
+					if (null == btn)
+						break;
+					btn.handleEvent(OnScreenButton.BUTTON_PRESS,
+							x, y, e.getPointerId(i));
+				}
+				break;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_POINTER_UP:
+			case MotionEvent.ACTION_CANCEL:
+				for (OnScreenButton btn: mButtons) {
+					if (null == btn)
+						break;
+					btn.handleEvent(OnScreenButton.BUTTON_RELEASE,
+							(int) e.getX(i), (int) e.getY(i), e.getPointerId(i));
+				}
+				break;
+			case MotionEvent.ACTION_MOVE:
+				for (OnScreenButton btn: mButtons) {
+					if (null == btn)
+						break;
+					int l = e.getPointerCount();
+					for (int j = 0; j < l; ++j) {
+						btn.handleEvent(OnScreenButton.BUTTON_RELEASE,
+								(int) e.getX(j), (int) e.getY(j), e.getPointerId(j));
+					}
+				}
+				break;
+				
+			}
+		} catch (Throwable x) {
+			Log.f(TAG, "Error in touch handler", x);
 		}
 		return false;
 	}
@@ -171,7 +219,7 @@ public abstract class HGameActivity extends Activity
 				Log.d(TAG, "onDrawFrame");
 				mRCtx.onDrawFrame();
 			} catch (Throwable e) {
-				Log.e(TAG, "Rendering exception", e);
+				Log.f(TAG, "Rendering exception", e);
 			}
 		}
 
@@ -190,7 +238,7 @@ public abstract class HGameActivity extends Activity
 					mRCtx.preRequestRender(RenderContext.REASON_RESIZE);
 				}
 			} catch (Throwable e) {
-				Log.e(TAG, "Exception in onSurfaceChanged", e);
+				Log.f(TAG, "Exception in onSurfaceChanged", e);
 			}
 		}
 		
@@ -209,8 +257,27 @@ public abstract class HGameActivity extends Activity
 				mMgr.setRenderContext(mRCtx);
 				mRCtx.preRequestRender(RenderContext.REASON_INIT);
 			} catch (Throwable e) {
-				Log.e(TAG, "Exception in onSurfaceCreated", e);
+				Log.f(TAG, "Exception in onSurfaceCreated", e);
 			}
 		}
+	}
+	
+	/**
+	 * @see uk.co.realh.hgame.ScreenButtonSource#addOnScreenButton(uk.co.realh.hgame.OnScreenButton)
+	 */
+	@Override
+	public void addOnScreenButton(OnScreenButton btn) {
+		mButtons[mNButtons++] = btn;
+	}
+	
+	/**
+	 * @see uk.co.realh.hgame.ScreenButtonSource#removeButtons()
+	 */
+	@Override
+	public void removeButtons()
+	{
+		for (int n = 0; n < mNButtons; ++n)
+			mButtons[n] = null;
+		mNButtons = 0;
 	}
 }

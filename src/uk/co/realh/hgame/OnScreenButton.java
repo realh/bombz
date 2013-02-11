@@ -59,6 +59,6 @@ public interface OnScreenButton {
 	 * @param y				In physical screen coords (0 = top)
 	 * @param pointer_id	For multitouch.
 	 */
-	public void handleEvent(int type, int x, int y, int pointer_id);
+	public void handleEvent(int type, int x, int y, int pointerId);
 
 }

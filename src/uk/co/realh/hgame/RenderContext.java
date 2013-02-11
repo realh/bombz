@@ -83,7 +83,7 @@ public abstract class RenderContext {
 
 	/**
 	 * Old renderer, if any, will have its replacingRenderer method called.
-	 * initRendering will then be called on new renderer, followed by render
+	 * replacedRenderer will then be called on new renderer, followed by render
 	 * if appropriate (last request reason was REASON_RENDER).
 	 * 
 	 * @param renderer	New Renderer, may be null.

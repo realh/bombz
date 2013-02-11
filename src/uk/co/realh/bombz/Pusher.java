@@ -96,8 +96,6 @@ public class Pusher {
 	    mMoving = false;
 	    mHaveMatch = false;
 	    mPushingBomb = 0;
-    	mMgr.mTextures.mPusherSprite.setTexture(
-    			mMgr.mTextures.mPusherRegions[mDirection]);
     }
 
     void render(RenderContext rctx) {
@@ -105,6 +103,14 @@ public class Pusher {
 	            (mInterX * K.FRUSTUM_TILE_SIZE) / K.DELTA_PIX;
     	int y = mTileY * K.FRUSTUM_TILE_SIZE +
 	            (mInterY * K.FRUSTUM_TILE_SIZE) / K.DELTA_PIX;
+    	/*
+    	Log.d(TAG, "Pusher sprite " + mMgr.mTextures.mPusherSprite);
+    	Log.d(TAG, "Direction " + mDirection);
+    	Log.d(TAG, "Regions " + mMgr.mTextures.mPusherRegions);
+    	Log.d(TAG, "Region[] " + mMgr.mTextures.mPusherRegions[mDirection]);
+    	*/
+    	mMgr.mTextures.mPusherSprite.setTexture(
+    			mMgr.mTextures.mPusherRegions[mDirection]);
     	mMgr.mTextures.mPusherSprite.setPosition(x, y);
     	mMgr.mTextures.mPusherSprite.render(rctx);
 	    if (0 != mPushingBomb)

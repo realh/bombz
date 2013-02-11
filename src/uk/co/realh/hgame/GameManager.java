@@ -48,6 +48,7 @@ public class GameManager {
 	public RenderContext mRCtx;
 	public Screen mScreen;
 	public final Sys mSys;
+	public final ScreenButtonSource mButtons;
 	
 	private volatile boolean mRunning;
 	private volatile boolean mTicking;
@@ -56,10 +57,13 @@ public class GameManager {
 	
 	/**
 	 * @param sys	The System object for this platform.
+	 * @param sbs 	Buttons source
+	 * @see ScreenButtonSource
 	 */
-	public GameManager(Sys sys)
+	public GameManager(Sys sys, ScreenButtonSource sbs)
 	{
 		mSys = sys;
+		mButtons = sbs;
 	}
 
 	/**
@@ -70,6 +74,7 @@ public class GameManager {
 	public void setScreen(Screen scrn)
 	{
 		disableTicks();
+		mButtons.removeButtons();
 		mScreen = scrn;
 		if (mRCtx != null)
 			mRCtx.setRenderer(scrn);
@@ -116,6 +121,7 @@ public class GameManager {
 	public void suspend()
 	{
 		mRunning = false;
+		disableTicks();
 		Event.pushEvent(Event.newEvent(Event.PAUSE));
 		try {
 			mGameThread.join();
@@ -127,7 +133,7 @@ public class GameManager {
 	
 	/**
 	 * Causes tick events to be sent at regular intervals.
-	 * After a PAUSE ticks will be disabled, and Screen must enable them 
+	 * On a PAUSE ticks will be disabled, and Screen must enable them 
 	 * again on RESUME if desired.
 	 * 
 	 * @param interval	Interval between ticks in ms.
@@ -157,27 +163,31 @@ public class GameManager {
 		@Override
 		public void run()
 		{
-			boolean running = true;
-			while (running)
-			{
-				Event ev = Event.popEvent();
-				if (ev.mCode == Event.TICK)
+			try {
+				boolean running = true;
+				while (running)
 				{
-					if (mTicking)
-						mScreen.step();
-				}
-				else
-				{
-					mScreen.handleEvent(ev);
-				}
-				if (ev.mCode == Event.RESUME)
-				{
-					synchronized(ev) {
-						ev.notifyAll();
+					Event ev = Event.popEvent();
+					if (ev.mCode == Event.TICK)
+					{
+						if (mTicking)
+							mScreen.step();
 					}
+					else
+					{
+						mScreen.handleEvent(ev);
+					}
+					if (ev.mCode == Event.RESUME)
+					{
+						synchronized(ev) {
+							ev.notifyAll();
+						}
+					}
+					else if (ev.mCode == Event.PAUSE)
+						running = false;
 				}
-				else if (ev.mCode == Event.PAUSE)
-					running = false;
+			} catch (Throwable e) {
+				Log.f(TAG, "Error in game thread", e);
 			}
 		}
 	}

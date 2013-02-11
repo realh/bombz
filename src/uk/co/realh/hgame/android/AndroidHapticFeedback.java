@@ -34,30 +34,33 @@
  * See the source code for details.
  */
 
-package uk.co.realh.hgame;
+package uk.co.realh.hgame.android;
+
+import android.os.Vibrator;
+import uk.co.realh.hgame.ButtonFeedback;
 
 /**
- * Interface to the part of the system-specific implementation which generates
- * events for an OnScreenButton.
- * 
  * @author Tony Houghton
- * @see OnScreenButton
+ *
  */
-public interface ScreenButtonSource {
+public class AndroidHapticFeedback implements ButtonFeedback {
 	
+	private final Vibrator mVibrator;
+	private static final int VIB_PERIOD = 25;
+
 	/**
-	 * Maximum number of buttons that can be added.
+	 * @param vibrator	An Android vibrator object (null not allowed)
 	 */
-	public static final int MAX_BUTTONS = 8;
-	
-	/**
-	 * @param btn
+	public AndroidHapticFeedback(Vibrator vibrator) {
+		mVibrator = vibrator;
+	}
+
+	/* (non-Javadoc)
+	 * @see uk.co.realh.hgame.ButtonFeedback#feedback()
 	 */
-	public void addOnScreenButton(OnScreenButton btn);
-	
-	/**
-	 * Removes any buttons added by addOnScreenButton.
-	 */
-	public void removeButtons();
+	@Override
+	public void feedback() {
+		mVibrator.vibrate(VIB_PERIOD);
+	}
 
 }

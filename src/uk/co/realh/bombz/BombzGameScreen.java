@@ -40,11 +40,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import uk.co.realh.hgame.ButtonFeedback;
 import uk.co.realh.hgame.DInput;
 import uk.co.realh.hgame.Event;
 import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
+import uk.co.realh.hgame.ScreenButtonSource;
 import uk.co.realh.hgame.SimpleRect;
+import uk.co.realh.hgame.VPad;
 
 /**
  * @author Tony Houghton
@@ -55,6 +58,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	private static final String TAG = "GameScreen";
 	
 	private BombzLevel mLevel;
+	private Pusher mPusher;
 	private RenderContext mRCtx;
 	private int mScreenWidth;
 	private int mScreenHeight;
@@ -69,14 +73,27 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	private SimpleRect mControlsFrustums[] = {
 			new SimpleRect(), new SimpleRect()
 	};
+	
+	// Ratio of vpad inner/outer radii
+	private final static float VPAD_RATIO = 0.375f;
+	private final ScreenButtonSource mButtons;
+	private final ButtonFeedback mFeedback;
+	private VPad mVPad;
 
 	/**
 	 * @param mgr
+	 * @param sbs		ScreenButtonSource
+	 * @param feedback	Haptic feedback service for vpad etc, may be null
 	 * @throws IOException 
 	 */
-	public BombzGameScreen(BombzGameManager mgr) throws IOException {
+	public BombzGameScreen(BombzGameManager mgr, ScreenButtonSource sbs,
+			ButtonFeedback feedback)
+			throws IOException {
 		super(mgr);
+		mButtons = sbs;
+		mFeedback = feedback;
 		mLevel = new BombzLevel(mgr.mTextures);
+		mPusher = new Pusher(mgr, mLevel);
 		mCurrentLevel = mMgr.mSavedGame.get("level", 1);
 		loadLevel(mCurrentLevel);
 	}
@@ -85,11 +102,15 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		BufferedReader fd = new BufferedReader(new InputStreamReader(
 				mMgr.mSys.openAsset(String.format("levels/%02d", level))));
 		mLevel.load(fd);
+		fd.close();
+		mPusher.reset();
 	}
 
 	private void setupViewports(int w, int h) {
+		mButtons.removeButtons();
 		int vpw = mMgr.mTextures.mViewportWidth;
 		int vph = mMgr.mTextures.mViewportHeight;
+		SimpleRect r;
 		mTilesFrustum.setRect(0, 0,
 				K.N_COLUMNS * K.FRUSTUM_TILE_SIZE,
 				K.N_ROWS * K.FRUSTUM_TILE_SIZE);
@@ -100,17 +121,25 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		case K.CONTROL_VPAD_LEFT:
 			mTilesViewport.setRect(w - vpw,
 					0, vpw, vph);
-			mControlsViewports[0].setRect(w / K.CONTROL_XPADDING,
+			r = mControlsViewports[0];
+			r.setRect(w / K.CONTROL_XPADDING,
 					h - mMgr.mTextures.mVpadHeight -
 						h / K.CONTROL_YPADDING,
 					mMgr.mTextures.mVpadWidth,
 					mMgr.mTextures.mVpadHeight);
 			mControlsFrustums[0].setRect(0, 0, mMgr.mTextures.mVpadWidth,
 					mMgr.mTextures.mVpadHeight);
+			if (null == mVPad)
+				mVPad = new VPad(mFeedback);
+			mVPad.setDimensions(r.x, r.y,
+					mMgr.mTextures.mVpadWidth / 2,
+					(int) (VPAD_RATIO * mMgr.mTextures.mVpadWidth / 2));
+			mButtons.addOnScreenButton(mVPad);
 			break;
 		case K.CONTROL_VPAD_RIGHT:
 			mTilesViewport.setRect(0, 0, vpw, vph);
-			mControlsViewports[0].setRect(w - mMgr.mTextures.mVpadWidth -
+			r = mControlsViewports[0];
+			r.setRect(w - mMgr.mTextures.mVpadWidth -
 						w / K.CONTROL_XPADDING,
 					h - mMgr.mTextures.mVpadHeight -
 					h / K.CONTROL_YPADDING,
@@ -118,12 +147,20 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 					mMgr.mTextures.mVpadHeight);
 			mControlsFrustums[0].setRect(0, 0, mMgr.mTextures.mVpadWidth,
 					mMgr.mTextures.mVpadHeight);
+			if (null == mVPad)
+				mVPad = new VPad(mFeedback);
+			mVPad.setDimensions(r.x, r.y,
+					mMgr.mTextures.mVpadWidth / 2,
+					(int) (VPAD_RATIO * mMgr.mTextures.mVpadWidth / 2));
+			mButtons.addOnScreenButton(mVPad);
 			break;
 		case K.CONTROL_VBUTTONS_LEFT:
 			mTilesViewport.setRect((w - vpw) * 2 / 3, 0, vpw, vph);
+			mVPad = null;
 			break;
 		case K.CONTROL_VBUTTONS_RIGHT:
 			mTilesViewport.setRect((w - vpw) / 3, 0, vpw, vph);
+			mVPad = null;
 			break;
 		}
 	}
@@ -134,6 +171,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		super.initRendering(rctx, w, h);
 		mScreenWidth = w;
 		mScreenHeight = h;
+		mMgr.mTextures.loadAlphaTextures(rctx);
 		mMgr.mTextures.loadControls(rctx);
 		setupViewports(w, h);
 	}
@@ -155,10 +193,12 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		rctx.enableBlend(false);
 		rctx.bindTexture(mMgr.mTextures.mTileAtlas);
 		mLevel.render(rctx);
+		rctx.enableBlend(true);
+		rctx.bindTexture(mMgr.mTextures.mAlphaAtlas);
+		mPusher.render(rctx);
 		if (0 != mMgr.mTextures.mControlsType)
 		{
 			Log.d(TAG, "Rendering controls");
-			rctx.enableBlend(true);
 			rctx.bindTexture(mMgr.mTextures.mControlsAtlas);
 			rctx.setViewport(mControlsViewports[0]);
 			rctx.set2DFrustum(mControlsFrustums[0]);
@@ -175,6 +215,10 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	@Override
 	public boolean handleEvent(Event ev) {
 		Log.d(TAG, "Event " + Event.quarkToString(ev.mCode));
+		// Apparently can't use dynamic constants in case
+		if (ev.mCode == Event.RESUME) {
+			mMgr.enableTicks(K.TICK_INTERVAL);
+		}
 		return false;
 	}
 
@@ -185,7 +229,8 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	public void step() {
 		if (null == mRCtx)
 			return;
-		if (mLevel.step())
+		boolean update = mLevel.step();
+		if (mPusher.step() || update)
 			mRCtx.requestRender();
 	}
 
@@ -208,16 +253,18 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mMgr.mTextures.deleteLogoAtlas(rctx);
 		mScreenWidth = rctx.getScreenWidth();
 		mScreenHeight = rctx.getScreenHeight();
+		mMgr.mTextures.loadAlphaTextures(rctx);
 		mMgr.mTextures.loadControls(rctx);
 		setupViewports(mScreenWidth, mScreenHeight);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see uk.co.realh.hgame.DInput#pollDInput()
 	 */
 	@Override
 	public int pollDInput() {
-		// TODO Auto-generated method stub
+		if (null != mVPad)
+			return mVPad.pollDInput();
 		return 0;
 	}
 }

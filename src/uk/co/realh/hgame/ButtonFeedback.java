@@ -37,27 +37,13 @@
 package uk.co.realh.hgame;
 
 /**
- * Interface to the part of the system-specific implementation which generates
- * events for an OnScreenButton.
+ * Provides feedback when a virtual button is pressed eg haptic.
  * 
  * @author Tony Houghton
- * @see OnScreenButton
+ *
  */
-public interface ScreenButtonSource {
+public interface ButtonFeedback {
 	
-	/**
-	 * Maximum number of buttons that can be added.
-	 */
-	public static final int MAX_BUTTONS = 8;
-	
-	/**
-	 * @param btn
-	 */
-	public void addOnScreenButton(OnScreenButton btn);
-	
-	/**
-	 * Removes any buttons added by addOnScreenButton.
-	 */
-	public void removeButtons();
+	public void feedback();
 
 }

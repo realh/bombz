@@ -226,4 +226,31 @@ public class Log {
 		smLogger.v(tag, message, ex);
 	}
 	
+	/**
+	 * Log an error message then throw RunTimeException to force quit.
+	 * 
+	 * @param level
+	 * @param tag
+	 * @param message
+	 */
+	public static void f(String tag, String message)
+	{
+		smLogger.e(tag, message);
+		throw new RuntimeException("Fatal error: " + message);
+	}
+
+	/**
+	 * Log an error message then throw RunTimeException to force quit.
+	 * 
+	 * @param level
+	 * @param tag
+	 * @param message
+	 */
+	public static void f(String tag, String message, Throwable ex)
+	{
+		smLogger.e(tag, message, ex);
+		throw new RuntimeException("Fatal exception: " + message + ": " +
+				ex.toString());
+	}
+
 }

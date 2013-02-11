@@ -38,9 +38,11 @@ package uk.co.realh.bombz;
 
 import java.io.IOException;
 
+import uk.co.realh.hgame.ButtonFeedback;
 import uk.co.realh.hgame.GameManager;
 import uk.co.realh.hgame.SavedSettings;
 import uk.co.realh.hgame.Screen;
+import uk.co.realh.hgame.ScreenButtonSource;
 import uk.co.realh.hgame.Sys;
 
 /**
@@ -55,15 +57,20 @@ public class BombzGameManager extends GameManager {
 	
 	private BombzMainMenuScreen mMainMenuScreen;
 	private BombzGameScreen mGameScreen;
+	private final ButtonFeedback mHapticFeedback;
 
 	/**
 	 * @param sys
-	 * @throws IOException 
+	 * @param sbs	Object for managing on-screen buttons
+	 * @throws IOException
+	 * @see uk.co.realh.hgame.ScreenButtonSource
 	 */
-	public BombzGameManager(Sys sys) throws IOException {
-		super(sys);
+	public BombzGameManager(Sys sys, ScreenButtonSource sbs) throws IOException
+	{
+		super(sys, sbs);
 		mSavedGame = sys.getSavedSettings("saves");
 		mConfiguration = sys.getSavedSettings("config");
+		mHapticFeedback = sys.getHapticFeedback();
 		mTextures = new BombzTextures(sys,
 				mConfiguration.get("touchpad", K.CONTROL_VPAD_LEFT));
 		mMainMenuScreen = new BombzMainMenuScreen(this);
@@ -79,7 +86,7 @@ public class BombzGameManager extends GameManager {
 	public Screen getGameScreen() throws IOException
 	{
 		if (null == mGameScreen)
-			mGameScreen = new BombzGameScreen(this);
+			mGameScreen = new BombzGameScreen(this, mButtons, mHapticFeedback);
 		return mGameScreen;
 	}
 }

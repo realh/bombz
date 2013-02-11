@@ -128,4 +128,9 @@ public interface Sys {
 	 */
 	public boolean usesTouchScreen();
 
+	/**
+	 * @return	A haptic feedback service, may be null.
+	 */
+	public ButtonFeedback getHapticFeedback();
+
 }
