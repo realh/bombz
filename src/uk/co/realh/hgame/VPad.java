@@ -42,8 +42,10 @@ package uk.co.realh.hgame;
  */
 public class VPad implements DInput, OnScreenButton {
 	
-	private float mCentreX;
-	private float mCentreY;
+	private static final String TAG = "VPad";
+	
+	private int mCentreX;
+	private int mCentreY;
 	// Squared versions of radii
 	private float mOuterRad2;
 	private float mInnerRad2;
@@ -82,6 +84,10 @@ public class VPad implements DInput, OnScreenButton {
 		mCentreY = y + outerRadius / 2;
 		mOuterRad2 = outerRadius * outerRadius;
 		mInnerRad2 = innerRadius * innerRadius;
+		Log.d(TAG, String.format("Vpad at %d, %d, radii %d, %d " +
+				"box (%d, %d) - (%d, %d)",
+				mCentreX, mCentreY, outerRadius, innerRadius,
+				x, y, x + outerRadius, y + outerRadius));
 	}
 
 	/* (non-Javadoc)
@@ -101,6 +107,26 @@ public class VPad implements DInput, OnScreenButton {
 		else
 			ratio = 999999999;
 		int newMask = mPressingMask;
+		if (mPressing[0] == pointerId)
+		{
+			mPressing[0] = -1;
+			newMask &= ~LEFT;
+		}
+		if (mPressing[1] == pointerId)
+		{
+			mPressing[1] = -1;
+			newMask &= ~RIGHT;
+		}
+		if (mPressing[2] == pointerId)
+		{
+			mPressing[2] = -1;
+			newMask &= ~UP;
+		}
+		if (mPressing[3] == pointerId)
+		{
+			mPressing[3] = -1;
+			newMask &= ~DOWN;
+		}
 		if (BUTTON_RELEASE != type)
 		{
 			if (rsq < mOuterRad2 && rsq >= mInnerRad2)
@@ -158,33 +184,10 @@ public class VPad implements DInput, OnScreenButton {
 					}
 				}
 			}
-			else {
-				type = BUTTON_RELEASE;
-			}
 		}
-		if (BUTTON_RELEASE == type)
-		{
-			if (mPressing[0] == pointerId)
-			{
-				mPressing[0] = -1;
-				newMask &= ~LEFT;
-			}
-			if (mPressing[1] == pointerId)
-			{
-				mPressing[1] = -1;
-				newMask &= ~RIGHT;
-			}
-			if (mPressing[2] == pointerId)
-			{
-				mPressing[2] = -1;
-				newMask &= ~UP;
-			}
-			if (mPressing[3] == pointerId)
-			{
-				mPressing[3] = -1;
-				newMask &= ~DOWN;
-			}
-		}
+		Log.v(TAG, String.format(
+				"Type %d id %d at %d, %d changed mask from %x to %x",
+				type, pointerId, x, y, mPressingMask, newMask));
 		if (newMask != mPressingMask)
 		{
 			mPressingMask = newMask;

@@ -160,18 +160,23 @@ public abstract class HGameActivity extends Activity
 			int i = (a & MotionEvent.ACTION_POINTER_INDEX_MASK) >>
 					MotionEvent.ACTION_POINTER_INDEX_SHIFT;
 			a &= MotionEvent.ACTION_MASK;
-			int x;
-			int y;
+			/*
+			Log.v(TAG, String.format(
+					"Touch event action %d, index %d, at (%d, %d)",
+					a, i, (int) e.getX(i), (int) e.getY(i)));
+			*/
 			switch (a) {
 			case MotionEvent.ACTION_DOWN:
-				x = (int) e.getX(i);
-				y = (int) e.getY(i);
+			case MotionEvent.ACTION_POINTER_DOWN:
+				int x = (int) e.getX(i);
+				int y = (int) e.getY(i);
 				Event.pushEvent(Event.newEvent(Event.TAP, x, y));
 				for (OnScreenButton btn: mButtons) {
 					if (null == btn)
 						break;
 					btn.handleEvent(OnScreenButton.BUTTON_PRESS,
-							x, y, e.getPointerId(i));
+							(int) e.getX(i), (int) e.getY(i),
+							e.getPointerId(i));
 				}
 				break;
 			case MotionEvent.ACTION_UP:
@@ -190,7 +195,7 @@ public abstract class HGameActivity extends Activity
 						break;
 					int l = e.getPointerCount();
 					for (int j = 0; j < l; ++j) {
-						btn.handleEvent(OnScreenButton.BUTTON_RELEASE,
+						btn.handleEvent(OnScreenButton.BUTTON_MOTION,
 								(int) e.getX(j), (int) e.getY(j), e.getPointerId(j));
 					}
 				}
@@ -200,7 +205,7 @@ public abstract class HGameActivity extends Activity
 		} catch (Throwable x) {
 			Log.f(TAG, "Error in touch handler", x);
 		}
-		return false;
+		return true;
 	}
 	
 	private class HGameRenderer implements GLSurfaceView.Renderer

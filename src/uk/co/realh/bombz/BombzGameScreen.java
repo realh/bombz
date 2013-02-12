@@ -110,7 +110,6 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mButtons.removeButtons();
 		int vpw = mMgr.mTextures.mViewportWidth;
 		int vph = mMgr.mTextures.mViewportHeight;
-		SimpleRect r;
 		mTilesFrustum.setRect(0, 0,
 				K.N_COLUMNS * K.FRUSTUM_TILE_SIZE,
 				K.N_ROWS * K.FRUSTUM_TILE_SIZE);
@@ -119,40 +118,12 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 			mTilesViewport.setRect((w - vpw) / 2, (h - vph) / 2, vpw, vph);
 			break;
 		case K.CONTROL_VPAD_LEFT:
-			mTilesViewport.setRect(w - vpw,
-					0, vpw, vph);
-			r = mControlsViewports[0];
-			r.setRect(w / K.CONTROL_XPADDING,
-					h - mMgr.mTextures.mVpadHeight -
-						h / K.CONTROL_YPADDING,
-					mMgr.mTextures.mVpadWidth,
-					mMgr.mTextures.mVpadHeight);
-			mControlsFrustums[0].setRect(0, 0, mMgr.mTextures.mVpadWidth,
-					mMgr.mTextures.mVpadHeight);
-			if (null == mVPad)
-				mVPad = new VPad(mFeedback);
-			mVPad.setDimensions(r.x, r.y,
-					mMgr.mTextures.mVpadWidth / 2,
-					(int) (VPAD_RATIO * mMgr.mTextures.mVpadWidth / 2));
-			mButtons.addOnScreenButton(mVPad);
+			mTilesViewport.setRect(w - vpw, 0, vpw, vph);
+			setupVPad(w, h);
 			break;
 		case K.CONTROL_VPAD_RIGHT:
 			mTilesViewport.setRect(0, 0, vpw, vph);
-			r = mControlsViewports[0];
-			r.setRect(w - mMgr.mTextures.mVpadWidth -
-						w / K.CONTROL_XPADDING,
-					h - mMgr.mTextures.mVpadHeight -
-					h / K.CONTROL_YPADDING,
-					mMgr.mTextures.mVpadWidth,
-					mMgr.mTextures.mVpadHeight);
-			mControlsFrustums[0].setRect(0, 0, mMgr.mTextures.mVpadWidth,
-					mMgr.mTextures.mVpadHeight);
-			if (null == mVPad)
-				mVPad = new VPad(mFeedback);
-			mVPad.setDimensions(r.x, r.y,
-					mMgr.mTextures.mVpadWidth / 2,
-					(int) (VPAD_RATIO * mMgr.mTextures.mVpadWidth / 2));
-			mButtons.addOnScreenButton(mVPad);
+			setupVPad(w, h);
 			break;
 		case K.CONTROL_VBUTTONS_LEFT:
 			mTilesViewport.setRect((w - vpw) * 2 / 3, 0, vpw, vph);
@@ -163,6 +134,37 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 			mVPad = null;
 			break;
 		}
+	}
+	
+	private void setupVPad(int w, int h) {
+		SimpleRect r = mControlsViewports[0];
+		if (mMgr.mTextures.mControlsType == K.CONTROL_VPAD_LEFT)
+		{
+			r.x = (mTilesViewport.x - mMgr.mTextures.mVpadWidth) / 2;
+			if (r.x < w / K.CONTROL_XPADDING)
+				r.x = K.CONTROL_XPADDING;
+		}
+		else // VPAD_RIGHT
+		{
+			r.x = (mTilesViewport.x - mMgr.mTextures.mViewportWidth) / 2;
+			r.x = (mMgr.mTextures.mViewportWidth + w -
+					mMgr.mTextures.mVpadWidth) / 2;
+			if (w - r.x - mMgr.mTextures.mVpadWidth < w / K.CONTROL_XPADDING)
+				r.x = w - mMgr.mTextures.mVpadWidth - K.CONTROL_XPADDING;
+		}
+		r.y = h / 2;
+		if (r.y + mMgr.mTextures.mVpadHeight < K.CONTROL_YPADDING)
+			r.y = h - mMgr.mTextures.mVpadHeight - h / K.CONTROL_YPADDING;
+		r.w = mMgr.mTextures.mVpadWidth;
+		r.h = mMgr.mTextures.mVpadHeight;
+		mControlsFrustums[0].setRect(0, 0, mMgr.mTextures.mVpadWidth,
+				mMgr.mTextures.mVpadHeight);
+		if (null == mVPad)
+			mVPad = new VPad(mFeedback);
+		mVPad.setDimensions(r.x, r.y,
+				mMgr.mTextures.mVpadWidth / 2,
+				(int) (VPAD_RATIO * mMgr.mTextures.mVpadWidth / 2));
+		mButtons.addOnScreenButton(mVPad);
 	}
 	
 	@Override
