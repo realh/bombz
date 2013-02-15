@@ -213,24 +213,26 @@ public class BombzTextures {
 				3 * mSrcTileSize, 3 * mSrcTileSize),
 				3 * K.FRUSTUM_TILE_SIZE, 3 * K.FRUSTUM_TILE_SIZE);
 		mPusherRegions[K.FACING_LEFT] =
-				mAlphaAtlas.createRegion(3 * mSrcTileSize, 0,
+				mAlphaAtlas.createRegion(0,
+						3 * mSrcTileSize,
 						mSrcTileSize, mSrcTileSize);
 		mPusherRegions[K.FACING_RIGHT] =
-				mAlphaAtlas.createRegion(4 * mSrcTileSize, 0,
+				mAlphaAtlas.createRegion(mSrcTileSize,
+						3 * mSrcTileSize,
 						mSrcTileSize, mSrcTileSize);
 		mPusherRegions[K.FACING_UP] =
-				mAlphaAtlas.createRegion(3 * mSrcTileSize,
-						mSrcTileSize, 
+				mAlphaAtlas.createRegion(2 * mSrcTileSize,
+						3 * mSrcTileSize, 
 						mSrcTileSize, mSrcTileSize);
 		mPusherRegions[K.FACING_DOWN] =
-				mAlphaAtlas.createRegion(4 * mSrcTileSize,
-						mSrcTileSize, 
+				mAlphaAtlas.createRegion(3 * mSrcTileSize,
+						3 * mSrcTileSize, 
 						mSrcTileSize, mSrcTileSize);
-		mBomb1Region = mAlphaAtlas.createRegion(3 * mSrcTileSize,
-						2 * mSrcTileSize, 
+		mBomb1Region = mAlphaAtlas.createRegion(4 * mSrcTileSize,
+						3 * mSrcTileSize, 
 						mSrcTileSize, mSrcTileSize);
-		mBomb2Region = mAlphaAtlas.createRegion(4 * mSrcTileSize,
-						2 * mSrcTileSize, 
+		mBomb2Region = mAlphaAtlas.createRegion(5 * mSrcTileSize,
+						3 * mSrcTileSize, 
 						mSrcTileSize, mSrcTileSize);
 		mPusherSprite = rctx.createSprite(mPusherRegions[K.FACING_UP],
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
