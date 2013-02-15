@@ -52,6 +52,9 @@ public class VPad implements DInput, OnScreenButton {
 	
 	private final ButtonFeedback mFeedback;
 	
+	// Respond to touch slightly outside visible vpad
+	private static final float OVERSPILL = 1.12f;
+	
 	// If x/y is between these two ratios we're on diagonal
 	private static final float RATIO = 0.7f;
 	private static final float INV_RATIO = 1 / RATIO;
@@ -80,14 +83,10 @@ public class VPad implements DInput, OnScreenButton {
 	}
 	
 	public final void setDimensions(int x, int y, int outerRadius, int innerRadius) {
-		mCentreX = x + outerRadius / 2;
-		mCentreY = y + outerRadius / 2;
-		mOuterRad2 = outerRadius * outerRadius;
-		mInnerRad2 = innerRadius * innerRadius;
-		Log.d(TAG, String.format("Vpad at %d, %d, radii %d, %d " +
-				"box (%d, %d) - (%d, %d)",
-				mCentreX, mCentreY, outerRadius, innerRadius,
-				x, y, x + outerRadius, y + outerRadius));
+		mCentreX = x + outerRadius;
+		mCentreY = y + outerRadius;
+		mOuterRad2 = outerRadius * outerRadius * OVERSPILL * OVERSPILL;
+		mInnerRad2 = innerRadius * innerRadius * OVERSPILL * OVERSPILL;
 	}
 
 	/* (non-Javadoc)
@@ -95,17 +94,6 @@ public class VPad implements DInput, OnScreenButton {
 	 */
 	@Override
 	public void handleEvent(int type, int x, int y, int pointerId) {
-		// TODO Auto-generated method stub
-		x -= mCentreX;
-		y -= mCentreY;
-		float rsq = x * x + y * y;
-		float ratio;
-		if (y != 0)
-			ratio = x / y;
-		else if (x < 0)
-			ratio = -999999999;
-		else
-			ratio = 999999999;
 		int newMask = mPressingMask;
 		if (mPressing[0] == pointerId)
 		{
@@ -129,6 +117,16 @@ public class VPad implements DInput, OnScreenButton {
 		}
 		if (BUTTON_RELEASE != type)
 		{
+			x -= mCentreX;
+			y -= mCentreY;
+			float rsq = x * x + y * y;
+			float ratio;
+			if (y != 0)
+				ratio = x / y;
+			else if (x < 0)
+				ratio = -999999999;
+			else
+				ratio = 999999999;
 			if (rsq < mOuterRad2 && rsq >= mInnerRad2)
 			{
 				if (x >= 0 && y >= 0)
