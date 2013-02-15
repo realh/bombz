@@ -129,6 +129,8 @@ public class Pusher {
 	                y += K.FRUSTUM_TILE_SIZE;
 	                break;
 	        }
+	    	mMgr.mTextures.mBombSprite.setTexture((Cell.BOMB1 == mPushingBomb) ?
+	    			mMgr.mTextures.mBomb1Region : mMgr.mTextures.mBomb2Region);
 	    	mMgr.mTextures.mBombSprite.setPosition(x, y);
 	    	mMgr.mTextures.mBombSprite.render(rctx);
 	    }
