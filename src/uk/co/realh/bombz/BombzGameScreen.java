@@ -188,7 +188,6 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 
 	@Override
 	public void render(RenderContext rctx) {
-		Log.d(TAG, "Rendering");
 		rctx.setViewport(mTilesViewport);
 		rctx.set2DFrustum(mTilesFrustum);
 		rctx.enableBlend(false);
@@ -199,14 +198,10 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mPusher.render(rctx);
 		if (0 != mMgr.mTextures.mControlsType)
 		{
-			Log.d(TAG, "Rendering controls");
 			rctx.bindTexture(mMgr.mTextures.mControlsAtlas);
 			rctx.setViewport(mControlsViewports[0]);
 			rctx.set2DFrustum(mControlsFrustums[0]);
 			mMgr.mTextures.mControlsSprites[0].render(rctx);
-		}
-		else {
-			Log.d(TAG, "Not rendering controls");
 		}
 	}
 

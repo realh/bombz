@@ -80,8 +80,8 @@ public class VPad implements DInput, OnScreenButton {
 	}
 	
 	public final void setDimensions(int x, int y, int outerRadius, int innerRadius) {
-		mCentreX = x + outerRadius / 2;
-		mCentreY = y + outerRadius / 2;
+		mCentreX = x + outerRadius;
+		mCentreY = y + outerRadius;
 		mOuterRad2 = outerRadius * outerRadius;
 		mInnerRad2 = innerRadius * innerRadius;
 		Log.d(TAG, String.format("Vpad at %d, %d, radii %d, %d " +
@@ -95,17 +95,6 @@ public class VPad implements DInput, OnScreenButton {
 	 */
 	@Override
 	public void handleEvent(int type, int x, int y, int pointerId) {
-		// TODO Auto-generated method stub
-		x -= mCentreX;
-		y -= mCentreY;
-		float rsq = x * x + y * y;
-		float ratio;
-		if (y != 0)
-			ratio = x / y;
-		else if (x < 0)
-			ratio = -999999999;
-		else
-			ratio = 999999999;
 		int newMask = mPressingMask;
 		if (mPressing[0] == pointerId)
 		{
@@ -129,6 +118,16 @@ public class VPad implements DInput, OnScreenButton {
 		}
 		if (BUTTON_RELEASE != type)
 		{
+			x -= mCentreX;
+			y -= mCentreY;
+			float rsq = x * x + y * y;
+			float ratio;
+			if (y != 0)
+				ratio = x / y;
+			else if (x < 0)
+				ratio = -999999999;
+			else
+				ratio = 999999999;
 			if (rsq < mOuterRad2 && rsq >= mInnerRad2)
 			{
 				if (x >= 0 && y >= 0)
