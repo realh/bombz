@@ -51,6 +51,7 @@ public abstract class BombzScreen implements Screen {
 	private static final String TAG = "BombzScreen";
 	
 	protected BombzGameManager mMgr;
+	protected RenderContext mRCtx;
 
 	public BombzScreen(BombzGameManager mgr) {
 		mMgr = mgr;
@@ -59,6 +60,7 @@ public abstract class BombzScreen implements Screen {
 	@Override
 	public void initRendering(RenderContext rctx, int w, int h)
 			throws IOException {
+		mRCtx = rctx;
 		rctx.enable2DTextures(true);
 		mMgr.mTextures.calculateTileSize(rctx, w, h);
 		// All Bombz screens need the tiles
@@ -69,6 +71,7 @@ public abstract class BombzScreen implements Screen {
 	@Override
 	public void deleteRendering(RenderContext rctx) {
 		mMgr.mTextures.deleteAllTextures(rctx);
+		mRCtx = null;
 	}
 
 	@Override
@@ -83,11 +86,13 @@ public abstract class BombzScreen implements Screen {
 	 */
 	@Override
 	public void replacingRenderer(RenderContext rctx) {
+		mRCtx = null;
 		Log.d(TAG, "Replacing renderer " + getDescription());
 	}
 
 	@Override
 	public void replacedRenderer(RenderContext rctx) throws IOException {
+		mRCtx = rctx;
 		Log.d(TAG, "New renderer " + getDescription());
 		if (null == mMgr.mTextures.mTileAtlas)
 			mMgr.mTextures.loadTiles(rctx);

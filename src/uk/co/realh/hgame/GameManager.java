@@ -142,9 +142,14 @@ public class GameManager {
 	{
 		if (!mTicking)
 		{
+			Log.d(TAG, "Enabling ticks, period " + interval);
 			mTicking = true;
 			mTickThread = new TickThread(interval);
 			mTickThread.start();
+		}
+		else
+		{
+			Log.d(TAG, "Ticking was already enabled");
 		}
 	}
 	
@@ -153,8 +158,13 @@ public class GameManager {
 		mTicking = false;
 		if (mTickThread != null)
 		{
+			Log.d(TAG, "Disabling ticks");
 			mTickThread.stopTicking();
 			mTickThread = null;
+		}
+		else
+		{
+			Log.d(TAG, "Ticking was already disabled");
 		}
 	}
 	
@@ -210,7 +220,9 @@ public class GameManager {
 			{
 				synchronized(this) {
 					if (!mEnabled)
+					{
 						break;
+					}
 					Event.pushEvent(Event.newEvent(Event.TICK));
 				}
 				try {
