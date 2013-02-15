@@ -185,11 +185,11 @@ public class VPad implements DInput, OnScreenButton {
 				}
 			}
 		}
-		Log.v(TAG, String.format(
-				"Type %d id %d at %d, %d changed mask from %x to %x",
-				type, pointerId, x, y, mPressingMask, newMask));
 		if (newMask != mPressingMask)
 		{
+			Log.v(TAG, String.format(
+					"Type %d id %d at %d, %d changed mask from %x to %x",
+					type, pointerId, x, y, mPressingMask, newMask));
 			mPressingMask = newMask;
 			if (mFeedback != null)
 				mFeedback.feedback();
