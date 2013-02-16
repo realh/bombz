@@ -36,65 +36,43 @@
 
 package uk.co.realh.bombz;
 
-import java.io.IOException;
-
-import uk.co.realh.hgame.ButtonFeedback;
-import uk.co.realh.hgame.GameManager;
-import uk.co.realh.hgame.SavedSettings;
-import uk.co.realh.hgame.Screen;
-import uk.co.realh.hgame.ScreenButtonSource;
-import uk.co.realh.hgame.Sys;
+import uk.co.realh.hgame.Event;
+import uk.co.realh.hgame.Log;
+import uk.co.realh.hgame.TapEventHandler;
 
 /**
  * @author Tony Houghton
  *
  */
-public class BombzGameManager extends GameManager {
+public class ChooseLevelScreen extends BombzMenuScreen {
+
+	private static final String TAG = "Choose Level";
 	
-	BombzTextures mTextures;
-	SavedSettings mSavedGame;
-	SavedSettings mConfiguration;
-	
-	private BombzMainMenuScreen mMainMenuScreen;
-	private BombzGameScreen mGameScreen;
-	private ChooseLevelScreen mChooseLevelScreen;
-	private final ButtonFeedback mHapticFeedback;
+	/**
+	 * @param mgr
+	 */
+	public ChooseLevelScreen(BombzGameManager mgr) {
+		super(mgr);
+		mWidgetY = 12 * K.FRUSTUM_TILE_SIZE;
+		addTextWidget(mMgr.mSys.translate("Back"),
+				new BackTappedListener());
+	}
+
+	private class BackTappedListener implements TapEventHandler {
+		@Override
+		public boolean handleTapEvent(Event e) {
+			Log.d(TAG, "Back tapped");
+			mMgr.setScreen(mMgr.getMainMenuScreen());
+			return true;
+		}
+	}
 
 	/**
-	 * @param sys
-	 * @param sbs	Object for managing on-screen buttons
-	 * @throws IOException
-	 * @see uk.co.realh.hgame.ScreenButtonSource
+	 * @see uk.co.realh.hgame.Renderer#getDescription()
 	 */
-	public BombzGameManager(Sys sys, ScreenButtonSource sbs) throws IOException
-	{
-		super(sys, sbs);
-		mSavedGame = sys.getSavedSettings("saves");
-		mConfiguration = sys.getSavedSettings("config");
-		mHapticFeedback = sys.getHapticFeedback();
-		mTextures = new BombzTextures(sys,
-				mConfiguration.get("touchpad", K.CONTROL_VPAD_LEFT));
-		mMainMenuScreen = new BombzMainMenuScreen(this);
-		setScreen(mMainMenuScreen);
+	@Override
+	public String getDescription() {
+		return "ChooseLevelScreen";
 	}
-	
-	public Screen getMainMenuScreen()
-	{
-		// Created in c'tor so always exists
-		return mMainMenuScreen;
-	}
-	
-	public Screen getGameScreen() throws IOException
-	{
-		if (null == mGameScreen)
-			mGameScreen = new BombzGameScreen(this, mButtons, mHapticFeedback);
-		return mGameScreen;
-	}
-	
-	public Screen getChooseLevelScreen()
-	{
-		if (null == mGameScreen)
-			mChooseLevelScreen = new ChooseLevelScreen(this);
-		return mChooseLevelScreen;
-	}
+
 }

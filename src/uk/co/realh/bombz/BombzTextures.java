@@ -72,8 +72,9 @@ public class BombzTextures {
 	TextureRegion[] mYellowDigitRegions = new TextureRegion[11];
 	TextureRegion[] mRedDigitRegions = new TextureRegion[11];
 	TextureRegion mStar1Region, mStar2Region;
-	// 4 digits + colon
-	Sprite[] mDigitSprites = new Sprite[5];
+	TextureRegion mHourglassRegion;
+	// 4 digits + colon + hourglass
+	Sprite[] mClockSprites = new Sprite[6];
 	Sprite mAlphaSprite;	// General purpose
 
 	private Sys mSys;
@@ -242,20 +243,25 @@ public class BombzTextures {
 		for (int n = 0; n < 11; ++n) {
 			int x = 3 * mSrcTileSize + n * 3 * mSrcTileSize / 4;
 			mYellowDigitRegions[n] = mAlphaAtlas.createRegion(
-					x, 0, 3 * mSrcTileSize / 4, mSrcTileSize / 2);
+					x, 0, 3 * mSrcTileSize / 8, mSrcTileSize / 2);
 			mRedDigitRegions[n] = mAlphaAtlas.createRegion(
-					x, mSrcTileSize, 3 * mSrcTileSize / 4, mSrcTileSize / 2);
+					x, mSrcTileSize, 3 * mSrcTileSize / 8, mSrcTileSize / 2);
 		}
+		mHourglassRegion = mAlphaAtlas.createRegion(
+				7 * mSrcTileSize, 2 * mSrcTileSize,
+				mSrcTileSize * 3 / 8, mSrcTileSize / 2);
 		for (int n = 0; n < 5; ++n) {
-			mDigitSprites[n] = rctx.createSprite(mYellowDigitRegions[10],
-					3 * K.FRUSTUM_TILE_SIZE / 4, K.FRUSTUM_TILE_SIZE / 2);
+			mClockSprites[n] = rctx.createSprite(mYellowDigitRegions[10],
+					3 * K.FRUSTUM_TILE_SIZE / 8, K.FRUSTUM_TILE_SIZE / 2);
 		}
+		mClockSprites[5] = rctx.createSprite(mHourglassRegion,
+				3 * K.FRUSTUM_TILE_SIZE / 8, K.FRUSTUM_TILE_SIZE / 2);
 		
 		mStar1Region = mAlphaAtlas.createRegion(
-				3 * mSrcTileSize, 2 * mSrcTileSize,
+				5 * mSrcTileSize, 2 * mSrcTileSize,
 				mSrcTileSize / 2, mSrcTileSize / 2);
 		mStar2Region = mAlphaAtlas.createRegion(
-				4 * mSrcTileSize, 2 * mSrcTileSize,
+				6 * mSrcTileSize, 2 * mSrcTileSize,
 				mSrcTileSize / 2, mSrcTileSize / 2);
 	}
 
@@ -264,9 +270,10 @@ public class BombzTextures {
 		mAlphaSprite = null;
 		mStar1Region = null;
 		mStar2Region = null;
-		for (int n = 0; n < 5; ++n) {
-			mDigitSprites[n] = null;
+		for (int n = 0; n < 6; ++n) {
+			mClockSprites[n] = null;
 		}
+		mHourglassRegion = null;
 		for (int n = 0; n < 11; ++n) {
 			mYellowDigitRegions[n] = null;
 			mRedDigitRegions[n] = null;

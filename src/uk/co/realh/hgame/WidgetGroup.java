@@ -148,6 +148,9 @@ public class WidgetGroup implements Renderer, TapEventHandler {
 	 */
 	@Override
 	public void replacedRenderer(RenderContext rctx) throws IOException {
+		if (null == mAtlasMaker) {
+			initRendering(rctx, rctx.getScreenWidth(), rctx.getScreenHeight());
+		}
 	}
 
 	/**

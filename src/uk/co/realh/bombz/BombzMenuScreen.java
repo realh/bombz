@@ -85,7 +85,6 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		mMgr.mTextures.loadTitleLogo(rctx);
 		setupRendering(rctx, w, h);
 		mWidgetGroup.initRendering(rctx, w, h);
-		rctx.requestRender();
 	}
 	
 	private void setupRendering(RenderContext rctx, int w, int h)
@@ -165,7 +164,6 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		super.resizeRendering(rctx, w, h);
 		setupRendering(rctx, w, h);
 		mWidgetGroup.resizeRendering(rctx, w, h);
-		rctx.requestRender();
 	}
 	
 	protected void setupViewport(RenderContext rctx, int w, int h)
@@ -194,7 +192,11 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	
 	@Override
 	public boolean handleEvent(Event ev) {
-		if (Event.TAP == ev.mCode)
+		if (Event.RESUME == ev.mCode) {
+			Log.d(TAG, "Requesting render on RESUME");
+			mRCtx.requestRender();
+		}
+		else if (Event.TAP == ev.mCode)
 		{
 			for (int n = 0; n < mTextWidgets.size(); ++n)
 			{
@@ -214,6 +216,8 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		super.replacedRenderer(rctx);
 		if (null == mMgr.mTextures.mLogoAtlas)
 			mMgr.mTextures.loadTitleLogo(rctx);
+		setupRendering(rctx, rctx.getScreenWidth(), rctx.getScreenHeight());
+		mWidgetGroup.replacedRenderer(rctx);
 	}
 
 }

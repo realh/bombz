@@ -67,10 +67,13 @@ public abstract class RenderContext {
 	public int mId;
 	
 	protected boolean mNativeSize;
-
+	
+	boolean mReady;
+	
 	/**
 	 * Subclasses are responsible for making sure the Renderer gets called
-	 * with REASON_INIT.
+	 * with REASON_INIT. notifyAll will be called on renderer after
+	 * initRendering.
 	 * 
 	 * @param renderer	Initial renderer
 	 */
@@ -80,7 +83,7 @@ public abstract class RenderContext {
 		mRenderer = renderer;
 		mRenderReason = REASON_INIT;
 	}
-
+	
 	/**
 	 * Old renderer, if any, will have its replacingRenderer method called.
 	 * replacedRenderer will then be called on new renderer, followed by render
@@ -107,6 +110,8 @@ public abstract class RenderContext {
 	 */
 	synchronized
 	public void requestRender(int reason, boolean block) {
+		if (mRenderBlocking)
+			Log.f(TAG, "requestRender called while already blocking");
 		mRenderBlocking = block;
 		mRenderReason = reason;
 		implementRenderRequest();
@@ -133,6 +138,8 @@ public abstract class RenderContext {
 	 */
 	synchronized
 	public void preRequestRender(int reason) {
+		if (mRenderBlocking)
+			Log.f(TAG, "requestRender called while already blocking");
 		mRenderBlocking = false;
 		mRenderReason = reason;
 	}
@@ -142,6 +149,8 @@ public abstract class RenderContext {
 	 */
 	synchronized
 	public void requestRender() {
+		if (mRenderBlocking)
+			Log.f(TAG, "requestRender called while already blocking");
 		mRenderBlocking = false;
 		mRenderReason = REASON_RENDER;
 		implementRenderRequest();
@@ -172,9 +181,16 @@ public abstract class RenderContext {
 			mWidth = getCurrentScreenWidth();
 			mHeight = getCurrentScreenHeight();
 			if (null != mRenderer)
+			{
 				mRenderer.initRendering(this, mWidth, mHeight);
+				mReady = true;
+				synchronized(mRenderer) {
+					mRenderer.notifyAll();
+				}
+			}
 			break;
 		case REASON_DISPOSE:
+			mReady = false;
 			if (null != mRenderer)
 				mRenderer.deleteRendering(this);
 			break;
@@ -209,7 +225,10 @@ public abstract class RenderContext {
 		}
 		mRendering = rendering;
 		if (mRenderBlocking)
+		{
 			notifyAll();
+			mRenderBlocking = false;
+		}
 		return rendering;
 	}
 

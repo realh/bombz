@@ -77,9 +77,13 @@ public class GameManager {
 		mButtons.removeButtons();
 		mScreen = scrn;
 		if (mRCtx != null)
+		{
 			mRCtx.setRenderer(scrn);
+		}
 		if (mRunning && scrn != null)
+		{
 			Event.pushEvent(Event.newEvent(Event.RESUME));
+		}
 	}
 	
 	/**
@@ -87,13 +91,26 @@ public class GameManager {
 	 * 
 	 * @param rctx
 	 */
+	synchronized
 	public void setRenderContext(RenderContext rctx)
 	{
 		mRCtx = rctx;
-		if (mScreen != null)
-			mRCtx.setRenderer(mScreen);
+		mRCtx.setRenderer(mScreen);
 	}
 	
+	public void waitForRenderContext() {
+		Log.d(TAG, "Waiting for RenderContext");
+		synchronized(mScreen) {
+			while (null == mRCtx || !mRCtx.mReady) {
+				try {
+					mScreen.wait();
+				} catch (InterruptedException e) {
+					Log.w(TAG, "Interrupted waiting for RenderContext", e);
+				}
+			}
+		}
+	}
+		
 	/**
 	 * Lets the Screen know that it's to continue after a pause
 	 * or that it should start.
@@ -103,16 +120,7 @@ public class GameManager {
 		mGameThread = new GameThread();
 		mRunning = true;
 		mGameThread.start();
-		Event ev = Event.newEvent(Event.RESUME);
-		synchronized(ev) {
-			Event.pushEvent(ev);
-			try {
-				ev.wait();
-			} catch (InterruptedException e) {
-				Log.w(TAG, "Interrupted waiting for " +
-						"resume event to be handled", e);
-			}
-		}
+		Event.pushEvent(Event.newEvent(Event.RESUME));
 	}
 	
 	/**
@@ -185,15 +193,11 @@ public class GameManager {
 					}
 					else
 					{
+						if (ev.mCode == Event.RESUME)
+							waitForRenderContext();
 						mScreen.handleEvent(ev);
 					}
-					if (ev.mCode == Event.RESUME)
-					{
-						synchronized(ev) {
-							ev.notifyAll();
-						}
-					}
-					else if (ev.mCode == Event.PAUSE)
+					if (ev.mCode == Event.PAUSE)
 						running = false;
 				}
 			} catch (Throwable e) {
