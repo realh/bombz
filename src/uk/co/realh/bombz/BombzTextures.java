@@ -57,7 +57,8 @@ public class BombzTextures {
 
 	TextureAtlas mTileAtlas, mAlphaAtlas, mLogoAtlas;
 	TextureRegion[] mTileRegions = new TextureRegion[Cell.N_CELLS];
-	TextureRegion[] mPusherRegions = new TextureRegion[4];
+	// 4 "live" pushers, 4 "dead"
+	TextureRegion[] mPusherRegions = new TextureRegion[8];
 	TextureRegion mBomb1Region, mBomb2Region;
 	Sprite mPusherSprite, mBombSprite, mLogoSprite, mExplo00Sprite;
 	TileBatcher mTileBatcher;
@@ -66,6 +67,14 @@ public class BombzTextures {
 	TextureRegion[] mControlsRegions = new TextureRegion[4];
 	Sprite[] mControlsSprites = new Sprite[4];
 	int mVpadWidth, mVpadHeight;
+	
+	// 11th "digit" is colon
+	TextureRegion[] mYellowDigitRegions = new TextureRegion[11];
+	TextureRegion[] mRedDigitRegions = new TextureRegion[11];
+	TextureRegion mStar1Region, mStar2Region;
+	// 4 digits + colon
+	Sprite[] mDigitSprites = new Sprite[5];
+	Sprite mAlphaSprite;	// General purpose
 
 	private Sys mSys;
 	int mSrcTileSize;		// Source size
@@ -209,25 +218,16 @@ public class BombzTextures {
 	{
 		rctx.enableBlend(true);
 		mAlphaAtlas = loadAtlas(rctx, "alpha_atlas", true);
+		
 		mExplo00Sprite = rctx.createSprite(mAlphaAtlas.createRegion(0, 0,
 				3 * mSrcTileSize, 3 * mSrcTileSize),
 				3 * K.FRUSTUM_TILE_SIZE, 3 * K.FRUSTUM_TILE_SIZE);
-		mPusherRegions[K.FACING_LEFT] =
-				mAlphaAtlas.createRegion(0,
-						3 * mSrcTileSize,
-						mSrcTileSize, mSrcTileSize);
-		mPusherRegions[K.FACING_RIGHT] =
-				mAlphaAtlas.createRegion(mSrcTileSize,
-						3 * mSrcTileSize,
-						mSrcTileSize, mSrcTileSize);
-		mPusherRegions[K.FACING_UP] =
-				mAlphaAtlas.createRegion(2 * mSrcTileSize,
-						3 * mSrcTileSize,
-						mSrcTileSize, mSrcTileSize);
-		mPusherRegions[K.FACING_DOWN] =
-				mAlphaAtlas.createRegion(3 * mSrcTileSize,
-						3 * mSrcTileSize,
-						mSrcTileSize, mSrcTileSize);
+		
+		for (int n = 0; n < 8; ++n) {
+			mPusherRegions[n] = mAlphaAtlas.createRegion(n * mSrcTileSize,
+						3 * mSrcTileSize, mSrcTileSize, mSrcTileSize);
+		}
+		
 		mBomb1Region = mAlphaAtlas.createRegion(3 * mSrcTileSize,
 						2 * mSrcTileSize,
 						mSrcTileSize, mSrcTileSize);
@@ -238,12 +238,41 @@ public class BombzTextures {
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 		mBombSprite = rctx.createSprite(mBomb1Region,
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
+		
+		for (int n = 0; n < 11; ++n) {
+			int x = 3 * mSrcTileSize + n * 3 * mSrcTileSize / 4;
+			mYellowDigitRegions[n] = mAlphaAtlas.createRegion(
+					x, 0, 3 * mSrcTileSize / 4, mSrcTileSize / 2);
+			mRedDigitRegions[n] = mAlphaAtlas.createRegion(
+					x, mSrcTileSize, 3 * mSrcTileSize / 4, mSrcTileSize / 2);
+		}
+		for (int n = 0; n < 5; ++n) {
+			mDigitSprites[n] = rctx.createSprite(mYellowDigitRegions[10],
+					3 * K.FRUSTUM_TILE_SIZE / 4, K.FRUSTUM_TILE_SIZE / 2);
+		}
+		
+		mStar1Region = mAlphaAtlas.createRegion(
+				3 * mSrcTileSize, 2 * mSrcTileSize,
+				mSrcTileSize / 2, mSrcTileSize / 2);
+		mStar2Region = mAlphaAtlas.createRegion(
+				4 * mSrcTileSize, 2 * mSrcTileSize,
+				mSrcTileSize / 2, mSrcTileSize / 2);
 	}
 
 	void deleteAlphaTextures(RenderContext rctx)
 	{
+		mAlphaSprite = null;
+		mStar1Region = null;
+		mStar2Region = null;
+		for (int n = 0; n < 5; ++n) {
+			mDigitSprites[n] = null;
+		}
+		for (int n = 0; n < 11; ++n) {
+			mYellowDigitRegions[n] = null;
+			mRedDigitRegions[n] = null;
+		}
 		mPusherSprite = null;
-		for (int n = 0; n < 4; ++n)
+		for (int n = 0; n < 8; ++n)
 			mPusherRegions[n] = null;
 		mBombSprite = null;
 		mBomb1Region = null;

@@ -221,7 +221,6 @@ public abstract class HGameActivity extends Activity
 		@Override
 		public void onDrawFrame(GL10 gl) {
 			try {
-				Log.d(TAG, "onDrawFrame");
 				mRCtx.onDrawFrame();
 			} catch (Throwable e) {
 				Log.f(TAG, "Rendering exception", e);
