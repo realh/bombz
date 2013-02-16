@@ -241,7 +241,7 @@ public class BombzTextures {
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 		
 		for (int n = 0; n < 11; ++n) {
-			int x = 3 * mSrcTileSize + n * 3 * mSrcTileSize / 4;
+			int x = 3 * mSrcTileSize + n * 3 * mSrcTileSize / 8;
 			mYellowDigitRegions[n] = mAlphaAtlas.createRegion(
 					x, 0, 3 * mSrcTileSize / 8, mSrcTileSize / 2);
 			mRedDigitRegions[n] = mAlphaAtlas.createRegion(

@@ -57,8 +57,10 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	
 	private static final String TAG = "MenuScreen";
 	
+	protected static final int WIDGET_TOP = 6 * K.FRUSTUM_TILE_SIZE;
+	
 	protected WidgetGroup mWidgetGroup = new WidgetGroup();
-	protected int mWidgetY = 6 * K.FRUSTUM_TILE_SIZE;
+	protected int mWidgetY = WIDGET_TOP;
 	protected List<TextWidget> mTextWidgets = new ArrayList<TextWidget>();
 
 	/**

@@ -36,8 +36,12 @@
 
 package uk.co.realh.bombz;
 
+import java.io.IOException;
+
 import uk.co.realh.hgame.Event;
 import uk.co.realh.hgame.Log;
+import uk.co.realh.hgame.RenderContext;
+import uk.co.realh.hgame.Sprite;
 import uk.co.realh.hgame.TapEventHandler;
 
 /**
@@ -53,11 +57,85 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 	 */
 	public ChooseLevelScreen(BombzGameManager mgr) {
 		super(mgr);
-		mWidgetY = 12 * K.FRUSTUM_TILE_SIZE;
+		mWidgetY = 25 * K.FRUSTUM_TILE_SIZE / 2;
 		addTextWidget(mMgr.mSys.translate("Back"),
 				new BackTappedListener());
 	}
+	
+	@Override
+	public void initRendering(RenderContext rctx, int w, int h)
+			throws IOException {
+		super.initRendering(rctx, w, h);
+		setupRendering(rctx);
+	}
+	
+	private void setupRendering(RenderContext rctx) throws IOException {
+		BombzTextures t = mMgr.mTextures;
+		t.loadAlphaTextures(rctx);
+		t.mAlphaSprite = rctx.createSprite(t.mBomb1Region,
+					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
+	}
+	
+	@Override
+	public void render(RenderContext rctx ) {
+		super.render(rctx);
+		int bestLevel = mMgr.mSavedGame.get("highest_completed", 0);
+		BombzTextures t = mMgr.mTextures;
+		Sprite s = t.mAlphaSprite;
+		rctx.bindTexture(t.mAlphaAtlas);
+		int d1 = 1;
+		int d10 = 0;
+		for (int n = 0; n < K.N_LEVELS; ++n) {
+			int x = (n % 10) * 16 * K.FRUSTUM_TILE_SIZE / 10 +
+					2 * K.FRUSTUM_TILE_SIZE;
+			int y = (n / 10) * 3 * K.FRUSTUM_TILE_SIZE / 2 +
+					WIDGET_TOP;
+			s.setTexture((n > bestLevel) ? t.mBomb1Region : t.mBomb2Region);
+			s.setPositionAndSize(x, y,
+					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
+			s.render(rctx);
+			int y0 = y + 13 * K.FRUSTUM_TILE_SIZE / 16;
+			s.setTexture(t.mYellowDigitRegions[d10]);
+			s.setPositionAndSize(x + K.FRUSTUM_TILE_SIZE / 8, y0,
+					3 * K.FRUSTUM_TILE_SIZE / 8,
+					K.FRUSTUM_TILE_SIZE / 2);
+			s.render(rctx);
+			s.setTexture(t.mYellowDigitRegions[d1]);
+			s.setPosition(x + K.FRUSTUM_TILE_SIZE / 2, y0);
+			s.render(rctx);
+			int score = mMgr.mSavedGame.get("score_" + n, 0);
+			if (score != 0 || n == bestLevel) {
+				y0 = y + 5 * K.FRUSTUM_TILE_SIZE / 16;
+				s.setTexture(score > 0 ? t.mStar2Region : t.mStar1Region);
+				s.setPositionAndSize(x, y0,
+						3 * K.FRUSTUM_TILE_SIZE / 8,
+						3 * K.FRUSTUM_TILE_SIZE / 8);
+				s.render(rctx);
+				if (score == 1)
+					s.setTexture(t.mStar1Region);
+				s.setPosition(x + 6 * K.FRUSTUM_TILE_SIZE / 16,
+						y0 - K.FRUSTUM_TILE_SIZE / 8);
+				s.render(rctx);
+				if (score == 2)
+					s.setTexture(t.mStar1Region);
+				s.setPosition(x + 12 * K.FRUSTUM_TILE_SIZE / 16, y0);
+				s.render(rctx);
+			}
+			if (++d1 == 10)
+			{
+				d1 = 0;
+				++d10;
+			}
+		}
+	}
 
+	@Override
+	public void replacedRenderer(RenderContext rctx) throws IOException {
+		super.replacedRenderer(rctx);
+		if (null == mMgr.mTextures.mAlphaAtlas)
+			setupRendering(rctx);
+	}
+	
 	private class BackTappedListener implements TapEventHandler {
 		@Override
 		public boolean handleTapEvent(Event e) {
