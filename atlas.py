@@ -299,17 +299,18 @@ def make_game_alpha_atlas(dest, sources, size = 72):
     """ Arranges the graphics with alpha into a texture atlas.
     dest = output PNG filename.
     The order of sources (list of SVG filenames) should be
-    explo00, 4 droids, 2 bombs, 2 stars.
+    explo00, 4 droids, 4 dead droids, 2 bombs, 2 stars.
     """
     explo0 = svg_to_cairo(sources[0], size * 3, size * 3)
     ytext = load_text(os.path.dirname(sources[0]), "yellow", size * 3 / 8)
     rtext = load_text(os.path.dirname(sources[0]), "red", size * 3 / 8)
-    star1 = svg_to_cairo(sources[7], size * 3 / 8, size * 3 / 8)
-    star2 = svg_to_cairo(sources[8], size * 3 / 8, size * 3 / 8)
-    table = [[[explo0, 3, 3], None, None, [ytext, 3, 1], None, None],
-            [None, None, None, [rtext, 3, 1], None, None],
-            [None, None, None, star1, star2, None],
-            sources[1:7]]
+    star1 = svg_to_cairo(sources[11], size * 3 / 8, size * 3 / 8)
+    star2 = svg_to_cairo(sources[12], size * 3 / 8, size * 3 / 8)
+    table = [[[explo0, 3, 3], None, None,
+                    [ytext, 5, 1], None, None, None, None],
+            [None, None, None, [rtext, 5, 1], None, None, None, None],
+            [None, None, None, sources[9], sources[10], star1, star2, None],
+            sources[1:9]]
     atlas = make_atlas(True, size, table)
     atlas.write_to_png(dest)
 
@@ -366,8 +367,9 @@ def builder(m, dest, size):
         omdp(dest)
         make_game_alpha_atlas(dest,
                 ["svgs/%s.svg" % s for s in ["explo00"] + \
-                    ["droid%s" % d for d in "left right up down".split()] \
-                            + ["bomb1", "bomb2", "star1", "star2"]],
+                    ["droid%s" % d for d in "left right up down".split()] + \
+                    ["dead%s" % d for d in "left right up down".split()] + \
+                            ["bomb1", "bomb2", "star1", "star2"]],
                 size)
     elif m == 'logo':
         omdp(dest)

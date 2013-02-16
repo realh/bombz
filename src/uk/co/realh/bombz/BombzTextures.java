@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2013, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -52,9 +52,9 @@ import uk.co.realh.hgame.TileBatcher;
  * TODO: Create sprites etc.
  */
 public class BombzTextures {
-	
+
 	private static String TAG = "Textures";
-	
+
 	TextureAtlas mTileAtlas, mAlphaAtlas, mLogoAtlas;
 	TextureRegion[] mTileRegions = new TextureRegion[Cell.N_CELLS];
 	TextureRegion[] mPusherRegions = new TextureRegion[4];
@@ -66,31 +66,31 @@ public class BombzTextures {
 	TextureRegion[] mControlsRegions = new TextureRegion[4];
 	Sprite[] mControlsSprites = new Sprite[4];
 	int mVpadWidth, mVpadHeight;
-	
+
 	private Sys mSys;
 	int mSrcTileSize;		// Source size
 	int mViewportWidth, mViewportHeight;
-	
+
 	// Used to work out how well a source tile size matches screen size.
 	// The higher the better the match.
 	private static final int NO_MATCH = 0;
 	private static final int INT_RATIO = 1;
 	private static final int EXACT = 2;
-	
+
 	/**
 	 * @param sys
 	 * @param screen_w	Width of screen
 	 * @param screen_h	Height of screen
 	 * @param controlsType	One of controls constants
 	 * @see uk.co.realh.hgame.K
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	BombzTextures(Sys sys, int controlsType)
 	{
 		mSys = sys;
 		setControlsType(controlsType);
 	}
-	
+
 	final void setControlsType(int c)
 	{
 		if (mSys.usesTouchScreen())
@@ -98,7 +98,7 @@ public class BombzTextures {
 		else
 			mControlsType = 0;
 	}
-	
+
 	void calculateTileSize(RenderContext rctx, int screen_w, int screen_h)
 			throws IOException
 	{
@@ -140,7 +140,7 @@ public class BombzTextures {
 				", viewport " + mViewportWidth + "x" + mViewportHeight);
 		rctx.setNativeSize(best_goodness == EXACT);
 	}
-	
+
 	private TextureAtlas loadAtlas(RenderContext rctx,
 			String name, boolean alpha) throws IOException
 	{
@@ -153,7 +153,7 @@ public class BombzTextures {
 		img.dispose();
 		return atlas;
 	}
-	
+
 	void loadTiles(RenderContext rctx) throws IOException
 	{
 		mTileAtlas = loadAtlas(rctx, "tile_atlas", false);
@@ -172,7 +172,7 @@ public class BombzTextures {
 		mTileBatcher = rctx.createTileBatcher(K.N_COLUMNS, K.N_ROWS,
 				K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 	}
-	
+
 	private void createFusedRegions(int bomb1or2)
 	{
 		int start = (bomb1or2 == Cell.BOMB2) ?
@@ -187,14 +187,14 @@ public class BombzTextures {
 							Cell.BLANK : bomb1or2) - Cell.OFFSET];
 		}
 	}
-	
+
 	private TextureRegion createTileRegion(int n)
 	{
 		int x = (n % K.TILE_ATLAS_COLUMNS) * mSrcTileSize;
 		int y = (n / K.TILE_ATLAS_COLUMNS) * mSrcTileSize;
 		return mTileAtlas.createRegion(x, y, mSrcTileSize, mSrcTileSize);
 	}
-	
+
 	void deleteTiles(RenderContext rctx)
 	{
 		mTileBatcher = null;
@@ -204,7 +204,7 @@ public class BombzTextures {
 			mTileAtlas.dispose(rctx);
 		mTileAtlas = null;
 	}
-	
+
 	void loadAlphaTextures(RenderContext rctx) throws IOException
 	{
 		rctx.enableBlend(true);
@@ -222,24 +222,24 @@ public class BombzTextures {
 						mSrcTileSize, mSrcTileSize);
 		mPusherRegions[K.FACING_UP] =
 				mAlphaAtlas.createRegion(2 * mSrcTileSize,
-						3 * mSrcTileSize, 
+						3 * mSrcTileSize,
 						mSrcTileSize, mSrcTileSize);
 		mPusherRegions[K.FACING_DOWN] =
 				mAlphaAtlas.createRegion(3 * mSrcTileSize,
-						3 * mSrcTileSize, 
+						3 * mSrcTileSize,
 						mSrcTileSize, mSrcTileSize);
-		mBomb1Region = mAlphaAtlas.createRegion(4 * mSrcTileSize,
-						3 * mSrcTileSize, 
+		mBomb1Region = mAlphaAtlas.createRegion(3 * mSrcTileSize,
+						2 * mSrcTileSize,
 						mSrcTileSize, mSrcTileSize);
-		mBomb2Region = mAlphaAtlas.createRegion(5 * mSrcTileSize,
-						3 * mSrcTileSize, 
+		mBomb2Region = mAlphaAtlas.createRegion(4 * mSrcTileSize,
+						2 * mSrcTileSize,
 						mSrcTileSize, mSrcTileSize);
 		mPusherSprite = rctx.createSprite(mPusherRegions[K.FACING_UP],
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 		mBombSprite = rctx.createSprite(mBomb1Region,
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 	}
-	
+
 	void deleteAlphaTextures(RenderContext rctx)
 	{
 		mPusherSprite = null;
@@ -253,7 +253,7 @@ public class BombzTextures {
 			mAlphaAtlas.dispose(rctx);
 		mAlphaAtlas = null;
 	}
-	
+
 	void loadTitleLogo(RenderContext rctx) throws IOException
 	{
 		rctx.enableBlend(true);
@@ -263,7 +263,7 @@ public class BombzTextures {
 				2 * K.FRUSTUM_TILE_SIZE, (K.FRUSTUM_TILE_SIZE * 3) / 2,
 				16 * K.FRUSTUM_TILE_SIZE, 4 * K.FRUSTUM_TILE_SIZE);
 	}
-	
+
 	void deleteLogoAtlas(RenderContext rctx)
 	{
 		mLogoSprite = null;
@@ -271,7 +271,7 @@ public class BombzTextures {
 			mLogoAtlas.dispose(rctx);
 		mLogoAtlas = null;
 	}
-	
+
 	void loadControls(RenderContext rctx) {
 		Image img = null;
 		if (0 != mControlsType)
@@ -306,7 +306,7 @@ public class BombzTextures {
 		if (null != img)
 			img.dispose();
 	}
-	
+
 	void deleteControls(RenderContext rctx) {
 		for (int n = 0; n < 4; ++n)
 		{
@@ -321,7 +321,7 @@ public class BombzTextures {
 	}
 	/**
 	 * Call in a deleteRendering handler and at the start of initRendering.
-	 * 
+	 *
 	 * @see uk.co.realh.hgame.Renderer
 	 */
 	void deleteAllTextures(RenderContext rctx)
@@ -331,9 +331,9 @@ public class BombzTextures {
 		deleteLogoAtlas(rctx);
 		deleteControls(rctx);
 	}
-	
+
 	/**
-	 * @throws IOException 
+	 * @throws IOException
 	 * @see uk.co.realh.hgame.Renderer
 	 */
 	void onResize(RenderContext rctx, int w, int h) throws IOException
@@ -360,5 +360,5 @@ public class BombzTextures {
 			loadControls(rctx);
 		}
 	}
-	
+
 }
