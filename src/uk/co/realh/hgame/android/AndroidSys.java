@@ -8,21 +8,19 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.TreeSet;
 
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Vibrator;
-import android.util.Log;
-
 import uk.co.realh.hgame.ButtonFeedback;
 import uk.co.realh.hgame.Font;
 import uk.co.realh.hgame.Image;
 import uk.co.realh.hgame.SavedSettings;
 import uk.co.realh.hgame.Sys;
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Vibrator;
+import android.util.Log;
 
 /**
  * @author Tony Houghton
@@ -119,8 +117,6 @@ public class AndroidSys implements Sys {
 		}
 		Resources res = mContext.getResources();
 		Bitmap bmp = ((BitmapDrawable) res.getDrawable(id)).getBitmap();
-		Config cfg = bmp.getConfig();
-		Log.d(TAG, "Res '" + name + "' bitmap format " + cfg.toString());
 		return new AndroidImage(bmp);
 	}
 	

@@ -316,18 +316,12 @@ public class BombzTextures {
 			img = mSys.loadResPNG("vpad");
 			mControlsAtlas = rctx.uploadTexture(img, true);
 		}
-		else
-		{
-			Log.d(TAG, "Not loading controls atlas");
-		}
 		switch (mControlsType)
 		{
 		case K.CONTROL_VPAD_LEFT:
 		case K.CONTROL_VPAD_RIGHT:
 			mVpadWidth = img.getWidth();
 			mVpadHeight = img.getHeight();
-			Log.d(TAG, "Loaded controls atlas " +
-					mVpadWidth + " x " + mVpadHeight);
 			mControlsRegions[0] = mControlsAtlas.createRegion(0, 0,
 					img.getWidth(), img.getHeight());
 			mControlsSprites[0] = rctx.createSprite(mControlsRegions[0],

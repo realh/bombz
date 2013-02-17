@@ -234,6 +234,7 @@ public abstract class HGameActivity extends Activity
 		 */
 		@Override
 		public void onSurfaceChanged(GL10 gl, int w, int h) {
+			Log.d(TAG, "onSurfaceChanged");
 			try {
 				if (w != mW || h != mH)
 				{
@@ -253,6 +254,7 @@ public abstract class HGameActivity extends Activity
 		 */
 		@Override
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+			Log.d(TAG, "onSurfaceCreated");
 			try {
 				mW = mGlView.getWidth();
 				mH = mGlView.getHeight();

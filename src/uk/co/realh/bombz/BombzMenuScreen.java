@@ -103,7 +103,6 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		SimpleRect fr = rctx.get2DFrustum();
 		int view_ts = (int) ((float) K.FRUSTUM_TILE_SIZE *
 				(float) vp.h / (float) fr.h);
-		Log.d(TAG, "View tile size " + view_ts);
 		Font font = mMgr.mSys.openFont(view_ts);
 		font.setColour(K.MENU_TEXT_COLOUR >> 16,
 				(K.MENU_TEXT_COLOUR >> 8) & 0xff,
@@ -175,8 +174,6 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		rctx.setViewport((w - vpw) / 2, (h - vph) / 2, vpw, vph);
 		rctx.set2DFrustum(0, K.N_COLUMNS * K.FRUSTUM_TILE_SIZE,
 				K.N_ROWS * K.FRUSTUM_TILE_SIZE, 0);
-		Log.d(TAG, "Setting viewport " + rctx.getViewport().toString() +
-				", frustum " + rctx.get2DFrustum().toString());
 	}
 	
 	@Override
@@ -195,7 +192,6 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	@Override
 	public boolean handleEvent(Event ev) {
 		if (Event.RESUME == ev.mCode) {
-			Log.d(TAG, "Requesting render on RESUME");
 			mRCtx.requestRender();
 		}
 		else if (Event.TAP == ev.mCode)
