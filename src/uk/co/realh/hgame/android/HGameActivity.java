@@ -137,7 +137,6 @@ public abstract class HGameActivity extends Activity
 		try {
 			super.onResume();
 			mGlView.onResume();
-			mMgr.resume();
 		} catch (Throwable e) {
 			Log.f(TAG, "Exception in onResume", e);
 		}
@@ -234,8 +233,12 @@ public abstract class HGameActivity extends Activity
 		 */
 		@Override
 		public void onSurfaceChanged(GL10 gl, int w, int h) {
-			Log.d(TAG, "onSurfaceChanged");
+			Log.d(TAG, "onSurfaceChanged: " + w + "x" + h);
 			try {
+				/*
+				 * Change to this to ignore spurious orientation changes
+				if ((w != mW || h != mH) && (w != mH || h != mW))
+				 */
 				if (w != mW || h != mH)
 				{
 					Log.d(TAG, "Surface resized to " + w + "x" + h);
@@ -254,13 +257,14 @@ public abstract class HGameActivity extends Activity
 		 */
 		@Override
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-			Log.d(TAG, "onSurfaceCreated");
 			try {
 				mW = mGlView.getWidth();
 				mH = mGlView.getHeight();
+				Log.d(TAG, "onSurfaceCreated: " + mW + "x" + mH);
 				mRCtx = new AndroidGles1RenderContext(mGlView, gl, mMgr.mScreen);
-				mMgr.setRenderContext(mRCtx);
 				mRCtx.preRequestRender(RenderContext.REASON_INIT);
+				mMgr.setRenderContext(mRCtx);
+				mMgr.resume();
 			} catch (Throwable e) {
 				Log.f(TAG, "Exception in onSurfaceCreated", e);
 			}

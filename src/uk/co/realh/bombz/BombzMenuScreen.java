@@ -42,7 +42,6 @@ import java.util.List;
 
 import uk.co.realh.hgame.Event;
 import uk.co.realh.hgame.Font;
-import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.SimpleRect;
 import uk.co.realh.hgame.TapEventHandler;
@@ -55,6 +54,7 @@ import uk.co.realh.hgame.WidgetGroup;
  */
 public abstract class BombzMenuScreen extends BombzScreen {
 	
+	@SuppressWarnings("unused")
 	private static final String TAG = "MenuScreen";
 	
 	protected static final int WIDGET_TOP = 6 * K.FRUSTUM_TILE_SIZE;

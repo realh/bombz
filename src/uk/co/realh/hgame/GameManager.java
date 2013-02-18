@@ -98,18 +98,6 @@ public class GameManager {
 		mRCtx.setRenderer(mScreen);
 	}
 	
-	public void waitForRenderContext() {
-		synchronized(mScreen) {
-			while (null == mRCtx || !mRCtx.mReady) {
-				try {
-					mScreen.wait();
-				} catch (InterruptedException e) {
-					Log.w(TAG, "Interrupted waiting for RenderContext", e);
-				}
-			}
-		}
-	}
-		
 	/**
 	 * Lets the Screen know that it's to continue after a pause
 	 * or that it should start.
@@ -123,18 +111,21 @@ public class GameManager {
 	}
 	
 	/**
-	 * Asks the Screen thread to stop.
+	 * Asks the Screen thread to stop if it's running, and waits for it.
 	 */
 	public void suspend()
 	{
 		mRunning = false;
 		disableTicks();
-		Event.pushEvent(Event.newEvent(Event.PAUSE));
-		try {
-			mGameThread.join();
-		} catch (InterruptedException e) {
-			Log.w(TAG, "Interrupted waiting for " +
-					"game thread to stop", e);
+		if (null != mGameThread) {
+			Event.pushEvent(Event.newEvent(Event.PAUSE));
+			try {
+				mGameThread.join();
+			} catch (InterruptedException e) {
+				Log.w(TAG, "Interrupted waiting for " +
+						"game thread to stop", e);
+			}
+			mGameThread = null;
 		}
 	}
 	
@@ -183,7 +174,7 @@ public class GameManager {
 					else
 					{
 						if (ev.mCode == Event.RESUME)
-							waitForRenderContext();
+							mRCtx.waitUntilReady();
 						mScreen.handleEvent(ev);
 					}
 					if (ev.mCode == Event.PAUSE)

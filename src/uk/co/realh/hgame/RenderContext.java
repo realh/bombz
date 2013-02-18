@@ -68,12 +68,15 @@ public abstract class RenderContext {
 	
 	protected boolean mNativeSize;
 	
+	/**
+	 * When an initRendering has been completed this flag is set to true
+	 * and notifyAll called.
+	 */
 	boolean mReady;
 	
 	/**
 	 * Subclasses are responsible for making sure the Renderer gets called
-	 * with REASON_INIT. notifyAll will be called on renderer after
-	 * initRendering.
+	 * with REASON_INIT.
 	 * 
 	 * @param renderer	Initial renderer
 	 */
@@ -155,6 +158,17 @@ public abstract class RenderContext {
 		mRenderReason = REASON_RENDER;
 		implementRenderRequest();
 	}
+	
+	synchronized
+	public void waitUntilReady() {
+		while (!mReady) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				Log.w(TAG, "Interrupt waiting for RenderContext ready", e);
+			}
+		}
+	}
 
 	/**
 	 * Communication between threads is implementation-dependent so subclass
@@ -174,6 +188,7 @@ public abstract class RenderContext {
 	synchronized
 	protected boolean serviceRenderRequest() throws IOException
 	{
+		Log.d(TAG, "Servicing render request, reason " + mRenderReason);
 		boolean rendering = false;
 		switch (mRenderReason)
 		{
@@ -184,9 +199,8 @@ public abstract class RenderContext {
 			{
 				mRenderer.initRendering(this, mWidth, mHeight);
 				mReady = true;
-				synchronized(mRenderer) {
-					mRenderer.notifyAll();
-				}
+				notifyAll();
+				rendering = true;
 			}
 			break;
 		case REASON_DISPOSE:
