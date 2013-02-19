@@ -6,12 +6,11 @@ import sys
 import cairo
 import rsvg
 
-def svg_to_cairo(source, width, height, alpha = True, SCALE = 4,
+def rsvg_to_cairo(svg, width, height, alpha = True, SCALE = 4,
         w2 = 0, h2 = 0, opacity = 1):
     """ SVGs don't plot well at the small sizes we're using so
     use enlarged versions (default SCALE 4) and scale down the bitmaps
     afterwards """
-    svg = rsvg.Handle(file = source)
     if alpha:
         format = cairo.FORMAT_ARGB32
     else:
@@ -42,6 +41,32 @@ def svg_to_cairo(source, width, height, alpha = True, SCALE = 4,
     return surf2
 
 
+def svg_to_cairo(source, width, height, alpha = True, SCALE = 4,
+        w2 = 0, h2 = 0, opacity = 1):
+    return rsvg_to_cairo(rsvg.Handle(file = source),
+        width, height, alpha, SCALE, w2, h2, opacity)
+
+
+# width is per digit
+def load_text(folder, prefix, width, height = None):
+    svg = rsvg.Handle(folder + "/" + prefix + "_digits.svg")
+    ratio = float(svg.props.width) / 10 / float(svg.props.height)
+    if not height:
+        height = width * 4 / 3
+        #height = int(width / ratio)
+    digits = rsvg_to_cairo(svg, width * 10, height)
+    colon = svg_to_cairo(folder + "/" + prefix + "_colon.svg", width, height)
+    surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, width * 11, height)
+    cr = cairo.Context(surf)
+    cr.set_source_surface(digits, 0, 0)
+    cr.rectangle(0, 0, width * 10, height)
+    cr.fill()
+    cr.set_source_surface(colon, width * 10, 0)
+    cr.rectangle(width * 10, 0, width, height)
+    cr.fill()
+    return surf
+
+
 def load_image(*args):
     if args[0].endswith(".svg"):
         return svg_to_cairo(*args)
@@ -63,12 +88,14 @@ def composite(obj1, obj2):
     return surf
 
 
-def make_array(cols, rows):
+def make_array(cols, rows, value = None):
+    if not value:
+        value = [0, 0]
     a = []
     for row in range(rows):
         r = []
         for col in range(cols):
-            r.append([0, 0])
+            r.append(list(value))
         a.append(r)
     return a
 
@@ -80,65 +107,18 @@ def round_to_powerof2(a):
     return b
 
 
-def montage(format, objects, powerof2 = False):
+def montage(format, objects, size, powerof2 = False):
     """ Lays out multiple objects in a grid.
-    format is a cairo format constant.
+    format is a cairo format constant. size is size of each table cell.
     objects is a 2D array, each row must contain the same number of members. An
     object may span more than 1 column and/or row by specifying [object, cols,
     rows]. Spanned cells should contain None.
     If powerof2 is True, final sizes will be rounded up to a power of 2. """
-    # First calculate the size of the content of each cell
+    # First calculate the total size
     rows = len(objects)
     columns = len(objects[0])
-    sizes = make_array(columns, rows)
-    for row in range(rows):
-        if len(objects[row]) != columns:
-            raise Exception( \
-                    "Table of montage objects has non-uniform row lengths")
-        for col in range(columns):
-            o = objects[row][col]
-            if o == None:
-                continue
-            elif isinstance(o, cairo.Surface):
-                span_x = 1
-                span_y = 1
-            else:
-                o, span_x, span_y = o
-            for y in range(span_y):
-                for x in range(span_x):
-                    sizes[row + y][col + x] = \
-                            [o.get_width() / span_x, o.get_height() / span_y]
-    # Then make sure each column is as wide as its widest element
-    for col in range(columns):
-        biggest = 0
-        for row in range(rows):
-            s = sizes[row][col][0]
-            if s > biggest:
-                biggest = s
-        for row in range(rows):
-            sizes[row][col][0] = biggest
-    # Do the same for rows
-    for row in range(rows):
-        biggest = 0
-        for col in range(columns):
-            s = sizes[row][col][1]
-            if s > biggest:
-                biggest = s
-        for col in range(columns):
-            sizes[row][col][1] = biggest
-    # Now work out offsets from sizes
-    offsets = make_array(columns, rows)
-    for row in range(rows):
-        for col in range(columns):
-            if col > 0:
-                offsets[row][col][0] = \
-                        offsets[row][col - 1][0] + sizes[row][col - 1][0]
-            if row > 0:
-                offsets[row][col][1] = \
-                        offsets[row - 1][col][1] + sizes[row - 1][col][1]
-    # Now we can work out final size
-    width = offsets[-1][-1][0] + sizes[-1][-1][0]
-    height = offsets[-1][-1][1] + sizes[-1][-1][1]
+    width = size * columns
+    height = size * rows
     if powerof2:
         width = round_to_powerof2(width)
         height = round_to_powerof2(height)
@@ -149,21 +129,14 @@ def montage(format, objects, powerof2 = False):
     for row in range(rows):
         for col in range(columns):
             o = objects[row][col]
+            x0 = size * col
+            y0 = size * row
             if o == None:
                 continue
             elif not isinstance(o, cairo.Surface):
-                xscale = o[1]
-                yscale = o[2]
                 o = o[0]
-            else:
-                xscale = 1
-                yscale = 1
-            x0 = offsets[row][col][0]
-            y0 = offsets[row][col][1]
             cr.set_source_surface(o, x0, y0)
-            w = sizes[row][col][0]
-            h = sizes[row][col][1]
-            cr.rectangle(x0, y0, w * xscale, h * yscale)
+            cr.rectangle(x0, y0, o.get_width(), o.get_height())
             cr.fill()
     return surf
 
@@ -209,8 +182,7 @@ def extend_edges(surf):
 
 
 def make_atlas(alpha, size, textures):
-    """ Makes a PNG containing an atlas suitable for OpenGL with each texture
-    having its edges and corners doubled-up.
+    """ Makes a PNG containing an atlas suitable for OpenGL.
     alpha is boolean, whether dest will have alpha channel. If false, the first
     object should be the floor, over which subsequent tiles are composited.
     size: size (width = height) of each tile.
@@ -246,7 +218,7 @@ def make_atlas(alpha, size, textures):
                 obj[0] = s
             else:
                 row[x] = s
-    return montage(format, textures, True)
+    return montage(format, textures, size, True)
 
 
 def load_and_clip(source, top, left, size = 72):
@@ -280,7 +252,7 @@ def make_game_tile_atlas(dest, sources, size = 72, columns = 6):
     sources = sources[:-6]
     def mc(*a):
         sources.append(montage(cairo.FORMAT_ARGB32,
-                [[a[0], a[1]], [a[2], a[3]]]))
+                [[a[0], a[1]], [a[2], a[3]]], size / 2))
     # 00: tl corner             08: cross
     # 01: horiz straight        09: right end
     # 02: tr corner             10: bottom end
@@ -327,12 +299,20 @@ def make_game_alpha_atlas(dest, sources, size = 72):
     """ Arranges the graphics with alpha into a texture atlas.
     dest = output PNG filename.
     The order of sources (list of SVG filenames) should be
-    explo00, 4 droids, 2 bombs.
+    explo00, 4 droids, 4 dead droids, 2 bombs, 2 stars, hourglass.
     """
     explo0 = svg_to_cairo(sources[0], size * 3, size * 3)
-    table = [[[explo0, 3, 3], None, None, sources[1], sources[2]],
-            [None, None, None, sources[3], sources[4]],
-            [None, None, None, sources[5], sources[6]]]
+    ytext = load_text(os.path.dirname(sources[0]), "yellow", size * 3 / 8)
+    rtext = load_text(os.path.dirname(sources[0]), "red", size * 3 / 8)
+    star1 = svg_to_cairo(sources[11], size * 3 / 8, size * 3 / 8)
+    star2 = svg_to_cairo(sources[12], size * 3 / 8, size * 3 / 8)
+    hourglass = svg_to_cairo(sources[13], size * 3 / 8, size / 2)
+    table = [[[explo0, 3, 3], None, None,
+                    [ytext, 5, 1], None, None, None, None],
+            [None, None, None, [rtext, 5, 1], None, None, None, None],
+            [None, None, None, sources[9], sources[10],
+        			star1, star2, hourglass],
+            sources[1:9]]
     atlas = make_atlas(True, size, table)
     atlas.write_to_png(dest)
 
@@ -389,8 +369,9 @@ def builder(m, dest, size):
         omdp(dest)
         make_game_alpha_atlas(dest,
                 ["svgs/%s.svg" % s for s in ["explo00"] + \
-                    ["droid%s" % d for d in "left right up down".split()] \
-                            + ["bomb1", "bomb2"]],
+                    ["droid%s" % d for d in "left right up down".split()] + \
+                    ["dead%s" % d for d in "left right up down".split()] + \
+                            ["bomb1", "bomb2", "star1", "star2", "hourglass"]],
                 size)
     elif m == 'logo':
         omdp(dest)

@@ -77,9 +77,13 @@ public class GameManager {
 		mButtons.removeButtons();
 		mScreen = scrn;
 		if (mRCtx != null)
+		{
 			mRCtx.setRenderer(scrn);
+		}
 		if (mRunning && scrn != null)
+		{
 			Event.pushEvent(Event.newEvent(Event.RESUME));
+		}
 	}
 	
 	/**
@@ -87,11 +91,11 @@ public class GameManager {
 	 * 
 	 * @param rctx
 	 */
+	synchronized
 	public void setRenderContext(RenderContext rctx)
 	{
 		mRCtx = rctx;
-		if (mScreen != null)
-			mRCtx.setRenderer(mScreen);
+		mRCtx.setRenderer(mScreen);
 	}
 	
 	/**
@@ -103,31 +107,25 @@ public class GameManager {
 		mGameThread = new GameThread();
 		mRunning = true;
 		mGameThread.start();
-		Event ev = Event.newEvent(Event.RESUME);
-		synchronized(ev) {
-			Event.pushEvent(ev);
-			try {
-				ev.wait();
-			} catch (InterruptedException e) {
-				Log.w(TAG, "Interrupted waiting for " +
-						"resume event to be handled", e);
-			}
-		}
+		Event.pushEvent(Event.newEvent(Event.RESUME));
 	}
 	
 	/**
-	 * Asks the Screen thread to stop.
+	 * Asks the Screen thread to stop if it's running, and waits for it.
 	 */
 	public void suspend()
 	{
 		mRunning = false;
 		disableTicks();
-		Event.pushEvent(Event.newEvent(Event.PAUSE));
-		try {
-			mGameThread.join();
-		} catch (InterruptedException e) {
-			Log.w(TAG, "Interrupted waiting for " +
-					"game thread to stop", e);
+		if (null != mGameThread) {
+			Event.pushEvent(Event.newEvent(Event.PAUSE));
+			try {
+				mGameThread.join();
+			} catch (InterruptedException e) {
+				Log.w(TAG, "Interrupted waiting for " +
+						"game thread to stop", e);
+			}
+			mGameThread = null;
 		}
 	}
 	
@@ -175,15 +173,11 @@ public class GameManager {
 					}
 					else
 					{
+						if (ev.mCode == Event.RESUME)
+							mRCtx.waitUntilReady();
 						mScreen.handleEvent(ev);
 					}
-					if (ev.mCode == Event.RESUME)
-					{
-						synchronized(ev) {
-							ev.notifyAll();
-						}
-					}
-					else if (ev.mCode == Event.PAUSE)
+					if (ev.mCode == Event.PAUSE)
 						running = false;
 				}
 			} catch (Throwable e) {
@@ -210,7 +204,9 @@ public class GameManager {
 			{
 				synchronized(this) {
 					if (!mEnabled)
+					{
 						break;
+					}
 					Event.pushEvent(Event.newEvent(Event.TICK));
 				}
 				try {

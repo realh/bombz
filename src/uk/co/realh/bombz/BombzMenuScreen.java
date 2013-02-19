@@ -42,7 +42,6 @@ import java.util.List;
 
 import uk.co.realh.hgame.Event;
 import uk.co.realh.hgame.Font;
-import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.SimpleRect;
 import uk.co.realh.hgame.TapEventHandler;
@@ -55,10 +54,13 @@ import uk.co.realh.hgame.WidgetGroup;
  */
 public abstract class BombzMenuScreen extends BombzScreen {
 	
+	@SuppressWarnings("unused")
 	private static final String TAG = "MenuScreen";
 	
+	protected static final int WIDGET_TOP = 6 * K.FRUSTUM_TILE_SIZE;
+	
 	protected WidgetGroup mWidgetGroup = new WidgetGroup();
-	protected int mWidgetY = 6 * K.FRUSTUM_TILE_SIZE;
+	protected int mWidgetY = WIDGET_TOP;
 	protected List<TextWidget> mTextWidgets = new ArrayList<TextWidget>();
 
 	/**
@@ -85,7 +87,6 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		mMgr.mTextures.loadTitleLogo(rctx);
 		setupRendering(rctx, w, h);
 		mWidgetGroup.initRendering(rctx, w, h);
-		rctx.requestRender();
 	}
 	
 	private void setupRendering(RenderContext rctx, int w, int h)
@@ -102,7 +103,6 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		SimpleRect fr = rctx.get2DFrustum();
 		int view_ts = (int) ((float) K.FRUSTUM_TILE_SIZE *
 				(float) vp.h / (float) fr.h);
-		Log.d(TAG, "View tile size " + view_ts);
 		Font font = mMgr.mSys.openFont(view_ts);
 		font.setColour(K.MENU_TEXT_COLOUR >> 16,
 				(K.MENU_TEXT_COLOUR >> 8) & 0xff,
@@ -165,7 +165,6 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		super.resizeRendering(rctx, w, h);
 		setupRendering(rctx, w, h);
 		mWidgetGroup.resizeRendering(rctx, w, h);
-		rctx.requestRender();
 	}
 	
 	protected void setupViewport(RenderContext rctx, int w, int h)
@@ -175,8 +174,6 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		rctx.setViewport((w - vpw) / 2, (h - vph) / 2, vpw, vph);
 		rctx.set2DFrustum(0, K.N_COLUMNS * K.FRUSTUM_TILE_SIZE,
 				K.N_ROWS * K.FRUSTUM_TILE_SIZE, 0);
-		Log.d(TAG, "Setting viewport " + rctx.getViewport().toString() +
-				", frustum " + rctx.get2DFrustum().toString());
 	}
 	
 	@Override
@@ -194,7 +191,10 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	
 	@Override
 	public boolean handleEvent(Event ev) {
-		if (Event.TAP == ev.mCode)
+		if (Event.RESUME == ev.mCode) {
+			mRCtx.requestRender();
+		}
+		else if (Event.TAP == ev.mCode)
 		{
 			for (int n = 0; n < mTextWidgets.size(); ++n)
 			{
@@ -214,6 +214,8 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		super.replacedRenderer(rctx);
 		if (null == mMgr.mTextures.mLogoAtlas)
 			mMgr.mTextures.loadTitleLogo(rctx);
+		setupRendering(rctx, rctx.getScreenWidth(), rctx.getScreenHeight());
+		mWidgetGroup.replacedRenderer(rctx);
 	}
 
 }

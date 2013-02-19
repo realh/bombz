@@ -69,6 +69,7 @@ public abstract class HGameActivity extends Activity
 	private GLSurfaceView mGlView;
 	protected Sys mSys;
 	protected GameManager mMgr;
+	private HGameRenderer mRenderer;
 	
 	private OnScreenButton[] mButtons =
 			new OnScreenButton[ScreenButtonSource.MAX_BUTTONS];
@@ -112,7 +113,8 @@ public abstract class HGameActivity extends Activity
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			
 			mGlView = new GLSurfaceView(this);
-			mGlView.setRenderer(new HGameRenderer());
+			mRenderer = new HGameRenderer();
+			mGlView.setRenderer(mRenderer);
 			mGlView.setOnTouchListener(this);
 			setContentView(mGlView);
 		} catch (Throwable e) {
@@ -135,7 +137,6 @@ public abstract class HGameActivity extends Activity
 		try {
 			super.onResume();
 			mGlView.onResume();
-			mMgr.resume();
 		} catch (Throwable e) {
 			Log.f(TAG, "Exception in onResume", e);
 		}
@@ -210,7 +211,6 @@ public abstract class HGameActivity extends Activity
 	
 	private class HGameRenderer implements GLSurfaceView.Renderer
 	{
-
 		private AndroidGles1RenderContext mRCtx;
 		private int mW, mH;
 		
@@ -221,7 +221,6 @@ public abstract class HGameActivity extends Activity
 		@Override
 		public void onDrawFrame(GL10 gl) {
 			try {
-				Log.d(TAG, "onDrawFrame");
 				mRCtx.onDrawFrame();
 			} catch (Throwable e) {
 				Log.f(TAG, "Rendering exception", e);
@@ -234,8 +233,12 @@ public abstract class HGameActivity extends Activity
 		 */
 		@Override
 		public void onSurfaceChanged(GL10 gl, int w, int h) {
+			Log.d(TAG, "onSurfaceChanged: " + w + "x" + h);
 			try {
-				Log.d(TAG, "Surface changed to " + w + "x" + h);
+				/*
+				 * Change to this to ignore spurious orientation changes
+				if ((w != mW || h != mH) && (w != mH || h != mW))
+				 */
 				if (w != mW || h != mH)
 				{
 					Log.d(TAG, "Surface resized to " + w + "x" + h);
@@ -257,10 +260,11 @@ public abstract class HGameActivity extends Activity
 			try {
 				mW = mGlView.getWidth();
 				mH = mGlView.getHeight();
-				Log.d(TAG, "Surface created " + mW + "x" + mH);
+				Log.d(TAG, "onSurfaceCreated: " + mW + "x" + mH);
 				mRCtx = new AndroidGles1RenderContext(mGlView, gl, mMgr.mScreen);
-				mMgr.setRenderContext(mRCtx);
 				mRCtx.preRequestRender(RenderContext.REASON_INIT);
+				mMgr.setRenderContext(mRCtx);
+				mMgr.resume();
 			} catch (Throwable e) {
 				Log.f(TAG, "Exception in onSurfaceCreated", e);
 			}

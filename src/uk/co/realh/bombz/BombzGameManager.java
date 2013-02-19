@@ -57,6 +57,7 @@ public class BombzGameManager extends GameManager {
 	
 	private BombzMainMenuScreen mMainMenuScreen;
 	private BombzGameScreen mGameScreen;
+	private ChooseLevelScreen mChooseLevelScreen;
 	private final ButtonFeedback mHapticFeedback;
 
 	/**
@@ -88,5 +89,12 @@ public class BombzGameManager extends GameManager {
 		if (null == mGameScreen)
 			mGameScreen = new BombzGameScreen(this, mButtons, mHapticFeedback);
 		return mGameScreen;
+	}
+	
+	public Screen getChooseLevelScreen()
+	{
+		if (null == mGameScreen)
+			mChooseLevelScreen = new ChooseLevelScreen(this);
+		return mChooseLevelScreen;
 	}
 }

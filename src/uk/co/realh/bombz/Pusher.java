@@ -82,9 +82,10 @@ public class Pusher {
     
     private Lrud mLrud = new Lrud();
     
-    Pusher(BombzGameManager mgr, BombzLevel level) {
+    Pusher(BombzGameManager mgr, BombzLevel level, DInput dInput) {
     	mMgr = mgr;
     	mLevel = level;
+    	mDInput = dInput;
     }
 
     final void reset() {
@@ -99,10 +100,8 @@ public class Pusher {
     }
 
     void render(RenderContext rctx) {
-    	int x = mTileX * K.FRUSTUM_TILE_SIZE +
-	            (mInterX * K.FRUSTUM_TILE_SIZE) / K.DELTA_PIX;
-    	int y = mTileY * K.FRUSTUM_TILE_SIZE +
-	            (mInterY * K.FRUSTUM_TILE_SIZE) / K.DELTA_PIX;
+    	int x = mTileX * K.FRUSTUM_TILE_SIZE + mInterX;
+    	int y = mTileY * K.FRUSTUM_TILE_SIZE + mInterY;
     	/*
     	Log.d(TAG, "Pusher sprite " + mMgr.mTextures.mPusherSprite);
     	Log.d(TAG, "Direction " + mDirection);
@@ -130,6 +129,8 @@ public class Pusher {
 	                y += K.FRUSTUM_TILE_SIZE;
 	                break;
 	        }
+	    	mMgr.mTextures.mBombSprite.setTexture((Cell.BOMB1 == mPushingBomb) ?
+	    			mMgr.mTextures.mBomb1Region : mMgr.mTextures.mBomb2Region);
 	    	mMgr.mTextures.mBombSprite.setPosition(x, y);
 	    	mMgr.mTextures.mBombSprite.render(rctx);
 	    }
@@ -225,28 +226,28 @@ public class Pusher {
 	        switch (mDirection)
 	        {
 	            case LEFT:
-	                mInterX -= 1;
+	                mInterX -= K.DELTA_PIX;
 	                if (mInterX == -K.FRUSTUM_TILE_SIZE)
 	                    gotToNewTile(-1, 0);
 	                else if (mInterX == -K.FRUSTUM_TILE_SIZE / 2)
 	                    gotHalfway();
 	                break;
 	            case RIGHT:
-	                mInterX += 1;
+	                mInterX += K.DELTA_PIX;
 	                if (mInterX == K.FRUSTUM_TILE_SIZE)
 	                    gotToNewTile(1, 0);
 	                else if (mInterX == K.FRUSTUM_TILE_SIZE / 2)
 	                    gotHalfway();
 	                break;
 	            case UP:
-	                mInterY -= 1;
+	                mInterY -= K.DELTA_PIX;
 	                if (mInterY == -K.FRUSTUM_TILE_SIZE)
 	                    gotToNewTile(0, -1);
 	                else if (mInterY == -K.FRUSTUM_TILE_SIZE / 2)
 	                    gotHalfway();
 	                break;
 	            case DOWN:
-	                mInterY += 1;
+	                mInterY += K.DELTA_PIX;
 	                if (mInterY == K.FRUSTUM_TILE_SIZE)
 	                    gotToNewTile(0, 1);
 	                else if (mInterY == K.FRUSTUM_TILE_SIZE / 2)

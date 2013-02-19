@@ -45,10 +45,13 @@ public class K
 	static final int FRUSTUM_TILE_SIZE = 32;
 	static final int N_COLUMNS = 20;
 	static final int N_ROWS = 15;
-	static final int DELTA_PIX = 2;		// How many frustum units
+	static final int DELTA_PIX = 4;		// How many frustum units
 										// hero moves each step
-	static final int TICK_INTERVAL = 20;
+	static final int TICK_INTERVAL = 40;
 	static final int TILE_ATLAS_COLUMNS = 6;
+	
+	static final int N_LEVELS = 40;
+	
 	static final int FACING_LEFT = 0;
 	static final int FACING_RIGHT = 1;
 	static final int FACING_UP = 2;

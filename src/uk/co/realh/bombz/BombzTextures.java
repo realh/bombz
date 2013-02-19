@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2013, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -52,12 +52,13 @@ import uk.co.realh.hgame.TileBatcher;
  * TODO: Create sprites etc.
  */
 public class BombzTextures {
-	
+
 	private static String TAG = "Textures";
-	
+
 	TextureAtlas mTileAtlas, mAlphaAtlas, mLogoAtlas;
 	TextureRegion[] mTileRegions = new TextureRegion[Cell.N_CELLS];
-	TextureRegion[] mPusherRegions = new TextureRegion[4];
+	// 4 "live" pushers, 4 "dead"
+	TextureRegion[] mPusherRegions = new TextureRegion[8];
 	TextureRegion mBomb1Region, mBomb2Region;
 	Sprite mPusherSprite, mBombSprite, mLogoSprite, mExplo00Sprite;
 	TileBatcher mTileBatcher;
@@ -67,30 +68,39 @@ public class BombzTextures {
 	Sprite[] mControlsSprites = new Sprite[4];
 	int mVpadWidth, mVpadHeight;
 	
+	// 11th "digit" is colon
+	TextureRegion[] mYellowDigitRegions = new TextureRegion[11];
+	TextureRegion[] mRedDigitRegions = new TextureRegion[11];
+	TextureRegion mStar1Region, mStar2Region;
+	TextureRegion mHourglassRegion;
+	// 4 digits + colon + hourglass
+	Sprite[] mClockSprites = new Sprite[6];
+	Sprite mAlphaSprite;	// General purpose
+
 	private Sys mSys;
 	int mSrcTileSize;		// Source size
 	int mViewportWidth, mViewportHeight;
-	
+
 	// Used to work out how well a source tile size matches screen size.
 	// The higher the better the match.
 	private static final int NO_MATCH = 0;
 	private static final int INT_RATIO = 1;
 	private static final int EXACT = 2;
-	
+
 	/**
 	 * @param sys
 	 * @param screen_w	Width of screen
 	 * @param screen_h	Height of screen
 	 * @param controlsType	One of controls constants
 	 * @see uk.co.realh.hgame.K
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	BombzTextures(Sys sys, int controlsType)
 	{
 		mSys = sys;
 		setControlsType(controlsType);
 	}
-	
+
 	final void setControlsType(int c)
 	{
 		if (mSys.usesTouchScreen())
@@ -98,7 +108,7 @@ public class BombzTextures {
 		else
 			mControlsType = 0;
 	}
-	
+
 	void calculateTileSize(RenderContext rctx, int screen_w, int screen_h)
 			throws IOException
 	{
@@ -140,7 +150,7 @@ public class BombzTextures {
 				", viewport " + mViewportWidth + "x" + mViewportHeight);
 		rctx.setNativeSize(best_goodness == EXACT);
 	}
-	
+
 	private TextureAtlas loadAtlas(RenderContext rctx,
 			String name, boolean alpha) throws IOException
 	{
@@ -153,7 +163,7 @@ public class BombzTextures {
 		img.dispose();
 		return atlas;
 	}
-	
+
 	void loadTiles(RenderContext rctx) throws IOException
 	{
 		mTileAtlas = loadAtlas(rctx, "tile_atlas", false);
@@ -172,7 +182,7 @@ public class BombzTextures {
 		mTileBatcher = rctx.createTileBatcher(K.N_COLUMNS, K.N_ROWS,
 				K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 	}
-	
+
 	private void createFusedRegions(int bomb1or2)
 	{
 		int start = (bomb1or2 == Cell.BOMB2) ?
@@ -187,14 +197,14 @@ public class BombzTextures {
 							Cell.BLANK : bomb1or2) - Cell.OFFSET];
 		}
 	}
-	
+
 	private TextureRegion createTileRegion(int n)
 	{
 		int x = (n % K.TILE_ATLAS_COLUMNS) * mSrcTileSize;
 		int y = (n / K.TILE_ATLAS_COLUMNS) * mSrcTileSize;
 		return mTileAtlas.createRegion(x, y, mSrcTileSize, mSrcTileSize);
 	}
-	
+
 	void deleteTiles(RenderContext rctx)
 	{
 		mTileBatcher = null;
@@ -204,44 +214,72 @@ public class BombzTextures {
 			mTileAtlas.dispose(rctx);
 		mTileAtlas = null;
 	}
-	
+
 	void loadAlphaTextures(RenderContext rctx) throws IOException
 	{
 		rctx.enableBlend(true);
 		mAlphaAtlas = loadAtlas(rctx, "alpha_atlas", true);
+		
 		mExplo00Sprite = rctx.createSprite(mAlphaAtlas.createRegion(0, 0,
 				3 * mSrcTileSize, 3 * mSrcTileSize),
 				3 * K.FRUSTUM_TILE_SIZE, 3 * K.FRUSTUM_TILE_SIZE);
-		mPusherRegions[K.FACING_LEFT] =
-				mAlphaAtlas.createRegion(3 * mSrcTileSize, 0,
-						mSrcTileSize, mSrcTileSize);
-		mPusherRegions[K.FACING_RIGHT] =
-				mAlphaAtlas.createRegion(4 * mSrcTileSize, 0,
-						mSrcTileSize, mSrcTileSize);
-		mPusherRegions[K.FACING_UP] =
-				mAlphaAtlas.createRegion(3 * mSrcTileSize,
-						mSrcTileSize, 
-						mSrcTileSize, mSrcTileSize);
-		mPusherRegions[K.FACING_DOWN] =
-				mAlphaAtlas.createRegion(4 * mSrcTileSize,
-						mSrcTileSize, 
-						mSrcTileSize, mSrcTileSize);
+		
+		for (int n = 0; n < 8; ++n) {
+			mPusherRegions[n] = mAlphaAtlas.createRegion(n * mSrcTileSize,
+						3 * mSrcTileSize, mSrcTileSize, mSrcTileSize);
+		}
+		
 		mBomb1Region = mAlphaAtlas.createRegion(3 * mSrcTileSize,
-						2 * mSrcTileSize, 
+						2 * mSrcTileSize,
 						mSrcTileSize, mSrcTileSize);
 		mBomb2Region = mAlphaAtlas.createRegion(4 * mSrcTileSize,
-						2 * mSrcTileSize, 
+						2 * mSrcTileSize,
 						mSrcTileSize, mSrcTileSize);
 		mPusherSprite = rctx.createSprite(mPusherRegions[K.FACING_UP],
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 		mBombSprite = rctx.createSprite(mBomb1Region,
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
+		
+		for (int n = 0; n < 11; ++n) {
+			int x = 3 * mSrcTileSize + n * 3 * mSrcTileSize / 8;
+			mYellowDigitRegions[n] = mAlphaAtlas.createRegion(
+					x, 0, 3 * mSrcTileSize / 8, mSrcTileSize / 2);
+			mRedDigitRegions[n] = mAlphaAtlas.createRegion(
+					x, mSrcTileSize, 3 * mSrcTileSize / 8, mSrcTileSize / 2);
+		}
+		mHourglassRegion = mAlphaAtlas.createRegion(
+				7 * mSrcTileSize, 2 * mSrcTileSize,
+				mSrcTileSize * 3 / 8, mSrcTileSize / 2);
+		for (int n = 0; n < 5; ++n) {
+			mClockSprites[n] = rctx.createSprite(mYellowDigitRegions[10],
+					3 * K.FRUSTUM_TILE_SIZE / 8, K.FRUSTUM_TILE_SIZE / 2);
+		}
+		mClockSprites[5] = rctx.createSprite(mHourglassRegion,
+				3 * K.FRUSTUM_TILE_SIZE / 8, K.FRUSTUM_TILE_SIZE / 2);
+		
+		mStar1Region = mAlphaAtlas.createRegion(
+				5 * mSrcTileSize, 2 * mSrcTileSize,
+				mSrcTileSize / 2, mSrcTileSize / 2);
+		mStar2Region = mAlphaAtlas.createRegion(
+				6 * mSrcTileSize, 2 * mSrcTileSize,
+				mSrcTileSize / 2, mSrcTileSize / 2);
 	}
-	
+
 	void deleteAlphaTextures(RenderContext rctx)
 	{
+		mAlphaSprite = null;
+		mStar1Region = null;
+		mStar2Region = null;
+		for (int n = 0; n < 6; ++n) {
+			mClockSprites[n] = null;
+		}
+		mHourglassRegion = null;
+		for (int n = 0; n < 11; ++n) {
+			mYellowDigitRegions[n] = null;
+			mRedDigitRegions[n] = null;
+		}
 		mPusherSprite = null;
-		for (int n = 0; n < 4; ++n)
+		for (int n = 0; n < 8; ++n)
 			mPusherRegions[n] = null;
 		mBombSprite = null;
 		mBomb1Region = null;
@@ -251,7 +289,7 @@ public class BombzTextures {
 			mAlphaAtlas.dispose(rctx);
 		mAlphaAtlas = null;
 	}
-	
+
 	void loadTitleLogo(RenderContext rctx) throws IOException
 	{
 		rctx.enableBlend(true);
@@ -261,7 +299,7 @@ public class BombzTextures {
 				2 * K.FRUSTUM_TILE_SIZE, (K.FRUSTUM_TILE_SIZE * 3) / 2,
 				16 * K.FRUSTUM_TILE_SIZE, 4 * K.FRUSTUM_TILE_SIZE);
 	}
-	
+
 	void deleteLogoAtlas(RenderContext rctx)
 	{
 		mLogoSprite = null;
@@ -269,7 +307,7 @@ public class BombzTextures {
 			mLogoAtlas.dispose(rctx);
 		mLogoAtlas = null;
 	}
-	
+
 	void loadControls(RenderContext rctx) {
 		Image img = null;
 		if (0 != mControlsType)
@@ -278,18 +316,12 @@ public class BombzTextures {
 			img = mSys.loadResPNG("vpad");
 			mControlsAtlas = rctx.uploadTexture(img, true);
 		}
-		else
-		{
-			Log.d(TAG, "Not loading controls atlas");
-		}
 		switch (mControlsType)
 		{
 		case K.CONTROL_VPAD_LEFT:
 		case K.CONTROL_VPAD_RIGHT:
 			mVpadWidth = img.getWidth();
 			mVpadHeight = img.getHeight();
-			Log.d(TAG, "Loaded controls atlas " +
-					mVpadWidth + " x " + mVpadHeight);
 			mControlsRegions[0] = mControlsAtlas.createRegion(0, 0,
 					img.getWidth(), img.getHeight());
 			mControlsSprites[0] = rctx.createSprite(mControlsRegions[0],
@@ -304,7 +336,7 @@ public class BombzTextures {
 		if (null != img)
 			img.dispose();
 	}
-	
+
 	void deleteControls(RenderContext rctx) {
 		for (int n = 0; n < 4; ++n)
 		{
@@ -319,7 +351,7 @@ public class BombzTextures {
 	}
 	/**
 	 * Call in a deleteRendering handler and at the start of initRendering.
-	 * 
+	 *
 	 * @see uk.co.realh.hgame.Renderer
 	 */
 	void deleteAllTextures(RenderContext rctx)
@@ -329,9 +361,9 @@ public class BombzTextures {
 		deleteLogoAtlas(rctx);
 		deleteControls(rctx);
 	}
-	
+
 	/**
-	 * @throws IOException 
+	 * @throws IOException
 	 * @see uk.co.realh.hgame.Renderer
 	 */
 	void onResize(RenderContext rctx, int w, int h) throws IOException
@@ -358,5 +390,5 @@ public class BombzTextures {
 			loadControls(rctx);
 		}
 	}
-	
+
 }

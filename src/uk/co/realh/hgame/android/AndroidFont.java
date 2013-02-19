@@ -36,15 +36,14 @@
 
 package uk.co.realh.hgame.android;
 
+import uk.co.realh.hgame.Font;
+import uk.co.realh.hgame.Image;
+import uk.co.realh.hgame.ShadowMaker;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import uk.co.realh.hgame.Font;
-import uk.co.realh.hgame.Image;
-import uk.co.realh.hgame.Log;
-import uk.co.realh.hgame.ShadowMaker;
 
 /**
  * @author Tony Houghton
@@ -52,6 +51,7 @@ import uk.co.realh.hgame.ShadowMaker;
  */
 public class AndroidFont implements Font {
 	
+	@SuppressWarnings("unused")
 	private static final String TAG = "Font";
 	private static final int PADDING = 4;
 	
@@ -77,8 +77,6 @@ public class AndroidFont implements Font {
 	public Image render(String text, int shadow_offset) {
 		Rect bounds = new Rect();
 		mPaint.getTextBounds(text, 0, text.length(), bounds);
-		Log.d(TAG, String.format("'%s' bounds L:%d R:%d B:%d T%d",
-				text, bounds.left, bounds.right, bounds.bottom, bounds.top));
 		Bitmap.Config config = Bitmap.Config.ARGB_8888;
 		Bitmap bmp = Bitmap.createBitmap(bounds.width() + PADDING * 2,
 				bounds.height() + PADDING * 2, config);

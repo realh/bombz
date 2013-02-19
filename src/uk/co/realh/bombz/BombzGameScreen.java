@@ -59,7 +59,6 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	
 	private BombzLevel mLevel;
 	private Pusher mPusher;
-	private RenderContext mRCtx;
 	private int mScreenWidth;
 	private int mScreenHeight;
 	
@@ -93,7 +92,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mButtons = sbs;
 		mFeedback = feedback;
 		mLevel = new BombzLevel(mgr.mTextures);
-		mPusher = new Pusher(mgr, mLevel);
+		mPusher = new Pusher(mgr, mLevel, this);
 		mCurrentLevel = mMgr.mSavedGame.get("level", 1);
 		loadLevel(mCurrentLevel);
 	}
@@ -189,7 +188,6 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 
 	@Override
 	public void render(RenderContext rctx) {
-		Log.d(TAG, "Rendering");
 		rctx.setViewport(mTilesViewport);
 		rctx.set2DFrustum(mTilesFrustum);
 		rctx.enableBlend(false);
@@ -200,14 +198,10 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mPusher.render(rctx);
 		if (0 != mMgr.mTextures.mControlsType)
 		{
-			Log.d(TAG, "Rendering controls");
 			rctx.bindTexture(mMgr.mTextures.mControlsAtlas);
 			rctx.setViewport(mControlsViewports[0]);
 			rctx.set2DFrustum(mControlsFrustums[0]);
 			mMgr.mTextures.mControlsSprites[0].render(rctx);
-		}
-		else {
-			Log.d(TAG, "Not rendering controls");
 		}
 	}
 
@@ -220,6 +214,8 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		// Apparently can't use dynamic constants in case
 		if (ev.mCode == Event.RESUME) {
 			mMgr.enableTicks(K.TICK_INTERVAL);
+			if (null != mRCtx)
+				mRCtx.requestRender();
 		}
 		return false;
 	}
@@ -230,7 +226,10 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	@Override
 	public void step() {
 		if (null == mRCtx)
+		{
+			Log.d(TAG, "Ignoring step because no rctx");
 			return;
+		}
 		boolean update = mLevel.step();
 		if (mPusher.step() || update)
 			mRCtx.requestRender();

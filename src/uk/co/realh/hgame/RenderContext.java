@@ -67,7 +67,13 @@ public abstract class RenderContext {
 	public int mId;
 	
 	protected boolean mNativeSize;
-
+	
+	/**
+	 * When an initRendering has been completed this flag is set to true
+	 * and notifyAll called.
+	 */
+	boolean mReady;
+	
 	/**
 	 * Subclasses are responsible for making sure the Renderer gets called
 	 * with REASON_INIT.
@@ -80,7 +86,7 @@ public abstract class RenderContext {
 		mRenderer = renderer;
 		mRenderReason = REASON_INIT;
 	}
-
+	
 	/**
 	 * Old renderer, if any, will have its replacingRenderer method called.
 	 * replacedRenderer will then be called on new renderer, followed by render
@@ -107,6 +113,8 @@ public abstract class RenderContext {
 	 */
 	synchronized
 	public void requestRender(int reason, boolean block) {
+		if (mRenderBlocking)
+			Log.f(TAG, "requestRender called while already blocking");
 		mRenderBlocking = block;
 		mRenderReason = reason;
 		implementRenderRequest();
@@ -133,6 +141,8 @@ public abstract class RenderContext {
 	 */
 	synchronized
 	public void preRequestRender(int reason) {
+		if (mRenderBlocking)
+			Log.f(TAG, "requestRender called while already blocking");
 		mRenderBlocking = false;
 		mRenderReason = reason;
 	}
@@ -142,9 +152,22 @@ public abstract class RenderContext {
 	 */
 	synchronized
 	public void requestRender() {
+		if (mRenderBlocking)
+			Log.f(TAG, "requestRender called while already blocking");
 		mRenderBlocking = false;
 		mRenderReason = REASON_RENDER;
 		implementRenderRequest();
+	}
+	
+	synchronized
+	public void waitUntilReady() {
+		while (!mReady) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				Log.w(TAG, "Interrupt waiting for RenderContext ready", e);
+			}
+		}
 	}
 
 	/**
@@ -165,6 +188,7 @@ public abstract class RenderContext {
 	synchronized
 	protected boolean serviceRenderRequest() throws IOException
 	{
+		Log.d(TAG, "Servicing render request, reason " + mRenderReason);
 		boolean rendering = false;
 		switch (mRenderReason)
 		{
@@ -172,9 +196,15 @@ public abstract class RenderContext {
 			mWidth = getCurrentScreenWidth();
 			mHeight = getCurrentScreenHeight();
 			if (null != mRenderer)
+			{
 				mRenderer.initRendering(this, mWidth, mHeight);
+				mReady = true;
+				notifyAll();
+				rendering = true;
+			}
 			break;
 		case REASON_DISPOSE:
+			mReady = false;
 			if (null != mRenderer)
 				mRenderer.deleteRendering(this);
 			break;
@@ -209,7 +239,10 @@ public abstract class RenderContext {
 		}
 		mRendering = rendering;
 		if (mRenderBlocking)
+		{
 			notifyAll();
+			mRenderBlocking = false;
+		}
 		return rendering;
 	}
 
