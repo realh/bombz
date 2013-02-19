@@ -59,6 +59,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	
 	private BombzLevel mLevel;
 	private Pusher mPusher;
+	private TimeLimit mTimeLimit;
 	private int mScreenWidth;
 	private int mScreenHeight;
 	
@@ -78,6 +79,8 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	private final ScreenButtonSource mButtons;
 	private final ButtonFeedback mFeedback;
 	private VPad mVPad;
+	
+	private int mMsSinceTick;	// ms since last TimeLimit update
 
 	/**
 	 * @param mgr
@@ -93,6 +96,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mFeedback = feedback;
 		mLevel = new BombzLevel(mgr.mTextures);
 		mPusher = new Pusher(mgr, mLevel, this);
+		mTimeLimit = new TimeLimit(mgr.mTextures);
 		mCurrentLevel = mMgr.mSavedGame.get("level", 1);
 		loadLevel(mCurrentLevel);
 	}
@@ -103,6 +107,8 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mLevel.load(fd);
 		fd.close();
 		mPusher.reset();
+		mTimeLimit.setTimeLeft(mLevel.mTimeLimit);
+		mMsSinceTick = 0;
 	}
 
 	private void setupViewports(int w, int h) {
@@ -115,22 +121,27 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		switch (mMgr.mTextures.mControlsType) {
 		case K.CONTROL_NONE:
 			mTilesViewport.setRect((w - vpw) / 2, (h - vph) / 2, vpw, vph);
+			setTimeLimitOnLeft();
 			break;
 		case K.CONTROL_VPAD_LEFT:
 			mTilesViewport.setRect(w - vpw, 0, vpw, vph);
 			setupVPad(w, h);
+			setTimeLimitOnLeft();
 			break;
 		case K.CONTROL_VPAD_RIGHT:
 			mTilesViewport.setRect(0, 0, vpw, vph);
 			setupVPad(w, h);
+			setTimeLimitOnRight(vpw);
 			break;
 		case K.CONTROL_VBUTTONS_LEFT:
 			mTilesViewport.setRect((w - vpw) * 2 / 3, 0, vpw, vph);
 			mVPad = null;
+			setTimeLimitOnLeft();
 			break;
 		case K.CONTROL_VBUTTONS_RIGHT:
 			mTilesViewport.setRect((w - vpw) / 3, 0, vpw, vph);
 			mVPad = null;
+			setTimeLimitOnRight(vpw);
 			break;
 		}
 	}
@@ -166,6 +177,22 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mButtons.addOnScreenButton(mVPad);
 	}
 	
+	private void setTimeLimitOnLeft() {
+		int w = mTimeLimit.getViewportWidth();
+		int x = mTilesViewport.x - w;
+		if (x < 0)
+			x = 0;
+		mTimeLimit.setViewport(x, 0, w, mTimeLimit.getViewportHeight());
+	}
+	
+	private void setTimeLimitOnRight(int vpw) {
+		int w = mTimeLimit.getViewportWidth();
+		int x = mTilesViewport.x + mTilesViewport.w;
+		if (x + w > vpw)
+			x = vpw - w;
+		mTimeLimit.setViewport(x, 0, w, mTimeLimit.getViewportHeight());
+	}
+	
 	@Override
 	public void initRendering(RenderContext rctx, int w, int h)
 			throws IOException {
@@ -174,6 +201,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mScreenHeight = h;
 		mMgr.mTextures.loadAlphaTextures(rctx);
 		mMgr.mTextures.loadControls(rctx);
+		mTimeLimit.initRendering(rctx,  w,  h);
 		setupViewports(w, h);
 	}
 	
@@ -196,6 +224,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		rctx.enableBlend(true);
 		rctx.bindTexture(mMgr.mTextures.mAlphaAtlas);
 		mPusher.render(rctx);
+		mTimeLimit.render(rctx);
 		if (0 != mMgr.mTextures.mControlsType)
 		{
 			rctx.bindTexture(mMgr.mTextures.mControlsAtlas);
@@ -231,7 +260,15 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 			return;
 		}
 		boolean update = mLevel.step();
-		if (mPusher.step() || update)
+		update = mPusher.step() || update;
+		mMsSinceTick += K.TICK_INTERVAL;
+		if (mMsSinceTick >=1000)
+			mMsSinceTick = 0;
+		if (0 == mMsSinceTick) {
+			update = true;
+			mTimeLimit.tick();
+		}
+		if (update)
 			mRCtx.requestRender();
 	}
 

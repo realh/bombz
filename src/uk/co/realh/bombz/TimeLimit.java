@@ -52,7 +52,6 @@ public class TimeLimit {
 	private TileBatcher mBatcher;
 	private int mScrnTileSize;
 	private int[] mDigits = new int[4]; 
-	private boolean mRed;
 	
 	public TimeLimit(BombzTextures tex) {
 		mTextures = tex;
@@ -88,7 +87,11 @@ public class TimeLimit {
 		return mSeconds;
 	}
 	
-	public boolean tick() {
+	public void tick() {
+		if (mSeconds > 0)
+			--mSeconds;
+		else
+			return;
 		if (0 == mDigits[3]) {
 			mDigits[3] = 9;
 			if (0 == mDigits[2]) {
@@ -107,11 +110,9 @@ public class TimeLimit {
 		} else {
 			--mDigits[3];
 		}
-		return 0 == mSeconds--;
 	}
 
 	public void initRendering(RenderContext rctx, int w, int h) {
-		mRed = false;
 		mScrnTileSize = w / K.N_COLUMNS;
 		mBatcher = rctx.createTileBatcher(6, 1,
 				K.FRUSTUM_TILE_SIZE * 3 / 8, K.FRUSTUM_TILE_SIZE / 2);
