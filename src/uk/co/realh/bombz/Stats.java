@@ -50,9 +50,7 @@ public class Stats {
 	private SavedSettings mSettings;
 	
 	private int mCurrentLevel;
-	private int mDetonators;
 	private int mMoves;
-	private int mTimeLimit;
 
 	/**
 	 * @param settings	For loading/saving
@@ -63,9 +61,8 @@ public class Stats {
 	
 	public void startAttempt(int level, int detonators, int timeLimit) {
 		mCurrentLevel = level;
-		mDetonators = detonators;
+		mSettings.set("time_limit_" + level, timeLimit);
 		mMoves = 0;
-		mTimeLimit = timeLimit;
 	}
 	
 	/**
@@ -91,8 +88,8 @@ public class Stats {
 	public void succeeded(int timeLeft, int detonatorsLeft)
 			throws IOException {
 		incrementSetting("succeeded_");
-		addSuccessMeanStat("detonators_", detonatorsLeft); 
-		addSuccessMeanStat("time_", timeLeft); 
+		addSuccessMeanStat("detonators_left_", detonatorsLeft); 
+		addSuccessMeanStat("time_left_", timeLeft); 
 		addSuccessMeanStat("moves_", mMoves); 
 		mSettings.save();
 	}
