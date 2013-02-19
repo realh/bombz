@@ -74,7 +74,6 @@ public class BombzTextures {
 	TextureRegion mStar1Region, mStar2Region;
 	TextureRegion mHourglassRegion;
 	// 4 digits + colon + hourglass
-	Sprite[] mClockSprites = new Sprite[6];
 	Sprite mAlphaSprite;	// General purpose
 
 	private Sys mSys;
@@ -250,12 +249,6 @@ public class BombzTextures {
 		mHourglassRegion = mAlphaAtlas.createRegion(
 				7 * mSrcTileSize, 2 * mSrcTileSize,
 				mSrcTileSize * 3 / 8, mSrcTileSize / 2);
-		for (int n = 0; n < 5; ++n) {
-			mClockSprites[n] = rctx.createSprite(mYellowDigitRegions[10],
-					3 * K.FRUSTUM_TILE_SIZE / 8, K.FRUSTUM_TILE_SIZE / 2);
-		}
-		mClockSprites[5] = rctx.createSprite(mHourglassRegion,
-				3 * K.FRUSTUM_TILE_SIZE / 8, K.FRUSTUM_TILE_SIZE / 2);
 		
 		mStar1Region = mAlphaAtlas.createRegion(
 				5 * mSrcTileSize, 2 * mSrcTileSize,
@@ -270,9 +263,6 @@ public class BombzTextures {
 		mAlphaSprite = null;
 		mStar1Region = null;
 		mStar2Region = null;
-		for (int n = 0; n < 6; ++n) {
-			mClockSprites[n] = null;
-		}
 		mHourglassRegion = null;
 		for (int n = 0; n < 11; ++n) {
 			mYellowDigitRegions[n] = null;
