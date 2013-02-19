@@ -293,6 +293,8 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mScreenHeight = rctx.getScreenHeight();
 		mMgr.mTextures.loadAlphaTextures(rctx);
 		mMgr.mTextures.loadControls(rctx);
+		mTimeLimit.initRendering(rctx,
+				rctx.getScreenWidth(), rctx.getScreenHeight());
 		setupViewports(mScreenWidth, mScreenHeight);
 	}
 
