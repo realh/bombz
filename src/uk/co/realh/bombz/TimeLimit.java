@@ -122,6 +122,7 @@ public class TimeLimit {
 		}
 		mScrnTileSize = w / K.N_COLUMNS;
 		mBatcher.setTextureAt(mTextures.mHourglassRegion, 0, 0);
+		setTextures();
 	}
 	
 	public void render(RenderContext rctx) {
