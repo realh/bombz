@@ -239,8 +239,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	 */
 	@Override
 	public boolean handleEvent(Event ev) {
-		Log.d(TAG, "Event " + Event.quarkToString(ev.mCode));
-		// Apparently can't use dynamic constants in case
+		// Apparently can't use dynamic constants in switch case
 		if (ev.mCode == Event.RESUME) {
 			mMgr.enableTicks(K.TICK_INTERVAL);
 			if (null != mRCtx)

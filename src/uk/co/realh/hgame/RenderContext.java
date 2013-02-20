@@ -188,7 +188,6 @@ public abstract class RenderContext {
 	synchronized
 	protected boolean serviceRenderRequest() throws IOException
 	{
-		Log.d(TAG, "Servicing render request, reason " + mRenderReason);
 		boolean rendering = false;
 		switch (mRenderReason)
 		{
