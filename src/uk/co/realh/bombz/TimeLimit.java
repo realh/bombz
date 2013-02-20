@@ -81,7 +81,7 @@ public class TimeLimit {
 		mDigits[1] = mins % 10;
 		mDigits[2] = secs / 10;
 		mDigits[3] = secs % 10;
-		setTextures();
+		// Can't setTextures() yet because might not have called initRendering
 	}
 
 	public int getTimeLeft() {
@@ -111,6 +111,7 @@ public class TimeLimit {
 		} else {
 			--mDigits[3];
 		}
+		setTextures();
 	}
 
 	public void initRendering(RenderContext rctx, int w, int h) {
