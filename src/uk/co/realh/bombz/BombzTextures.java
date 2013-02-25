@@ -71,6 +71,7 @@ public class BombzTextures {
 	// 11th "digit" is colon
 	TextureRegion[] mYellowDigitRegions = new TextureRegion[11];
 	TextureRegion[] mRedDigitRegions = new TextureRegion[11];
+	TextureRegion[] mMiniDigitRegions = new TextureRegion[11];
 	TextureRegion mStar1Region, mStar2Region;
 	TextureRegion mHourglassRegion;
 	// 4 digits + colon + hourglass
@@ -224,38 +225,41 @@ public class BombzTextures {
 				3 * K.FRUSTUM_TILE_SIZE, 3 * K.FRUSTUM_TILE_SIZE);
 		
 		for (int n = 0; n < 8; ++n) {
-			mPusherRegions[n] = mAlphaAtlas.createRegion(n * mSrcTileSize,
-						3 * mSrcTileSize, mSrcTileSize, mSrcTileSize);
+			mPusherRegions[n] = mAlphaAtlas.createRegion(
+						3 + (n % 4) * mSrcTileSize,
+						mSrcTileSize * (n / 4),
+						mSrcTileSize, mSrcTileSize);
 		}
 		
-		mBomb1Region = mAlphaAtlas.createRegion(3 * mSrcTileSize,
-						2 * mSrcTileSize,
+		mBomb1Region = mAlphaAtlas.createRegion(7 * mSrcTileSize, 0,
 						mSrcTileSize, mSrcTileSize);
-		mBomb2Region = mAlphaAtlas.createRegion(4 * mSrcTileSize,
-						2 * mSrcTileSize,
+		mBomb2Region = mAlphaAtlas.createRegion(8 * mSrcTileSize, 0,
 						mSrcTileSize, mSrcTileSize);
 		mPusherSprite = rctx.createSprite(mPusherRegions[K.FACING_UP],
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 		mBombSprite = rctx.createSprite(mBomb1Region,
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 		
+		int dw = mSrcTileSize * K.DIGIT_MUL / K.DIGIT_DIV;
+		int dh = mSrcTileSize;
 		for (int n = 0; n < 11; ++n) {
-			int x = 3 * mSrcTileSize + n * 3 * mSrcTileSize / 8;
+			int x = n * mSrcTileSize * K.DIGIT_MUL / K.DIGIT_DIV;
 			mYellowDigitRegions[n] = mAlphaAtlas.createRegion(
-					x, 0, 3 * mSrcTileSize / 8, mSrcTileSize / 2);
+					x, 3 * mSrcTileSize, dw, dh);
 			mRedDigitRegions[n] = mAlphaAtlas.createRegion(
-					x, mSrcTileSize, 3 * mSrcTileSize / 8, mSrcTileSize / 2);
+					x, 4 * mSrcTileSize, dw, dh);
+			mMiniDigitRegions[n] = mAlphaAtlas.createRegion(
+					3 * mSrcTileSize + n * dw / 2, 2 * mSrcTileSize,
+					dw / 2, dh / 2);
 		}
 		mHourglassRegion = mAlphaAtlas.createRegion(
-				7 * mSrcTileSize, 2 * mSrcTileSize,
-				mSrcTileSize * 3 / 8, mSrcTileSize / 2);
+				8 * mSrcTileSize, 2 * mSrcTileSize,
+				dw, mSrcTileSize);
 		
 		mStar1Region = mAlphaAtlas.createRegion(
-				5 * mSrcTileSize, 2 * mSrcTileSize,
-				mSrcTileSize / 2, mSrcTileSize / 2);
+				7 * mSrcTileSize, mSrcTileSize, dw / 2, dw / 2);
 		mStar2Region = mAlphaAtlas.createRegion(
-				6 * mSrcTileSize, 2 * mSrcTileSize,
-				mSrcTileSize / 2, mSrcTileSize / 2);
+				8 * mSrcTileSize, mSrcTileSize, dw / 2, dw / 2);
 	}
 
 	void deleteAlphaTextures(RenderContext rctx)
@@ -265,6 +269,7 @@ public class BombzTextures {
 		mStar2Region = null;
 		mHourglassRegion = null;
 		for (int n = 0; n < 11; ++n) {
+			mMiniDigitRegions[n] = null;
 			mYellowDigitRegions[n] = null;
 			mRedDigitRegions[n] = null;
 		}

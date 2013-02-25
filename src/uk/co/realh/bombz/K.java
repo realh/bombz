@@ -68,4 +68,7 @@ public class K
 	static final int CONTROL_XPADDING = 40;
 	static final int CONTROL_YPADDING = 24;
 	
+	// Size of main digits compared to tile size
+	static final int DIGIT_MUL = 3;
+	static final int DIGIT_DIV = 4;
 }

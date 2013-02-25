@@ -95,12 +95,12 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 			s.render(rctx);
 			int y0 = y + 13 * K.FRUSTUM_TILE_SIZE / 16;
-			s.setTexture(t.mYellowDigitRegions[d10]);
+			s.setTexture(t.mMiniDigitRegions[d10]);
 			s.setPositionAndSize(x + K.FRUSTUM_TILE_SIZE / 8, y0,
-					3 * K.FRUSTUM_TILE_SIZE / 8,
+					K.FRUSTUM_TILE_SIZE * K.DIGIT_MUL / K.DIGIT_DIV / 2,
 					K.FRUSTUM_TILE_SIZE / 2);
 			s.render(rctx);
-			s.setTexture(t.mYellowDigitRegions[d1]);
+			s.setTexture(t.mMiniDigitRegions[d1]);
 			s.setPosition(x + K.FRUSTUM_TILE_SIZE / 2, y0);
 			s.render(rctx);
 			int score = mMgr.mSavedGame.get("score_" + n, 0);

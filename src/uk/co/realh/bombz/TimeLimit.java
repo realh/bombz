@@ -59,11 +59,11 @@ public class TimeLimit {
 	}
 	
 	public int getViewportWidth() {
-		return (mScrnTileSize * 3 * 6) / 8;
+		return mScrnTileSize * K.DIGIT_MUL * 6 / K.DIGIT_DIV;
 	}
 	
 	public int getViewportHeight() {
-		return mScrnTileSize / 2;
+		return mScrnTileSize;
 	}
 	
 	public void setViewport(int x, int y, int w, int h) {
@@ -117,7 +117,8 @@ public class TimeLimit {
 	public void initRendering(RenderContext rctx, int w, int h) {
 		if (null == mBatcher || mRCtx != rctx) {
 			mBatcher = rctx.createTileBatcher(6, 1,
-					K.FRUSTUM_TILE_SIZE * 3 / 8, K.FRUSTUM_TILE_SIZE / 2);
+					K.FRUSTUM_TILE_SIZE * K.DIGIT_MUL / K.DIGIT_DIV,
+					K.FRUSTUM_TILE_SIZE);
 			mRCtx = rctx;
 		}
 		mScrnTileSize = w / K.N_COLUMNS;
@@ -127,7 +128,8 @@ public class TimeLimit {
 	
 	public void render(RenderContext rctx) {
 		rctx.setViewport(mVpX, mVpY, mVpW, mVpH);
-		rctx.set2DFrustum(0, mScrnTileSize * 6 * 3 / 8, mScrnTileSize / 2, 0);
+		rctx.set2DFrustum(0, mScrnTileSize * 6 * K.DIGIT_MUL / K.DIGIT_DIV,
+				mScrnTileSize, 0);
 		mBatcher.render(rctx);
 	}
 	
