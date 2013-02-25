@@ -59,7 +59,7 @@ public class TimeLimit {
 	}
 	
 	public int getViewportWidth() {
-		return mScrnTileSize * K.DIGIT_MUL * 6 / K.DIGIT_DIV;
+		return 6 * mScrnTileSize * K.DIGIT_MUL / K.DIGIT_DIV;
 	}
 	
 	public int getViewportHeight() {
@@ -121,7 +121,7 @@ public class TimeLimit {
 					K.FRUSTUM_TILE_SIZE);
 			mRCtx = rctx;
 		}
-		mScrnTileSize = w / K.N_COLUMNS;
+		mScrnTileSize = (h - (h % K.N_ROWS)) / K.N_ROWS;
 		mBatcher.setTextureAt(mTextures.mHourglassRegion, 0, 0);
 		setTextures();
 	}
