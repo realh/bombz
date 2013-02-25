@@ -50,7 +50,7 @@ public class K
 	static final int TICK_INTERVAL = 40;
 	static final int TILE_ATLAS_COLUMNS = 6;
 	
-	static final int N_LEVELS = 40;
+	static final int N_LEVELS = 42;
 	
 	static final int FACING_LEFT = 0;
 	static final int FACING_RIGHT = 1;

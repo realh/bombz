@@ -52,12 +52,17 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 
 	private static final String TAG = "Choose Level";
 	
+	private static final int COLUMNS = 10;
+	private static final int ROWS = 5;
+	private static final int TOP = WIDGET_TOP - K.FRUSTUM_TILE_SIZE / 2;
+	private static final int BOTTOM = 51 * K.FRUSTUM_TILE_SIZE / 4;
+	
 	/**
 	 * @param mgr
 	 */
 	public ChooseLevelScreen(BombzGameManager mgr) {
 		super(mgr);
-		mWidgetY = 25 * K.FRUSTUM_TILE_SIZE / 2;
+		mWidgetY = BOTTOM;
 		addTextWidget(mMgr.mSys.translate("Back"),
 				new BackTappedListener());
 	}
@@ -86,15 +91,14 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 		int d1 = 1;
 		int d10 = 0;
 		for (int n = 0; n < K.N_LEVELS; ++n) {
-			int x = (n % 10) * 16 * K.FRUSTUM_TILE_SIZE / 10 +
+			int x = (n % COLUMNS) * 16 * K.FRUSTUM_TILE_SIZE / COLUMNS +
 					2 * K.FRUSTUM_TILE_SIZE;
-			int y = (n / 10) * 3 * K.FRUSTUM_TILE_SIZE / 2 +
-					WIDGET_TOP;
+			int y = (n / COLUMNS) * (BOTTOM - TOP) / ROWS + TOP;
 			s.setTexture((n > bestLevel) ? t.mBomb1Region : t.mBomb2Region);
 			s.setPositionAndSize(x, y,
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
 			s.render(rctx);
-			int y0 = y + 13 * K.FRUSTUM_TILE_SIZE / 16;
+			int y0 = y + 3 * K.FRUSTUM_TILE_SIZE / 4;
 			s.setTexture(t.mMiniDigitRegions[d10]);
 			s.setPositionAndSize(x + K.FRUSTUM_TILE_SIZE / 8, y0,
 					K.FRUSTUM_TILE_SIZE * K.DIGIT_MUL / K.DIGIT_DIV / 2,
@@ -105,7 +109,7 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 			s.render(rctx);
 			int score = mMgr.mSavedGame.get("score_" + n, 0);
 			if (score != 0 || n == bestLevel) {
-				y0 = y + 5 * K.FRUSTUM_TILE_SIZE / 16;
+				y0 = y + K.FRUSTUM_TILE_SIZE / 4;
 				s.setTexture(score > 0 ? t.mStar2Region : t.mStar1Region);
 				s.setPositionAndSize(x, y0,
 						3 * K.FRUSTUM_TILE_SIZE / 8,
