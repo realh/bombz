@@ -146,7 +146,8 @@ public class BombzTextures {
 			}
 		}
 		mSrcTileSize = best_size;
-		Log.d(TAG, "Using source tile size " + mSrcTileSize +
+		Log.d(TAG, "Screen tile size " + mViewportWidth / K.N_COLUMNS +
+				", source tile size " + mSrcTileSize +
 				", viewport " + mViewportWidth + "x" + mViewportHeight);
 		rctx.setNativeSize(best_goodness == EXACT);
 	}
@@ -226,7 +227,7 @@ public class BombzTextures {
 		
 		for (int n = 0; n < 8; ++n) {
 			mPusherRegions[n] = mAlphaAtlas.createRegion(
-						3 + (n % 4) * mSrcTileSize,
+						(3 + (n % 4)) * mSrcTileSize,
 						mSrcTileSize * (n / 4),
 						mSrcTileSize, mSrcTileSize);
 		}
