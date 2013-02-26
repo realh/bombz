@@ -189,7 +189,6 @@ public class BombzLevel {
 	            else if (c == Cell.PRE_EXPLO)
 	            {
 	                setTileAt(x, y, Cell.EXPLO00 + 1);
-	                mBombActivity = true;
 	            }
 	            else if (c == Cell.EXPLO00)
 	            {
@@ -202,7 +201,15 @@ public class BombzLevel {
 	                            x0 <= (x < K.N_COLUMNS - 1 ? x + 1 : x);
 	                            ++x0)
 	                    {
-	                        setExploAt(x0, y0, y0 < y || (y0 == y && x0 <= x));
+	                    	if (x0 == x && y0 == y)
+	                    	{
+				                setTileAt(x, y, Cell.EXPLO00 + 1);
+	                    	}
+	                    	else
+	                    	{
+		                        setExploAt(x0, y0, (y0 < y) ||
+		                        		(y0 == y && x0 <= x));
+	                    	}
 	                    }
 	                }
 	            }
@@ -234,20 +241,20 @@ public class BombzLevel {
 	            c <= Cell.BOMB1_FUSED_LAST))
 	    {
 	        if (behind)
-	            setTileAt(x, y, Cell.BOMB1_FUSED_LAST);
+	            setTileAt(x, y, Cell.EXPLO00);
 	        else
-	            setTileAt(x, y, Cell.BOMB1_FUSED_LAST - 1);
+	            setTileAt(x, y, Cell.BOMB1_FUSED_LAST);
 	    }
 	    else if (c == Cell.BOMB2 ||
 	            (c >= Cell.BOMB2_FUSED_FIRST &&
 	            c <= Cell.BOMB2_FUSED_LAST))
 	    {
 	        if (behind)
-	            setTileAt(x, y, Cell.BOMB2_FUSED_LAST);
+	            setTileAt(x, y, Cell.EXPLO00);
 	        else
-	            setTileAt(x, y, Cell.BOMB2_FUSED_LAST - 1);
+	            setTileAt(x, y, Cell.BOMB2_FUSED_LAST);
 	    }
-	    else if (c < Cell.CHROME00 || c > Cell.CHROME15)
+	    else if (c < Cell.CHROME00 && c != Cell.EXPLO00)
 	    {
 	        if (behind)
 	            setTileAt(x, y, Cell.EXPLO00 + 1);
