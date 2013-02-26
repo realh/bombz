@@ -224,6 +224,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		rctx.enableBlend(true);
 		rctx.bindTexture(mMgr.mTextures.mAlphaAtlas);
 		mPusher.render(rctx);
+		mLevel.renderExplo(rctx);
 		mTimeLimit.render(rctx);
 		if (0 != mMgr.mTextures.mControlsType)
 		{

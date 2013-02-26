@@ -47,6 +47,9 @@ import uk.co.realh.hgame.RenderContext;
  */
 public class BombzLevel {
 	
+	@SuppressWarnings("unused")
+	private static final String TAG = "Level";
+	
 	private byte[] mTiles = new byte[K.N_COLUMNS * K.N_ROWS];
 	private byte[] mTmpTiles = new byte[K.N_COLUMNS * K.N_ROWS];
 	private BombzTextures mTextures;
@@ -75,6 +78,22 @@ public class BombzLevel {
 			
 		}
 		mTextures.mTileBatcher.render(rctx);
+	}
+
+	public void renderExplo(RenderContext rctx) {
+		int n = 0;
+		for (int y = 0; y < K.N_ROWS; ++y) {
+			for (int x = 0; x < K.N_COLUMNS; ++x) {
+				if (mTiles[n] == Cell.EXPLO00) {
+					mTextures.mExplo00Sprite.setPosition(
+							(x - 1) * K.FRUSTUM_TILE_SIZE,
+							(y - 1) * K.FRUSTUM_TILE_SIZE);
+					mTextures.mExplo00Sprite.render(rctx);
+				}
+				++n;
+			}
+			
+		}
 	}
 
 	public void load(BufferedReader fd) throws IOException {
