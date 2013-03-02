@@ -53,7 +53,7 @@ public class GameManager {
 	private volatile boolean mRunning;
 	private volatile boolean mTicking;
 	private GameThread mGameThread;
-	private TickThread mTickThread;
+	private long mTickInterval;
 	
 	/**
 	 * @param sys	The System object for this platform.
@@ -138,22 +138,14 @@ public class GameManager {
 	 */
 	public synchronized void enableTicks(int interval)
 	{
-		if (!mTicking)
-		{
-			mTicking = true;
-			mTickThread = new TickThread(interval);
-			mTickThread.start();
-		}
+		mTickInterval = (long) interval * 1000000;
+		mTicking = true;
+		Event.pushEvent(Event.newEvent(Event.TICK));
 	}
 	
 	public synchronized void disableTicks()
 	{
 		mTicking = false;
-		if (mTickThread != null)
-		{
-			mTickThread.stopTicking();
-			mTickThread = null;
-		}
 	}
 	
 	private class GameThread extends Thread {
@@ -161,66 +153,48 @@ public class GameManager {
 		@Override
 		public void run()
 		{
+			long lastTick = System.nanoTime();
 			try {
 				boolean running = true;
 				while (running)
 				{
-					Event ev = Event.popEvent();
-					if (ev.mCode == Event.TICK)
-					{
+					Event ev = null;
+					long interval = -1;
+					
+					if (mTicking) {
+						long now = System.nanoTime();
+						interval = mTickInterval - (now - lastTick);
+						if (interval < -mTickInterval) {
+							/* Drop ticks if it looks like we've hit a slow
+							 * patch.
+							 */
+							lastTick = now;
+						}
+						if (interval < 0)
+							interval = 0;
+						ev = Event.popEvent(interval);
+					} else {
+						ev = Event.popEvent();
+					}
+					if (null == ev || ev.mCode == Event.TICK) {
+						if (null == ev) {
+							lastTick += mTickInterval;
+						} else {
+							lastTick = System.nanoTime();
+						}
 						if (mTicking)
 							mScreen.step();
-					}
-					else
-					{
+					} else {
 						if (ev.mCode == Event.RESUME)
 							mRCtx.waitUntilReady();
 						mScreen.handleEvent(ev);
 					}
-					if (ev.mCode == Event.PAUSE)
+					if (null != ev && ev.mCode == Event.PAUSE)
 						running = false;
 				}
 			} catch (Throwable e) {
 				Log.f(TAG, "Error in game thread", e);
 			}
-		}
-	}
-	
-	private class TickThread extends Thread {
-		
-		private volatile boolean mEnabled;
-		private int mInterval;
-		
-		TickThread(int interval)
-		{
-			mInterval = interval;
-		}
-		
-		@Override
-		public void run()
-		{
-			mEnabled = true;
-			while (true)
-			{
-				synchronized(this) {
-					if (!mEnabled)
-					{
-						break;
-					}
-					Event.pushEvent(Event.newEvent(Event.TICK));
-				}
-				try {
-					sleep(mInterval);
-				} catch (InterruptedException e) {
-					Log.w(TAG, "Tick thread interrupted", e);
-					mEnabled = false;
-				}
-			}
-		}
-		
-		public synchronized void stopTicking()
-		{
-			mEnabled = false;
 		}
 	}
 	

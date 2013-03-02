@@ -37,6 +37,7 @@
 package uk.co.realh.hgame;
 
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Tony Houghton
@@ -142,8 +143,7 @@ public class Event {
 	 * 
 	 * @param ev
 	 */
-	public static void pushEvent(Event ev)
-	{
+	public static void pushEvent(Event ev) {
 		try {
 			smQueue.put(ev);
 		} catch (InterruptedException e) {
@@ -154,16 +154,23 @@ public class Event {
 	/**
 	 * Gets event at head of queue, blocking if one isn't available yet.
 	 * 
+	 * @param timeout	in nanoseconds, -1 to block indefinitely
 	 * @return
 	 */
-	public static Event popEvent()
-	{
+	public static Event popEvent(long timeout) {
 		try {
-			return smQueue.take();
+			if (timeout >= 0)
+				return smQueue.poll(timeout, TimeUnit.NANOSECONDS);
+			else
+				return smQueue.take();
 		} catch (InterruptedException e) {
 			Log.e(TAG, "Event pop interrupted", e);
 			return newEvent(INTERRUPT);
 		}
+	}
+	
+	public static Event popEvent() {
+		return popEvent(-1);
 	}
 	
 	private static final int MAX_EVENTS = 32;
