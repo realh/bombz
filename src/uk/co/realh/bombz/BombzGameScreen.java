@@ -182,7 +182,8 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		int x = mTilesViewport.x - w;
 		if (x < 0)
 			x = 0;
-		mTimeLimit.setViewport(x, 0, w, mTimeLimit.getViewportHeight());
+		mTimeLimit.setViewport(x, mMgr.mTextures.mSrcTileSize / 4,
+				w, mTimeLimit.getViewportHeight());
 	}
 	
 	private void setTimeLimitOnRight(int vpw) {
@@ -190,7 +191,8 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		int x = mTilesViewport.x + mTilesViewport.w;
 		if (x + w > vpw)
 			x = vpw - w;
-		mTimeLimit.setViewport(x, 0, w, mTimeLimit.getViewportHeight());
+		mTimeLimit.setViewport(x, mMgr.mTextures.mSrcTileSize / 4,
+				w, mTimeLimit.getViewportHeight());
 	}
 	
 	@Override
