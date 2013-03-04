@@ -208,6 +208,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mMgr.mTextures.loadAlphaTextures(rctx);
 		mMgr.mTextures.loadControls(rctx);
 		mTimeLimit.initRendering(rctx,  w,  h);
+		Log.d(TAG, "initRendering(" + w + ", " + h + ")");
 		setupViewports(w, h);
 	}
 	
@@ -217,6 +218,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		super.resizeRendering(rctx, w, h);
 		mScreenWidth = w;
 		mScreenHeight = h;
+		Log.d(TAG, "resizeRendering(" + w + ", " + h + ")");
 		setupViewports(w, h);
 	}
 
@@ -305,6 +307,8 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mMgr.mTextures.loadControls(rctx);
 		mTimeLimit.initRendering(rctx,
 				rctx.getScreenWidth(), rctx.getScreenHeight());
+		Log.d(TAG, "replacedRenderer(" +
+				mScreenWidth + ", " + mScreenHeight + ")");
 		setupViewports(mScreenWidth, mScreenHeight);
 	}
 

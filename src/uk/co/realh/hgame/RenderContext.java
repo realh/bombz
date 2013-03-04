@@ -213,7 +213,7 @@ public abstract class RenderContext {
 			if (w != mWidth || h != mHeight)
 			{
 				mWidth = w;
-				mHeight = w;
+				mHeight = h;
 				if (null != mRenderer)
 				{
 					mRenderer.resizeRendering(this, w, h);

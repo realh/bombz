@@ -41,7 +41,6 @@ import java.io.IOException;
 import uk.co.realh.hgame.ButtonFeedback;
 import uk.co.realh.hgame.GameManager;
 import uk.co.realh.hgame.SavedSettings;
-import uk.co.realh.hgame.Screen;
 import uk.co.realh.hgame.ScreenButtonSource;
 import uk.co.realh.hgame.Sys;
 
