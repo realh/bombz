@@ -55,6 +55,7 @@ public class BombzGameManager extends GameManager {
 	SavedSettings mSavedGame;
 	SavedSettings mConfiguration;
 	
+	private BombzPauseScreen mBombzPauseScreen;
 	private BombzMainMenuScreen mMainMenuScreen;
 	private BombzGameScreen mGameScreen;
 	private ChooseLevelScreen mChooseLevelScreen;
@@ -78,23 +79,31 @@ public class BombzGameManager extends GameManager {
 		setScreen(mMainMenuScreen);
 	}
 	
-	public Screen getMainMenuScreen()
+	public BombzMainMenuScreen getMainMenuScreen()
 	{
 		// Created in c'tor so always exists
 		return mMainMenuScreen;
 	}
 	
-	public Screen getGameScreen() throws IOException
+	public BombzGameScreen getGameScreen() throws IOException
 	{
 		if (null == mGameScreen)
 			mGameScreen = new BombzGameScreen(this, mButtons, mHapticFeedback);
 		return mGameScreen;
 	}
 	
-	public Screen getChooseLevelScreen()
+	public ChooseLevelScreen getChooseLevelScreen()
 	{
 		if (null == mGameScreen)
 			mChooseLevelScreen = new ChooseLevelScreen(this);
 		return mChooseLevelScreen;
 	}
+	
+	public BombzPauseScreen getPauseScreen()
+	{
+		if (null == mBombzPauseScreen)
+			mBombzPauseScreen = new BombzPauseScreen(this);
+		return mBombzPauseScreen;
+	}
+	
 }

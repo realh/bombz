@@ -198,4 +198,15 @@ public class GameManager {
 		}
 	}
 	
+	/**
+	 * Forwards back button events to screen.
+	 * 
+	 * @return	Whether screen handled event.
+	 */
+	public boolean onBackPressed() {
+		if (null != mScreen)
+			return mScreen.onBackPressed();
+		else
+			return false;
+	}
 }

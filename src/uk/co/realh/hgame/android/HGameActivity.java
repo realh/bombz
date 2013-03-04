@@ -155,6 +155,13 @@ public abstract class HGameActivity extends Activity
 	}
 	
 	@Override
+	public void onBackPressed() {
+		Log.d(TAG, "onBackPressed");
+		if (!mMgr.onBackPressed())
+			super.onBackPressed();
+	}
+	
+	@Override
 	public boolean onTouch(View v, MotionEvent e) {
 		try {
 			int a = e.getAction();

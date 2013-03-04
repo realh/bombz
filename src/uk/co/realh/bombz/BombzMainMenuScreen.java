@@ -55,16 +55,30 @@ public class BombzMainMenuScreen extends BombzMenuScreen {
 	 */
 	public BombzMainMenuScreen(BombzGameManager mgr) {
 		super(mgr);
-		addTextWidget(mMgr.mSys.translate("Play"),
+		addTextWidget(mMgr.mSys.translate(getPlayCaption()),
 				new PlayTappedListener());
-		addTextWidget(mMgr.mSys.translate("Choose_Level"),
-				new ChooseLevelTappedListener());
+		if (hasChooseLevelItem()) {
+			addTextWidget(mMgr.mSys.translate("Choose_Level"),
+					new ChooseLevelTappedListener());
+		}
 		addTextWidget(mMgr.mSys.translate("Configure_Controls"),
 				new ConfigureControlsTappedListener());
 		addTextWidget(mMgr.mSys.translate("Other_Settings"),
 				new OtherSettingsTappedListener());
 	}
-
+	
+	protected String getPlayCaption() {
+		return "Play";
+	}
+	
+	protected boolean hasChooseLevelItem() {
+		return true;
+	}
+	
+	protected boolean resetLevelOnPlay() {
+		return true;
+	}
+	
 	/**
 	 * @see uk.co.realh.hgame.Renderer#getDescription()
 	 */
@@ -78,7 +92,10 @@ public class BombzMainMenuScreen extends BombzMenuScreen {
 		public boolean handleTapEvent(Event e) {
 			Log.d(TAG, "Play tapped");
 			try {
-				mMgr.setScreen(mMgr.getGameScreen());
+				BombzGameScreen scrn = mMgr.getGameScreen();
+				if (resetLevelOnPlay())
+					scrn.loadCurrentLevel();
+				mMgr.setScreen(scrn);
 			} catch (IOException x) {
 				Log.e(TAG, "Unable to start game", x);
 			}
@@ -112,6 +129,11 @@ public class BombzMainMenuScreen extends BombzMenuScreen {
 			Log.d(TAG, "Other Settings tapped");
 			return true;
 		}
+	}
+	
+	@Override
+	public boolean onBackPressed() {
+		return false;
 	}
 	
 }

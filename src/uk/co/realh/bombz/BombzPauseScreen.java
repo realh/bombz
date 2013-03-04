@@ -34,35 +34,35 @@
  * See the source code for details.
  */
 
-package uk.co.realh.hgame;
+package uk.co.realh.bombz;
 
 /**
- * Extends Renderer with an additional method to handle game events
- * on a separate thread from rendering.
- * 
  * @author Tony Houghton
- * @see Renderer
+ *
  */
-public interface Screen extends Renderer {
-	
+public class BombzPauseScreen extends BombzMainMenuScreen {
+
 	/**
-	 * Handles game events.
-	 * 
-	 * @param ev
-	 * @return Whether this handler considers it has handled the event.
+	 * @param mgr
 	 */
-	public boolean handleEvent(Event ev);
+	public BombzPauseScreen(BombzGameManager mgr) {
+		super(mgr);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	protected String getPlayCaption() {
+		return "Resume";
+	}
 	
-	/**
-	 * Called on tick events.
-	 */
-	public void step();
+	@Override
+	protected boolean hasChooseLevelItem() {
+		return false;
+	}
 	
-	/**
-	 * Called when the user presses the Back button.
-	 * 
-	 * @return	Whether this Screen has handled the event.
-	 */
-	public boolean onBackPressed();
+	@Override
+	protected boolean resetLevelOnPlay() {
+		return false;
+	}
 
 }

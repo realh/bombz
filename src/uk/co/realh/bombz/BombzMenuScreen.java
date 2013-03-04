@@ -218,4 +218,10 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		mWidgetGroup.replacedRenderer(rctx);
 	}
 
+	@Override
+	public boolean onBackPressed() {
+		mMgr.setScreen(mMgr.getMainMenuScreen());
+		return true;
+	}
+	
 }

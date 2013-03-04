@@ -98,10 +98,10 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mPusher = new Pusher(mgr, mLevel, this);
 		mTimeLimit = new TimeLimit(mgr.mTextures);
 		mCurrentLevel = mMgr.mSavedGame.get("level", 1);
-		loadLevel(mCurrentLevel);
+		loadCurrentLevel();
 	}
 	
-	final void loadLevel(int level) throws IOException {
+	public final void loadLevel(int level) throws IOException {
 		BufferedReader fd = new BufferedReader(new InputStreamReader(
 				mMgr.mSys.openAsset(String.format("levels/%02d", level))));
 		mLevel.load(fd);
@@ -109,6 +109,10 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mPusher.reset();
 		mTimeLimit.setTimeLeft(mLevel.mTimeLimit);
 		mMsSinceTick = 0;
+	}
+	
+	public final void loadCurrentLevel() throws IOException {
+		loadLevel(mCurrentLevel);
 	}
 
 	private void setupViewports(int w, int h) {
@@ -248,6 +252,10 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 			if (null != mRCtx)
 				mRCtx.requestRender();
 		}
+		else if (ev.mCode == Event.PAUSE) {
+			mMgr.disableTicks();
+			mMgr.setScreen(mMgr.getPauseScreen());
+		}
 		return false;
 	}
 
@@ -309,4 +317,11 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 			return mVPad.pollDInput();
 		return 0;
 	}
+	
+	@Override
+	public boolean onBackPressed() {
+		mMgr.setScreen(mMgr.getPauseScreen());
+		return true;
+	}
+	
 }
