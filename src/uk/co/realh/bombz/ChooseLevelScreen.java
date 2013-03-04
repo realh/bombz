@@ -38,11 +38,8 @@ package uk.co.realh.bombz;
 
 import java.io.IOException;
 
-import uk.co.realh.hgame.Event;
-import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.Sprite;
-import uk.co.realh.hgame.TapEventHandler;
 
 /**
  * @author Tony Houghton
@@ -50,12 +47,13 @@ import uk.co.realh.hgame.TapEventHandler;
  */
 public class ChooseLevelScreen extends BombzMenuScreen {
 
-	private static final String TAG = "Choose Level";
+	@SuppressWarnings("unused")
+	private static final String TAG = "ChooseLevel";
 	
 	private static final int COLUMNS = 10;
 	private static final int ROWS = 5;
 	private static final int TOP = WIDGET_TOP - K.FRUSTUM_TILE_SIZE / 2;
-	private static final int BOTTOM = 51 * K.FRUSTUM_TILE_SIZE / 4;
+	private static final int BOTTOM = 14 * K.FRUSTUM_TILE_SIZE;
 	
 	/**
 	 * @param mgr
@@ -63,8 +61,10 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 	public ChooseLevelScreen(BombzGameManager mgr) {
 		super(mgr);
 		mWidgetY = BOTTOM;
+		/*
 		addTextWidget(mMgr.mSys.translate("Back"),
 				new BackTappedListener());
+		*/
 	}
 	
 	@Override
@@ -92,7 +92,7 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 		int d10 = 0;
 		for (int n = 0; n < K.N_LEVELS; ++n) {
 			int x = (n % COLUMNS) * 16 * K.FRUSTUM_TILE_SIZE / COLUMNS +
-					2 * K.FRUSTUM_TILE_SIZE;
+					9 * K.FRUSTUM_TILE_SIZE / 4;
 			int y = (n / COLUMNS) * (BOTTOM - TOP) / ROWS + TOP;
 			s.setTexture((n > bestLevel) ? t.mBomb1Region : t.mBomb2Region);
 			s.setPositionAndSize(x, y,
@@ -140,6 +140,7 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 			setupRendering(rctx);
 	}
 	
+	/*
 	private class BackTappedListener implements TapEventHandler {
 		@Override
 		public boolean handleTapEvent(Event e) {
@@ -148,6 +149,7 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 			return true;
 		}
 	}
+	*/
 
 	/**
 	 * @see uk.co.realh.hgame.Renderer#getDescription()

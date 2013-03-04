@@ -186,61 +186,66 @@ public abstract class RenderContext {
 	 * @throws IOException 
 	 */
 	synchronized
-	protected boolean serviceRenderRequest() throws IOException
+	protected boolean serviceRenderRequest()
 	{
 		boolean rendering = false;
-		switch (mRenderReason)
-		{
-		case REASON_INIT:
-			mWidth = getCurrentScreenWidth();
-			mHeight = getCurrentScreenHeight();
-			if (null != mRenderer)
+		try {
+			switch (mRenderReason)
 			{
-				mRenderer.initRendering(this, mWidth, mHeight);
-				mReady = true;
-				notifyAll();
-				rendering = true;
-			}
-			break;
-		case REASON_DISPOSE:
-			mReady = false;
-			if (null != mRenderer)
-				mRenderer.deleteRendering(this);
-			break;
-		case REASON_RESIZE:
-			int w = getCurrentScreenWidth();
-			int h = getCurrentScreenHeight();
-			if (w != mWidth || h != mHeight)
-			{
-				mWidth = w;
-				mHeight = h;
+			case REASON_INIT:
+				mWidth = getCurrentScreenWidth();
+				mHeight = getCurrentScreenHeight();
 				if (null != mRenderer)
 				{
-					mRenderer.resizeRendering(this, w, h);
+					mRenderer.initRendering(this, mWidth, mHeight);
+					mReady = true;
+					notifyAll();
+					rendering = true;
+				}
+				break;
+			case REASON_DISPOSE:
+				mReady = false;
+				if (null != mRenderer)
+					mRenderer.deleteRendering(this);
+				break;
+			case REASON_RESIZE:
+				int w = getCurrentScreenWidth();
+				int h = getCurrentScreenHeight();
+				if (w != mWidth || h != mHeight)
+				{
+					mWidth = w;
+					mHeight = h;
+					if (null != mRenderer)
+					{
+						mRenderer.resizeRendering(this, w, h);
+						rendering = mRendering;
+					}
+				}
+				break;
+			case REASON_RENDER:
+				rendering = true;
+				break;
+			case REASON_REPLACE:
+				if (null != mRenderer)
+					mRenderer.replacingRenderer(this);
+				mRenderer = mNewRenderer;
+				mNewRenderer = null;
+				if (null != mRenderer)
+				{
+					mRenderer.replacedRenderer(this);
 					rendering = mRendering;
 				}
+				break;
 			}
-			break;
-		case REASON_RENDER:
-			rendering = true;
-			break;
-		case REASON_REPLACE:
-			if (null != mRenderer)
-				mRenderer.replacingRenderer(this);
-			mRenderer = mNewRenderer;
-			mNewRenderer = null;
-			if (null != mRenderer)
+			mRendering = rendering;
+			if (mRenderBlocking)
 			{
-				mRenderer.replacedRenderer(this);
-				rendering = mRendering;
+				notifyAll();
+				mRenderBlocking = false;
 			}
-			break;
-		}
-		mRendering = rendering;
-		if (mRenderBlocking)
-		{
-			notifyAll();
-			mRenderBlocking = false;
+		} catch (Throwable e) {
+			rendering = false;
+			Log.e(TAG, "Exception in RenderContext", e);
 		}
 		return rendering;
 	}

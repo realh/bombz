@@ -46,6 +46,7 @@ import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.SimpleRect;
 import uk.co.realh.hgame.TapEventHandler;
 import uk.co.realh.hgame.TextWidget;
+import uk.co.realh.hgame.TextureAtlas;
 import uk.co.realh.hgame.WidgetGroup;
 
 /**
@@ -184,9 +185,14 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		rctx.enableBlend(true);
 		rctx.bindTexture(mMgr.mTextures.mLogoAtlas);
 		mMgr.mTextures.mLogoSprite.render(rctx);
-		rctx.bindTexture(mWidgetGroup.getTextureAtlas());
-		mWidgetGroup.render(rctx);
-		rctx.unbindTexture(mWidgetGroup.getTextureAtlas());
+		TextureAtlas atlas = mWidgetGroup.getTextureAtlas();
+		if (null != atlas) {
+			rctx.bindTexture(atlas);
+			mWidgetGroup.render(rctx);
+			rctx.unbindTexture(atlas);
+		} else {
+			rctx.unbindTexture(mMgr.mTextures.mLogoAtlas);
+		}
 	}
 	
 	@Override

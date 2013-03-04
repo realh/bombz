@@ -54,7 +54,10 @@ public class WidgetGroup implements Renderer, TapEventHandler {
 
 	public TextureAtlas getTextureAtlas()
 	{
-		return mAtlasMaker.mAtlas;
+		if (null == mAtlasMaker)
+			return null;
+		else
+			return mAtlasMaker.mAtlas;
 	}
 
 	public void addWidget(Widget w)
@@ -79,6 +82,10 @@ public class WidgetGroup implements Renderer, TapEventHandler {
 	@Override
 	public void initRendering(RenderContext rctx, int w, int h)
 			throws IOException {
+		if (0 == mWidgets.size()) {
+			mAtlasMaker = null;
+			return;
+		}
 		List<Image> imgs = new ArrayList<Image>();
 		for (int n = 0; n < mWidgets.size(); ++n)
 		{
@@ -130,6 +137,8 @@ public class WidgetGroup implements Renderer, TapEventHandler {
 	 */
 	@Override
 	public void render(RenderContext rctx) {
+		if (null == mAtlasMaker)
+			return;
 		rctx.bindTexture(mAtlasMaker.mAtlas);
 		for (int n = 0; n < mWidgets.size(); ++n)
 			mWidgets.get(n).render(rctx);
