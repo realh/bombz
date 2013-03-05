@@ -382,8 +382,8 @@ def builder(m, dest, size):
         omdp(dest)
         make_game_alpha_atlas(dest,
                 ["svgs/%s.svg" % s for s in ["explo00"] + \
-                    ["droid%s" % d for d in "left right up down".split()] + \
-                    ["dead%s" % d for d in "left right up down".split()] + \
+                    ["droid%s" % d for d in "left up right down".split()] + \
+                    ["dead%s" % d for d in "left up right down".split()] + \
                             ["bomb1", "bomb2", "star1", "star2", "hourglass"]],
                 size)
     elif m == 'logo':

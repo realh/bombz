@@ -53,8 +53,8 @@ public class K
 	static final int N_LEVELS = 42;
 	
 	static final int FACING_LEFT = 0;
-	static final int FACING_RIGHT = 1;
-	static final int FACING_UP = 2;
+	static final int FACING_UP = 1;
+	static final int FACING_RIGHT = 2;
 	static final int FACING_DOWN = 3;
 	
 	static final int MENU_TEXT_COLOUR = 0x000088;
