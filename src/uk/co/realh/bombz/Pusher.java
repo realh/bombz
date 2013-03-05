@@ -57,6 +57,9 @@ public class Pusher {
     private int mInterX, mInterY;
     private int mDirection;
     private boolean mMoving;
+    private int mVulnX, mVulnY;
+    private int mDying;
+    private static final int MAX_DYING = 42;
     
     private DInput mDInput;
     
@@ -89,8 +92,9 @@ public class Pusher {
     }
 
     final void reset() {
-	    mTileX = mLevel.mStartX;
-	    mTileY = mLevel.mStartY;
+    	mDying = 0;
+	    mVulnX = mTileX = mLevel.mStartX;
+	    mVulnY = mTileY = mLevel.mStartY;
 	    mInterX = 0;
 	    mInterY = 0;
 	    mDirection = UP;
@@ -108,8 +112,14 @@ public class Pusher {
     	Log.d(TAG, "Regions " + mMgr.mTextures.mPusherRegions);
     	Log.d(TAG, "Region[] " + mMgr.mTextures.mPusherRegions[mDirection]);
     	*/
+    	int d = mDirection;
+    	if (0 != mDying) {
+    		d += (mDying - 2) / 2;
+    		d &= 3;
+    		d += 4;
+    	}
     	mMgr.mTextures.mPusherSprite.setTexture(
-    			mMgr.mTextures.mPusherRegions[mDirection]);
+    			mMgr.mTextures.mPusherRegions[d]);
     	mMgr.mTextures.mPusherSprite.setPosition(x, y);
     	mMgr.mTextures.mPusherSprite.render(rctx);
 	    if (0 != mPushingBomb)
@@ -137,9 +147,23 @@ public class Pusher {
     }
 
     // Returns true if movement etc requires screen refresh
-    boolean step()
-    {
+    boolean step() {
 	    boolean refresh = false;
+	    
+	    if (0 == mDying) {
+	        byte c = mLevel.getTileAt(mVulnX, mVulnY);
+	        if (c >= Cell.EXPLO00 && c <= Cell.EXPLO11) {
+	        	mDying = 1;
+	        	mPushingBomb = 0;
+	        }
+	    }
+	    if (0 != mDying) {
+	    	if (++mDying == MAX_DYING) {
+	    		mMgr.setScreen(mMgr.getMainMenuScreen());
+	    		return false;
+	    	}
+	    	return true;
+	    }
 	    if (!mMoving)
 	    {
 	    	int keys = mDInput.pollDInput();
@@ -194,7 +218,7 @@ public class Pusher {
 	            mDirection = DOWN;
 	            dy = 1;
 	        }
-	        byte c = mLevel.getTileAt(mTileX + dx, mTileY +dy);
+	        byte c = mLevel.getTileAt(mTileX + dx, mTileY + dy);
 	        if (c == Cell.BOMB1 || c == Cell.BOMB2)
 	        {
 	            if (mHaveMatch)
@@ -202,12 +226,12 @@ public class Pusher {
 	                Log.v(TAG, "Lighting bomb");
 	                if (c == Cell.BOMB1)
 	                {
-	                    mLevel.setTileAt(mTileX + dx, mTileY +dy,
+	                    mLevel.setTileAt(mTileX + dx, mTileY + dy,
 	                            Cell.BOMB1_FUSED_FIRST, true);
 	                }
 	                else
 	                {
-	                    mLevel.setTileAt(mTileX + dx, mTileY +dy,
+	                    mLevel.setTileAt(mTileX + dx, mTileY + dy,
 	                            Cell.BOMB2_FUSED_FIRST, true);
 	                }
 	                mMoving = false;
@@ -216,7 +240,7 @@ public class Pusher {
 	            else
 	            {
 	                mPushingBomb = c;
-	                mLevel.setBlankAt(mTileX + dx, mTileY +dy);
+	                mLevel.setBlankAt(mTileX + dx, mTileY + dy);
 	            }
 	        }
 	    }
@@ -311,6 +335,8 @@ public class Pusher {
 	            y += 1;
 	            break;
 	    }
+	    mVulnX = x;
+	    mVulnY = y;
 	    byte c = mLevel.getTileAt(x, y);
 	    switch (c)
 	    {
