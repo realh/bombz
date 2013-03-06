@@ -150,6 +150,20 @@ public class BombzLevel {
 		return mTiles[y * K.N_COLUMNS + x];
 	}
 	
+	public int countDetonators()
+	{
+		int n = 0;
+		int d = 0;
+		for (int y = 0; y < K.N_ROWS; ++y) {
+			for (int x = 0; x < K.N_COLUMNS; ++x) {
+				if (mTiles[n] == Cell.MATCH)
+					++d;
+				++n;
+			}
+		}
+		return d;
+	}
+	
 	/**
 	 * @param x
 	 * @param y
@@ -597,7 +611,7 @@ public class BombzLevel {
 	    switch (c)
 	    {
         case Cell.OUTSIDE:
-        	return false;
+        	return !bomb && mNBombs == 0;
         case Cell.BLANK:
             return true;
         case Cell.EARTH:

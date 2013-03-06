@@ -40,6 +40,7 @@ import java.io.IOException;
 
 import uk.co.realh.hgame.ButtonFeedback;
 import uk.co.realh.hgame.GameManager;
+import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.SavedSettings;
 import uk.co.realh.hgame.ScreenButtonSource;
 import uk.co.realh.hgame.Sys;
@@ -53,6 +54,9 @@ public class BombzGameManager extends GameManager {
 	BombzTextures mTextures;
 	SavedSettings mSavedGame;
 	SavedSettings mConfiguration;
+	Stats mStats;
+	
+	int mCurrentLevel;
 	
 	private BombzPauseScreen mBombzPauseScreen;
 	private BombzMainMenuScreen mMainMenuScreen;
@@ -71,9 +75,11 @@ public class BombzGameManager extends GameManager {
 		super(sys, sbs);
 		mSavedGame = sys.getSavedSettings("saves");
 		mConfiguration = sys.getSavedSettings("config");
+		mStats = new Stats(sys.getSavedSettings("stats"));
 		mHapticFeedback = sys.getHapticFeedback();
 		mTextures = new BombzTextures(sys,
 				mConfiguration.get("touchpad", K.CONTROL_VPAD_LEFT));
+		mCurrentLevel = mSavedGame.get("level", 1);
 		mMainMenuScreen = new BombzMainMenuScreen(this);
 		setScreen(mMainMenuScreen);
 	}
@@ -103,6 +109,28 @@ public class BombzGameManager extends GameManager {
 		if (null == mBombzPauseScreen)
 			mBombzPauseScreen = new BombzPauseScreen(this);
 		return mBombzPauseScreen;
+	}
+	
+	void completedLevel()
+	{
+		int secs = mGameScreen.mTimeLimit.getTimeLeft();
+		mStats.succeeded(secs, mGameScreen.mLevel.countDetonators());
+		int score;
+		if (secs > 10)
+			score = 3;
+		else if (secs > 0)
+			score = 2;
+		else
+			score = 1;
+		mSavedGame.set("score_" + mCurrentLevel, score);
+		mCurrentLevel += 1;
+		mSavedGame.set("level", mCurrentLevel);
+		try {
+			mSavedGame.save();
+		} catch (IOException e) {
+			Log.e(TAG, "Unable to save progress", e);
+		}
+    	setScreen(getMainMenuScreen());
 	}
 	
 }

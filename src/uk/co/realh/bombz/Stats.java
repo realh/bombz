@@ -38,6 +38,7 @@ package uk.co.realh.bombz;
 
 import java.io.IOException;
 
+import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.SavedSettings;
 
 /**
@@ -47,6 +48,8 @@ import uk.co.realh.hgame.SavedSettings;
  */
 public class Stats {
 	
+	private static final String TAG = "Stats";
+
 	private SavedSettings mSettings;
 	
 	private int mCurrentLevel;
@@ -80,18 +83,25 @@ public class Stats {
 		++mMoves;
 	}
 	
-	public void failed() throws IOException {
+	public void failed() {
 		incrementSetting("failed_");
-		mSettings.save();
+		save();
 	}
 	
-	public void succeeded(int timeLeft, int detonatorsLeft)
-			throws IOException {
+	public void succeeded(int timeLeft, int detonatorsLeft) {
 		incrementSetting("succeeded_");
 		addSuccessMeanStat("detonators_left_", detonatorsLeft); 
 		addSuccessMeanStat("time_left_", timeLeft); 
 		addSuccessMeanStat("moves_", mMoves); 
-		mSettings.save();
+		save();
+	}
+	
+	private void save() {
+		try {
+			mSettings.save();
+		} catch (IOException e) {
+			Log.w(TAG, "Failed to save stats", e);
+		}
 	}
 	
 	private void incrementSetting(String s) {

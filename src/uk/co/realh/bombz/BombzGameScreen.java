@@ -57,13 +57,11 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	
 	private static final String TAG = "GameScreen";
 	
-	private BombzLevel mLevel;
+	BombzLevel mLevel;
 	private Pusher mPusher;
-	private TimeLimit mTimeLimit;
+	TimeLimit mTimeLimit;
 	private int mScreenWidth;
 	private int mScreenHeight;
-	
-	private int mCurrentLevel;
 	
 	private SimpleRect mTilesViewport = new SimpleRect();
 	private SimpleRect mControlsViewports[] = {
@@ -97,7 +95,6 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mLevel = new BombzLevel(mgr.mTextures);
 		mPusher = new Pusher(mgr, mLevel, this);
 		mTimeLimit = new TimeLimit(mgr.mTextures);
-		mCurrentLevel = mMgr.mSavedGame.get("level", 1);
 		loadCurrentLevel();
 	}
 	
@@ -107,12 +104,14 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mLevel.load(fd);
 		fd.close();
 		mPusher.reset();
+		mMgr.mStats.startAttempt(level,
+				mLevel.countDetonators(), mLevel.mTimeLimit);
 		mTimeLimit.setTimeLeft(mLevel.mTimeLimit);
 		mMsSinceTick = 0;
 	}
 	
 	public final void loadCurrentLevel() throws IOException {
-		loadLevel(mCurrentLevel);
+		loadLevel(mMgr.mCurrentLevel);
 	}
 
 	private void setupViewports(int w, int h) {

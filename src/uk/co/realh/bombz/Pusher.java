@@ -159,6 +159,7 @@ public class Pusher {
 	    }
 	    if (0 != mDying) {
 	    	if (++mDying == MAX_DYING) {
+	    		mMgr.mStats.failed();
 	    		mMgr.setScreen(mMgr.getMainMenuScreen());
 	    		return false;
 	    	}
@@ -166,6 +167,7 @@ public class Pusher {
 	    }
 	    if (!mMoving)
 	    {
+	    	int oldDir = mDirection;
 	    	int keys = mDInput.pollDInput();
 	        mLrud.left = (keys & DInput.LEFT) != 0;
 	        mLrud.right = (keys & DInput.RIGHT) != 0;
@@ -243,6 +245,8 @@ public class Pusher {
 	                mLevel.setBlankAt(mTileX + dx, mTileY + dy);
 	            }
 	        }
+	        if (mMoving && oldDir != mDirection)
+	        	mMgr.mStats.madeMove();
 	    }
 	    if (mMoving)
 	    {
@@ -345,6 +349,9 @@ public class Pusher {
 	        case Cell.EARTH:
 	            mLevel.setBlankAt(x, y);
 	            break;
+	        case Cell.OUTSIDE:
+	        	mMgr.completedLevel();
+	        	break;
 	    }
 	}
 
