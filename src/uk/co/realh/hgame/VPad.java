@@ -83,6 +83,12 @@ public class VPad implements DInput, OnScreenButton {
 		mFeedback = feedback;
 	}
 	
+	synchronized
+	public void reset() {
+		mPressing[0] = mPressing[1] = mPressing[2] = mPressing[3] = -1;
+		mPressingMask = 0;
+	}
+	
 	public final void setDimensions(int x, int y, int outerRadius, int innerRadius) {
 		mCentreX = x + outerRadius;
 		mCentreY = y + outerRadius;
@@ -94,6 +100,7 @@ public class VPad implements DInput, OnScreenButton {
 	 * @see uk.co.realh.hgame.OnScreenButton#handleEvent(int, int, int, int)
 	 */
 	@Override
+	synchronized
 	public void handleEvent(int type, int x, int y, int pointerId) {
 		int newMask = mPressingMask;
 		if (mPressing[0] == pointerId)
@@ -196,6 +203,7 @@ public class VPad implements DInput, OnScreenButton {
 	 * @see uk.co.realh.hgame.DInput#pollDInput()
 	 */
 	@Override
+	synchronized
 	public int pollDInput() {
 		return mPressingMask;
 	}
