@@ -124,17 +124,31 @@ public abstract class SavedSettings {
 	}
 	
 	/**
-	 * Get a value for a non-string type.
+	 * Get an int value.
 	 * 
 	 * @param k		Key
 	 * @param v		Default value if not already set
 	 * @return		Value
 	 */
-	@SuppressWarnings("unchecked")
-	public <T> T get(String k, T v) {
+	public int get(String k, int v) {
 		if (mMap.containsKey(k))
-			return (T) mMap.get(k);
+			return Integer.parseInt(mMap.get(k));
 		else
 			return v;
 	}
+	
+	/**
+	 * Get a float value.
+	 * 
+	 * @param k		Key
+	 * @param v		Default value if not already set
+	 * @return		Value
+	 */
+	public float get(String k, float v) {
+		if (mMap.containsKey(k))
+			return Float.parseFloat(mMap.get(k));
+		else
+			return v;
+	}
+	
 }
