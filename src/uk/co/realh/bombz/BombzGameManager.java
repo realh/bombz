@@ -122,7 +122,9 @@ public class BombzGameManager extends GameManager {
 			score = 2;
 		else
 			score = 1;
-		mSavedGame.set("score_" + mCurrentLevel, score);
+		int old_score = mSavedGame.get("score_" + mCurrentLevel, 0);
+		if (score > old_score)
+			mSavedGame.set("score_" + mCurrentLevel, score);
 		mCurrentLevel += 1;
 		mSavedGame.set("level", mCurrentLevel);
 		try {
