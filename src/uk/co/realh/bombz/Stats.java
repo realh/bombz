@@ -89,10 +89,10 @@ public class Stats {
 	}
 	
 	public void succeeded(int timeLeft, int detonatorsLeft) {
-		incrementSetting("succeeded_");
-		addSuccessMeanStat("detonators_left_", detonatorsLeft); 
-		addSuccessMeanStat("time_left_", timeLeft); 
-		addSuccessMeanStat("moves_", mMoves); 
+		float suc = (float) incrementSetting("succeeded_");
+		addSuccessMeanStat("detonators_left_", detonatorsLeft, suc); 
+		addSuccessMeanStat("time_left_", timeLeft, suc); 
+		addSuccessMeanStat("moves_", mMoves, suc); 
 		save();
 	}
 	
@@ -105,19 +105,20 @@ public class Stats {
 		}
 	}
 	
-	private void incrementSetting(String s) {
+	private int incrementSetting(String s) {
 		s += mCurrentLevel;
-		mSettings.set(s, mSettings.get(s, 0) + 1);
+		int val = mSettings.get(s, 0) + 1;
+		mSettings.set(s, val);
+		return val;
 	}
 	
-	private void addSuccessMeanStat(String s, int val) {
+	private void addSuccessMeanStat(String s, int val, float suc) {
 		s += mCurrentLevel;
 		float mean = mSettings.get(s, 0.0f);
-		float n = (float) mSettings.get("succeeded_" + mCurrentLevel, 1);
-		if (0.0f == mean || 1 == n)
-			mean = (float) val / (float) n;
+		if (0.0f == mean || 1 == suc)
+			mean = (float) val / suc;
 		else
-			mean = (mean * (n - 1) + (float) val) / n;
+			mean = (mean * (suc - 1) + (float) val) / suc;
 		mSettings.set(s, mean);
 	}
 
