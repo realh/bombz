@@ -71,4 +71,7 @@ public class K
 	// Size of main digits compared to tile size
 	static final int DIGIT_MUL = 3;
 	static final int DIGIT_DIV = 4;
+	
+	// For Stats
+	static final int ORDER_VERSION = 1;
 }
