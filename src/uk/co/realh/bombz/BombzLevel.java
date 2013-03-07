@@ -39,6 +39,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Random;
 
+import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
 
 /**
@@ -47,7 +48,6 @@ import uk.co.realh.hgame.RenderContext;
  */
 public class BombzLevel {
 	
-	@SuppressWarnings("unused")
 	private static final String TAG = "Level";
 	
 	private byte[] mTiles = new byte[K.N_COLUMNS * K.N_ROWS];
@@ -97,6 +97,7 @@ public class BombzLevel {
 	}
 
 	public void load(BufferedReader fd) throws IOException {
+		mNBombs = 0;
 	    int n = 0;
 		for (int y = 0; y < K.N_ROWS; ++y) {
 			String s = fd.readLine();
@@ -141,6 +142,7 @@ public class BombzLevel {
 	    }
 	    mTimeLimit = Integer.parseInt(fd.readLine());
 	    prettify();
+	    Log.d(TAG, "Initial number of bombs " + mNBombs);
 	}
 	
 	public byte getTileAt(int x, int y)
@@ -273,19 +275,23 @@ public class BombzLevel {
 	            (c >= Cell.BOMB1_FUSED_FIRST &&
 	            c <= Cell.BOMB1_FUSED_LAST))
 	    {
-	        if (behind)
+	        if (behind) {
 	            setTileAt(x, y, Cell.EXPLO00);
-	        else
+	            --mNBombs;
+	        } else {
 	            setTileAt(x, y, Cell.BOMB1_FUSED_LAST);
+	        }
 	    }
 	    else if (c == Cell.BOMB2 ||
 	            (c >= Cell.BOMB2_FUSED_FIRST &&
 	            c <= Cell.BOMB2_FUSED_LAST))
 	    {
-	        if (behind)
+	        if (behind) {
 	            setTileAt(x, y, Cell.EXPLO00);
-	        else
+	            --mNBombs;
+	        } else {
 	            setTileAt(x, y, Cell.BOMB2_FUSED_LAST);
+	        }
 	    }
 	    else if (c < Cell.CHROME00 && c != Cell.EXPLO00)
 	    {
@@ -611,6 +617,8 @@ public class BombzLevel {
 	    switch (c)
 	    {
         case Cell.OUTSIDE:
+        	Log.d(TAG, "Attempting to move outside: bomb " +
+        			bomb + " nBombs " + mNBombs);
         	return !bomb && mNBombs == 0;
         case Cell.BLANK:
             return true;
