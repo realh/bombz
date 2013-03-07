@@ -226,7 +226,7 @@ public abstract class BombzMenuScreen extends BombzScreen {
 
 	@Override
 	public boolean onBackPressed() {
-		mMgr.setScreen(mMgr.getMainMenuScreen());
+		mMgr.setScreen(mMgr.getMasterMenuScreen());
 		return true;
 	}
 	

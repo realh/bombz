@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2013, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -46,10 +46,10 @@ import uk.co.realh.hgame.TapEventHandler;
  * @author Tony Houghton
  *
  */
-public class BombzMainMenuScreen extends BombzMenuScreen {
+public  abstract class BombzMainMenuScreen extends BombzMenuScreen {
 
 	private static final String TAG = "MainMenu";
-	
+
 	/**
 	 * @param mgr
 	 */
@@ -66,19 +66,13 @@ public class BombzMainMenuScreen extends BombzMenuScreen {
 		addTextWidget(mMgr.mSys.translate("Other_Settings"),
 				new OtherSettingsTappedListener());
 	}
-	
-	protected String getPlayCaption() {
-		return "Play";
-	}
-	
-	protected boolean hasChooseLevelItem() {
-		return true;
-	}
-	
-	protected boolean resetLevelOnPlay() {
-		return true;
-	}
-	
+
+	protected abstract String getPlayCaption();
+
+	protected abstract boolean hasChooseLevelItem();
+
+	protected abstract boolean resetLevelOnPlay();
+
 	/**
 	 * @see uk.co.realh.hgame.Renderer#getDescription()
 	 */
@@ -112,7 +106,7 @@ public class BombzMainMenuScreen extends BombzMenuScreen {
 			return true;
 		}
 	}
-	
+
 	private class ConfigureControlsTappedListener implements TapEventHandler
 	{
 		@Override
@@ -121,7 +115,7 @@ public class BombzMainMenuScreen extends BombzMenuScreen {
 			return true;
 		}
 	}
-	
+
 	private class OtherSettingsTappedListener implements TapEventHandler
 	{
 		@Override
@@ -130,10 +124,5 @@ public class BombzMainMenuScreen extends BombzMenuScreen {
 			return true;
 		}
 	}
-	
-	@Override
-	public boolean onBackPressed() {
-		return false;
-	}
-	
+
 }

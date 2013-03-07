@@ -160,7 +160,7 @@ public class Pusher {
 	    if (0 != mDying) {
 	    	if (++mDying == MAX_DYING) {
 	    		mMgr.mStats.failed();
-	    		mMgr.setScreen(mMgr.getMainMenuScreen());
+	    		mMgr.setScreen(mMgr.getMasterMenuScreen());
 	    		return false;
 	    	}
 	    	return true;

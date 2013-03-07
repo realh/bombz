@@ -59,7 +59,7 @@ public class BombzGameManager extends GameManager {
 	int mCurrentLevel;
 	
 	private BombzPauseScreen mBombzPauseScreen;
-	private BombzMainMenuScreen mMainMenuScreen;
+	private BombzMasterMenuScreen mMainMenuScreen;
 	private BombzGameScreen mGameScreen;
 	private ChooseLevelScreen mChooseLevelScreen;
 	private final ButtonFeedback mHapticFeedback;
@@ -80,11 +80,11 @@ public class BombzGameManager extends GameManager {
 		mTextures = new BombzTextures(sys,
 				mConfiguration.get("touchpad", K.CONTROL_VPAD_LEFT));
 		mCurrentLevel = mSavedGame.get("level", 1);
-		mMainMenuScreen = new BombzMainMenuScreen(this);
+		mMainMenuScreen = new BombzMasterMenuScreen(this);
 		setScreen(mMainMenuScreen);
 	}
 	
-	public BombzMainMenuScreen getMainMenuScreen()
+	public BombzMasterMenuScreen getMasterMenuScreen()
 	{
 		// Created in c'tor so always exists
 		return mMainMenuScreen;
@@ -132,7 +132,7 @@ public class BombzGameManager extends GameManager {
 		} catch (IOException e) {
 			Log.e(TAG, "Unable to save progress", e);
 		}
-    	setScreen(getMainMenuScreen());
+    	setScreen(getMasterMenuScreen());
 	}
 	
 }
