@@ -65,6 +65,9 @@ public class Stats {
 	public void startAttempt(int level, int detonators, int timeLimit) {
 		mCurrentLevel = level;
 		mSettings.set("time_limit_" + level, timeLimit);
+		String s = "started_" + level;
+		int attempts = mSettings.get(s, 0);
+		mSettings.set(s, attempts + 1);
 		mMoves = 0;
 	}
 	
