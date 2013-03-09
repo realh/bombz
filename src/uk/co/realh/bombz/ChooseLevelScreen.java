@@ -38,6 +38,8 @@ package uk.co.realh.bombz;
 
 import java.io.IOException;
 
+import android.util.Log;
+
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.Sprite;
 
@@ -86,6 +88,8 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 		super.render(rctx);
 		int bestLevel = mMgr.mSavedGame.get("highest_completed", 0);
 		BombzTextures t = mMgr.mTextures;
+		if (null == t.mAlphaSprite)
+			t.mAlphaSprite = rctx.createSprite(t.mBomb1Region, 0, 0);
 		Sprite s = t.mAlphaSprite;
 		rctx.bindTexture(t.mAlphaAtlas);
 		int d1 = 1;
@@ -94,6 +98,7 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 			int x = (n % COLUMNS) * 16 * K.FRUSTUM_TILE_SIZE / COLUMNS +
 					9 * K.FRUSTUM_TILE_SIZE / 4;
 			int y = (n / COLUMNS) * (BOTTOM - TOP) / ROWS + TOP;
+			Log.d(TAG, "s " + s + " t " + t);
 			s.setTexture((n > bestLevel) ? t.mBomb1Region : t.mBomb2Region);
 			s.setPositionAndSize(x, y,
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);

@@ -99,7 +99,7 @@ public class BombzGameManager extends GameManager {
 	
 	public ChooseLevelScreen getChooseLevelScreen()
 	{
-		if (null == mGameScreen)
+		if (null == mChooseLevelScreen)
 			mChooseLevelScreen = new ChooseLevelScreen(this);
 		return mChooseLevelScreen;
 	}
