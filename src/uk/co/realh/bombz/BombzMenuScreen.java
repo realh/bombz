@@ -63,6 +63,8 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	protected WidgetGroup mWidgetGroup = new WidgetGroup();
 	protected int mWidgetY = WIDGET_TOP;
 	protected List<TextWidget> mTextWidgets = new ArrayList<TextWidget>();
+	
+	protected int mViewportLeft, mViewportTop;
 
 	/**
 	 * @param mgr
@@ -172,7 +174,9 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	{
 		int vpw = mMgr.mTextures.mViewportWidth;
 		int vph = mMgr.mTextures.mViewportHeight;
-		rctx.setViewport((w - vpw) / 2, (h - vph) / 2, vpw, vph);
+		mViewportLeft = (w - vpw) / 2;
+		mViewportTop = (h - vph) / 2;
+		rctx.setViewport(mViewportLeft, mViewportTop, vpw, vph);
 		rctx.set2DFrustum(0, K.N_COLUMNS * K.FRUSTUM_TILE_SIZE,
 				K.N_ROWS * K.FRUSTUM_TILE_SIZE, 0);
 	}

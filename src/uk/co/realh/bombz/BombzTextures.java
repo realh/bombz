@@ -79,6 +79,7 @@ public class BombzTextures {
 
 	private Sys mSys;
 	int mSrcTileSize;		// Source size
+	int mScrnTileSize;
 	int mViewportWidth, mViewportHeight;
 
 	// Used to work out how well a source tile size matches screen size.
@@ -114,6 +115,7 @@ public class BombzTextures {
 	{
 		mViewportHeight = screen_h - (screen_h % K.N_ROWS);
 		mViewportWidth = (mViewportHeight * 4) / 3;
+		mScrnTileSize = mViewportHeight / K.N_ROWS;
 		int best_size = 0;
 		int best_goodness = NO_MATCH;
 		for (String s: mSys.listFolder("pngs"))
@@ -146,7 +148,7 @@ public class BombzTextures {
 			}
 		}
 		mSrcTileSize = best_size;
-		Log.d(TAG, "Screen tile size " + mViewportWidth / K.N_COLUMNS +
+		Log.d(TAG, "Screen tile size " + mScrnTileSize +
 				", source tile size " + mSrcTileSize +
 				", viewport " + mViewportWidth + "x" + mViewportHeight);
 		rctx.setNativeSize(best_goodness == EXACT);

@@ -38,8 +38,8 @@ package uk.co.realh.bombz;
 
 import java.io.IOException;
 
-import android.util.Log;
-
+import uk.co.realh.hgame.Event;
+import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.Sprite;
 
@@ -48,14 +48,18 @@ import uk.co.realh.hgame.Sprite;
  *
  */
 public class ChooseLevelScreen extends BombzMenuScreen {
-
-	@SuppressWarnings("unused")
 	private static final String TAG = "ChooseLevel";
 	
 	private static final int COLUMNS = 10;
 	private static final int ROWS = 5;
+	private static final int TOTAL_WIDTH = 16 * K.FRUSTUM_TILE_SIZE;
+	private static final int UNIT_WIDTH = TOTAL_WIDTH / COLUMNS;
+	private static final int LEFT = 9 * K.FRUSTUM_TILE_SIZE / 4;
+	private static final int RIGHT = LEFT + TOTAL_WIDTH;
 	private static final int TOP = WIDGET_TOP - K.FRUSTUM_TILE_SIZE / 2;
 	private static final int BOTTOM = 14 * K.FRUSTUM_TILE_SIZE;
+	private static final int TOTAL_HEIGHT = BOTTOM - TOP;
+	private static final int UNIT_HEIGHT = TOTAL_HEIGHT / ROWS;
 	
 	/**
 	 * @param mgr
@@ -95,9 +99,8 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 		int d1 = 1;
 		int d10 = 0;
 		for (int n = 0; n < K.N_LEVELS; ++n) {
-			int x = (n % COLUMNS) * 16 * K.FRUSTUM_TILE_SIZE / COLUMNS +
-					9 * K.FRUSTUM_TILE_SIZE / 4;
-			int y = (n / COLUMNS) * (BOTTOM - TOP) / ROWS + TOP;
+			int x = (n % COLUMNS) * UNIT_WIDTH + LEFT;
+			int y = (n / COLUMNS) * UNIT_HEIGHT + TOP;
 			Log.d(TAG, "s " + s + " t " + t);
 			s.setTexture((n > bestLevel) ? t.mBomb1Region : t.mBomb2Region);
 			s.setPositionAndSize(x, y,
@@ -145,16 +148,39 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 			setupRendering(rctx);
 	}
 	
-	/*
-	private class BackTappedListener implements TapEventHandler {
-		@Override
-		public boolean handleTapEvent(Event e) {
-			Log.d(TAG, "Back tapped");
-			mMgr.setScreen(mMgr.getMainMenuScreen());
-			return true;
+	@Override
+	public boolean handleEvent(Event ev) {
+		boolean handled = false;
+		if (Event.TAP == ev.mCode)
+		{
+			// Convert coordinates to frustum space
+			int x = (ev.mDatum1 - mViewportLeft) *
+					K.FRUSTUM_TILE_SIZE / mMgr.mTextures.mScrnTileSize;
+			int y = (ev.mDatum2 - mViewportTop) *
+					K.FRUSTUM_TILE_SIZE / mMgr.mTextures.mScrnTileSize;
+			if (x >= LEFT && x < RIGHT && y >= TOP && y < BOTTOM) {
+				handled = true;
+				int level = (x - LEFT) / UNIT_WIDTH +
+						((y - TOP) / UNIT_HEIGHT) * COLUMNS + 1;
+				Log.d(TAG, "Tapped level " + level);
+				if (level <= mMgr.mSavedGame.get("highest_completed", 0) + 1) {
+					mMgr.setCurrentLevel(level);
+					BombzGameScreen scrn = null;
+					try {
+						scrn = mMgr.getGameScreen();
+						scrn.loadCurrentLevel();
+					} catch (IOException e) {
+						Log.f(TAG, "Unable to load level", e);
+					}
+					mMgr.setScreen(scrn);
+				}
+			}
 		}
+		if (!handled)
+			return super.handleEvent(ev);
+		return handled;
+
 	}
-	*/
 
 	/**
 	 * @see uk.co.realh.hgame.Renderer#getDescription()
