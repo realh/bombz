@@ -101,7 +101,6 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 		for (int n = 0; n < K.N_LEVELS; ++n) {
 			int x = (n % COLUMNS) * UNIT_WIDTH + LEFT;
 			int y = (n / COLUMNS) * UNIT_HEIGHT + TOP;
-			Log.d(TAG, "s " + s + " t " + t);
 			s.setTexture((n > bestLevel) ? t.mBomb1Region : t.mBomb2Region);
 			s.setPositionAndSize(x, y,
 					K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
