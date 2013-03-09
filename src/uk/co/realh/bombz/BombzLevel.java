@@ -617,8 +617,6 @@ public class BombzLevel {
 	    switch (c)
 	    {
         case Cell.OUTSIDE:
-        	Log.d(TAG, "Attempting to move outside: bomb " +
-        			bomb + " nBombs " + mNBombs);
         	return !bomb && mNBombs == 0;
         case Cell.BLANK:
             return true;

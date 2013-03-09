@@ -128,6 +128,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 			break;
 		case K.CONTROL_VPAD_LEFT:
 			mTilesViewport.setRect(w - vpw, 0, vpw, vph);
+			Log.d(TAG, "Master viewport x " + (w - vpw));
 			setupVPad(w, h);
 			setTimeLimitOnLeft();
 			break;
@@ -183,6 +184,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	private void setTimeLimitOnLeft() {
 		int w = mTimeLimit.getViewportWidth();
 		int x = mTilesViewport.x - w;
+		Log.d(TAG, "TimeLimit viewport w " + w + " x " + x);
 		if (x < 0)
 			x = 0;
 		mTimeLimit.setViewport(x, mMgr.mTextures.mSrcTileSize / 4,
@@ -219,6 +221,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mScreenWidth = w;
 		mScreenHeight = h;
 		Log.d(TAG, "resizeRendering(" + w + ", " + h + ")");
+		mTimeLimit.initRendering(rctx, w, h);
 		setupViewports(w, h);
 		mVPad.reset();
 	}

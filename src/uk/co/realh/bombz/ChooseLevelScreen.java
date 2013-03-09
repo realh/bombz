@@ -107,8 +107,8 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 			s.setTexture(t.mMiniDigitRegions[d1]);
 			s.setPosition(x + K.FRUSTUM_TILE_SIZE / 2, y0);
 			s.render(rctx);
-			int score = mMgr.mSavedGame.get("score_" + n, 0);
-			if (score != 0 || n == bestLevel) {
+			int score = mMgr.mSavedGame.get("score_" + (n + 1), 0);
+			if (score != 0 || (n + 1) == bestLevel) {
 				y0 = y + K.FRUSTUM_TILE_SIZE / 4;
 				s.setTexture(score > 0 ? t.mStar2Region : t.mStar1Region);
 				s.setPositionAndSize(x, y0,

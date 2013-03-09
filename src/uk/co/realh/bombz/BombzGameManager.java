@@ -125,6 +125,9 @@ public class BombzGameManager extends GameManager {
 		int old_score = mSavedGame.get("score_" + mCurrentLevel, 0);
 		if (score > old_score)
 			mSavedGame.set("score_" + mCurrentLevel, score);
+		int highest = mSavedGame.get("highest_completed", 0);
+		if (mCurrentLevel > highest)
+			mSavedGame.set("highest_completed", mCurrentLevel);
 		mCurrentLevel += 1;
 		mSavedGame.set("level", mCurrentLevel);
 		try {
