@@ -88,9 +88,8 @@ public class TimeLimit {
 	}
 	
 	public void tick() {
-		if (mSeconds > 0)
-			--mSeconds;
-		else
+		--mSeconds;
+		if (mSeconds < 0)
 			return;
 		if (0 == mDigits[3]) {
 			mDigits[3] = 9;
