@@ -255,11 +255,13 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		// Apparently can't use dynamic constants in switch case
 		if (ev.mCode == Event.RESUME) {
 			mMgr.enableTicks(K.TICK_INTERVAL);
+			mMgr.setScreenBlankTimeout(K.EXTENDED_IDLE);
 			if (null != mRCtx)
 				mRCtx.requestRender();
 		}
 		else if (ev.mCode == Event.PAUSE) {
 			mMgr.disableTicks();
+			mMgr.setScreenBlankTimeout(0);
 			mMgr.setScreen(mMgr.getPauseScreen());
 		}
 		return false;

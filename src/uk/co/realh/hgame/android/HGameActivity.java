@@ -164,6 +164,7 @@ public abstract class HGameActivity extends Activity
 	@Override
 	public boolean onTouch(View v, MotionEvent e) {
 		try {
+			mMgr.resetBlankTimeout();
 			int a = e.getAction();
 			int i = (a & MotionEvent.ACTION_POINTER_INDEX_MASK) >>
 					MotionEvent.ACTION_POINTER_INDEX_SHIFT;

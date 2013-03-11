@@ -13,6 +13,7 @@ import uk.co.realh.hgame.Font;
 import uk.co.realh.hgame.Image;
 import uk.co.realh.hgame.SavedSettings;
 import uk.co.realh.hgame.Sys;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -21,6 +22,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.WindowManager;
 
 /**
  * @author Tony Houghton
@@ -29,7 +31,7 @@ public class AndroidSys implements Sys {
 	
 	private static String TAG = "Sys";
 	
-	private Context mContext;
+	private Activity mActivity;
 	private AssetManager mAssets;
 	//private String mOwner;
 	//private String mDomain;
@@ -38,19 +40,19 @@ public class AndroidSys implements Sys {
 	private Class<?> mRDrawable;
 	
 	/**
-	 * @param aContext	Android Context eg the Activity
+	 * @param act		Android Activity
 	 * @param owner		Name associated with developer
 	 * @param domain	Domain of URL associated with app/developer
 	 * @param appName	App name
 	 * @param pkg		Package name (containing R class)
 	 * @throws ClassNotFoundException 
 	 */
-	public AndroidSys(Context aContext,
+	public AndroidSys(Activity act,
 			String owner, String domain, String appName, String pkg)
 			throws ClassNotFoundException
 	{
-		mContext = aContext;
-		mAssets = aContext.getAssets();
+		mActivity = act;
+		mAssets = act.getAssets();
 		//mOwner = owner;
 		//mDomain = domain;
 		//mAppName = appName;
@@ -66,7 +68,7 @@ public class AndroidSys implements Sys {
 	 */
 	private String getSDCardFilename(String leafname, boolean ensure)
 	{
-		File f = mContext.getExternalFilesDir(null);
+		File f = mActivity.getExternalFilesDir(null);
 		if (!f.isDirectory())
 			f.mkdirs();
 		Log.d(TAG, "sdcard path: " + f.getPath());
@@ -115,7 +117,7 @@ public class AndroidSys implements Sys {
 			Log.e(TAG, "Unable to load res PNG " + name);
 			return null;
 		}
-		Resources res = mContext.getResources();
+		Resources res = mActivity.getResources();
 		Bitmap bmp = ((BitmapDrawable) res.getDrawable(id)).getBitmap();
 		return new AndroidImage(bmp);
 	}
@@ -165,7 +167,7 @@ public class AndroidSys implements Sys {
 		Field f;
 		try {
 			f = mRString.getDeclaredField(tag);
-			tag = mContext.getString(f.getInt(null));
+			tag = mActivity.getString(f.getInt(null));
 		} catch (Throwable e) {
 			Log.w(TAG, "Can't translate tag '" + tag + "'", e);
 			tag = tag.replace('_', ' ');
@@ -189,8 +191,40 @@ public class AndroidSys implements Sys {
 	@Override
 	public ButtonFeedback getHapticFeedback() {
 		Vibrator vib = (Vibrator)
-				mContext.getSystemService(Context.VIBRATOR_SERVICE);
+				mActivity.getSystemService(Context.VIBRATOR_SERVICE);
 		return (null != vib) ? new AndroidHapticFeedback(vib) : null;
+	}
+
+	/**
+	 * @see uk.co.realh.hgame.Sys#acquireWakeLock()
+	 */
+	@Override
+	public void disableScreenBlanker() {
+		mActivity.runOnUiThread(new ScreenBlankDisabler());
+	}
+
+	/**
+	 * @see uk.co.realh.hgame.Sys#releaseWakeLock()
+	 */
+	@Override
+	public void enableScreenBlanker() {
+		mActivity.runOnUiThread(new ScreenBlankEnabler());
+	}
+	
+	private class ScreenBlankDisabler implements Runnable {
+		@Override
+		public void run() {
+			mActivity.getWindow().addFlags(
+					WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		}
+	}
+
+	private class ScreenBlankEnabler implements Runnable {
+		@Override
+		public void run() {
+			mActivity.getWindow().clearFlags(
+					WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		}
 	}
 
 }

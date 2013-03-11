@@ -132,5 +132,15 @@ public interface Sys {
 	 * @return	A haptic feedback service, may be null.
 	 */
 	public ButtonFeedback getHapticFeedback();
+	
+	/**
+	 * Prevents the device from sleeping.
+	 */
+	public void disableScreenBlanker();
+
+	/**
+	 * Allows the device to sleep when inactive.
+	 */
+	public void enableScreenBlanker();
 
 }

@@ -54,6 +54,9 @@ public class GameManager {
 	private volatile boolean mTicking;
 	private GameThread mGameThread;
 	private long mTickInterval;
+	private volatile long mLastTapTime;
+	private volatile long mBlankTimeout;
+	private volatile boolean mBlankDisabled;
 	
 	/**
 	 * @param sys	The System object for this platform.
@@ -64,6 +67,39 @@ public class GameManager {
 	{
 		mSys = sys;
 		mButtons = sbs;
+	}
+	
+	/**
+	 * Indicate there has been user activity, keep screen blanker disabled.
+	 */
+	public void resetBlankTimeout()
+	{
+		mLastTapTime = System.nanoTime();
+		if (!mBlankDisabled && mBlankTimeout > 0)
+		{
+			Log.d(TAG, "Disabling screen blanker");
+			mBlankDisabled = true;
+			mSys.disableScreenBlanker();
+		}
+	}
+	
+	/**
+	 * How long to wait idle before enabling screenblanker,
+	 * 0 for system default.
+	 * @param timeout	In ns
+	 */
+	public void setScreenBlankTimeout(long timeout)
+	{
+		mBlankTimeout = timeout;
+		if (timeout > 0)
+		{
+			resetBlankTimeout();
+		}
+		else
+		{
+			mBlankDisabled = false;
+			mSys.enableScreenBlanker();
+		}
 	}
 
 	/**
@@ -84,6 +120,7 @@ public class GameManager {
 		{
 			Event.pushEvent(Event.newEvent(Event.RESUME));
 		}
+		resetBlankTimeout();
 	}
 	
 	/**
@@ -104,6 +141,7 @@ public class GameManager {
 	 */
 	public void resume()
 	{
+		resetBlankTimeout();
 		mGameThread = new GameThread();
 		mRunning = true;
 		mGameThread.start();
@@ -191,6 +229,14 @@ public class GameManager {
 					}
 					if (null != ev && ev.mCode == Event.PAUSE)
 						running = false;
+					if (mBlankDisabled && 0 < mBlankTimeout &&
+							System.nanoTime() - mLastTapTime > mBlankTimeout)
+					{
+						Log.d(TAG, "Idle for " + mBlankTimeout / 1000000000l +
+								"s, enabling screen blanker");
+						mSys.enableScreenBlanker();
+						mBlankDisabled = false;
+					}
 				}
 			} catch (Throwable e) {
 				Log.f(TAG, "Error in game thread", e);

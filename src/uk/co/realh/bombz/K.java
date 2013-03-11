@@ -74,4 +74,7 @@ public class K
 	
 	// For Stats
 	static final int ORDER_VERSION = 1;
+	
+	// How long to keep screen on for in ns
+	static final long EXTENDED_IDLE = 180000000000l;
 }
