@@ -76,6 +76,10 @@ public class BombzTextures {
 	TextureRegion mHourglassRegion;
 	// 4 digits + colon + hourglass
 	Sprite mAlphaSprite;	// General purpose
+	
+	TextureAtlas mCtrlMenuAtlas;
+	TextureRegion mCtrlMenuRegions[] = new TextureRegion[4];
+	Sprite mCtrlMenuSprite;
 
 	private Sys mSys;
 	int mSrcTileSize;		// Source size
@@ -347,6 +351,35 @@ public class BombzTextures {
 			mControlsAtlas = null;
 		}
 	}
+	
+	void loadCtrlMenu(RenderContext rctx) throws IOException
+	{
+		rctx.enableBlend(true);
+		mCtrlMenuAtlas = loadAtlas(rctx, "vpad_menu", true);
+		for (int n = 0; n < 4; ++n)
+		{
+			mCtrlMenuRegions[n] = mCtrlMenuAtlas.createRegion(
+					n * K.CTRL_MENU_WIDTH * mSrcTileSize, 0,
+					K.CTRL_MENU_WIDTH * mSrcTileSize,
+					K.CTRL_MENU_HEIGHT * mSrcTileSize);
+		}
+		mCtrlMenuSprite = rctx.createSprite(mCtrlMenuRegions[0],
+				K.CTRL_MENU_WIDTH * K.FRUSTUM_TILE_SIZE,
+				K.CTRL_MENU_HEIGHT * K.FRUSTUM_TILE_SIZE);
+	}
+
+	void deleteCtrlMenu(RenderContext rctx)
+	{
+		mCtrlMenuSprite = null;
+		for (int n = 0; n < 4; ++n)
+		{
+			mCtrlMenuRegions[n] = null;
+		}
+		if (null != mCtrlMenuAtlas)
+			mCtrlMenuAtlas.dispose(rctx);
+		mCtrlMenuAtlas = null;
+	}
+
 	/**
 	 * Call in a deleteRendering handler and at the start of initRendering.
 	 *
@@ -354,6 +387,7 @@ public class BombzTextures {
 	 */
 	void deleteAllTextures(RenderContext rctx)
 	{
+		deleteCtrlMenu(rctx);
 		deleteTiles(rctx);
 		deleteAlphaTextures(rctx);
 		deleteLogoAtlas(rctx);
@@ -386,6 +420,11 @@ public class BombzTextures {
 		{
 			deleteControls(rctx);
 			loadControls(rctx);
+		}
+		if (null != mCtrlMenuAtlas)
+		{
+			deleteCtrlMenu(rctx);
+			loadCtrlMenu(rctx);
 		}
 	}
 

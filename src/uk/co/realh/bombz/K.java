@@ -77,4 +77,8 @@ public class K
 	
 	// How long to keep screen on for in ns
 	static final long EXTENDED_IDLE = 180000000000l;
+	
+	// In units of tiles
+	static final int CTRL_MENU_WIDTH = 5;
+	static final int CTRL_MENU_HEIGHT = 5;
 }
