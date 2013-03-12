@@ -107,18 +107,13 @@ def round_to_powerof2(a):
     return b
 
 
-def montage(format, objects, size, powerof2 = False):
-    """ Lays out multiple objects in a grid.
-    format is a cairo format constant. size is size of each table cell.
-    objects is a 2D array, each row must contain the same number of members. An
-    object may span more than 1 column and/or row by specifying [object, cols,
-    rows]. Spanned cells should contain None.
-    If powerof2 is True, final sizes will be rounded up to a power of 2. """
+def montage_rect(format, objects, w, h, powerof2 = False):
+    """ Like montage but with separate width and height. """
     # First calculate the total size
     rows = len(objects)
     columns = len(objects[0])
-    width = size * columns
-    height = size * rows
+    width = w * columns
+    height = h * rows
     if powerof2:
         width = round_to_powerof2(width)
         height = round_to_powerof2(height)
@@ -129,8 +124,8 @@ def montage(format, objects, size, powerof2 = False):
     for row in range(rows):
         for col in range(columns):
             o = objects[row][col]
-            x0 = size * col
-            y0 = size * row
+            x0 = w * col
+            y0 = h * row
             if o == None:
                 continue
             elif not isinstance(o, cairo.Surface):
@@ -139,6 +134,16 @@ def montage(format, objects, size, powerof2 = False):
             cr.rectangle(x0, y0, o.get_width(), o.get_height())
             cr.fill()
     return surf
+
+
+def montage(format, objects, size, powerof2 = False):
+    """ Lays out multiple objects in a grid.
+    format is a cairo format constant. size is size of each table cell.
+    objects is a 2D array, each row must contain the same number of members. An
+    object may span more than 1 column and/or row by specifying [object, cols,
+    rows]. Spanned cells should contain None.
+    If powerof2 is True, final sizes will be rounded up to a power of 2. """
+    return montage_rect(format, objects, size, size, powerof2)
 
 
 """
@@ -337,6 +342,14 @@ def make_title_logo(dest, source, width, height):
     surf.write_to_png(dest)
 
 
+def make_vpad_atlas(tile_size):
+    files = ["svgs/%s.svg" % n for n in \
+            ["vpad_left", "vpad_right", "vbuttons_left", "vbuttons_right"]]
+    surfaces = [svg_to_cairo(f, tile_size * 5, tile_size * 4) for f in files]
+    return montage_rect(cairo.FORMAT_ARGB32, [surfaces],
+            tile_size * 5, tile_size * 4, True)
+
+
 # We don't need this because it turns out to return the same value for every
 # pixel size
 def get_best_packing(size, ntiles, limit = 2048):
@@ -389,10 +402,6 @@ def builder(m, dest, size):
     elif m == 'logo':
         omdp(dest)
         make_title_logo(dest, "svgs/title_logo.svg", size * 16, size * 4)
-    elif m == 'assets':
-        builder('tiles', dest + "/tile_atlas.png", size)
-        builder('alpha', dest + "/alpha_atlas.png", size)
-        builder('logo', dest + "/title_logo.png", size)
     elif m == 'vpad':
         omdp(dest)
         svg_to_cairo("svgs/vpad.svg", size, size,
@@ -400,6 +409,14 @@ def builder(m, dest, size):
     elif m == 'vpads':
         for ds in (('ldpi', 96), ('mdpi', 128), ('hdpi', 192), ('xhdpi', 256)):
             builder('vpad', dest + "/drawable-" + ds[0] + "/vpad.png", ds[1])
+    elif m == 'vpad_menu':
+        omdp(dest)
+        make_vpad_atlas(size).write_to_png(dest)
+    elif m == 'assets':
+        builder('tiles', dest + "/tile_atlas.png", size)
+        builder('alpha', dest + "/alpha_atlas.png", size)
+        builder('logo', dest + "/title_logo.png", size)
+        builder('vpad_menu', dest + "/vpad_menu.png", size)
     elif m == 'all':
         builder('assets', dest + "/assets/pngs/%d" % size, size)
         builder('vpads', dest + "/res", size)
