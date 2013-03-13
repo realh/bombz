@@ -10,12 +10,12 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="87"
-   height="67"
+   width="78.007622"
+   height="48.207603"
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="vpad_right.svg"
+   sodipodi:docname="vbuttons_left.svg"
    version="1.1">
   <defs
      id="defs4">
@@ -94,15 +94,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="11.313708"
-     inkscape:cx="27.654773"
-     inkscape:cy="32.977151"
+     inkscape:cx="37.684235"
+     inkscape:cy="31.480952"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1050"
+     inkscape:window-width="1600"
+     inkscape:window-height="843"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="27"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -117,8 +117,8 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       originx="-146.5px"
-       originy="-406.50001px" />
+       originx="-142.99619px"
+       originy="-407.99621px" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -128,7 +128,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -136,30 +136,29 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-186.44414,-256.51172)">
+     transform="translate(-182.94033,-273.80792)">
     <rect
-       style="fill:#000000;fill-opacity:1;stroke:#e5f3f7;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#000000;fill-opacity:1;stroke:#e5f3f7;stroke-width:2.40760517;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3799"
-       width="84.000015"
-       height="64"
-       x="-36"
-       y="-15.999989"
-       transform="translate(223.94414,274.01172)"
-       rx="3"
-       ry="3" />
+       width="75.600014"
+       height="45.799999"
+       x="184.14413"
+       y="275.01172"
+       rx="2.7"
+       ry="2.1468751" />
     <rect
        style="fill:#669944;fill-opacity:1;stroke:none"
        id="rect3014"
-       width="60"
-       height="60"
-       x="203.94414"
-       y="260.01172" />
+       width="54"
+       height="41.999977"
+       x="198.54414"
+       y="277.01172" />
     <g
        id="g3839"
-       transform="translate(-5,1)">
+       transform="matrix(0.9,0,0,0.9,10.494415,31.901173)">
       <path
          transform="matrix(0.5,0,0,0.5,210.94414,289.01173)"
-         d="m -12,30.000011 a 10,10 0 1 1 -20,0 10,10 0 1 1 20,0 z"
+         d="m -12,30.000011 c 0,5.522848 -4.477153,10 -10,10 -5.522847,0 -10,-4.477152 -10,-10 0,-5.522847 4.477153,-10 10,-10 5.522847,0 10,4.477153 10,10 z"
          sodipodi:ry="10"
          sodipodi:rx="10"
          sodipodi:cy="30.000011"
@@ -174,7 +173,7 @@
          style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     </g>
     <g
-       transform="matrix(-1,0,0,1,404.88828,1)"
+       transform="matrix(-0.9,0,0,0.9,379.39387,31.901173)"
        id="g3843">
       <path
          sodipodi:type="arc"
@@ -184,7 +183,7 @@
          sodipodi:cy="30.000011"
          sodipodi:rx="10"
          sodipodi:ry="10"
-         d="m -12,30.000011 a 10,10 0 1 1 -20,0 10,10 0 1 1 20,0 z"
+         d="m -12,30.000011 c 0,5.522848 -4.477153,10 -10,10 -5.522847,0 -10,-4.477152 -10,-10 0,-5.522847 4.477153,-10 10,-10 5.522847,0 10,4.477153 10,10 z"
          transform="matrix(0.5,0,0,0.5,210.94414,289.01173)" />
       <path
          style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -194,7 +193,7 @@
     </g>
     <g
        id="g3849"
-       transform="matrix(0,1,1,0,-39.06759,95.06759)">
+       transform="matrix(0,0.9,0.9,0,-20.166416,116.562)">
       <path
          transform="matrix(0.5,0,0,0.5,210.94414,289.01173)"
          d="m -12,30.000011 c 0,5.522848 -4.477153,10 -10,10 -5.522847,0 -10,-4.477152 -10,-10 0,-5.522847 4.477153,-10 10,-10 5.522847,0 10,4.477153 10,10 z"
@@ -212,7 +211,7 @@
          style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     </g>
     <g
-       transform="matrix(0,-1,1,0,-41.06759,504.95587)"
+       transform="matrix(0,-0.9,0.9,0,-21.966416,485.46146)"
        id="g3855">
       <path
          sodipodi:type="arc"

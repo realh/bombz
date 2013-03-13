@@ -345,11 +345,11 @@ def make_title_logo(dest, source, width, height):
 def make_vpad_menu_atlas(tile_size):
     files = ["svgs/%s.svg" % n for n in \
             ["vpad_left", "vpad_right", "vbuttons_left", "vbuttons_right"]]
-    row1 = [svg_to_cairo(f, tile_size * 5, tile_size * 4) for f in files]
-    row2 = [svg_to_cairo(f, tile_size * 5, tile_size * 4, opacity = 0.5) \
+    row1 = [svg_to_cairo(f, tile_size * 5, tile_size * 3) for f in files]
+    row2 = [svg_to_cairo(f, tile_size * 5, tile_size * 3, opacity = 0.5) \
             for f in files]
     return montage_rect(cairo.FORMAT_ARGB32, [row1, row2],
-            tile_size * 5, tile_size * 4, True)
+            tile_size * 5, tile_size * 3, True)
 
 
 # We don't need this because it turns out to return the same value for every
