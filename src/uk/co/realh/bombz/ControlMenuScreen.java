@@ -39,6 +39,7 @@ package uk.co.realh.bombz;
 import java.io.IOException;
 
 import uk.co.realh.hgame.Event;
+import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.SimpleRect;
 
@@ -47,6 +48,8 @@ import uk.co.realh.hgame.SimpleRect;
  *
  */
 public class ControlMenuScreen extends BombzMenuScreen {
+	
+	private static final String TAG = "ControlMenuScreen";
 	
 	private static final int WIDGET_BOTTOM = 14 * K.FRUSTUM_TILE_SIZE;
 	private int mCtrlType;
@@ -129,6 +132,11 @@ public class ControlMenuScreen extends BombzMenuScreen {
 				if (mBounds[n].isPointInRect(x, y)) {
 					mCtrlType = n + 1;
 					mMgr.mConfiguration.set("touchpad", mCtrlType);
+					try {
+						mMgr.mConfiguration.save();
+					} catch (IOException e) {
+						Log.w(TAG, "Unable to save controls configuration");
+					}
 					handled = true;
 					mRCtx.requestRender();
 					break;

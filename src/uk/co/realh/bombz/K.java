@@ -65,6 +65,7 @@ public class K
 	static final int CONTROL_VBUTTONS_LEFT = 3;
 	static final int CONTROL_VBUTTONS_RIGHT = 4;
 	
+	// Divisor under overall width and height
 	static final int CONTROL_XPADDING = 40;
 	static final int CONTROL_YPADDING = 24;
 	

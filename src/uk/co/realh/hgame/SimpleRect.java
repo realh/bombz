@@ -61,6 +61,13 @@ public class SimpleRect {
 		this.h = h;
 	}
 	
+	public void copy(SimpleRect r) {
+		x = r.x;
+		y = r.y;
+		w = r.w;
+		h = r.h;
+	}
+	
 	public final boolean isPointInRect(int x, int y)
 	{
 		return x >= this.x && x < this.x + w && y >= this.y && y < this.y + h;
