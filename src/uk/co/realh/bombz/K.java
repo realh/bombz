@@ -80,5 +80,5 @@ public class K
 	
 	// In units of tiles
 	static final int CTRL_MENU_WIDTH = 5;
-	static final int CTRL_MENU_HEIGHT = 5;
+	static final int CTRL_MENU_HEIGHT = 4;
 }

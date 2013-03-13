@@ -152,11 +152,8 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 		boolean handled = false;
 		if (Event.TAP == ev.mCode)
 		{
-			// Convert coordinates to frustum space
-			int x = (ev.mDatum1 - mViewportLeft) *
-					K.FRUSTUM_TILE_SIZE / mMgr.mTextures.mScrnTileSize;
-			int y = (ev.mDatum2 - mViewportTop) *
-					K.FRUSTUM_TILE_SIZE / mMgr.mTextures.mScrnTileSize;
+			int x = getEventFrustumX(ev);
+			int y = getEventFrustumY(ev);
 			if (x >= LEFT && x < RIGHT && y >= TOP && y < BOTTOM) {
 				handled = true;
 				int level = (x - LEFT) / UNIT_WIDTH +

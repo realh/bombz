@@ -63,8 +63,11 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	private int mScreenWidth;
 	private int mScreenHeight;
 	
+	private int mCtrlType;
+	
 	private SimpleRect mTilesViewport = new SimpleRect();
 	private SimpleRect mControlsViewports[] = {
+			new SimpleRect(), new SimpleRect(),
 			new SimpleRect(), new SimpleRect()
 	};
 	private SimpleRect mTilesFrustum = new SimpleRect();
@@ -121,7 +124,9 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mTilesFrustum.setRect(0, 0,
 				K.N_COLUMNS * K.FRUSTUM_TILE_SIZE,
 				K.N_ROWS * K.FRUSTUM_TILE_SIZE);
-		switch (mMgr.mTextures.mControlsType) {
+		mCtrlType = mMgr.mConfiguration.get("touchpad",
+				K.CONTROL_VPAD_LEFT);
+		switch (mCtrlType) {
 		case K.CONTROL_NONE:
 			mTilesViewport.setRect((w - vpw) / 2, (h - vph) / 2, vpw, vph);
 			setTimeLimitOnLeft();
@@ -129,12 +134,12 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		case K.CONTROL_VPAD_LEFT:
 			mTilesViewport.setRect(w - vpw, 0, vpw, vph);
 			Log.d(TAG, "Master viewport x " + (w - vpw));
-			setupVPad(w, h);
+			setupVPad(w, h, mCtrlType);
 			setTimeLimitOnLeft();
 			break;
 		case K.CONTROL_VPAD_RIGHT:
 			mTilesViewport.setRect(0, 0, vpw, vph);
-			setupVPad(w, h);
+			setupVPad(w, h, mCtrlType);
 			setTimeLimitOnRight(vpw);
 			break;
 		case K.CONTROL_VBUTTONS_LEFT:
@@ -150,34 +155,36 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		}
 	}
 	
-	private void setupVPad(int w, int h) {
+	private void setupVPad(int w, int h, int ctrl_type) {
 		SimpleRect r = mControlsViewports[0];
-		if (mMgr.mTextures.mControlsType == K.CONTROL_VPAD_LEFT)
+		BombzTextures t = mMgr.mTextures;
+		if (ctrl_type == K.CONTROL_VPAD_LEFT)
 		{
-			r.x = (mTilesViewport.x - mMgr.mTextures.mVpadWidth) / 2;
+			r.x = (mTilesViewport.x - t.mVpadWidth) / 2;
 			if (r.x < w / K.CONTROL_XPADDING)
 				r.x = K.CONTROL_XPADDING;
 		}
 		else // VPAD_RIGHT
 		{
-			r.x = (mTilesViewport.x - mMgr.mTextures.mViewportWidth) / 2;
-			r.x = (mMgr.mTextures.mViewportWidth + w -
-					mMgr.mTextures.mVpadWidth) / 2;
-			if (w - r.x - mMgr.mTextures.mVpadWidth < w / K.CONTROL_XPADDING)
-				r.x = w - mMgr.mTextures.mVpadWidth - K.CONTROL_XPADDING;
+			r.x = (mTilesViewport.x - t.mViewportWidth) / 2;
+			r.x = (t.mViewportWidth + w -
+					t.mVpadWidth) / 2;
+			if (w - r.x - t.mVpadWidth < w / K.CONTROL_XPADDING)
+				r.x = w - t.mVpadWidth - K.CONTROL_XPADDING;
 		}
 		r.y = h / 2;
-		if (r.y + mMgr.mTextures.mVpadHeight < K.CONTROL_YPADDING)
-			r.y = h - mMgr.mTextures.mVpadHeight - h / K.CONTROL_YPADDING;
-		r.w = mMgr.mTextures.mVpadWidth;
-		r.h = mMgr.mTextures.mVpadHeight;
-		mControlsFrustums[0].setRect(0, 0, mMgr.mTextures.mVpadWidth,
-				mMgr.mTextures.mVpadHeight);
+		if (r.y + t.mVpadHeight < K.CONTROL_YPADDING)
+			r.y = h - t.mVpadHeight - h / K.CONTROL_YPADDING;
+		r.w = t.mVpadWidth;
+		r.h = t.mVpadHeight;
+		t.mControlsSprite.setSize(r.w, r.h);
+		mControlsFrustums[0].setRect(0, 0, t.mVpadWidth,
+				t.mVpadHeight);
 		if (null == mVPad)
 			mVPad = new VPad(mFeedback);
 		mVPad.setDimensions(r.x, r.y,
-				mMgr.mTextures.mVpadWidth / 2,
-				(int) (VPAD_RATIO * mMgr.mTextures.mVpadWidth / 2));
+				t.mVpadWidth / 2,
+				(int) (VPAD_RATIO * t.mVpadWidth / 2));
 		mButtons.addOnScreenButton(mVPad);
 	}
 	
@@ -238,12 +245,12 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mPusher.render(rctx);
 		mLevel.renderExplo(rctx);
 		mTimeLimit.render(rctx);
-		if (0 != mMgr.mTextures.mControlsType)
+		if (0 != mCtrlType)
 		{
 			rctx.bindTexture(mMgr.mTextures.mControlsAtlas);
 			rctx.setViewport(mControlsViewports[0]);
 			rctx.set2DFrustum(mControlsFrustums[0]);
-			mMgr.mTextures.mControlsSprites[0].render(rctx);
+			mMgr.mTextures.mControlsSprite.render(rctx);
 		}
 	}
 

@@ -62,10 +62,9 @@ public class BombzTextures {
 	TextureRegion mBomb1Region, mBomb2Region;
 	Sprite mPusherSprite, mBombSprite, mLogoSprite, mExplo00Sprite;
 	TileBatcher mTileBatcher;
-	int mControlsType;
 	TextureAtlas mControlsAtlas;
-	TextureRegion[] mControlsRegions = new TextureRegion[4];
-	Sprite[] mControlsSprites = new Sprite[4];
+	TextureRegion mControlsRegion;
+	Sprite mControlsSprite;
 	int mVpadWidth, mVpadHeight;
 	
 	// 11th "digit" is colon
@@ -78,7 +77,7 @@ public class BombzTextures {
 	Sprite mAlphaSprite;	// General purpose
 	
 	TextureAtlas mCtrlMenuAtlas;
-	TextureRegion mCtrlMenuRegions[] = new TextureRegion[4];
+	TextureRegion mCtrlMenuRegions[] = new TextureRegion[8];
 	Sprite mCtrlMenuSprite;
 
 	private Sys mSys;
@@ -100,18 +99,9 @@ public class BombzTextures {
 	 * @see uk.co.realh.hgame.K
 	 * @throws IOException
 	 */
-	BombzTextures(Sys sys, int controlsType)
+	BombzTextures(Sys sys)
 	{
 		mSys = sys;
-		setControlsType(controlsType);
-	}
-
-	final void setControlsType(int c)
-	{
-		if (mSys.usesTouchScreen())
-			mControlsType = c;
-		else
-			mControlsType = 0;
 	}
 
 	void calculateTileSize(RenderContext rctx, int screen_w, int screen_h)
@@ -312,39 +302,20 @@ public class BombzTextures {
 
 	void loadControls(RenderContext rctx) {
 		Image img = null;
-		if (0 != mControlsType)
-		{
-			rctx.enableBlend(true);
-			img = mSys.loadResPNG("vpad");
-			mControlsAtlas = rctx.uploadTexture(img, true);
-		}
-		switch (mControlsType)
-		{
-		case K.CONTROL_VPAD_LEFT:
-		case K.CONTROL_VPAD_RIGHT:
-			mVpadWidth = img.getWidth();
-			mVpadHeight = img.getHeight();
-			mControlsRegions[0] = mControlsAtlas.createRegion(0, 0,
+		rctx.enableBlend(true);
+		img = mSys.loadResPNG("vpad");
+		mControlsAtlas = rctx.uploadTexture(img, true);
+		mControlsRegion = mControlsAtlas.createRegion(0, 0,
 					img.getWidth(), img.getHeight());
-			mControlsSprites[0] = rctx.createSprite(mControlsRegions[0],
-					0, 0, img.getWidth(), img.getHeight());
-			for (int n = 1; n < 4; ++n)
-			{
-				mControlsSprites[n] = null;
-				mControlsRegions[n] = null;
-			}
-			break;
-		}
+		mControlsSprite = rctx.createSprite(mControlsRegion,
+				0, 0, img.getWidth(), img.getHeight());
 		if (null != img)
 			img.dispose();
 	}
 
 	void deleteControls(RenderContext rctx) {
-		for (int n = 0; n < 4; ++n)
-		{
-			mControlsSprites[n] = null;
-			mControlsRegions[n] = null;
-		}
+		mControlsSprite = null;
+		mControlsRegion = null;
 		if (null != mControlsAtlas)
 		{
 			mControlsAtlas.dispose(rctx);
@@ -356,10 +327,11 @@ public class BombzTextures {
 	{
 		rctx.enableBlend(true);
 		mCtrlMenuAtlas = loadAtlas(rctx, "vpad_menu", true);
-		for (int n = 0; n < 4; ++n)
+		for (int n = 0; n < 8; ++n)
 		{
 			mCtrlMenuRegions[n] = mCtrlMenuAtlas.createRegion(
-					n * K.CTRL_MENU_WIDTH * mSrcTileSize, 0,
+					(n % 4) * K.CTRL_MENU_WIDTH * mSrcTileSize,
+					(n / 4) * K.CTRL_MENU_HEIGHT * mSrcTileSize,
 					K.CTRL_MENU_WIDTH * mSrcTileSize,
 					K.CTRL_MENU_HEIGHT * mSrcTileSize);
 		}

@@ -60,8 +60,13 @@ public class SimpleRect {
 		this.w = w;
 		this.h = h;
 	}
+	
+	public final boolean isPointInRect(int x, int y)
+	{
+		return x >= this.x && x < this.x + w && y >= this.y && y < this.y + h;
+	}
 
-	public final String toString()
+	public String toString()
 	{
 		return String.format("(%d, %d)+(%d x %d)", x, y, w, h);
 	}

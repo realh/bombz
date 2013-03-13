@@ -102,7 +102,6 @@ public  abstract class BombzMainMenuScreen extends BombzMenuScreen {
 		public boolean handleTapEvent(Event e) {
 			Log.d(TAG, "Choose Level tapped");
 			mMgr.setScreen(mMgr.getChooseLevelScreen());
-			Log.d(TAG, "Exiting ChooseLevelTapped");
 			return true;
 		}
 	}
@@ -112,6 +111,7 @@ public  abstract class BombzMainMenuScreen extends BombzMenuScreen {
 		@Override
 		public boolean handleTapEvent(Event e) {
 			Log.d(TAG, "Configure Controls tapped");
+			mMgr.setScreen(mMgr.getControlMenuScreen());
 			return true;
 		}
 	}

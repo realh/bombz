@@ -342,11 +342,13 @@ def make_title_logo(dest, source, width, height):
     surf.write_to_png(dest)
 
 
-def make_vpad_atlas(tile_size):
+def make_vpad_menu_atlas(tile_size):
     files = ["svgs/%s.svg" % n for n in \
             ["vpad_left", "vpad_right", "vbuttons_left", "vbuttons_right"]]
-    surfaces = [svg_to_cairo(f, tile_size * 5, tile_size * 4) for f in files]
-    return montage_rect(cairo.FORMAT_ARGB32, [surfaces],
+    row1 = [svg_to_cairo(f, tile_size * 5, tile_size * 4) for f in files]
+    row2 = [svg_to_cairo(f, tile_size * 5, tile_size * 4, opacity = 0.5) \
+            for f in files]
+    return montage_rect(cairo.FORMAT_ARGB32, [row1, row2],
             tile_size * 5, tile_size * 4, True)
 
 
@@ -411,7 +413,7 @@ def builder(m, dest, size):
             builder('vpad', dest + "/drawable-" + ds[0] + "/vpad.png", ds[1])
     elif m == 'vpad_menu':
         omdp(dest)
-        make_vpad_atlas(size).write_to_png(dest)
+        make_vpad_menu_atlas(size).write_to_png(dest)
     elif m == 'assets':
         builder('tiles', dest + "/tile_atlas.png", size)
         builder('alpha', dest + "/alpha_atlas.png", size)

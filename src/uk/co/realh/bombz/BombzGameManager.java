@@ -62,6 +62,7 @@ public class BombzGameManager extends GameManager {
 	private BombzMasterMenuScreen mMainMenuScreen;
 	private BombzGameScreen mGameScreen;
 	private ChooseLevelScreen mChooseLevelScreen;
+	private ControlMenuScreen mControlMenuScreen;
 	private final ButtonFeedback mHapticFeedback;
 
 	/**
@@ -77,8 +78,7 @@ public class BombzGameManager extends GameManager {
 		mConfiguration = sys.getSavedSettings("config");
 		mStats = new Stats(sys.getSavedSettings("stats"));
 		mHapticFeedback = sys.getHapticFeedback();
-		mTextures = new BombzTextures(sys,
-				mConfiguration.get("touchpad", K.CONTROL_VPAD_LEFT));
+		mTextures = new BombzTextures(sys);
 		mCurrentLevel = mSavedGame.get("level", 1);
 		mMainMenuScreen = new BombzMasterMenuScreen(this);
 		setScreen(mMainMenuScreen);
@@ -102,6 +102,13 @@ public class BombzGameManager extends GameManager {
 		if (null == mChooseLevelScreen)
 			mChooseLevelScreen = new ChooseLevelScreen(this);
 		return mChooseLevelScreen;
+	}
+	
+	public ControlMenuScreen getControlMenuScreen()
+	{
+		if (null == mControlMenuScreen)
+			mControlMenuScreen = new ControlMenuScreen(this);
+		return mControlMenuScreen;
 	}
 	
 	public BombzPauseScreen getPauseScreen()

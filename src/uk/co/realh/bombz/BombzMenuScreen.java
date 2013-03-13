@@ -234,4 +234,24 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		return true;
 	}
 	
+	/**
+	 * Get X coord in frustum space from tap event.
+	 * @param ev
+	 * @return	X
+	 */
+	public int getEventFrustumX(Event ev) {
+		return (ev.mDatum1 - mViewportLeft) *
+					K.FRUSTUM_TILE_SIZE / mMgr.mTextures.mScrnTileSize;
+	}
+	
+	/**
+	 * Get Y coord in frustum space from tap event.
+	 * @param ev
+	 * @return	X
+	 */
+	public int getEventFrustumY(Event ev) {
+		return (ev.mDatum2 - mViewportTop) *
+					K.FRUSTUM_TILE_SIZE / mMgr.mTextures.mScrnTileSize;
+	}
+	
 }
