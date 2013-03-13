@@ -42,6 +42,7 @@ import uk.co.realh.hgame.ButtonFeedback;
 import uk.co.realh.hgame.GameManager;
 import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.SavedSettings;
+import uk.co.realh.hgame.Screen;
 import uk.co.realh.hgame.ScreenButtonSource;
 import uk.co.realh.hgame.Sys;
 
@@ -147,6 +148,20 @@ public class BombzGameManager extends GameManager {
 	void setCurrentLevel(int level) {
 		mCurrentLevel = level;
 		mSavedGame.set("level", level);
+	}
+
+	/**
+	 * @param newScreen		New screen
+	 * @param backScreen	Screen to show when Back is pressed on newScreen
+	 */
+	public void setScreen(BombzMenuScreen newScreen, Screen backScreen) {
+		super.setScreen(newScreen);
+		newScreen.mBackScreen = backScreen;
+	}
+	
+	public void setScreen(BombzMenuScreen newScreen) {
+		super.setScreen(newScreen);
+		newScreen.mBackScreen = null;
 	}
 	
 }

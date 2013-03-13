@@ -43,6 +43,7 @@ import java.util.List;
 import uk.co.realh.hgame.Event;
 import uk.co.realh.hgame.Font;
 import uk.co.realh.hgame.RenderContext;
+import uk.co.realh.hgame.Screen;
 import uk.co.realh.hgame.SimpleRect;
 import uk.co.realh.hgame.TapEventHandler;
 import uk.co.realh.hgame.TextWidget;
@@ -65,6 +66,8 @@ public abstract class BombzMenuScreen extends BombzScreen {
 	protected List<TextWidget> mTextWidgets = new ArrayList<TextWidget>();
 	
 	protected int mViewportLeft, mViewportTop;
+	
+	Screen mBackScreen;
 
 	/**
 	 * @param mgr
@@ -230,7 +233,9 @@ public abstract class BombzMenuScreen extends BombzScreen {
 
 	@Override
 	public boolean onBackPressed() {
-		mMgr.setScreen(mMgr.getMasterMenuScreen());
+		if (null == mBackScreen)
+			mBackScreen = mMgr.getMasterMenuScreen();
+		mMgr.setScreen(mBackScreen);
 		return true;
 	}
 	

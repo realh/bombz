@@ -341,7 +341,9 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	
 	@Override
 	public boolean onBackPressed() {
-		mMgr.setScreen(mMgr.getPauseScreen());
+		BombzPauseScreen s = mMgr.getPauseScreen();
+		mMgr.setScreen(s);
+		s.mBackScreen = null;
 		return true;
 	}
 	

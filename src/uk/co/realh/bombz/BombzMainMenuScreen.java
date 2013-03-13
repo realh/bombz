@@ -49,6 +49,8 @@ import uk.co.realh.hgame.TapEventHandler;
 public  abstract class BombzMainMenuScreen extends BombzMenuScreen {
 
 	private static final String TAG = "MainMenu";
+	
+	private BombzMenuScreen mThis = this;
 
 	/**
 	 * @param mgr
@@ -101,7 +103,7 @@ public  abstract class BombzMainMenuScreen extends BombzMenuScreen {
 		@Override
 		public boolean handleTapEvent(Event e) {
 			Log.d(TAG, "Choose Level tapped");
-			mMgr.setScreen(mMgr.getChooseLevelScreen());
+			mMgr.setScreen(mMgr.getChooseLevelScreen(), mThis);
 			return true;
 		}
 	}
@@ -111,7 +113,7 @@ public  abstract class BombzMainMenuScreen extends BombzMenuScreen {
 		@Override
 		public boolean handleTapEvent(Event e) {
 			Log.d(TAG, "Configure Controls tapped");
-			mMgr.setScreen(mMgr.getControlMenuScreen());
+			mMgr.setScreen(mMgr.getControlMenuScreen(), mThis);
 			return true;
 		}
 	}
