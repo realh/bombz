@@ -133,13 +133,12 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 			break;
 		case K.CONTROL_VPAD_LEFT:
 			mTilesViewport.setRect(w - vpw, 0, vpw, vph);
-			Log.d(TAG, "Master viewport x " + (w - vpw));
-			setupVPad(w, h, mCtrlType);
+			setupVPad(w, h);
 			setTimeLimitOnLeft();
 			break;
 		case K.CONTROL_VPAD_RIGHT:
 			mTilesViewport.setRect(0, 0, vpw, vph);
-			setupVPad(w, h, mCtrlType);
+			setupVPad(w, h);
 			setTimeLimitOnRight(vpw);
 			break;
 		case K.CONTROL_VBUTTONS_LEFT:
@@ -155,10 +154,10 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		}
 	}
 	
-	private void setupVPad(int w, int h, int ctrl_type) {
+	private void setupVPad(int w, int h) {
 		SimpleRect r = mControlsViewports[0];
 		BombzTextures t = mMgr.mTextures;
-		if (ctrl_type == K.CONTROL_VPAD_LEFT)
+		if (mCtrlType == K.CONTROL_VPAD_LEFT)
 		{
 			r.x = (mTilesViewport.x - t.mVpadWidth) / 2;
 			if (r.x < w / K.CONTROL_XPADDING)
@@ -186,6 +185,8 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 				t.mVpadWidth / 2,
 				(int) (VPAD_RATIO * t.mVpadWidth / 2));
 		mButtons.addOnScreenButton(mVPad);
+		Log.d(TAG, String.format("Vpad type %d, rect %s",
+				mCtrlType, r.toString()));
 	}
 	
 	private void setTimeLimitOnLeft() {
@@ -308,6 +309,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	@Override
 	public void replacingRenderer(RenderContext rctx) {
 		mMgr.mTextures.deleteControls(rctx);
+		mButtons.removeButtons();
 		mVPad.reset();
 	}
 

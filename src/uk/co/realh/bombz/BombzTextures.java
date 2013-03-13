@@ -304,13 +304,14 @@ public class BombzTextures {
 		Image img = null;
 		rctx.enableBlend(true);
 		img = mSys.loadResPNG("vpad");
+		mVpadWidth = img.getWidth();
+		mVpadHeight = img.getHeight();
 		mControlsAtlas = rctx.uploadTexture(img, true);
 		mControlsRegion = mControlsAtlas.createRegion(0, 0,
-					img.getWidth(), img.getHeight());
+					mVpadWidth, mVpadHeight);
 		mControlsSprite = rctx.createSprite(mControlsRegion,
-				0, 0, img.getWidth(), img.getHeight());
-		if (null != img)
-			img.dispose();
+				0, 0, mVpadWidth, mVpadHeight);
+		img.dispose();
 	}
 
 	void deleteControls(RenderContext rctx) {
