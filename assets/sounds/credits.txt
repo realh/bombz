@@ -1,0 +1,13 @@
+match.ogg based on:
+match.wav (http://freesound.iua.upf.edu/samplesViewSingle.php?id=34144)
+By tliedes (http://freesound.iua.upf.edu/usersViewSingle.php?id=311103)
+
+bomb.ogg based on:
+spinner_fireworks_mkh3040_061105.wav
+(http://freesound.iua.upf.edu/samplesViewSingle.php?id=25778)
+By ermine (http://freesound.iua.upf.edu/usersViewSingle.php?id=15220)
+
+fuse.ogg based on:
+waterDropsOnAga1.wav
+(http://freesound.iua.upf.edu/samplesViewSingle.php?id=7172)
+By resonants (http://freesound.iua.upf.edu/usersViewSingle.php?id=10940)
