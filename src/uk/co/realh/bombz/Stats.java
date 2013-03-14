@@ -100,7 +100,7 @@ public class Stats {
 	}
 	
 	private void save() {
-		mSettings.set("order_version", K.ORDER_VERSION);
+		mSettings.set("version", K.STATS_VERSION);
 		try {
 			mSettings.save();
 		} catch (IOException e) {

@@ -74,7 +74,7 @@ public class K
 	static final int DIGIT_DIV = 4;
 	
 	// For Stats
-	static final int ORDER_VERSION = 1;
+	static final int STATS_VERSION = 2;
 	
 	// How long to keep screen on for in ns
 	static final long EXTENDED_IDLE = 180000000000l;

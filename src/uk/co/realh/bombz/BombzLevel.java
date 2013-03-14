@@ -142,7 +142,7 @@ public class BombzLevel {
 	            ++n;
 	        }
 	    }
-	    mTimeLimit = Integer.parseInt(fd.readLine());
+	    mTimeLimit = Integer.parseInt(fd.readLine()) * 7 / 4;
 	    prettify();
 	    Log.d(TAG, "Initial number of bombs " + mNBombs);
 	}
