@@ -304,7 +304,7 @@ def make_game_alpha_atlas(dest, sources, size = 72):
     """ Arranges the graphics with alpha into a texture atlas.
     dest = output PNG filename.
     The order of sources (list of SVG filenames) should be
-    explo00, 4 droids, 4 dead droids, 2 bombs, 2 stars, hourglass.
+    explo00, 4 droids, 4 dead droids, 2 bombs, 2 stars, hourglass, match2.
     """
     DIGIT_MUL = 3
     DIGIT_DIV = 4
@@ -317,12 +317,12 @@ def make_game_alpha_atlas(dest, sources, size = 72):
     star2 = svg_to_cairo(sources[12], ds / 2, ds / 2)
     hourglass = svg_to_cairo(sources[13], ds, size)
     table = [[[explo0, 3, 3], None, None] + \
-                    sources[1:5] + [sources[9], sources[10]],
-            [None, None, None] + sources[5:9] + [star1, star2],
+                    sources[1:5] + [sources[9], sources[10], sources[14]],
+            [None, None, None] + sources[5:9] + [star1, star2, None],
             [None, None, None, [mtext, 5, 1],
-                    None, None, None, None, hourglass],
-            [[ytext, 9, 1]] + [None] * 8,
-            [[rtext, 9, 1]] + [None] * 8]
+                    None, None, None, None, hourglass, None],
+            [[ytext, 9, 1]] + [None] * 9,
+            [[rtext, 9, 1]] + [None] * 9]
     """
     table = [[[explo0, 3, 3], None, None,
                     [ytext, 5, 1], None, None, None, None],
@@ -399,7 +399,8 @@ def builder(m, dest, size):
                 ["svgs/%s.svg" % s for s in ["explo00"] + \
                     ["droid%s" % d for d in "left up right down".split()] + \
                     ["dead%s" % d for d in "left up right down".split()] + \
-                            ["bomb1", "bomb2", "star1", "star2", "hourglass"]],
+                            ["bomb1", "bomb2", "star1", "star2",
+                                "hourglass", "match2"]],
                 size)
     elif m == 'logo':
         omdp(dest)

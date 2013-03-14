@@ -73,6 +73,7 @@ public class BombzTextures {
 	TextureRegion[] mMiniDigitRegions = new TextureRegion[11];
 	TextureRegion mStar1Region, mStar2Region;
 	TextureRegion mHourglassRegion;
+	TextureRegion mMatchRegion;
 	// 4 digits + colon + hourglass
 	Sprite mAlphaSprite;	// General purpose
 	
@@ -257,6 +258,9 @@ public class BombzTextures {
 				7 * mSrcTileSize, mSrcTileSize, dw / 2, dw / 2);
 		mStar2Region = mAlphaAtlas.createRegion(
 				8 * mSrcTileSize, mSrcTileSize, dw / 2, dw / 2);
+		
+		mMatchRegion = mAlphaAtlas.createRegion(9 * mSrcTileSize, 0,
+						mSrcTileSize, mSrcTileSize);
 	}
 
 	void deleteAlphaTextures(RenderContext rctx)
@@ -265,6 +269,7 @@ public class BombzTextures {
 		mStar1Region = null;
 		mStar2Region = null;
 		mHourglassRegion = null;
+		mMatchRegion = null;
 		for (int n = 0; n < 11; ++n) {
 			mMiniDigitRegions[n] = null;
 			mYellowDigitRegions[n] = null;
