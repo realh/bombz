@@ -95,9 +95,9 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		super(mgr);
 		mButtons = sbs;
 		mFeedback = feedback;
-		mLevel = new BombzLevel(mgr.mTextures);
+		mLevel = new BombzLevel(mgr);
 		mPusher = new Pusher(mgr, mLevel, this);
-		mTimeLimit = new TimeLimit(mgr.mTextures);
+		mTimeLimit = new TimeLimit(mgr);
 		loadCurrentLevel();
 	}
 	

@@ -38,6 +38,8 @@ package uk.co.realh.bombz;
 
 import java.io.IOException;
 
+import uk.co.realh.hgame.AudioContext;
+import uk.co.realh.hgame.AudioContext.SampleHandle;
 import uk.co.realh.hgame.ButtonFeedback;
 import uk.co.realh.hgame.GameManager;
 import uk.co.realh.hgame.Log;
@@ -58,6 +60,9 @@ public class BombzGameManager extends GameManager {
 	Stats mStats;
 	
 	int mCurrentLevel;
+	
+	SampleHandle mBangSample, mFuseSample, mMatchSample,
+			mPip1Sample, mPip2Sample;
 	
 	private BombzPauseScreen mBombzPauseScreen;
 	private BombzMasterMenuScreen mMainMenuScreen;
@@ -83,6 +88,12 @@ public class BombzGameManager extends GameManager {
 		mCurrentLevel = mSavedGame.get("level", 1);
 		mMainMenuScreen = new BombzMasterMenuScreen(this);
 		setScreen(mMainMenuScreen);
+	}
+	
+	public void setAudio(AudioContext audio)
+	{
+		super.setAudio(audio);
+		loadSounds();
 	}
 	
 	public BombzMasterMenuScreen getMasterMenuScreen()
@@ -162,6 +173,14 @@ public class BombzGameManager extends GameManager {
 	public void setScreen(BombzMenuScreen newScreen) {
 		super.setScreen(newScreen);
 		newScreen.mBackScreen = null;
+	}
+	
+	public void loadSounds() {
+		mBangSample = mAudio.loadEffect("bomb.ogg");
+		mFuseSample = mAudio.loadEffect("fuse.ogg");
+		mMatchSample = mAudio.loadEffect("match.ogg");
+		mPip1Sample = mAudio.loadEffect("pip1.ogg");
+		mPip2Sample = mAudio.loadEffect("pip2.ogg");
 	}
 	
 }

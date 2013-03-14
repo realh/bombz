@@ -53,10 +53,30 @@ public class AndroidAudioContext implements AudioContext
 {
 	private final static String TAG = "Audio";
 	
+	private final static int NULL_ID = 0x80000000;
+	
 	public final static int CONCURRENT_SAMPLES = 20;
 	
 	private SoundPool mSoundPool;
 	private AndroidSys mSys;
+	
+	class AndroidSampleHandle implements AudioContext.SampleHandle
+	{
+		int mId;
+		
+		AndroidSampleHandle(int id) {
+			mId = id;
+		}
+
+		@Override
+		public void dispose() {
+			if (NULL_ID != mId)
+			{
+				mSoundPool.unload(mId);
+				mId = NULL_ID;
+			}
+		}
+	}
 	
 	public AndroidAudioContext(Activity activity, AndroidSys sys)
 	{
@@ -67,29 +87,37 @@ public class AndroidAudioContext implements AudioContext
 	}
 	
 	@Override
-	public int loadEffect(String leafname)
+	public SampleHandle loadEffect(String leafname)
 	{
+		int id = NULL_ID;
 		leafname = "sounds/" + leafname;
 		try {
 			try {
 				AssetFileDescriptor fd;
-				fd = mSys.getAssets().openFd("sounds/" + leafname);
-				return mSoundPool.load(fd, 1);
+				fd = mSys.getAssets().openFd(leafname);
+				id = mSoundPool.load(fd, 1);
 			} catch (FileNotFoundException e) {
-				return mSoundPool.load(mSys.getSDCardFilename(leafname,
+				Log.d(TAG, leafname + " not found in assets, trying sdcard");
+				id = mSoundPool.load(mSys.getSDCardFilename(leafname,
 						false), 1);
 			}
 		} catch (IOException e) {
 			Log.w(TAG, "Unable to load " + leafname, e);
-			return -1;
+			return null;
 		}
+		return new AndroidSampleHandle(id);
 	}
 
 	@Override
-	public void playEffect(int sampleId, float balance)
+	public void playEffect(SampleHandle handle, float balance)
 	{
-		if (sampleId == -1)
+		if (null == handle)
 			return;
+		int id = ((AndroidSampleHandle) handle).mId;
+		if (NULL_ID == id) {
+			Log.w(TAG, "Tried to play sample with null id");
+			return;
+		}
 		float leftVolume = 1.0f - balance;
 		float rightVolume = balance;
 		if (leftVolume > rightVolume) {
@@ -99,14 +127,14 @@ public class AndroidAudioContext implements AudioContext
 			leftVolume /= rightVolume;
 			rightVolume = 1.0f;
 		}
-		mSoundPool.play(sampleId, leftVolume, rightVolume, 0, 0, 1);
+		mSoundPool.play(id, leftVolume, rightVolume, 0, 0, 1);
 	}
 
 	@Override
-	public void unloadEffect(int sampleId)
+	public void unloadEffect(SampleHandle handle)
 	{
-		if (sampleId != -1)
-			mSoundPool.unload(sampleId);
+		if (null != handle)
+			handle.dispose();
 	}
 
 	@Override

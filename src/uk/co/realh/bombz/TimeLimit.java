@@ -46,6 +46,7 @@ import uk.co.realh.hgame.TileBatcher;
  */
 public class TimeLimit {
 
+	private BombzGameManager mMgr;
 	private BombzTextures mTextures;
 	private int mVpX, mVpY, mVpW, mVpH;
 	private int mSeconds;
@@ -53,8 +54,9 @@ public class TimeLimit {
 	private int mScrnTileSize;
 	private int[] mDigits = new int[4]; 
 	
-	public TimeLimit(BombzTextures tex) {
-		mTextures = tex;
+	public TimeLimit(BombzGameManager mgr) {
+		mMgr = mgr;
+		mTextures = mgr.mTextures;
 	}
 	
 	public int getViewportWidth() {
@@ -108,6 +110,12 @@ public class TimeLimit {
 			}
 		} else {
 			--mDigits[3];
+		}
+		if (mSeconds <= 10) {
+			if (0 == (mSeconds % 2))
+				mMgr.mAudio.playEffect(mMgr.mPip1Sample, 0.25f);
+			else
+				mMgr.mAudio.playEffect(mMgr.mPip2Sample, 0.75f);
 		}
 		setTextures();
 	}

@@ -39,21 +39,28 @@ package uk.co.realh.hgame;
 /**
  * Abstract for playing game's sound samples.
  */
-public interface AudioContext
-{
-	/**
-	 * @param leafname - implementation should build path
-	 * @return sampleId
-	 */
-	public int loadEffect(String leafname);
+public interface AudioContext {
+	
+	public interface SampleHandle {
+		public void dispose();
+	}
 	
 	/**
-	 * @param sampleId
+	 * @param 	leafname - implementation should build path
+	 * @return	handle for loaded sample
+	 */
+	public SampleHandle loadEffect(String leafname);
+	
+	/**
+	 * @param handle
 	 * @param balance -1 for left, +1 for right
 	 */
-	public void playEffect(int sampleId, float balance);
+	public void playEffect(SampleHandle handle, float balance);
 	
-	public void unloadEffect(int sampleId);
+	/**
+	 * @param handle
+	 */
+	public void unloadEffect(SampleHandle handle);
 	
 	/**
 	 * Dispose of all resources used by audio system

@@ -236,6 +236,8 @@ public class Pusher {
 	                    mLevel.setTileAt(mTileX + dx, mTileY + dy,
 	                            Cell.BOMB2_FUSED_FIRST, true);
 	                }
+	                mMgr.mAudio.playEffect(mMgr.mFuseSample,
+	                		(float) (mTileX + dx) / (float) (K.N_COLUMNS - 1));
 	                mMoving = false;
 	                mHaveMatch = false;
 	            }
@@ -346,6 +348,9 @@ public class Pusher {
 	    {
 	        case Cell.MATCH:
 	            mHaveMatch = true;
+                mMgr.mAudio.playEffect(mMgr.mMatchSample,
+                		(float) x / (float) (K.N_COLUMNS - 1));
+                // no break
 	        case Cell.EARTH:
 	            mLevel.setBlankAt(x, y);
 	            break;

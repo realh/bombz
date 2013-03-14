@@ -52,6 +52,7 @@ public class BombzLevel {
 	
 	private byte[] mTiles = new byte[K.N_COLUMNS * K.N_ROWS];
 	private byte[] mTmpTiles = new byte[K.N_COLUMNS * K.N_ROWS];
+	private BombzGameManager mMgr;
 	private BombzTextures mTextures;
 	private Random mRandom = new Random();
 	
@@ -62,8 +63,9 @@ public class BombzLevel {
 	
 	private boolean mBombActivity;
 	
-	public BombzLevel(BombzTextures textures) {
-		mTextures = textures;
+	public BombzLevel(BombzGameManager mgr) {
+		mMgr = mgr;
+		mTextures = mgr.mTextures;
 	}
 	
 	public void render(RenderContext rctx) {
@@ -228,6 +230,8 @@ public class BombzLevel {
 	            else if (c == Cell.EXPLO00)
 	            {
 	                mBombActivity = true;
+	                mMgr.mAudio.playEffect(mMgr.mBangSample,
+	                		(float) x / (float) (K.N_COLUMNS - 1));
 	                for (int y0 = (y >= 1 ? y - 1 : y);
 	                        y0 <= (y < K.N_ROWS - 1 ? y + 1 : y);
 	                        ++y0)
