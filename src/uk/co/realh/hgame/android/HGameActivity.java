@@ -54,7 +54,6 @@ import uk.co.realh.hgame.Log;
 import uk.co.realh.hgame.OnScreenButton;
 import uk.co.realh.hgame.RenderContext;
 import uk.co.realh.hgame.ScreenButtonSource;
-import uk.co.realh.hgame.Sys;
 import uk.co.realh.hgame.gles1.android.AndroidGles1RenderContext;
 
 /**
@@ -67,7 +66,7 @@ public abstract class HGameActivity extends Activity
 	protected static final String TAG = "Activity";
 	
 	private GLSurfaceView mGlView;
-	protected Sys mSys;
+	protected AndroidSys mSys;
 	protected GameManager mMgr;
 	private HGameRenderer mRenderer;
 	
@@ -117,6 +116,7 @@ public abstract class HGameActivity extends Activity
 			mGlView.setRenderer(mRenderer);
 			mGlView.setOnTouchListener(this);
 			setContentView(mGlView);
+			mMgr.setAudio(new AndroidAudioContext(this, mSys));
 		} catch (Throwable e) {
 			Log.f(TAG, "Error creating app", e);
 		}
@@ -151,6 +151,18 @@ public abstract class HGameActivity extends Activity
 			mGlView.onPause();
 		} catch (Throwable e) {
 			Log.f(TAG, "Exception in onPause", e);
+		}
+	}
+	
+	@Override
+	public void onStop() {
+		Log.d(TAG, "onStop");
+		try {
+			mMgr.mAudio.dispose();
+			mMgr.mAudio = null;
+			super.onStop();
+		} catch (Throwable e) {
+			Log.f(TAG, "Exception in onStop", e);
 		}
 	}
 	

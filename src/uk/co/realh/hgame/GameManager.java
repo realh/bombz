@@ -49,6 +49,7 @@ public class GameManager {
 	public Screen mScreen;
 	public final Sys mSys;
 	public final ScreenButtonSource mButtons;
+	public AudioContext mAudio;
 	
 	private volatile boolean mRunning;
 	private volatile boolean mTicking;
@@ -67,6 +68,11 @@ public class GameManager {
 	{
 		mSys = sys;
 		mButtons = sbs;
+	}
+	
+	public void setAudio(AudioContext audio)
+	{
+		mAudio = audio;
 	}
 	
 	/**

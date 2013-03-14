@@ -66,7 +66,7 @@ public class AndroidSys implements Sys {
 	 * @param leafname
 	 * @return
 	 */
-	private String getSDCardFilename(String leafname, boolean ensure)
+	String getSDCardFilename(String leafname, boolean ensure)
 	{
 		File f = mActivity.getExternalFilesDir(null);
 		if (!f.isDirectory())
@@ -92,6 +92,10 @@ public class AndroidSys implements Sys {
 		} catch (FileNotFoundException e) {
 			return new FileInputStream(getSDCardFilename(leafname, false));
 		}
+	}
+
+	AssetManager getAssets() {
+		return mAssets;
 	}
 
 	@Override

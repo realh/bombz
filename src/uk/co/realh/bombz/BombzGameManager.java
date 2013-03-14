@@ -38,6 +38,7 @@ package uk.co.realh.bombz;
 
 import java.io.IOException;
 
+import uk.co.realh.hgame.AudioContext;
 import uk.co.realh.hgame.ButtonFeedback;
 import uk.co.realh.hgame.GameManager;
 import uk.co.realh.hgame.Log;
@@ -72,7 +73,8 @@ public class BombzGameManager extends GameManager {
 	 * @throws IOException
 	 * @see uk.co.realh.hgame.ScreenButtonSource
 	 */
-	public BombzGameManager(Sys sys, ScreenButtonSource sbs) throws IOException
+	public BombzGameManager(Sys sys, ScreenButtonSource sbs,
+			AudioContext audio) throws IOException
 	{
 		super(sys, sbs);
 		mSavedGame = sys.getSavedSettings("saves");
