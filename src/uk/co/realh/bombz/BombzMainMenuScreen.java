@@ -65,8 +65,14 @@ public  abstract class BombzMainMenuScreen extends BombzMenuScreen {
 		}
 		addTextWidget(mMgr.mSys.translate("Configure_Controls"),
 				new ConfigureControlsTappedListener());
+		/*
 		addTextWidget(mMgr.mSys.translate("Other_Settings"),
 				new OtherSettingsTappedListener());
+		*/
+		if (haveQuitItem()) {
+			addTextWidget(mMgr.mSys.translate("Quit"),
+					new QuitTappedListener());
+		}
 	}
 
 	protected abstract String getPlayCaption();
@@ -74,6 +80,8 @@ public  abstract class BombzMainMenuScreen extends BombzMenuScreen {
 	protected abstract boolean hasChooseLevelItem();
 
 	protected abstract boolean resetLevelOnPlay();
+	
+	protected abstract boolean haveQuitItem();
 
 	/**
 	 * @see uk.co.realh.hgame.Renderer#getDescription()
@@ -118,11 +126,23 @@ public  abstract class BombzMainMenuScreen extends BombzMenuScreen {
 		}
 	}
 
+	/*
 	private class OtherSettingsTappedListener implements TapEventHandler
 	{
 		@Override
 		public boolean handleTapEvent(Event e) {
 			Log.d(TAG, "Other Settings tapped");
+			return true;
+		}
+	}
+	*/
+
+	private class QuitTappedListener implements TapEventHandler
+	{
+		@Override
+		public boolean handleTapEvent(Event e) {
+			Log.d(TAG, "Quit tapped");
+			mMgr.setScreen(mMgr.getMasterMenuScreen());
 			return true;
 		}
 	}

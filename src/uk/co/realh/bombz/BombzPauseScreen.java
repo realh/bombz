@@ -65,4 +65,9 @@ public class BombzPauseScreen extends BombzMainMenuScreen {
 		return false;
 	}
 
+	@Override
+	protected boolean haveQuitItem() {
+		return true;
+	}
+
 }

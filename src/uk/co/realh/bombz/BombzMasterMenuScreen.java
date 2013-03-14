@@ -67,4 +67,9 @@ public class BombzMasterMenuScreen extends BombzMainMenuScreen {
 		return false;
 	}
 
+	@Override
+	protected boolean haveQuitItem() {
+		return false;
+	}
+
 }

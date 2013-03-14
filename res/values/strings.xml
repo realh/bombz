@@ -10,5 +10,6 @@
     <string name="Configure_Controls">Configure Controls</string>
     <string name="Other_Settings">Other Settings</string>
     <string name="Back">Back</string>
+    <string name="Quit">Quit</string>
 
 </resources>
