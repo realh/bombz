@@ -95,6 +95,12 @@ public abstract class BombzMenuScreen extends BombzScreen {
 		mWidgetGroup.initRendering(rctx, w, h);
 	}
 	
+	@Override
+	public void deleteRendering(RenderContext rctx) {
+		mWidgetGroup.deleteRendering(rctx);
+		super.deleteRendering(rctx);
+	}
+	
 	private void setupRendering(RenderContext rctx, int w, int h)
 			throws IOException
 	{
@@ -229,6 +235,12 @@ public abstract class BombzMenuScreen extends BombzScreen {
 			mMgr.mTextures.loadTitleLogo(rctx);
 		setupRendering(rctx, rctx.getScreenWidth(), rctx.getScreenHeight());
 		mWidgetGroup.replacedRenderer(rctx);
+	}
+
+	@Override
+	public void replacingRenderer(RenderContext rctx) {
+		mWidgetGroup.replacingRenderer(rctx);
+		super.replacingRenderer(rctx);
 	}
 
 	@Override
