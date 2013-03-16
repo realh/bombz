@@ -420,6 +420,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 
 	@Override
 	public void replacingRenderer(RenderContext rctx) {
+		mMgr.setScreenBlankTimeout(0);
 		mMgr.mTextures.deleteControls(rctx);
 		mButtons.removeButtons();
 		if (null != mVPad)
@@ -462,6 +463,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	
 	@Override
 	public boolean onBackPressed() {
+		mMgr.setScreenBlankTimeout(0);
 		BombzPauseScreen s = mMgr.getPauseScreen();
 		mMgr.setScreen(s);
 		s.mBackScreen = null;
