@@ -110,7 +110,6 @@ public class WidgetGroup implements Renderer, TapEventHandler {
 	@Override
 	public void deleteRendering(RenderContext rctx)
 	{
-		mWidgets = null;
 		if (null != mAtlasMaker)
 		{
 			mAtlasMaker.mAtlas.dispose(rctx);
