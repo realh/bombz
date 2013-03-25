@@ -132,6 +132,14 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 				s.setPosition(x + 12 * K.FRUSTUM_TILE_SIZE / 16, y0);
 				s.render(rctx);
 			}
+			if (n + 1 == mMgr.mCurrentLevel) {
+				s.setTexture(mMgr.mTextures.mCursorRegion);
+				s.setPositionAndSize(x - K.FRUSTUM_TILE_SIZE / 4,
+						y - K.FRUSTUM_TILE_SIZE / 8,
+						K.FRUSTUM_TILE_SIZE * 3 / 2,
+						K.FRUSTUM_TILE_SIZE * 3 / 2);
+				s.render(rctx);
+			}
 			if (++d1 == 10)
 			{
 				d1 = 0;
@@ -161,6 +169,7 @@ public class ChooseLevelScreen extends BombzMenuScreen {
 				Log.d(TAG, "Tapped level " + level);
 				if (level <= mMgr.mSavedGame.get("highest_completed", 0) + 1) {
 					mMgr.setCurrentLevel(level);
+					mRCtx.requestRender(RenderContext.REASON_RENDER, true);
 					BombzGameScreen scrn = null;
 					try {
 						scrn = mMgr.getGameScreen();
