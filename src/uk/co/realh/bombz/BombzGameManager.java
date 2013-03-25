@@ -148,17 +148,17 @@ public class BombzGameManager extends GameManager {
 		if (mCurrentLevel > highest)
 			mSavedGame.set("highest_completed", mCurrentLevel);
 		setCurrentLevel(mCurrentLevel + 1);
-		try {
-			mSavedGame.save();
-		} catch (IOException e) {
-			Log.e(TAG, "Unable to save progress", e);
-		}
-    	setScreen(getMasterMenuScreen());
+    	setScreen(getMasterMenuScreen());	// Causes save().
 	}
 	
 	void setCurrentLevel(int level) {
 		mCurrentLevel = level;
 		mSavedGame.set("level", level);
+		try {
+			mSavedGame.save();
+		} catch (IOException e) {
+			Log.w(TAG, "Unable to save game state");
+		}
 	}
 
 	/**
