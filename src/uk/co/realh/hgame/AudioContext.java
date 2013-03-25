@@ -53,7 +53,7 @@ public interface AudioContext {
 	
 	/**
 	 * @param handle
-	 * @param balance -1 for left, +1 for right
+	 * @param balance 0 for left, 1 for right
 	 */
 	public void playEffect(SampleHandle handle, float balance);
 	

@@ -55,6 +55,9 @@ public class AndroidAudioContext implements AudioContext
 	
 	private final static int NULL_ID = 0x80000000;
 	
+	// Apparently a volume of 1.0 is mute!
+	private final float MAX_VOL = 0.99f;
+	
 	public final static int CONCURRENT_SAMPLES = 20;
 	
 	private SoundPool mSoundPool;
@@ -118,14 +121,15 @@ public class AndroidAudioContext implements AudioContext
 			Log.w(TAG, "Tried to play sample with null id");
 			return;
 		}
-		float leftVolume = 1.0f - balance;
+		balance *= MAX_VOL;
+		float leftVolume = MAX_VOL - balance;
 		float rightVolume = balance;
 		if (leftVolume > rightVolume) {
 			rightVolume /= leftVolume;
-			leftVolume = 1.0f;
+			leftVolume = MAX_VOL;
 		} else {
 			leftVolume /= rightVolume;
-			rightVolume = 1.0f;
+			rightVolume = MAX_VOL;
 		}
 		mSoundPool.play(id, leftVolume, rightVolume, 0, 0, 1);
 	}
