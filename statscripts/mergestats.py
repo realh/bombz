@@ -9,11 +9,11 @@ N_LEVELS = 42
 WT_FAILED = 100         # 1 - (succeeded / started)
 WT_MOVES = 1
 WT_DETO = 1             # 10 - detonators_left, clamped >= 0
-WT_TIME = 1             # - time_left
+WT_TIME = 0.5           # 100 - time_left
 
 time_limits = None
 
-def load_time_limits(levels_dir):
+def load_time_limits():
     levels_dir = os.path.dirname(os.path.dirname( \
             os.path.abspath(sys.argv[0]))) + "/assets/levels"
     global time_limits
@@ -29,7 +29,7 @@ def load_time_limits(levels_dir):
 def load_stats(filename):
     fp = open(filename, 'r')
     stats = {}
-    for l in stats.readlines():
+    for l in fp.readlines():
         k, v = l.split('=', 1)
         if k == "version":
             version = int(v)
@@ -52,7 +52,7 @@ def load_stats(filename):
     return stats
 
 
-def stats_to_rating(stats):
+def stats_to_ratings(stats):
     global WT_FAILED, WT_MOVES, WT_DETO, WT_TIME
     ratings = {}
     for lvl, sfl in stats.items():
@@ -67,10 +67,10 @@ def stats_to_rating(stats):
         deto = 10 - deto
         if deto < 0:
             deto = 0
-        ratings[lvl] = WT_FAILED * (1.0 - succ / started) +
-                WT_MOVES * moves +
-                WT_DETO * deto +
-                WT_TIME * -tm
+        ratings[lvl] = WT_FAILED * (1.0 - succ / started) + \
+                WT_MOVES * moves + \
+                WT_DETO * deto + \
+                WT_TIME * (100.0 - tm)
     return ratings
 
 
@@ -85,3 +85,17 @@ def merge_ratings(all_ratings):
     for lvl in totals.keys():
         totals[lvl] /= count[lvl]
     return totals
+
+
+def main():
+    ratings = []
+    for f in sys.argv[1:]:
+        s = load_stats(f)
+        ratings.append(stats_to_ratings(s))
+    ratings = merge_ratings(ratings)
+    lvls = ratings.keys()
+    lvls.sort()
+    for l in lvls:
+        print "%d=%f" % (l, ratings[l])
+
+main()
