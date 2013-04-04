@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2013, Tony Houghton <h@realh.co.uk>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
- * 
+ * modification, are permitted provided that the following conditions are met:
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer. 
+ *    this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution. 
- * 
+ *    and/or other materials provided with the distribution.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -47,11 +47,13 @@ import uk.co.realh.hgame.SavedSettings;
  *
  */
 public class Stats {
-	
+
 	private static final String TAG = "Stats";
 
+	private static final int VERSION = 3;
+
 	private SavedSettings mSettings;
-	
+
 	private int mCurrentLevel;
 	private int mMoves;
 
@@ -61,7 +63,7 @@ public class Stats {
 	public Stats(SavedSettings settings) {
 		mSettings = settings;
 	}
-	
+
 	public void startAttempt(int level, int detonators, int timeLimit) {
 		mCurrentLevel = level;
 		mSettings.set("time_limit_" + level, timeLimit);
@@ -70,7 +72,7 @@ public class Stats {
 		mSettings.set(s, attempts + 1);
 		mMoves = 0;
 	}
-	
+
 	/**
 	 * A move is actually a change of direction.
 	 * @param n	Number of moves made
@@ -85,36 +87,36 @@ public class Stats {
 	public void madeMove() {
 		++mMoves;
 	}
-	
+
 	public void failed() {
 		incrementSetting("failed_");
 		save();
 	}
-	
+
 	public void succeeded(int timeLeft, int detonatorsLeft) {
 		float suc = (float) incrementSetting("succeeded_");
-		addSuccessMeanStat("detonators_left_", detonatorsLeft, suc); 
-		addSuccessMeanStat("time_left_", timeLeft, suc); 
-		addSuccessMeanStat("moves_", mMoves, suc); 
+		addSuccessMeanStat("detonators_left_", detonatorsLeft, suc);
+		addSuccessMeanStat("time_left_", timeLeft, suc);
+		addSuccessMeanStat("moves_", mMoves, suc);
 		save();
 	}
-	
+
 	private void save() {
-		mSettings.set("version", K.STATS_VERSION);
+		mSettings.set("version", VERSION);
 		try {
 			mSettings.save();
 		} catch (IOException e) {
 			Log.w(TAG, "Failed to save stats", e);
 		}
 	}
-	
+
 	private int incrementSetting(String s) {
 		s += mCurrentLevel;
 		int val = mSettings.get(s, 0) + 1;
 		mSettings.set(s, val);
 		return val;
 	}
-	
+
 	private void addSuccessMeanStat(String s, int val, float suc) {
 		s += mCurrentLevel;
 		float mean = mSettings.get(s, 0.0f);

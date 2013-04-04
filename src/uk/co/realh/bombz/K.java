@@ -49,36 +49,33 @@ public class K
 										// hero moves each step
 	static final int TICK_INTERVAL = 40;
 	static final int TILE_ATLAS_COLUMNS = 6;
-	
+
 	static final int N_LEVELS = 42;
-	
+
 	static final int FACING_LEFT = 0;
 	static final int FACING_UP = 1;
 	static final int FACING_RIGHT = 2;
 	static final int FACING_DOWN = 3;
-	
+
 	static final int MENU_TEXT_COLOUR = 0x000088;
-	
+
 	static final int CONTROL_NONE = 0;			// No touchscreen controls
 	static final int CONTROL_VPAD_LEFT = 1;
 	static final int CONTROL_VPAD_RIGHT = 2;
 	static final int CONTROL_VBUTTONS_LEFT = 3;
 	static final int CONTROL_VBUTTONS_RIGHT = 4;
-	
+
 	// Divisor under overall width and height
 	static final int CONTROL_XPADDING = 40;
 	static final int CONTROL_YPADDING = 24;
-	
+
 	// Size of main digits compared to tile size
 	static final int DIGIT_MUL = 3;
 	static final int DIGIT_DIV = 4;
-	
-	// For Stats
-	static final int STATS_VERSION = 2;
-	
+
 	// How long to keep screen on for in ns
 	static final long EXTENDED_IDLE = 180000000000l;
-	
+
 	// In units of tiles
 	static final int CTRL_MENU_WIDTH = 5;
 	static final int CTRL_MENU_HEIGHT = 3;
