@@ -155,17 +155,17 @@ public abstract class HGameActivity extends Activity
 	}
 	
 	@Override
-	public void onStop() {
-		Log.d(TAG, "onStop");
+	public void onDestroy() {
+		Log.d(TAG, "onDestroy");
 		try {
 			if (null != mMgr && null != mMgr.mAudio) {
 				mMgr.mAudio.dispose();
 				mMgr.mAudio = null;
 			}
 		} catch (Throwable e) {
-			Log.e(TAG, "Exception in onStop", e);
+			Log.e(TAG, "Exception in onDestroy", e);
 		}
-		super.onStop();
+		super.onDestroy();
 	}
 	
 	@Override

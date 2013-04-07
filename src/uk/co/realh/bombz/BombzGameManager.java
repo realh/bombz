@@ -90,6 +90,7 @@ public class BombzGameManager extends GameManager {
 		setScreen(mMainMenuScreen);
 	}
 	
+	@Override
 	public void setAudio(AudioContext audio)
 	{
 		super.setAudio(audio);
