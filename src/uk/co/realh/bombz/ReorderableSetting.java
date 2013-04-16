@@ -46,7 +46,7 @@ import uk.co.realh.hgame.SavedSettings;
  * @author Tony Houghton
  *
  */
-public abstract class ReorderableSetting implements Reorder.Dataset {
+public class ReorderableSetting implements Reorder.Dataset {
 
 	protected static class SettingDatum implements Reorder.Datum {
 		public String mValue;
@@ -86,6 +86,6 @@ public abstract class ReorderableSetting implements Reorder.Dataset {
 	@Override
 	public void set(int n, Datum d) {
 		mSettings.set(mKey + (n + 1), ((SettingDatum) d).mValue);
-		
 	}
+	
 }

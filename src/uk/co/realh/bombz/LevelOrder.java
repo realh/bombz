@@ -36,17 +36,72 @@
 
 package uk.co.realh.bombz;
 
+import java.io.IOException;
+
+import uk.co.realh.hgame.Log;
+import uk.co.realh.hgame.SavedSettings;
+
 /**
  * Holds relationship between old and new level ordering.
  * @author Tony Houghton
  *
  */
 public class LevelOrder {
-
-	public final static int[] order_1_3 = {
+	
+	public final static int[] ORDER_1_3 = {
 		12,  6,  7,  5,  3, 20, 11, 42,  4,  9,  1, 26, 21, 24, 13, 31, 28,
 		 2, 41, 23, 25, 22, 40, 39, 33, 17, 15, 36, 18, 14, 34, 19, 35, 29,
 		 8, 37, 32, 27, 16, 30, 38, 10
 	};
+
+	private static final String TAG = "LevelOrder";
+
+    ReorderableSetting mScore;
+    ReorderableSetting mDeto;
+    ReorderableSetting mFailed;
+    ReorderableSetting mMoves;
+    ReorderableSetting mStarted;
+    ReorderableSetting mSucceeded;
+    ReorderableSetting mTimeLeft;
+    ReorderableSetting mTimeLimit;
+
+	LevelOrder(SavedSettings savedGame, SavedSettings stats, int oldVsn) {
+        mScore = new ReorderableSetting(savedGame, "score_", "0");
+        mDeto = new ReorderableSetting(stats, "detonators_left_", "0");
+        mFailed = new ReorderableSetting(stats, "failed_", "0");
+        mMoves = new ReorderableSetting(stats, "moves_", "0");
+        mStarted = new ReorderableSetting(stats, "started_", "0");
+        mSucceeded = new ReorderableSetting(stats, "succeeded_", "0");
+        mTimeLeft = new ReorderableSetting(stats, "time_left_", "0");
+        mTimeLimit = new ReorderableSetting(stats, "time_limit_", "0");
+        
+        reorder(ORDER_1_3);
+        
+		for (int n = 0; n < K.N_LEVELS; ++n) {
+			if (n > 0 && savedGame.get("score_" + n, 0) == 0) {
+				savedGame.set("highest_completed", n -1);
+				savedGame.set("level", n -1);
+				break;
+			}
+		}
+		
+		try {
+			savedGame.save();
+			stats.save();
+		} catch (IOException e) {
+			Log.e(TAG, "Unable to save data after update for level reorder", e);
+		}
+	}
+	
+	private void reorder(int[] order) {
+        new Reorder(mScore).reorder(order);
+        new Reorder(mDeto).reorder(order);
+        new Reorder(mFailed).reorder(order);
+        new Reorder(mMoves).reorder(order);
+        new Reorder(mStarted).reorder(order);
+        new Reorder(mSucceeded).reorder(order);
+        new Reorder(mTimeLeft).reorder(order);
+        new Reorder(mTimeLimit).reorder(order);
+	}
 
 }

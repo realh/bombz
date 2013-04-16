@@ -82,7 +82,11 @@ public class BombzGameManager extends GameManager {
 		super(sys, sbs);
 		mSavedGame = sys.getSavedSettings("saves");
 		mConfiguration = sys.getSavedSettings("config");
-		mStats = new Stats(sys.getSavedSettings("stats"));
+		SavedSettings stats = sys.getSavedSettings("stats");
+		int ov = stats.get("version", Stats.VERSION);
+		if (ov != Stats.VERSION)
+			new LevelOrder(mSavedGame, stats, ov);
+		mStats = new Stats(stats);
 		mHapticFeedback = sys.getHapticFeedback();
 		mTextures = new BombzTextures(sys);
 		mCurrentLevel = mSavedGame.get("level", 1);
@@ -146,9 +150,13 @@ public class BombzGameManager extends GameManager {
 		if (score > old_score)
 			mSavedGame.set("score_" + mCurrentLevel, score);
 		int highest = mSavedGame.get("highest_completed", 0);
-		if (mCurrentLevel > highest)
-			mSavedGame.set("highest_completed", mCurrentLevel);
-		setCurrentLevel(mCurrentLevel + 1);
+		int next = mCurrentLevel;
+		do {
+			++next;
+		} while (mSavedGame.get("score_" + next, 0) > 0);
+		if (next >= highest)
+			mSavedGame.set("highest_completed", next - 1);
+		setCurrentLevel(next);
     	setScreen(getMasterMenuScreen());	// Causes save().
 	}
 	
