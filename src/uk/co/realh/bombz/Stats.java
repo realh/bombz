@@ -50,7 +50,7 @@ public class Stats {
 
 	private static final String TAG = "Stats";
 
-	private static final int VERSION = 3;
+	public static final int VERSION = 3;
 
 	private SavedSettings mSettings;
 
