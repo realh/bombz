@@ -20,6 +20,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.WindowManager;
@@ -122,7 +123,8 @@ public class AndroidSys implements Sys {
 			return null;
 		}
 		Resources res = mActivity.getResources();
-		Bitmap bmp = ((BitmapDrawable) res.getDrawable(id)).getBitmap();
+		Drawable drwbl = res.getDrawable(id);
+		Bitmap bmp = ((BitmapDrawable) drwbl).getBitmap();
 		return new AndroidImage(bmp);
 	}
 	

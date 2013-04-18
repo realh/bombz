@@ -143,7 +143,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		case K.CONTROL_VPAD_RIGHT:
 			mTilesViewport.setRect(0, 0, vpw, vph);
 			setupVPad(w, h);
-			setTimeLimitOnRight(vpw);
+			setTimeLimitOnRight(w);
 			break;
 		case K.CONTROL_VBUTTONS_LEFT:
 			mTilesViewport.setRect((w - vpw) * 2 / 3, 0, vpw, vph);
@@ -157,7 +157,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 			setupVButtons(mTilesViewport.x + vpw, w,
 					0, mTilesViewport.x,
 					w, h);
-			setTimeLimitOnRight(vpw);
+			setTimeLimitOnRight(w);
 			break;
 		}
 		mMatchFrustum.setRect(0, 0, K.FRUSTUM_TILE_SIZE, K.FRUSTUM_TILE_SIZE);
@@ -275,21 +275,21 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mMatchViewport.setRect(x, h + s / 4, s, s);
 	}
 	
-	private void setTimeLimitOnRight(int vpw) {
+	private void setTimeLimitOnRight(int scrnW) {
 		int s = mMgr.mTextures.mSrcTileSize;
 		int w = mTimeLimit.getViewportWidth();
 		int x = mTilesViewport.x + mTilesViewport.w;
 		int x0 = x;
 		int h = mTimeLimit.getViewportHeight();
-		if (x + w > vpw)
-			x = vpw - w;
+		if (x + w > scrnW)
+			x = scrnW - w;
 		mTimeLimit.setViewport(x, mMgr.mTextures.mSrcTileSize / 4,
 				w, mTimeLimit.getViewportHeight());
 		x += (w - s) / 2;
 		if (x < x0)
 			x = x0;
-		if (x + s > vpw)
-			x = vpw - s;
+		if (x + s > scrnW)
+			x = scrnW - s;
 		mMatchViewport.setRect(x, h + s / 4, s, s);
 	}
 	
