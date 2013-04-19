@@ -79,4 +79,6 @@ public class K
 	// In units of tiles
 	static final int CTRL_MENU_WIDTH = 5;
 	static final int CTRL_MENU_HEIGHT = 3;
+	
+	static final float DPI_TO_VPAD = 320f / 256f;
 }

@@ -22,6 +22,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 
@@ -231,6 +232,17 @@ public class AndroidSys implements Sys {
 			mActivity.getWindow().clearFlags(
 					WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
+	}
+
+	/**
+	 * @see uk.co.realh.hgame.Sys#getDisplayDPI()
+	 */
+	@Override
+	public int getDisplayDPI() {
+		DisplayMetrics metrics = new DisplayMetrics();
+		mActivity.getWindowManager().getDefaultDisplay().getMetrics(metrics);	
+		Log.d(TAG, "Display DPI " + metrics.densityDpi);
+		return metrics.densityDpi;
 	}
 
 }

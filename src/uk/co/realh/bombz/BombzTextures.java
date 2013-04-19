@@ -309,18 +309,16 @@ public class BombzTextures {
 		mLogoAtlas = null;
 	}
 
-	void loadControls(RenderContext rctx) {
-		Image img = null;
+	void loadControls(RenderContext rctx) throws IOException {
 		rctx.enableBlend(true);
-		img = mSys.loadResPNG("vpad");
-		mVpadWidth = img.getWidth();
-		mVpadHeight = img.getHeight();
-		mControlsAtlas = rctx.uploadTexture(img, true);
+		mVpadWidth = (int) ((float) mSys.getDisplayDPI() / K.DPI_TO_VPAD);
+		mVpadHeight = mVpadWidth;
+		Log.d(TAG, "Vpad size " + mVpadWidth);
+		mControlsAtlas = loadAtlas(rctx, "vpad", true);
 		mControlsRegion = mControlsAtlas.createRegion(0, 0,
-					mVpadWidth, mVpadHeight);
+				mSrcTileSize * 16 / 3, mSrcTileSize * 16 / 3);
 		mControlsSprite = rctx.createSprite(mControlsRegion,
 				0, 0, mVpadWidth, mVpadHeight);
-		img.dispose();
 	}
 
 	void deleteControls(RenderContext rctx) {

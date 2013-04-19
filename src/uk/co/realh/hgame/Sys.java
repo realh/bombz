@@ -142,5 +142,11 @@ public interface Sys {
 	 * Allows the device to sleep when inactive.
 	 */
 	public void enableScreenBlanker();
+	
+	/**
+	 * Gets (approximate) display pixel density.
+	 * @return
+	 */
+	public int getDisplayDPI();
 
 }

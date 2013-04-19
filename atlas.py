@@ -410,9 +410,11 @@ def builder(m, dest, size):
         omdp(dest)
         svg_to_cairo("svgs/vpad.svg", size, size,
                 True, 4, 0, 0, 0.5).write_to_png(dest)
+        """
     elif m == 'vpads':
-        for ds in (('ldpi', 96), ('mdpi', 128), ('hdpi', 192), ('xhdpi', 256)):
-            builder('vpad', dest + "/drawable-" + ds[0] + "/vpad.png", ds[1])
+        for ds in (96, 128, 192, 256, 384):
+            builder('vpad', "%s/%d/%s" % (dest, ds, "vpad.png"))
+        """
     elif m == 'vpad_menu':
         omdp(dest)
         make_vpad_menu_atlas(size).write_to_png(dest)
@@ -421,9 +423,9 @@ def builder(m, dest, size):
         builder('alpha', dest + "/alpha_atlas.png", size)
         builder('logo', dest + "/title_logo.png", size)
         builder('vpad_menu', dest + "/vpad_menu.png", size)
+        builder('vpad', dest + "/vpad.png", int(size * 16 / 3))
     elif m == 'all':
         builder('assets', dest + "/assets/pngs/%d" % size, size)
-        builder('vpads', dest + "/res", size)
 
 
 if __name__ == "__main__":
