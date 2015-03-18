@@ -58,8 +58,8 @@ import uk.co.realh.hgame.VPad;
 public class BombzGameScreen extends BombzScreen implements DInput {
 	
 	private static final String TAG = "GameScreen";
-	
-	BombzLevel mLevel;
+
+    BombzLevel mLevel;
 	private Pusher mPusher;
 	TimeLimit mTimeLimit;
 	private int mScreenWidth;
@@ -84,7 +84,8 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	private final ButtonFeedback mFeedback;
 	private VPad mVPad;
 	private VButtons mVButtons;
-	
+    private final DInput mKbdDInput;
+
 	private int mMsSinceTick;	// ms since last TimeLimit update
 
 	/**
@@ -94,7 +95,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 	 * @throws IOException 
 	 */
 	public BombzGameScreen(BombzGameManager mgr, ScreenButtonSource sbs,
-			ButtonFeedback feedback)
+			ButtonFeedback feedback, DInput kbdDInput)
 			throws IOException {
 		super(mgr);
 		mButtons = sbs;
@@ -102,6 +103,7 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 		mLevel = new BombzLevel(mgr);
 		mPusher = new Pusher(mgr, mLevel, this);
 		mTimeLimit = new TimeLimit(mgr);
+        mKbdDInput = kbdDInput;
 		loadCurrentLevel();
 	}
 	
@@ -458,6 +460,8 @@ public class BombzGameScreen extends BombzScreen implements DInput {
 			d = mVPad.pollDInput();
 		if (null != mVButtons)
 			d |= mVButtons.pollDInput();
+        if (null != mKbdDInput)
+            d |= mKbdDInput.pollDInput();
 		return d;
 	}
 	

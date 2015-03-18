@@ -149,4 +149,9 @@ public interface Sys {
 	 */
 	public int getDisplayDPI();
 
+    /**
+     * @return  An object for polling direction keys on a keyboard.
+     */
+    public DInput getKbdDInput();
+
 }

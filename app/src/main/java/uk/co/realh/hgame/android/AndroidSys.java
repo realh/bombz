@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.util.TreeSet;
 
 import uk.co.realh.hgame.ButtonFeedback;
+import uk.co.realh.hgame.DInput;
 import uk.co.realh.hgame.Font;
 import uk.co.realh.hgame.Image;
 import uk.co.realh.hgame.SavedSettings;
@@ -33,14 +34,14 @@ public class AndroidSys implements Sys {
 	
 	private static String TAG = "Sys";
 	
-	private Activity mActivity;
+	private HGameActivity mActivity;
 	private AssetManager mAssets;
 	//private String mOwner;
 	//private String mDomain;
 	//private String mAppName;
 	private Class<?> mRString;
 	private Class<?> mRDrawable;
-	
+
 	/**
 	 * @param act		Android Activity
 	 * @param owner		Name associated with developer
@@ -49,7 +50,7 @@ public class AndroidSys implements Sys {
 	 * @param pkg		Package name (containing R class)
 	 * @throws ClassNotFoundException 
 	 */
-	public AndroidSys(Activity act,
+	public AndroidSys(HGameActivity act,
 			String owner, String domain, String appName, String pkg)
 			throws ClassNotFoundException
 	{
@@ -203,7 +204,7 @@ public class AndroidSys implements Sys {
 	}
 
 	/**
-	 * @see uk.co.realh.hgame.Sys#acquireWakeLock()
+	 * @see uk.co.realh.hgame.Sys#disableScreenBlanker()
 	 */
 	@Override
 	public void disableScreenBlanker() {
@@ -211,7 +212,7 @@ public class AndroidSys implements Sys {
 	}
 
 	/**
-	 * @see uk.co.realh.hgame.Sys#releaseWakeLock()
+	 * @see uk.co.realh.hgame.Sys#enableScreenBlanker()
 	 */
 	@Override
 	public void enableScreenBlanker() {
@@ -245,4 +246,9 @@ public class AndroidSys implements Sys {
 		return metrics.densityDpi;
 	}
 
+    @Override
+    public DInput getKbdDInput()
+    {
+        return mActivity.getKbdDInput();
+    }
 }

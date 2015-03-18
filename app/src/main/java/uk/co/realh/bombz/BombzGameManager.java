@@ -110,7 +110,8 @@ public class BombzGameManager extends GameManager {
 	public BombzGameScreen getGameScreen() throws IOException
 	{
 		if (null == mGameScreen)
-			mGameScreen = new BombzGameScreen(this, mButtons, mHapticFeedback);
+			mGameScreen = new BombzGameScreen(this, mButtons, mHapticFeedback,
+                    mSys.getKbdDInput());
 		return mGameScreen;
 	}
 	

@@ -7,4 +7,11 @@ gen
 libs
 vpad.png
 app/src/main/assets/pngs/*/*.png
-
+.gradle
+.idea
+*.apk
+gradle/
+gradlew
+gradlew.bat
+import-summary.txt
+local.properties

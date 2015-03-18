@@ -1,0 +1,7 @@
+Bombz is a simple 2D puzzle game. It doesn't really have a plot. The object is to blow up all the bombs on each level then escape off the edge of the screen. To blow up a bomb, push it to where you want to cause an explosion, then collect a match and touch the bomb again and quickly get out of the way. A bomb destroys everything surrounding it except the metallic walls; if it blows up another bomb, that takes out everything around it too so you can set off chain reactions.
+
+Version 0.3.0 features keyboard controls. You can use the arrow keys, WASD or ZXL, (comma). I hope to provide an option to turn off the on-screen controls soon, but it will take longer because I need to redesign the config screen. To upgrade from 0.2.0 you will have to uninstall the old version first because I lost my APK signing key. Sorry! I'm as annoyed with myself as you are. 
+
+Please remember this is a free game. It lacks in-game help and some polished transition screens etc.
+
+It's a port of my PC game Bombz, hosted at <http://bombz.sourceforge.net>. Note that the levels in the Android version are in a different order from the PC version because I've tried to rearrange them in a better order of difficulty, based on arbitrary statistics.

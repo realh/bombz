@@ -42,6 +42,7 @@ import javax.microedition.khronos.opengles.GL10;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -69,6 +70,7 @@ public abstract class HGameActivity extends Activity
 	protected AndroidSys mSys;
 	protected GameManager mMgr;
 	private HGameRenderer mRenderer;
+    private AndroidKbdDInput mKbdDInput;
 	
 	private OnScreenButton[] mButtons =
 			new OnScreenButton[ScreenButtonSource.MAX_BUTTONS];
@@ -91,6 +93,10 @@ public abstract class HGameActivity extends Activity
 	protected final void createSys(String owner,
 			String domain, String appName, String pkg)
 	{
+        if (null == mKbdDInput)
+        {
+            mKbdDInput = new AndroidKbdDInput();
+        }
 		if (null == mSys)
 		{
 			try {
@@ -311,4 +317,21 @@ public abstract class HGameActivity extends Activity
 			mButtons[n] = null;
 		mNButtons = 0;
 	}
+
+    public AndroidKbdDInput getKbdDInput()
+    {
+        return mKbdDInput;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        return mKbdDInput.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event)
+    {
+        return mKbdDInput.onKeyUp(keyCode, event);
+    }
 }
